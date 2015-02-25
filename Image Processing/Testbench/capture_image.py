@@ -20,5 +20,5 @@ camera.start_preview()
 sleep(10)
 camera.stop_preview()
 
-camera.capture('Images/Test1/Trapezoid.jpg')
+camera.capture('Images/Test.jpg')
 
