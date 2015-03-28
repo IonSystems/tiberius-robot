@@ -4,10 +4,10 @@
 # Test script to compare the descriptors of multiple library images with an input test image.
 # Returns a match_success based on Lowe's ratio test using BFMatcher.
 #
-# Input image folder: pi/Desktop/tiberius/Image Processing/Testbench/Images/
+# Input image folder: home/pi/Desktop/tiberius/Object Detection/Testbench/Images/
 #
-# Date: 25/02/2015 
-# Version: 0.0
+# Date: 10/03/2015 
+# Version: 1.0
 ##################################################################################################
 
 import cv2
@@ -21,9 +21,9 @@ MATCH_LIMIT_PERCENT = 10
 print "\n\nReading the library images"
 
 # read the library images (0: return a GRAYSCALE image)
-img_cube = cv2.imread('Images/Library/Cube.jpg',0) 
-img_hexagon = cv2.imread('Images/Library/Hexagon.jpg',0)
-img_star = cv2.imread('Images/Library/Star.jpg',0)
+img_cube = cv2.imread('../Library/Cube.jpg',0) 
+img_hexagon = cv2.imread('../Library/Hexagon.jpg',0)
+img_star = cv2.imread('../Library/Star.jpg',0)
 
 print "Reading the test image"
 img_test = cv2.imread('Images/Test1/Cube.jpg',0)
@@ -50,12 +50,12 @@ img_test = cv2.resize(img_test, (1136,640))
 
 # CANNY EDGE ALGORITHM
 print "Applying the Canny Edge Detector to the library images"
-img_cube    = cv2.Canny(img_cube,400,20)
-img_hexagon = cv2.Canny(img_hexagon,400,20)
-img_star    = cv2.Canny(img_star,400,20)
+img_cube    = cv2.Canny(img_cube,300,20)
+img_hexagon = cv2.Canny(img_hexagon,300,20)
+img_star    = cv2.Canny(img_star,300,20)
 
 print "Applying the Canny Edge Detector to the test image"
-img_test = cv2.Canny(img_test,400,20)
+img_test = cv2.Canny(img_test,300,20)
 
 # OPENING (EROSION FOLLOWED BY DILATION)
 kernel = np.ones((5,5),np.uint8)

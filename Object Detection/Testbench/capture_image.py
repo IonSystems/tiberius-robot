@@ -3,10 +3,10 @@
 ##########################################################################
 # Test script to capture an image using the pi camera module.
 #
-# Output image folder: pi/Desktop/tiberius/Image Processing/Testbench/Images/
+# Output image folder: home/pi/Desktop/tiberius/Object Detection/Testbench/Images/
 #
-# Date: 17/02/2015 
-# Version: 0.0
+# Date: 10/03/2015 
+# Version: 1.0
 ##########################################################################
 
 import picamera

@@ -5,10 +5,10 @@
 # Returns a match_success based on Lowe's ratio test.
 # Uses BFMatcher and FLANN matching.
 #
-# Input image folder: pi/Desktop/Image Processing/Testbench/Images/
+# Input image folder: home/pi/Desktop/Object Detection/Testbench/Images/
 #
-# Date: 25/02/2015 
-# Version: 0.0
+# Date: 10/03/2015 
+# Version: 1.0
 ##########################################################################
 
 import cv2
@@ -17,8 +17,8 @@ import sys
 
 print "Reading the images"
 # open the test images (0: return a GRAYSCALE image)
-image1 = cv2.imread('Images/Library/Hexagon.jpg',0) 
-image2 = cv2.imread('Images/Test1/Hexagon.jpg',0)
+image1 = cv2.imread('../Library/Hexagon.png',0) 
+image2 = cv2.imread('Images/Test1/Hexagon.png',0)
 
 # check input images
 if ((image1 is None) or (image2 is None)):
@@ -34,8 +34,8 @@ image2 = cv2.resize(image2, (1136,640))
 
 # find the edges in the images using the Canny algorithm
 print 'Applying the Canny Edge Detector to the images'
-image1 = cv2.Canny(image1,400,20)
-image2 = cv2.Canny(image2,400,20)
+image1 = cv2.Canny(image1,300,20)
+image2 = cv2.Canny(image2,300,20)
 
 # apply opening (erosion followed by dilation) to the images.
 print 'Applying Opening to the images'

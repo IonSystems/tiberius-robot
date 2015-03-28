@@ -3,11 +3,11 @@
 ###########################################################################
 # Test script to extract the keypoints and descriptors from a test image.
 #
-# Input image folder: pi/Desktop/tiberius/Image Processing/Testbench/Images/
-# Output image folder: pi/Desktop/tiberius/Image Processing/Testbench/Images/
+# Input image folder: home/pi/Desktop/tiberius/Object Detection/Testbench/Images/
+# Output image folder: home/pi/Desktop/tiberius/Object Detection/Testbench/Images/
 #
-# Date: 25/02/2015 
-# Version: 0.0
+# Date: 10/03/2015 
+# Version: 1.0
 ###########################################################################
 
 import cv2
@@ -25,7 +25,7 @@ if (image is None):
 image = cv2.resize(image, (1136,640))
 
 # find the edges in the image using the Canny algorithm
-image = cv2.Canny(image, 400, 20)
+image = cv2.Canny(image, 300, 20)
 
 # apply opening (erosion followed by dilation) to the image.
 kernel = np.ones((5,5),np.uint8)
