@@ -37,7 +37,7 @@ DATABASE_PORT = 60000
 ######################################################
 def receive_message(database,message):
     database.sendall(message)
-    recv_message = database.recv(2048)
+    recv_message = database.recv(4096)
     recv_message = recv_message.replace("\n","") # Database sends the message with a "\n" appended at the end.
     return recv_message
 
@@ -47,7 +47,7 @@ def receive_message(database,message):
 #####################
 def capture_image():
     camera = picamera.PiCamera()
-    camera.capture('./Image.png')
+    camera.capture('./Image.jpg')
     
     
 ######################################################
@@ -56,9 +56,9 @@ def capture_image():
 ######################################################    
 def get_library():
     # READ THE LIBRARY IMAGES (0: return a GRAYSCALE image)
-    img_cube = cv2.imread('./Library/Cube.png',0) 
-    img_hexagon = cv2.imread('./Library/Hexagon.png',0)
-    img_star = cv2.imread('./Library/Star.png',0)
+    img_cube = cv2.imread('./Library/Cube.jpg',0) 
+    img_hexagon = cv2.imread('./Library/Hexagon.jpg',0)
+    img_star = cv2.imread('./Library/Star.jpg',0)
 
     # RESIZING
     img_cube    = cv2.resize(img_cube, (1136,640))
@@ -98,7 +98,7 @@ def get_library():
 def analyse_image(mission_object,library,database):  
     
     ############## -- CAPTURED IMAGE -- #########################
-    image = cv2.imread('./Image.png',0)
+    image = cv2.imread('./Image.jpg',0)
     # RESIZING
     image    = cv2.resize(image, (1136,640))
     # CANNY EDGE ALGORITHM
