@@ -59,7 +59,7 @@ def adjust_pixel(search_object,image,x_pos,y_pos):
         BLUE_PIXELS += 1
             
     # STAR - RED        
-    elif ((search_object == "STAR") and (red > 50) and (green < 50) and (blue < 50)):
+    elif ((search_object == "STAR") and (red > 70) and (green < 70) and (blue < 70)):
 
         image.itemset((y_pos,x_pos,0),0)
         image.itemset((y_pos,x_pos,1),0)
@@ -219,9 +219,9 @@ if ((RED_PIXELS > PIXEL_THRESHOLD) or (BLUE_PIXELS > PIXEL_THRESHOLD) or (GREEN_
     # CHECK RESULTS
     if   ((cube_rate > hexagon_rate) and (cube_rate > star_rate) and (cube_rate > MATCH_LIMIT_PERCENT) and (GREEN_PIXELS > GREEN_THRESHOLD)):
        img_matched = 'cube'
-    elif ((star_rate > hexagon_rate) and (star_rate > MATCH_LIMIT_PERCENT) and (RED_PIXELS > RED_THRESHOLD)):
+    elif ((star_rate > hexagon_rate) and (star_rate > cube_rate) and (star_rate > MATCH_LIMIT_PERCENT) and (RED_PIXELS > RED_THRESHOLD)):
        img_matched = 'star'
-    elif ((hexagon_rate > MATCH_LIMIT_PERCENT) and (BLUE_PIXELS > BLUE_THRESHOLD)):
+    elif ((hexagon_rate > cube_rate) and (hexagon_rate > star_rate) and (hexagon_rate > MATCH_LIMIT_PERCENT) and (BLUE_PIXELS > BLUE_THRESHOLD)):
        img_matched = 'hexagon'
     
     
