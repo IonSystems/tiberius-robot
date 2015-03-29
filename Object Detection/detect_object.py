@@ -47,7 +47,48 @@ def receive_message(database,message):
 #####################
 def capture_image():
     camera = picamera.PiCamera()
+    camera.resolution = (640,480)
     camera.capture('./Image.jpg')
+    
+    
+#####################################################################
+# Change the color of the pixel based on the desired object's color.
+#####################################################################
+def adjust_pixel(mission_object,image,x_pos,y_pos):
+    
+    # Get the pixel value.
+    blue  = image[y_pos][x_pos][0] # BLUE
+    green = image[y_pos][x_pos][1] # GREEN
+    red   = image[y_pos][x_pos][2] # RED
+    
+    # CUBE - GREEN
+    if ((mission_object == "CUBE") and (red < 70) and (green > 70) and (blue < 70)) : 
+        
+        # If the pixel value is inside the object's color limits, set the pixel value to the object's color.
+        image.itemset((y_pos,x_pos,0),0)
+        image.itemset((y_pos,x_pos,1),255)
+        image.itemset((y_pos,x_pos,2),0)
+            
+    # HEXAGON - BLUE        
+    elif ((mission_object == "HEXAGON") and (red < 70) and (green < 70) and (blue > 70)):
+           
+        image.itemset((y_pos,x_pos,0),255)
+        image.itemset((y_pos,x_pos,1),0)
+        image.itemset((y_pos,x_pos,2),0)
+            
+    # STAR - RED        
+    elif ((mission_object == "STAR") and (red > 70) and (green < 70) and (blue < 70)):
+
+        image.itemset((y_pos,x_pos,0),0)
+        image.itemset((y_pos,x_pos,1),0)
+        image.itemset((y_pos,x_pos,2),255)
+            
+    # Else set the pixel value to WHITE.    
+    else:
+        
+        image.itemset((y_pos,x_pos,0),255)
+        image.itemset((y_pos,x_pos,1),255)
+        image.itemset((y_pos,x_pos,2),255)
     
     
 ######################################################
@@ -55,20 +96,15 @@ def capture_image():
 # Return a dictionary with image:descriptor pairs.
 ######################################################    
 def get_library():
-    # READ THE LIBRARY IMAGES (0: return a GRAYSCALE image)
-    img_cube = cv2.imread('./Library/Cube.jpg',0) 
-    img_hexagon = cv2.imread('./Library/Hexagon.jpg',0)
-    img_star = cv2.imread('./Library/Star.jpg',0)
-
-    # RESIZING
-    img_cube    = cv2.resize(img_cube, (1136,640))
-    img_hexagon = cv2.resize(img_hexagon, (1136,640))
-    img_star    = cv2.resize(img_star, (1136,640))
+    # READ THE LIBRARY IMAGES 
+    img_cube = cv2.imread('./Library/Cube.jpg') 
+    img_hexagon = cv2.imread('./Library/Hexagon.jpg')
+    img_star = cv2.imread('./Library/Star.jpg')
 
     # CANNY EDGE ALGORITHM
-    img_cube    = cv2.Canny(img_cube,300,20)
-    img_hexagon = cv2.Canny(img_hexagon,300,20)
-    img_star    = cv2.Canny(img_star,300,20)
+    img_cube    = cv2.Canny(img_cube, 1200, 100)
+    img_hexagon = cv2.Canny(img_hexagon, 1200, 100)
+    img_star    = cv2.Canny(img_star, 1200, 100)
 
     # OPENING (EROSION FOLLOWED BY DILATION)
     kernel = np.ones((5,5),np.uint8)
@@ -98,11 +134,29 @@ def get_library():
 def analyse_image(mission_object,library,database):  
     
     ############## -- CAPTURED IMAGE -- #########################
-    image = cv2.imread('./Image.jpg',0)
-    # RESIZING
-    image    = cv2.resize(image, (1136,640))
+    image = cv2.imread('./Image.jpg')
+    
+    # ADJUST TEST IMAGE COLOR
+    # Get the width and height of the image.
+    height = image.shape[0]
+    width = image.shape[1]
+
+    x_pos = 0
+    # Iterate through the rows.
+    while (x_pos < width):
+        y_pos = 0
+    
+        # Iterate through the column for each row.
+        while (y_pos < height):
+            # Adjust the color of the pixel based on the object that needs to be detected.
+            adjust_pixel(mission_object,image,x_pos,y_pos)
+            y_pos += 1
+        
+        x_pos += 1
+        
+    
     # CANNY EDGE ALGORITHM
-    image    = cv2.Canny(image,300,20)
+    image    = cv2.Canny(image, 1200, 100)
     # OPENING (EROSION FOLLOWED BY DILATION)
     kernel = np.ones((5,5),np.uint8)
     image    = cv2.morphologyEx(image,cv2.MORPH_GRADIENT,kernel)
@@ -113,38 +167,41 @@ def analyse_image(mission_object,library,database):
     (image_kpts, image_dpts) = surf.detectAndCompute(image,None)
     
     ############## -- COMPARING -- ############################
-     
-    # BFMatcher with default parameters
-    bfmatcher = cv2.BFMatcher()
-
+    
     # object results
     img_matched  = ""
     cube_rate    = 0
     hexagon_rate = 0
     star_rate    = 0
+    
+    # If the image wasn't cleared (no descriptors) - when the picture doesn't match the desired object.
+    if (image_dpts is not None):
+     
+        # BFMatcher with default parameters
+        bfmatcher = cv2.BFMatcher()
 
-    # Iterate through all library images
-    for name, descriptor in library.iteritems():
-  
-       matches = bfmatcher.knnMatch(descriptor, image_dpts, k=2)
-
-       # matching results
-       good_matches  = 0
-       total_matches = 0
-       match_rate    = 0
-
-       # Apply ratio test
-       for dmatch_1,dmatch_2 in matches:
-          total_matches += 1
-          if dmatch_1.distance < 0.75 * dmatch_2.distance:
-             good_matches += 1
-             
-       # round the match_rate to 2 decimal places         
-       match_rate = round(((float(good_matches) / total_matches) * 100),2)
-
-       if   (name == CUBE):    cube_rate    = match_rate
-       elif (name == HEXAGON): hexagon_rate = match_rate
-       elif (name == STAR):    star_rate    = match_rate
+        # Iterate through all library images
+        for name, descriptor in library.iteritems():
+        
+           matches = bfmatcher.knnMatch(descriptor, image_dpts, k=2)
+        
+           # matching results
+           good_matches  = 0
+           total_matches = 0
+           match_rate    = 0
+        
+           # Apply ratio test
+           for dmatch_1,dmatch_2 in matches:
+              total_matches += 1
+              if dmatch_1.distance < 0.75 * dmatch_2.distance:
+                 good_matches += 1
+                 
+           # round the match_rate to 2 decimal places         
+           match_rate = round(((float(good_matches) / total_matches) * 100),2)
+        
+           if   (name == CUBE):    cube_rate    = match_rate
+           elif (name == HEXAGON): hexagon_rate = match_rate
+           elif (name == STAR):    star_rate    = match_rate
 
 
     # CHECK RESULTS
@@ -230,4 +287,5 @@ while 1:
     except socket.error:
         # wait for 5 seconds before trying again
         time.sleep(5)
+                
                 

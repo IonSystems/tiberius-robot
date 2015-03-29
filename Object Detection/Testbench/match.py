@@ -7,7 +7,7 @@
 #
 # Input image folder: home/pi/Desktop/Object Detection/Testbench/Images/
 #
-# Date: 10/03/2015 
+# Date: 29/03/2015 
 # Version: 1.0
 ##########################################################################
 
@@ -16,9 +16,8 @@ import numpy as np
 import sys
 
 print "Reading the images"
-# open the test images (0: return a GRAYSCALE image)
-image1 = cv2.imread('../Library/Hexagon.png',0) 
-image2 = cv2.imread('Images/Test1/Hexagon.png',0)
+image1 = cv2.imread('../Library/Hexagon.png') 
+image2 = cv2.imread('Images/Test1/Hexagon.png')
 
 # check input images
 if ((image1 is None) or (image2 is None)):
@@ -27,15 +26,10 @@ if ((image1 is None) or (image2 is None)):
 
 ################################################################################
 
-# resize the test images
-print 'Resizing the images'
-image1 = cv2.resize(image1, (1136,640))
-image2 = cv2.resize(image2, (1136,640))
-
 # find the edges in the images using the Canny algorithm
 print 'Applying the Canny Edge Detector to the images'
-image1 = cv2.Canny(image1,300,20)
-image2 = cv2.Canny(image2,300,20)
+image1 = cv2.Canny(image1,1200,100)
+image2 = cv2.Canny(image2,1200,100)
 
 # apply opening (erosion followed by dilation) to the images.
 print 'Applying Opening to the images'

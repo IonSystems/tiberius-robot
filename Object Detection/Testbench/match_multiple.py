@@ -6,7 +6,7 @@
 #
 # Input image folder: home/pi/Desktop/tiberius/Object Detection/Testbench/Images/
 #
-# Date: 10/03/2015 
+# Date: 29/03/2015  
 # Version: 1.0
 ##################################################################################################
 
@@ -16,17 +16,61 @@ import sys
 
 MATCH_LIMIT_PERCENT = 10
 
-##################################################################################################
+#####################################################################
+# Change the color of the pixel based on the desired object's color.
+#####################################################################
+def adjust_pixel(search_object,image,x_pos,y_pos):
+    
+    # Get the pixel value.
+    blue  = image[y_pos][x_pos][0] # BLUE
+    green = image[y_pos][x_pos][1] # GREEN
+    red   = image[y_pos][x_pos][2] # RED
+    
+    # CUBE - GREEN
+    if ((search_object == "CUBE") and (red < 70) and (green > 70) and (blue < 70)) : 
+        
+        # If the pixel value is inside the object's color limits, set the pixel value to the object's color.
+        image.itemset((y_pos,x_pos,0),0)
+        image.itemset((y_pos,x_pos,1),255)
+        image.itemset((y_pos,x_pos,2),0)
+            
+    # HEXAGON - BLUE        
+    elif ((search_object == "HEXAGON") and (red < 70) and (green < 70) and (blue > 70)):
+           
+        image.itemset((y_pos,x_pos,0),255)
+        image.itemset((y_pos,x_pos,1),0)
+        image.itemset((y_pos,x_pos,2),0)
+            
+    # STAR - RED        
+    elif ((search_object == "STAR") and (red > 70) and (green < 70) and (blue < 70)):
+
+        image.itemset((y_pos,x_pos,0),0)
+        image.itemset((y_pos,x_pos,1),0)
+        image.itemset((y_pos,x_pos,2),255)
+            
+    # Else set the pixel value to white.    
+    else:
+        
+        image.itemset((y_pos,x_pos,0),255)
+        image.itemset((y_pos,x_pos,1),255)
+        image.itemset((y_pos,x_pos,2),255) 
+
+
+
+##################################################### -- MAIN PROGRAM -- #####################################################
+
+# The object to be detected.
+DETECT_OBJECT = "CUBE"
 
 print "\n\nReading the library images"
 
 # read the library images (0: return a GRAYSCALE image)
-img_cube = cv2.imread('../Library/Cube.jpg',0) 
-img_hexagon = cv2.imread('../Library/Hexagon.jpg',0)
-img_star = cv2.imread('../Library/Star.jpg',0)
+img_cube = cv2.imread('../Library/Cube.jpg') 
+img_hexagon = cv2.imread('../Library/Hexagon.jpg')
+img_star = cv2.imread('../Library/Star.jpg')
 
 print "Reading the test image"
-img_test = cv2.imread('Images/Test1/Cube.jpg',0)
+img_test = cv2.imread('./Images/Test.jpg')
 
 # INPUT ERROR CATCHING
 if ((img_cube is None) or (img_hexagon is None) or (img_star is None)):
@@ -39,23 +83,35 @@ if (img_test is None):
 
 ##################################################################################################
 
-# RESIZING
-print "Resizing the library images"
-img_cube    = cv2.resize(img_cube, (1136,640))
-img_hexagon = cv2.resize(img_hexagon, (1136,640))
-img_star    = cv2.resize(img_star, (1136,640))
+# ADJUST TEST IMAGE COLOR
+print "Adjusting the color of the test image"
 
-print "Resizing the test image"
-img_test = cv2.resize(img_test, (1136,640))
+# Get the width and height of the image.
+height = img_test.shape[0]
+width = img_test.shape[1]
+
+x_pos = 0
+# Iterate through the rows.
+while (x_pos < width):
+    y_pos = 0
+    
+    # Iterate through the column for each row.
+    while (y_pos < height):
+        # Adjust the color of the pixel based on the object that needs to be detected.
+        adjust_pixel(DETECT_OBJECT,img_test,x_pos,y_pos)
+        y_pos += 1
+        
+    x_pos += 1
+    
 
 # CANNY EDGE ALGORITHM
 print "Applying the Canny Edge Detector to the library images"
-img_cube    = cv2.Canny(img_cube,300,20)
-img_hexagon = cv2.Canny(img_hexagon,300,20)
-img_star    = cv2.Canny(img_star,300,20)
+img_cube    = cv2.Canny(img_cube, 1200, 100)
+img_hexagon = cv2.Canny(img_hexagon, 1200, 100)
+img_star    = cv2.Canny(img_star, 1200, 100)
 
 print "Applying the Canny Edge Detector to the test image"
-img_test = cv2.Canny(img_test,300,20)
+img_test = cv2.Canny(img_test, 1200, 100)
 
 # OPENING (EROSION FOLLOWED BY DILATION)
 kernel = np.ones((5,5),np.uint8)
@@ -102,39 +158,42 @@ libr_imgs = {'cube':cube_dpts, 'hexagon':hexagon_dpts, 'star':star_dpts}
 
 ##################################################################################################
 
-# BFMatcher with default parameters
-bfmatcher = cv2.BFMatcher()
-
 # initialise matching results
 img_matched  = ''
 cube_rate    = 0
 hexagon_rate = 0
 star_rate    = 0
 
-# Iterate through all library images
-for image, descriptor in libr_imgs.iteritems():
+# If the image wasn't cleared (no descriptors) - when the picture doesn't match the desired object.
+if (test_dpts is not None): 
+    
+   # BFMatcher with default parameters
+   bfmatcher = cv2.BFMatcher()
 
-   print 'Matching the descriptors for {0}:'.format(image)  
-   matches = bfmatcher.knnMatch(descriptor, test_dpts, k=2)
-
-   good_matches  = 0
-   total_matches = 0
-   match_rate    = 0
-
-   # Apply ratio test
-   for dmatch_1,dmatch_2 in matches:
-      total_matches += 1
-      if dmatch_1.distance < 0.75 * dmatch_2.distance:
-         good_matches += 1
-
-   match_rate = round(((float(good_matches) / total_matches) * 100),2)
-
-   print 'Match Rate for {0} = {1}%'.format(image,match_rate)
-
-   if   (image == 'cube'):    cube_rate    = match_rate
-   elif (image == 'hexagon'): hexagon_rate = match_rate
-   elif (image == 'star'):    star_rate    = match_rate
-
+   # Iterate through all library images
+   for image, descriptor in libr_imgs.iteritems():
+   
+      print 'Matching the descriptors for {0}:'.format(image)  
+      matches = bfmatcher.knnMatch(descriptor, test_dpts, k=2)
+   
+      good_matches  = 0
+      total_matches = 0
+      match_rate    = 0
+   
+      # Apply ratio test
+      for dmatch_1,dmatch_2 in matches:
+         total_matches += 1
+         if dmatch_1.distance < 0.75 * dmatch_2.distance:
+            good_matches += 1
+   
+      match_rate = round(((float(good_matches) / total_matches) * 100),2)
+   
+      print 'Match Rate for {0} = {1}%'.format(image,match_rate)
+   
+      if   (image == 'cube'):    cube_rate    = match_rate
+      elif (image == 'hexagon'): hexagon_rate = match_rate
+      elif (image == 'star'):    star_rate    = match_rate
+   
 ##################################################################################################
 
 # CHECK RESULTS
