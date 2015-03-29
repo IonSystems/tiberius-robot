@@ -18,8 +18,18 @@ import picamera
 
 ############################################ -- GLOBAL VARIABLES -- #############################################
 
-# An object is matched, if its match percentage is more than the limit.
+# An object is matched, if its match percentage is more than the set limit 
+# and the number of colored pixels detected in the image exceeds the set threshold for each object.
 MATCH_LIMIT_PERCENT = 10
+RED_THRESHOLD       = 5000
+GREEN_THRESHOLD     = 20000
+BLUE_THRESHOLD      = 50000
+# If the number of colored pixels is less than the below threshold, don't proceed with the testing - not enough data present.
+PIXEL_THRESHOLD = 5000
+RED_PIXELS   = 0 # STAR
+GREEN_PIXELS = 0 # CUBE
+BLUE_PIXELS  = 0 # HEXAGON
+
 # Objects
 CUBE    = "CUBE"
 HEXAGON = "HEXAGON"
@@ -54,7 +64,10 @@ def capture_image():
 #####################################################################
 # Change the color of the pixel based on the desired object's color.
 #####################################################################
-def adjust_pixel(mission_object,image,x_pos,y_pos):
+def adjust_pixel(search_object,image,x_pos,y_pos):
+    global RED_PIXELS
+    global GREEN_PIXELS
+    global BLUE_PIXELS
     
     # Get the pixel value.
     blue  = image[y_pos][x_pos][0] # BLUE
@@ -62,28 +75,31 @@ def adjust_pixel(mission_object,image,x_pos,y_pos):
     red   = image[y_pos][x_pos][2] # RED
     
     # CUBE - GREEN
-    if ((mission_object == "CUBE") and (red < 70) and (green > 70) and (blue < 70)) : 
+    if ((search_object == "CUBE") and (red < 70) and (green > 70) and (blue < 70)) : 
         
         # If the pixel value is inside the object's color limits, set the pixel value to the object's color.
         image.itemset((y_pos,x_pos,0),0)
         image.itemset((y_pos,x_pos,1),255)
         image.itemset((y_pos,x_pos,2),0)
+        GREEN_PIXELS += 1
             
     # HEXAGON - BLUE        
-    elif ((mission_object == "HEXAGON") and (red < 70) and (green < 70) and (blue > 70)):
+    elif ((search_object == "HEXAGON") and (red < 70) and (green < 70) and (blue > 70)):
            
         image.itemset((y_pos,x_pos,0),255)
         image.itemset((y_pos,x_pos,1),0)
         image.itemset((y_pos,x_pos,2),0)
+        BLUE_PIXELS += 1
             
     # STAR - RED        
-    elif ((mission_object == "STAR") and (red > 70) and (green < 70) and (blue < 70)):
+    elif ((search_object == "STAR") and (red > 70) and (green < 70) and (blue < 70)):
 
         image.itemset((y_pos,x_pos,0),0)
         image.itemset((y_pos,x_pos,1),0)
         image.itemset((y_pos,x_pos,2),255)
+        RED_PIXELS += 1
             
-    # Else set the pixel value to WHITE.    
+    # Else set the pixel value to white.    
     else:
         
         image.itemset((y_pos,x_pos,0),255)
@@ -154,79 +170,83 @@ def analyse_image(mission_object,library,database):
         
         x_pos += 1
         
-    
-    # CANNY EDGE ALGORITHM
-    image    = cv2.Canny(image, 1200, 100)
-    # OPENING (EROSION FOLLOWED BY DILATION)
-    kernel = np.ones((5,5),np.uint8)
-    image    = cv2.morphologyEx(image,cv2.MORPH_GRADIENT,kernel)
-    # THRESHOLD (INVERSE BINARY)
-    ret,image    = cv2.threshold(image,0,255,cv2.THRESH_BINARY_INV)
-    # SURF - FIND KEYPOINTS AND DESCRIPTORS
-    surf = cv2.SURF()
-    (image_kpts, image_dpts) = surf.detectAndCompute(image,None)
-    
-    ############## -- COMPARING -- ############################
-    
-    # object results
-    img_matched  = ""
-    cube_rate    = 0
-    hexagon_rate = 0
-    star_rate    = 0
-    
-    # If the image wasn't cleared (no descriptors) - when the picture doesn't match the desired object.
-    if (image_dpts is not None):
-     
-        # BFMatcher with default parameters
-        bfmatcher = cv2.BFMatcher()
-
-        # Iterate through all library images
-        for name, descriptor in library.iteritems():
+    # If the number of colored pixels is more than the set pixel threshold, proceed with testing.    
+    if ((RED_PIXELS > PIXEL_THRESHOLD) or (BLUE_PIXELS > PIXEL_THRESHOLD) or (GREEN_PIXELS > PIXEL_THRESHOLD)):
         
-           matches = bfmatcher.knnMatch(descriptor, image_dpts, k=2)
+        # CANNY EDGE ALGORITHM
+        image    = cv2.Canny(image, 1200, 100)
+        # OPENING (EROSION FOLLOWED BY DILATION)
+        kernel = np.ones((5,5),np.uint8)
+        image    = cv2.morphologyEx(image,cv2.MORPH_GRADIENT,kernel)
+        # THRESHOLD (INVERSE BINARY)
+        ret,image    = cv2.threshold(image,0,255,cv2.THRESH_BINARY_INV)
+        # SURF - FIND KEYPOINTS AND DESCRIPTORS
+        surf = cv2.SURF()
+        (image_kpts, image_dpts) = surf.detectAndCompute(image,None)
         
-           # matching results
-           good_matches  = 0
-           total_matches = 0
-           match_rate    = 0
+        ############## -- COMPARING -- ############################
         
-           # Apply ratio test
-           for dmatch_1,dmatch_2 in matches:
-              total_matches += 1
-              if dmatch_1.distance < 0.75 * dmatch_2.distance:
-                 good_matches += 1
-                 
-           # round the match_rate to 2 decimal places         
-           match_rate = round(((float(good_matches) / total_matches) * 100),2)
+        # object results
+        img_matched  = ""
+        cube_rate    = 0
+        hexagon_rate = 0
+        star_rate    = 0
         
-           if   (name == CUBE):    cube_rate    = match_rate
-           elif (name == HEXAGON): hexagon_rate = match_rate
-           elif (name == STAR):    star_rate    = match_rate
-
-
-    # CHECK RESULTS
-    if   ((cube_rate > hexagon_rate) and (cube_rate > star_rate) and (cube_rate > MATCH_LIMIT_PERCENT)):
-       img_matched = CUBE
-    elif ((star_rate > hexagon_rate) and (star_rate > MATCH_LIMIT_PERCENT)):
-       img_matched = STAR
-    elif (hexagon_rate > MATCH_LIMIT_PERCENT):
-       img_matched = HEXAGON
-       
-    # if the detected image matches the mission object   
-    if (img_matched == mission_object): 
-        # tell the mission that the object has been detected and send to the database the matching results
-        database.sendall("WRITE.OBJECT_SIMILARITY,CUBE:" + str(cube_rate) + ",HEX:" + str(hexagon_rate) + ",STAR:" + str(star_rate) +".")
-        database.sendall("WRITE.MISSION_STATUS,OBJECT_DETECTED.")
-        # close the connection to the database and wait for 1 minute
-        database.close()
-        time.sleep(60)
+        # If the image wasn't cleared (no descriptors) - when the picture doesn't match the desired object.
+        if (image_dpts is not None):
+         
+            # BFMatcher with default parameters
+            bfmatcher = cv2.BFMatcher()
         
-    else:
-        # tell the mission to continue scanning for other objects
-        database.sendall("WRITE.MISSION_STATUS,SCANNING_OBJECTS.")
+            # Iterate through all library images
+            for name, descriptor in library.iteritems():
+            
+               matches = bfmatcher.knnMatch(descriptor, image_dpts, k=2)
+            
+               # matching results
+               good_matches  = 0
+               total_matches = 0
+               match_rate    = 0
+            
+               # Apply ratio test
+               for dmatch_1,dmatch_2 in matches:
+                  total_matches += 1
+                  if dmatch_1.distance < 0.75 * dmatch_2.distance:
+                     good_matches += 1
+                     
+               # round the match_rate to 2 decimal places         
+               match_rate = round(((float(good_matches) / total_matches) * 100),2)
+            
+               if   (name == CUBE):    cube_rate    = match_rate
+               elif (name == HEXAGON): hexagon_rate = match_rate
+               elif (name == STAR):    star_rate    = match_rate
+        
+        
+        # CHECK RESULTS
+        if   ((cube_rate > hexagon_rate) and (cube_rate > star_rate) and (cube_rate > MATCH_LIMIT_PERCENT) and (GREEN_PIXELS > GREEN_THRESHOLD)):
+           img_matched = CUBE
+        elif ((star_rate > hexagon_rate) and (star_rate > MATCH_LIMIT_PERCENT) and (RED_PIXELS > RED_THRESHOLD)):
+           img_matched = STAR
+        elif ((hexagon_rate > MATCH_LIMIT_PERCENT) and (BLUE_PIXELS > BLUE_THRESHOLD)):
+           img_matched = HEXAGON
+           
+        # if the detected image matches the mission object   
+        if (img_matched == mission_object): 
+            # tell the mission that the object has been detected and send to the database the matching results
+            database.sendall("WRITE.OBJECT_SIMILARITY,CUBE:" + str(cube_rate) + ",HEX:" + str(hexagon_rate) + ",STAR:" + str(star_rate) +".")
+            database.sendall("WRITE.MISSION_STATUS,OBJECT_DETECTED.")
+            # close the connection to the database and wait for 1 minute
+            database.close()
+            time.sleep(60)
+            
+        else:
+            # tell the mission to continue scanning for other objects
+            database.sendall("WRITE.MISSION_STATUS,SCANNING_OBJECTS.")
 
-
-
+      # If the number of colored pixels is less than the set pixel threshold - not enough data present to make a decision.
+      else:
+          # tell the mission to continue scanning for other objects
+          database.sendall("WRITE.MISSION_STATUS,SCANNING_OBJECTS.")
 
 
 

@@ -13,10 +13,17 @@ import cv2
 import numpy as np
 
 
+RED_PIXELS   = 0 # STAR
+GREEN_PIXELS = 0 # CUBE
+BLUE_PIXELS  = 0 # HEXAGON
+
 #####################################################################
 # Change the color of the pixel based on the desired object's color.
 #####################################################################
 def adjust_pixel(search_object,image,x_pos,y_pos):
+    global RED_PIXELS
+    global GREEN_PIXELS
+    global BLUE_PIXELS
     
     # Get the pixel value.
     blue  = image[y_pos][x_pos][0] # BLUE
@@ -30,6 +37,7 @@ def adjust_pixel(search_object,image,x_pos,y_pos):
         image.itemset((y_pos,x_pos,0),0)
         image.itemset((y_pos,x_pos,1),255)
         image.itemset((y_pos,x_pos,2),0)
+        GREEN_PIXELS += 1
             
     # HEXAGON - BLUE        
     elif ((search_object == "HEXAGON") and (red < 70) and (green < 70) and (blue > 70)):
@@ -37,6 +45,7 @@ def adjust_pixel(search_object,image,x_pos,y_pos):
         image.itemset((y_pos,x_pos,0),255)
         image.itemset((y_pos,x_pos,1),0)
         image.itemset((y_pos,x_pos,2),0)
+        BLUE_PIXELS += 1
             
     # STAR - RED        
     elif ((search_object == "STAR") and (red > 70) and (green < 70) and (blue < 70)):
@@ -44,13 +53,14 @@ def adjust_pixel(search_object,image,x_pos,y_pos):
         image.itemset((y_pos,x_pos,0),0)
         image.itemset((y_pos,x_pos,1),0)
         image.itemset((y_pos,x_pos,2),255)
+        RED_PIXELS += 1
             
     # Else set the pixel value to white.    
     else:
         
         image.itemset((y_pos,x_pos,0),255)
         image.itemset((y_pos,x_pos,1),255)
-        image.itemset((y_pos,x_pos,2),255)       
+        image.itemset((y_pos,x_pos,2),255)  
         
 
 
@@ -75,11 +85,14 @@ while (x_pos < width):
     while (y_pos < height):
         
         # Adjust the color of the pixel based on the object that needs to be detected.
-        adjust_pixel("CUBE",image,x_pos,y_pos)
+        adjust_pixel("HEXAGON",image,x_pos,y_pos)
         y_pos += 1
         
     x_pos += 1   
       
+print "RED_PIXELS = {0}".format(RED_PIXELS)
+print "GREEN_PIXELS = {0}".format(GREEN_PIXELS)
+print "BLUE_PIXELS = {0}".format(BLUE_PIXELS)
 
 cv2.imwrite('Images/color.jpg', image)
 
