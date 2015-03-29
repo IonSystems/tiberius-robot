@@ -2,7 +2,7 @@
 ####--README FILE--####
 #######################
 
-Last Update: 10/03/2015
+Last Update: 29/03/2015
 
 !!! Please update this file as you update the software. !!!
 
@@ -40,6 +40,13 @@ match_multiple.py
 ##############
   Test script to compare the descriptors of multiple library images with an input test image.
   Returns a match_success based on Lowe's ratio test using BFMatcher.
+
+  Current version: 1.0
+  
+##############
+adjust_color.py
+##############
+  Adjust the color of an image based on the desired object's color.
 
   Current version: 1.0
 
