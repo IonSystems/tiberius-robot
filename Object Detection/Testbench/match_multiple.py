@@ -17,12 +17,12 @@ import sys
 # An object is matched, if its match percentage is more than the set limit 
 # and the number of colored pixels detected in the image exceeds the set threshold for each object.
 MATCH_LIMIT_PERCENT = 10
-RED_THRESHOLD       = 5000
-GREEN_THRESHOLD     = 20000
-BLUE_THRESHOLD      = 50000
+RED_THRESHOLD       = 8000
+GREEN_THRESHOLD     = 15000
+BLUE_THRESHOLD      = 10000
 
 # If the number of colored pixels is less than the below threshold, don't proceed with the testing - not enough data present.
-PIXEL_THRESHOLD = 5000
+PIXEL_THRESHOLD = 3000
 
 RED_PIXELS          = 0 # STAR
 GREEN_PIXELS        = 0 # CUBE
@@ -42,7 +42,7 @@ def adjust_pixel(search_object,image,x_pos,y_pos):
     red   = image[y_pos][x_pos][2] # RED
     
     # CUBE - GREEN
-    if ((search_object == "CUBE") and (red < 70) and (green > 70) and (blue < 70)) : 
+    if ((search_object == "CUBE") and (red < 50) and (green > 50) and (blue < 50)) : 
         
         # If the pixel value is inside the object's color limits, set the pixel value to the object's color.
         image.itemset((y_pos,x_pos,0),0)
@@ -51,7 +51,7 @@ def adjust_pixel(search_object,image,x_pos,y_pos):
         GREEN_PIXELS += 1
             
     # HEXAGON - BLUE        
-    elif ((search_object == "HEXAGON") and (red < 70) and (green < 70) and (blue > 70)):
+    elif ((search_object == "HEXAGON") and (red < 50) and (green < 50) and (blue > 50)):
            
         image.itemset((y_pos,x_pos,0),255)
         image.itemset((y_pos,x_pos,1),0)
@@ -59,7 +59,7 @@ def adjust_pixel(search_object,image,x_pos,y_pos):
         BLUE_PIXELS += 1
             
     # STAR - RED        
-    elif ((search_object == "STAR") and (red > 70) and (green < 70) and (blue < 70)):
+    elif ((search_object == "STAR") and (red > 50) and (green < 50) and (blue < 50)):
 
         image.itemset((y_pos,x_pos,0),0)
         image.itemset((y_pos,x_pos,1),0)

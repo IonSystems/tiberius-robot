@@ -21,11 +21,11 @@ import picamera
 # An object is matched, if its match percentage is more than the set limit 
 # and the number of colored pixels detected in the image exceeds the set threshold for each object.
 MATCH_LIMIT_PERCENT = 10
-RED_THRESHOLD       = 5000
-GREEN_THRESHOLD     = 20000
-BLUE_THRESHOLD      = 50000
+RED_THRESHOLD       = 8000
+GREEN_THRESHOLD     = 15000
+BLUE_THRESHOLD      = 10000
 # If the number of colored pixels is less than the below threshold, don't proceed with the testing - not enough data present.
-PIXEL_THRESHOLD = 5000
+PIXEL_THRESHOLD = 3000
 RED_PIXELS   = 0 # STAR
 GREEN_PIXELS = 0 # CUBE
 BLUE_PIXELS  = 0 # HEXAGON
@@ -148,9 +148,17 @@ def get_library():
 # Analyse an image and check whether it matches the mission object.
 #####################################################################
 def analyse_image(mission_object,library,database):  
+    global RED_PIXELS
+    global GREEN_PIXELS
+    global BLUE_PIXELS
     
     ############## -- CAPTURED IMAGE -- #########################
     image = cv2.imread('./Image.jpg')
+
+    # RESET THE PIXEL COUNT
+    RED_PIXELS   = 0 # STAR
+    GREEN_PIXELS = 0 # CUBE
+    BLUE_PIXELS  = 0 # HEXAGON
     
     # ADJUST TEST IMAGE COLOR
     # Get the width and height of the image.
