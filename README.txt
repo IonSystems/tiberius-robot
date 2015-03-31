@@ -19,18 +19,34 @@ Dionysis Koutavas - Databases/Communication
 
 Denis Melehovs - Autonomy 
 
-
-Passwords
 =========
+Passwords
+==========
 
-Tiberius-1:
------------
-Router-password: hailtiberius1
+Tiberius WiFi
+-------------
+Password: hailtiberius
+username: admin
+password: 1234
 
-Raspberry-pi password: tiberius1
+Database Unit:
+--------------
+Password: tiberiusmemory
+IP address: 192.168.2.100
 
-Tiberius-2:
------------
-Router-password: hailtiberius2
+Sensors Unit:
+-------------
+Password: tiberiussenses
+IP address: 192.168.2.101
 
-Rasbperry-pi password: tiberius2
+Control Unit:
+-------------
+Password: tiberiusbrain
+IP address: 192.168.2.102
+
+Object Detection Unit:
+----------------------
+Password: tiberiuseyes
+IP address: 192.168.2.103
+
+
