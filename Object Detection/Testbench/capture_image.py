@@ -16,6 +16,7 @@ camera = picamera.PiCamera()
 
 # Display a preview to ensure that you capture the right test image.
 camera.start_preview()
+camera.resolution = (640,480)
 
 # Wait until CTRL+C is pressed.
 try:
