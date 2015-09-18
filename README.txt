@@ -9,15 +9,13 @@ Tiberius Project (2014/15)
 Current members and responsibilities:
 =====================================
 
-Dr Jim Herd - Project Manager/Head of the project
-
-Sean Cunningham - Power System
-
-Tasos Deligiannis - Image Processing
-
-Dionysis Koutavas - Databases/Communication
-
-Denis Melehovs - Autonomy 
+Dr Jim Herd - Project Supervisor
+Aidan Gallagher - SLAM
+Andrew Rigg - Power Management
+Cameron Craig - Web Interaface
+Duncan Robertson - Mechanical
+Cameron Craig - Power System
+Stuart Thain - Robotic Arm
 
 =========
 Passwords
