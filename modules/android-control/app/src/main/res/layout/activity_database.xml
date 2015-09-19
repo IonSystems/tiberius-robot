@@ -1,0 +1,135 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/background_blue"
+                tools:context="tiberius.tiberius.Database">
+
+    <!-- *************************************** HEADER *************************************** -->
+    <TextView android:id="@+id/database_header"
+              android:layout_width="550dp"
+              android:layout_height="80dp"
+              android:layout_centerHorizontal="true"
+              android:layout_marginTop="10dp"
+              android:text="@string/database_header"
+              android:textStyle="italic|bold"
+              android:textSize="50sp"
+              android:textColor="@android:color/white"
+              android:gravity="center"/>
+
+    <!-- *************************************** MENU BUTTON *************************************** -->
+    <Button android:id="@+id/menu_database"
+            android:layout_width="110dp"
+            android:layout_height="70dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:text="@string/menu_btn"
+            android:background="@android:color/white"
+            android:onClick="goMenu"/>
+
+    <!-- **********************************  GPS  ******************************************** -->
+    <TextView android:id="@+id/database_gps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="120dp"
+        android:layout_marginLeft="100dp"
+        android:text="@string/GPS"
+        android:textStyle="italic|bold"
+        android:textSize="20sp"
+        android:textColor="@android:color/white"
+        android:gravity="center"/>
+
+    <TextView android:id="@+id/database_latitude_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/database_gps"
+        android:layout_below="@id/database_gps"
+        android:layout_marginTop="15dp"
+        android:text="@string/latitude"
+        android:textStyle="italic"
+        android:textSize="20sp"
+        android:textColor="@android:color/white"
+        android:gravity="center"/>
+
+    <TextView android:id="@+id/database_latitude"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:layout_alignLeft="@id/database_latitude_label"
+        android:layout_below="@id/database_latitude_label"
+        android:layout_marginTop="3dp"
+        android:textStyle="italic"
+        android:textSize="20sp"
+        android:background="@android:color/white"
+        android:gravity="center"/>
+
+    <TextView android:id="@+id/database_longitude_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/database_latitude_label"
+        android:layout_toEndOf="@id/database_latitude_label"
+        android:layout_marginLeft="95dp"
+        android:text="@string/longitude"
+        android:textStyle="italic"
+        android:textSize="20sp"
+        android:textColor="@android:color/white"
+        android:gravity="center"/>
+
+    <TextView android:id="@+id/database_longitude"
+              android:layout_width="150dp"
+              android:layout_height="40dp"
+              android:layout_alignLeft="@id/database_longitude_label"
+              android:layout_below="@id/database_longitude_label"
+              android:layout_marginTop="3dp"
+              android:textStyle="italic"
+              android:textSize="20sp"
+              android:background="@android:color/white"
+              android:gravity="center"/>
+
+    <!-- ********************************  COMPASS  ******************************************** -->
+    <TextView android:id="@+id/database_compass_label"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_alignLeft="@id/database_gps"
+              android:layout_below="@id/database_gps"
+              android:layout_marginTop="150dp"
+              android:text="@string/COMPASS"
+              android:textStyle="italic|bold"
+              android:textSize="20sp"
+              android:textColor="@android:color/white"
+              android:gravity="center"/>
+
+    <TextView android:id="@+id/database_compass"
+              android:layout_width="300dp"
+              android:layout_height="290dp"
+              android:layout_alignParentLeft="true"
+              android:layout_alignParentBottom="true"
+              android:layout_marginLeft="155dp"
+              android:textStyle="italic"
+              android:textSize="40sp"
+              android:background="@drawable/compass"
+              android:gravity="center"/>
+
+    <!-- ********************************  LIDAR  ******************************************** -->
+    <TextView android:id="@+id/database_lidar_label"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_alignTop="@id/database_gps"
+              android:layout_toEndOf="@id/database_gps"
+              android:layout_marginLeft="380dp"
+              android:text="@string/LIDAR"
+              android:textStyle="italic|bold"
+              android:textSize="20sp"
+              android:textColor="@android:color/white"
+              android:gravity="center"/>
+
+    <SurfaceView android:id="@+id/lidar"
+                 android:layout_width="530px"
+                 android:layout_height="450px"
+                 android:layout_alignLeft="@id/database_lidar_label"
+                 android:layout_alignTop="@id/database_lidar_label"
+                 android:layout_marginTop="40dp"/>
+
+
+</RelativeLayout>
