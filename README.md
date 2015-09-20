@@ -35,4 +35,4 @@ Denis Melehovs - Autonomy
 ## Development Team 2012/13
 
 # Documentation
-Our [https://github.com/IonSystems/tiberius-robot/wiki](wiki) contains information about this project as well as user guides.
+Our [wiki](https://github.com/IonSystems/tiberius-robot/wiki) contains information about this project as well as user guides.
