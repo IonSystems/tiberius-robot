@@ -4,42 +4,6 @@ Riccarton,
 Edinburgh
 
 
-# Development Team
-Dr Jim Herd - Project Supervisor
-
-Aidan Gallagher - SLAM
-
-Andrew Rigg - Power Management
-
-Cameron Craig - Web Interface
-
-Duncan Robertson - Mechanical
-
-Euan Mutch - Communications
-
-Stuart Thain - Robotic Arm
-
-## Last Year's Development Team (2014/15):
-Dr Jim Herd - Project Supervisor
-
-Sean Cunningham - Power System
-
-Tasos Deligiannis(@TasosDeligiannis) - Image Processing
-
-Dionysis Koutavas - Databases/Communication
-
-Denis Melehovs - Autonomy
-
-## Development Team 2013/14
-
-## Development Team 2012/13
-Dr Jim Herd - Project Supervisor
-
-Calum Morrison - Sensing the Local Environment
-
-Joshua Walhane - Modern Implementation of Robotics Suite
-
-Neil Comerford - Uses of Unmanned Vehicles
 
 
 # Documentation
