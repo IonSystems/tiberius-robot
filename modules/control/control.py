@@ -62,12 +62,15 @@ class Control:
 		
 	def senseUltrasonic(self):
 		#Tell sensors to write data to it's memory
+		# TODO: Currently the doranging() method does all sensors, a bit dodgy
 		self.srfrr.doranging()
 		
 		# Read the data from sensor's memory
-		self.srffrm = srffr.getranging()
-		self.srffcm = srffc.getranging()
-		self.srfflm = srffl.getranging()
-		self.srfrrm = srfrr.getranging()
-		self.srfrcm = srfrc.getranging()
-		self.srfrlm = srfrl.getranging()
+		fr = srffr.getranging()
+		fc = srffc.getranging()
+		fl = srffl.getranging()
+		rr = srfrr.getranging()
+		rc = srfrc.getranging()
+		rl = srfrl.getranging()
+		
+		return {'fl':fl, 'fc':fc , 'fl':fl, 'rl':rl, 'rc':rc , 'rl':rl}
