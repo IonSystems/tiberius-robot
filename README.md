@@ -33,6 +33,14 @@ Denis Melehovs - Autonomy
 ## Development Team 2013/14
 
 ## Development Team 2012/13
+Dr Jim Herd - Project Supervisor
+
+Calum Morrison - Sensing the Local Environment
+
+Joshua Walhane - Modern Implementation of Robotics Suite
+
+Neil Comerford - Uses of Unmanned Vehicles
+
 
 # Documentation
 Our [https://github.com/IonSystems/tiberius-robot/wiki](wiki) contains information about this project as well as user guides.
