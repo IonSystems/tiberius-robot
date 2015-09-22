@@ -5,7 +5,10 @@ from control.control import Control
 
 c = Control()
 
-
+'''
+	Control tests are designed to test control of the motors.
+	Other sensors may be used to to ensure the correct operation of the motors.
+'''
 
 class DriveForwardUntilWall(unittest.TestCase):
 	'''Drive forward in a straight line until an obsacle is detected from the front ultrasonic sensor.'''

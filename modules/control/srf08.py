@@ -3,7 +3,7 @@
 import smbus
 import time
 
-class UltrasonicRangefinder:
+class UltrasonicRangeFinder:
 	'''Ultrasonic rangefinder'''
 
     # parameters
