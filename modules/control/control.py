@@ -16,10 +16,7 @@ class Control:
 	ultrasonics = sensors.Ultrasonic()
 	compass = sensors.TiltCompensatedCompass()
 	motors = actuators.Motor()
-	
 
-	# 0 - 255
-	speed = 255
-	accel = 0
+
 
 	
