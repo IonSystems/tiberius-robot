@@ -4,7 +4,7 @@ import smbus
 import time
 
 class UltrasonicRangefinder:
-	'''Ultrasonic rangefinder'''
+    '''Ultrasonic rangefinder'''
 
     # parameters
     commandreg = 0x00
@@ -46,7 +46,7 @@ class UltrasonicRangefinder:
     def getranging(self):
         try:
             high_byte = self.bus.read_byte_data(self.address, self.first_echo_high)
-			low_byte = self.bus.read_byte_data(self.address, self.first_echo_low)	    
+            low_byte = self.bus.read_byte_data(self.address, self.first_echo_low)	    
             if (((high_byte << 8) + low_byte)==0):
                 #assign a random value when srf08 failed to range
                 value = 222.2
@@ -54,7 +54,7 @@ class UltrasonicRangefinder:
                 value = (high_byte << 8) + low_byte
 	    return value
 	
-		except IOError:
-				print 'IO error getranging ',hex(self.address)
-				return 222.2
+	except IOError:
+	    print 'IO error getranging ',hex(self.address)
+            return 222.2
 
