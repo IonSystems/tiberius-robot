@@ -2,27 +2,20 @@
 
 import md03
 import srf08
+import sensors
+import actuators
 
 class Control:
-	'''Control the motor drivers'''
+	'''
+		Provides methods to control the motors,
+		via the I2C interface to the motor drivers.
+		
+		Uses sensor feedback to accurately manoeuvre the vehicle.
+	'''
 	
-	#Front Right
-	srffr = srf08.UltrasonicRangefinder(0x72)
-	#Front Centre
-	srffc = srf08.UltrasonicRangefinder(0x71)
-	#Front Left
-	srffl = srf08.UltrasonicRangefinder(0x70)
-	#Rear Right
-	srfrr = srf08.UltrasonicRangefinder(0x73)
-	#Rear Centre
-	srfrc = srf08.UltrasonicRangefinder(0x74)
-	#Rear Left
-	srfrl = srf08.UltrasonicRangefinder(0x75)
-	
-	leftf = md03.MotorDriver(0x58)
-	leftr = md03.MotorDriver(0x5A)
-	rightf = md03.MotorDriver(0x5B)
-	rightr = md03.MotorDriver(0x59)
+	ultrasonics = sensors.Ultrasonic()
+	compass = sensors.TiltCompensatedCompass()
+	motors = actuators.Motor()
 
 	# 0 - 255
 	speed = 255
@@ -74,3 +67,6 @@ class Control:
 		rl = self.srfrl.getranging()
 		
 		return {'fl':fl, 'fc':fc , 'fl':fl, 'rl':rl, 'rc':rc , 'rl':rl}
+
+
+	
