@@ -35,30 +35,30 @@ class Control:
 		self.rightr.move(0, self.accel)
 		
 	def moveForward(self):
-		self.leftf.move(-self.speed, self.accel)
-        self.leftr.move(-self.speed, self.accel)
-        self.rightf.move(-self.speed, self.accel)
-        self.rightr.move(-self.speed, self.accel)
+		self.leftf.move(self.speed, self.accel)
+	        self.leftr.move(self.speed, self.accel)
+        	self.rightf.move(self.speed, self.accel)
+        	self.rightr.move(self.speed, self.accel)
 
 	def moveBackward(self):
-		self.leftf.move(self.speed, self.accel)
-		self.leftr.move(self.speed, self.accel)
-		self.rightf.move(self.speed, self.accel)
-		self.rightr.move(self.speed, self.accel)
+		self.leftf.move(-self.speed, self.accel)
+		self.leftr.move(-self.speed, self.accel)
+		self.rightf.move(-self.speed, self.accel)
+		self.rightr.move(-self.speed, self.accel)
 		
 	#Turn on the spot, to the right
 	def turnRight(self):
+		self.leftf.move(self.speed, self.accel)
+		self.leftr.move(self.speed, self.accel)
+		self.rightf.move(-self.speed, self.accel)
+		self.rightr.move(-self.speed, self.accel)
+		
+	#Turn on the spot, to the left
+	def turnLeft(self):
 		self.leftf.move(-self.speed, self.accel)
 		self.leftr.move(-self.speed, self.accel)
 		self.rightf.move(self.speed, self.accel)
 		self.rightr.move(self.speed, self.accel)
-		
-	#Turn on the spot, to the left
-	def turnLeft(self):
-		self.leftf.move(self.speed, self.accel)
-		self.leftr.move(speed, self.accel)
-		self.rightf.move(-self.speed, self.accel)
-		self.rightr.move(-self.speed, self.accel)
 		
 	def senseUltrasonic(self):
 		#Tell sensors to write data to it's memory
@@ -66,11 +66,11 @@ class Control:
 		self.srfrr.doranging()
 		
 		# Read the data from sensor's memory
-		fr = srffr.getranging()
-		fc = srffc.getranging()
-		fl = srffl.getranging()
-		rr = srfrr.getranging()
-		rc = srfrc.getranging()
-		rl = srfrl.getranging()
+		fr = self.srffr.getranging()
+		fc = self.srffc.getranging()
+		fl = self.srffl.getranging()
+		rr = self.srfrr.getranging()
+		rc = self.srfrc.getranging()
+		rl = self.srfrl.getranging()
 		
 		return {'fl':fl, 'fc':fc , 'fl':fl, 'rl':rl, 'rc':rc , 'rl':rl}
