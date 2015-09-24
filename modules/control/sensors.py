@@ -59,10 +59,21 @@ class Compass:
 	'''
 		Provides compass related methods, what more can I say?
 	'''
-	compass = cmps11.TiltCompensatedCompass
+	compass = cmps11.TiltCompensatedCompass()
 	
 	def headingDegrees(self):
 		# Get the heading in degrees.
-		raw = self.compass.heading()
-		return raw / 10;
+		raw = int(self.compass.heading())
+		return raw / 10
 
+	def getMostRecentDegrees(self):
+		return self.compass.getMostRecentDegrees()
+
+	def headingNormalized(self):
+		angle = int(self.headingDegrees())
+		while(angle > 180):
+			angle -= 360
+		while(angle < -180):
+			angle += 360
+		return angle 
+		

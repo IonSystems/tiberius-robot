@@ -15,6 +15,8 @@ class Motor:
 	speed = 255
 	accel = 0
 
+	def setSpeed(self, speed_percent):
+		self.speed = (255 * speed_percent) / 100
 
 	def stop(self):
 		self.front_left.move(0, self.accel)
@@ -43,7 +45,9 @@ class Motor:
 
 	#Turn on the spot, to the left
 	def turnLeft(self):
-		self.front_right.move(-self.speed, self.accel)
-		self.rear_leftr.move(-self.speed, self.accel)
 		self.front_right.move(self.speed, self.accel)
+		self.rear_left.move(-self.speed, self.accel)
+		self.front_left.move(-self.speed, self.accel)
 		self.rear_right.move(self.speed, self.accel)
+
+	

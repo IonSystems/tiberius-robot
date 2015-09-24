@@ -4,7 +4,8 @@ import time
 if __name__ == "__main__":
 	while(True):
 		c = Control()
-		vals = c.senseUltrasonic()
+		vals = c.ultrasonics.senseUltrasonic()
+		heading = c.compass.headingNormalized()
 		print str(vals)
+		print str(heading)
 		time.sleep(1)
-	
