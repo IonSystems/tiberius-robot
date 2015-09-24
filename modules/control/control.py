@@ -73,4 +73,20 @@ class Control:
 		rc = self.srfrc.getranging()
 		rl = self.srfrl.getranging()
 		
-		return {'fl':fl, 'fc':fc , 'fl':fl, 'rl':rl, 'rc':rc , 'rl':rl}
+		return {'fl':fl, 'fc':fc , 'fr':fr, 'rl':rl, 'rc':rc , 'rr':rr}
+
+	def frontNotHit(self, distance):
+		fl = self.senseUltrasonic()['fl'] > distance
+		fc = self.senseUltrasonic()['fc'] > distance
+		fr = self.senseUltrasonic()['fr'] > distance
+		if (fl or fc or fr):
+			print 'Front Right : ' + str(fr) + ' ,Front Centre: ' + str(fc) + ' , Front Left: ' + str(fl)
+		return fl and fc and fr
+	
+	def rearNotHit(self, distance):
+		rr = self.senseUltrasonic()['rr'] > distance
+		rc = self.senseUltrasonic()['rc'] > distance
+		rl = self.senseUltrasonic()['rl'] > distance
+		if(rr or rc or rl):
+			print 'Rear Right : ' + str(rr) + ' ,Rear Centre: ' + str(rc) + ' , Rear Left: ' + str(rl)
+		return rr and rc and rl

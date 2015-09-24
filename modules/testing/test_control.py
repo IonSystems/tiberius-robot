@@ -4,7 +4,7 @@ import os
 from control.control import Control
 
 c = Control()
-
+stop_distance = 20
 
 
 class DriveForwardUntilWall(unittest.TestCase):
@@ -13,7 +13,7 @@ class DriveForwardUntilWall(unittest.TestCase):
 	def runTest(self):
 		count = 0
 		#Wait until Tiberius is 5cm away from the wall.
-		while(c.senseUltrasonic()['fc'] > 5):
+		while(c.frontNotHit(stop_distance)):
 			c.moveForward()
 			time.sleep(1)
 			count += 1
@@ -30,11 +30,11 @@ class DriveBackwardUntilWall(unittest.TestCase):
 	def runTest(self):
 		count = 0
 		#Wait until Tiberius is 5cm away from the wall.
-		while(c.senseUltrasonic()['rc'] > 5):
+		while(c.rearNotHit(stop_distance)):
 			c.moveBackward()
 			time.sleep(1)
 			count += 1
-		s.stop()
+		c.stop()
 		#Cannot take any less than 3 seconds
 		self.assertGreater(count, 3)
 
@@ -45,4 +45,5 @@ class DriveBackwardUntilWall(unittest.TestCase):
 #For debugging
 if  __name__ =='__main__':
     d = DriveForwardUntilWall()
+    d = DriveBackwardUntilWall()
     d.runTest()
