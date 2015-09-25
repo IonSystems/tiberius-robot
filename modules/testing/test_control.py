@@ -6,6 +6,8 @@ import os
 from control.control import Control
 
 c = Control()
+stop_distance = 20
+
 
 '''
 	Control tests are designed to test control of the motors.
@@ -18,16 +20,16 @@ class DriveForwardUntilWall(unittest.TestCase):
 	def runTest(self):
 		count = 0
 		#Wait until Tiberius is 5cm away from the wall.
-		while(c.senseUltrasonic()['fc'] > 5):
-			c.moveForward()
-			time.sleep(1)
-			count += 1
-		c.stop()
+		while(c.frontNotHit(stop_distance)):
+			c.motors.moveForward()
+			time.sleep(0.1)
+			count += 0.1
+		c.motors.stop()
 		#Cannot take any less than 3 seconds
-		self.assertGreater(count, 3)
+		self.assertGreater(count, 30)
 
 		#Cannot take any more than 30 seconds
-		self.assertLess(count, 30)
+		self.assertLess(count, 300)
 		
 class DriveBackwardUntilWall(unittest.TestCase):
 	'''Drive backward in a straight line until an obsacle is detected from the front ultrasonic sensor.'''
@@ -35,16 +37,16 @@ class DriveBackwardUntilWall(unittest.TestCase):
 	def runTest(self):
 		count = 0
 		#Wait until Tiberius is 5cm away from the wall.
-		while(c.ultrasonic.senseUltrasonic['rc'] > 5):
-			c.moveBackward()
-			time.sleep(1)
-			count += 1
-		s.stop()
+		while(c.rearNotHit(stop_distance)):
+			c.motors.moveBackward()
+			time.sleep(0.1)
+			count += 0.1
+		c.motors.stop()
 		#Cannot take any less than 3 seconds
-		self.assertGreater(count, 3)
+		self.assertGreater(count, 30)
 
 		#Cannot take any more than 30 seconds
-		self.assertLess(count, 30)
+		self.assertLess(count, 300)
 		
 class TurnToRight90Degrees(unittest.TestCase):
 	'''Turn on the spot, clockwise until Tiberius has rotated 90 degrees.'''
@@ -55,11 +57,12 @@ class TurnToRight90Degrees(unittest.TestCase):
 		desired_bearing = (old_bearing + 90) % 360
 
 		#Wait until tiberius has rotated 90 degrees
+		c.motors.turnRight()
 		while(c.compass.headingDegrees() < desired_bearing):
 			time = 0
 			sleep(0.1)
 			time += 0.1
-
+		c.motors.stop()
 		#Cannot take any less than 3 seconds
 		self.assertGreater(time, 1)
 
@@ -75,10 +78,12 @@ class TurnToLeft90Degrees(unittest.TestCase):
 		desired_bearing = (old_bearing + 90) % 360
 
 		#Wait until tiberius has rotated 90 degrees
+		c.motors.turnLeft()
 		while(c.compass.headingDegrees() < desired_bearing):
 			time = 0
 			sleep(0.1)
 			time += 0.1
+		c.motors.stop()
 
 		#Cannot take any less than 3 seconds
 		self.assertGreater(time, 1)
@@ -90,6 +95,7 @@ class TurnToLeft90Degrees(unittest.TestCase):
 #For debugging
 if  __name__ =='__main__':
     d = DriveForwardUntilWall()
+    d = DriveBackwardUntilWall()
     d.runTest()
     c = DriveBackwardUntilWall()
     c.runTest()
