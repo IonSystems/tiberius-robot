@@ -9,17 +9,38 @@ class MotorDriver:
 		self.bus = smbus.SMBus(1)
 		self.address = address
 		self.debug = debug
-        
+
+		self.current_register = 0x05
+		self.status_register = 0x01
+
+	'''Returns a current value between 0(0A) and 186(20A)'''
+	def current(self):
+		current = self.bus.read_byte(self.current_register)
+		return current
+
+	'''	Returns the status register bits:
+		0: Acceleration in progress LSB
+		1: Over-current indicator
+		2: Over-temperature indicator
+		The bits are returned in dictionary form.
+	'''
+	def status(self):
+		status = self.bus.read_byte(self.status_register)
+		accel = status & 1
+		over-current = (status >> 1) & 1
+		over-temp = (stats >> 2) & 1
+		return ['accel' : accel, 'over-current' : over-current, 'over-temp' : over-temp]
+
 	def move(self, speed, accel):
-		try:           
+		try:
 			if ((speed<-255) or (speed>255)):
 				print 'Speed parameter out of range.'
 				return 0
-            
+
 			if ((accel<0) or (accel>255)):
 				print 'Acceleration parameter out of range.'
 				return 0
-            
+
 			self.bus.write_byte_data(self.address,3,accel)
 			if (speed>=0):
 				if (self.debug): print speed
@@ -38,6 +59,6 @@ class MotorDriver:
 				if ((self.address==0x59) or (self.address==0x5B)):
 					self.bus.write_byte_data(self.address,0,1)
 			return 1
-        
+
 		except IOError:
 			print 'IO error move', hex(self.address)
