@@ -1,0 +1,85 @@
+-------------------------------------------------------------------------------
+--                       P O L Y H E D R A    D E M O
+--                   Copyright (C) 2005-2014 by Enea Software AB
+-------------------------------------------------------------------------------
+--    Filename      : websocket.txt
+--    Description   : description of the example websocket client.
+--
+--    CVSID         : $Id: websocket.txt,v 1.4 2014/01/06 14:49:02 andy Exp $
+-------------------------------------------------------------------------------
+-- NOTE: this is ILLUSTRATIVE CODE, provided on an 'as is' basis to help
+-- demonstrate one or more features of the Polyhedra product.
+-- It may well need adaption for use in a live installation, and
+-- Enea Software AB and its agents and distributors do not warrant this code.
+-------------------------------------------------------------------------------
+
+INTRODUCTION
+
+This directory contains a demonstration of the the use of active
+queries to display dynamic data from a Polyhedra RTRDB. Specifically
+the demonstration dynamically displays the currency table used in
+other examples.
+
+The example consists of 3 components.
+
+1. currency.html
+A web page with areas to display currency data and websocket messages.
+
+2. currency.js
+Code to open a websocket connection, request data and display updates.
+
+3. The websocket (or websocket.exe for Windows) example client.
+A websocket server that uses ODBC calls to notify a client with
+changes to currency data. Please note that there is a pre-built client in
+the Linux and Windows release kits.
+
+USAGE
+
+These instructions assume that all components are being executed on
+the same computer.
+
+1. Run the RTRDB as described in the evaluation guide for the demo_1
+   example.
+
+2. Start the websocket executable in the command line.
+
+3. Open the currency.html file using a web browser.
+
+4. View the current state of the currency table in the web browser.
+
+The websocket application defaults to listening for websocket
+connections on port 3400 and accessing a Polyhedra database using the
+localhost:8001 service.
+
+The port and dataservice may be changed using command line arguments:
+
+websocket <websocket port> <Polyhedra database service>
+
+Note that in the case of changing the websocket port also change the "webSocketPort" in currency.js.
+
+The usage of this demonstration is also described in the evaluation guide
+
+SOURCE CODE
+
+Along with the web application (currency.html and currency.js) the
+source of the example websocket client is available in this directory
+for examination and modification.
+
+Assuming the Polyhedra ODBC header files, object files and libraries
+are copied to the current directory, the build instructions are:
+
+Linux GCC
+
+gcc -c websocket.c
+g++ -o websocket websocket.o polyposix.o -L. -lpolyodbc -ldbbase -lpat -lnomem -lpthread -lrt
+
+Microsoft Visual Studio
+
+cl -nologo -MTd -Od -Zi -WX -DWIN32  -c websocket.c
+link -nologo -stack:100000 -subsystem:console -out:websocket.exe websocket.o polyod32.lib ws2_32.lib
+
+
+-------------------------------------------------------------------------------
+--                        E n d   o f   F i l e
+-------------------------------------------------------------------------------
+

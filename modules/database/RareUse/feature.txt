@@ -1,0 +1,69 @@
+===========================================================
+Project:        Polyhedra
+Copyright:      Copyright (C) 1994-2014 by Enea Software AB
+                All Rights Reserved
+Date:           $Date: 2014/01/06 14:49:16 $
+Revision:       $Id: feature.txt,v 1.6 2014/01/06 14:49:16 andy Exp $
+Description:    Supported features
+===========================================================
+
+Standard Polyhedra supported features:
+
+SQL                             YES
+SQL Domains                     YES
+SQL Arrays                      YES
+SQL Stored Procedures           YES
+CL                              YES*
+Debugger                        YES*
+DVI                             YES*
+Historian                       YES*
+Active Queries                  YES
+SQL Procedures                  YES*
+Journaling                      YES
+Fault Tolerance                 YES*
+Data Replication                YES*
+DataPort and DataConnection     YES*
+Warm Restart                    YES
+
+===========================================================
+
+Polyhedra Flash DBMS supported features:
+
+SQL                             YES
+SQL Domains                     NO
+SQL Arrays                      NO
+SQL Stored Procedures           NO
+CL                              YES*
+Debugger                        YES*
+DVI                             NO
+Historian                       NO
+Active Queries                  YES
+Journaling                      NO
+Fault Tolerance                 YES*
+Data Replication                NO
+DataPort and DataConnection     YES*
+Warm Restart                    NO
+
+===========================================================
+
+Polyhedra Lite supported features:
+
+SQL                             YES
+SQL Domains                     YES
+SQL Arrays                      YES
+SQL Stored Procedures           YES
+CL                              YES
+Debugger                        NO
+DVI                             NO
+Historian                       NO
+Active Queries                  YES
+SQL Procedures                  YES
+Journaling                      YES
+Fault Tolerance                 NO
+Data Replication                NO
+DataPort and DataConnection     NO
+Warm Restart                    NO
+
+===========================================================
+* indicates a feature that is supported by linking an
+  optional module into the RTRDB.
