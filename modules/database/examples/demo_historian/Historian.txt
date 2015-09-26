@@ -1,0 +1,81 @@
+-------------------------------------------------------------------------------
+--                       P O L Y H E D R A    D E M O
+--                   Copyright (C) 2005-2014 by Enea Software AB
+-------------------------------------------------------------------------------
+--    Filename      : historian.txt
+--    Description   : description of the db_historian demo.
+--    Author        : Nigel Day
+--
+--    CVSID         : $Id: Historian.txt,v 1.10 2014/01/06 14:49:01 andy Exp $
+-------------------------------------------------------------------------------
+-- NOTE: this is ILLUSTRATIVE CODE, provided on an 'as is' basis to help
+-- demonstrate one or more features of the Polyhedra product.
+-- It may well need adaption for use in a live installation, and
+-- Enea Software AB and its agents and distributors do not warrant this code.
+-------------------------------------------------------------------------------
+
+This demonstration uses the historian feature and so is not applicable to all
+editions of Polyhedra. Please refer to the feature.txt file for a list of
+features supported by each edition of Polyhedra.
+
+This uses the same database as demo_1, but with the configuration file 
+altered to enable the historian sub-module of the Polyhedra DBMS.  The SQL 
+file init/setup.sql instructs the historian to log changes to the currency 
+table, and samples can be retrieved by queries such as...  
+
+    select * from sample where name = 'EUR'
+	and timestamp > now() - minutes(5);
+
+...  for raw samples, though when retrieving time-compressed samples the 
+granularity has to be given: 
+    
+    select * from csample where granularity='60s'
+        and name='AUD'
+        and timestamp > now() - minutes(45)
+	and timestamp < now() - minutes(20);
+
+To save away samples before they are overwritten in the circular use of 
+buffers, one issues a command such as...
+
+    update logdata
+        set archiving=true, 
+            archfilename='001.dat',
+	    archbuffercount=3
+	where rate='0s' and control=1;
+    commit;
+    
+this will cause the oldest 3 un-archived buffers to be written to the file 
+001.dat; at a later stage, this can be brought online again by a statement
+such as...
+
+    insert into logarchive (filename,  control)
+                    values ('001.dat', 1);
+    commit;
+    
+Whilst the archive file is online, the historian sub-module will use the 
+data in it to help answer queries on the relevant pseudo-table, in 
+conjunction with the data that it normally uses (e.g., the contents of the 
+buffer that is being built up, and the contents of the log file).  When 
+the archive file is no longer needed, simply delete the logarchive record; 
+the historian will release the file, but not delete it.  
+
+Running the demo
+----------------
+
+follow the instructions in the evaluation guide re demo 1 to find out how 
+to start up the database, to start off the 'animate' client (to change the 
+values in the currency table periodically) and to start off the SQLC 
+client.  The last allows you to type in SQL queries and changes such as 
+those given above.  Have a look at the init/setup.sql file to see how the 
+the historian was configured; there are lots of comments, explaining the 
+purpose of the records that were inserted into the varous configuration 
+tables used by the historian.  
+
+One manual in the Polyhedra reference set is devoted to the topic of the 
+historian submodule, and contains further worked examples.  
+
+
+-------------------------------------------------------------------------------
+--                        E n d   o f   f i l e
+-------------------------------------------------------------------------------
+

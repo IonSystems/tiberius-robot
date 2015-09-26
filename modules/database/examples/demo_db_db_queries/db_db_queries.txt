@@ -1,0 +1,105 @@
+-------------------------------------------------------------------------------
+--                       P O L Y H E D R A    D E M O
+--                   Copyright (C) 2005-2014 by Enea Software AB
+-------------------------------------------------------------------------------
+--    Filename      : db_db_queries.txt
+--    Description   : description of the db_db_queries demo.
+--    Author        : Nigel Day
+--
+--    CVSID         : $Id: db_db_queries.txt,v 1.10 2014/01/06 14:49:01 andy Exp $
+-------------------------------------------------------------------------------
+-- NOTE: this is ILLUSTRATIVE CODE, provided on an 'as is' basis to help
+-- demonstrate one or more features of the Polyhedra product.
+-- It may well need adaption for use in a live installation, and
+-- Enea Software AB and its agents and distributors do not warrant this code.
+-------------------------------------------------------------------------------
+
+This demonstration uses the arrays and data connection features and so is not
+applicable to all editions of Polyhedra. Please refer to the feature.txt file
+for a list of features supported by each edition of Polyhedra.
+
+This directory illustrates how one database can query another, with the 
+results of the query appearing as records in the database doing the 
+querying (the 'client database').  As the query is active, changes to the 
+records in the queried database are propagated through to the client 
+database post-transactionally; in fact, it is also the other way round, 
+in that changes to the query-generated records in the client database are 
+propagated through to the queried database.  
+
+-----------------
+RUNNING SEQUENCE:
+-----------------
+
+This demo is designed to be used in conjunction with demo_1, which will 
+provide the database to be queried. The demo_1 database can be started and
+inspected by selecting that directory and using the commands 'rtrdb db &'
+(or 'start rtrdb db' if on Windows) and 'sqlc sql' - however, for your 
+convenience, extra entry points have been added to the local poly.cfg file
+so that you can start the demo_1 database from this directory by use of
+the command 'rtrdb dbmain &' (or 'start rtrdb dbmain') and inspect it by 
+means of the command 'sqlc sqlmain'.
+
+If you need to recreate the saved database for the database doing the 
+queries, issue the commands 
+
+	start rtrdb empty
+	sqlc sql
+	
+... if running on Windows, or 
+
+	rtrdb empty &
+	sqlc sql
+	
+...  if running on a Unix-like platform.  inside the sqlc program, issue 
+the commands: 
+
+	include 'tables.sql';
+	save into 'test.dat';
+	shutdown;
+	
+the database should now be restarted using 'start rtrdb db' or 
+'rtrdb db &' as appropriate.  Using SQLC, issue the commands: 
+
+	include 'data.sql';
+	save;
+	
+
+To run the demo using the provided or recreated saved database, first 
+start the demo_1 database, and then (if not already running as a result of 
+rebuilding the saved database as described above) start the 'client 
+database' by 'start rtrdb db' (if on Windows) or 'rtrdb db &' (if on 
+Unix or Linux). The code attached to the client database will establish 
+a connection to the demo_1 database and then launch the active query.
+
+Using SQLC, you can modify the main database, and see the changes 
+reflected into the client database; also, if you update an attribute in 
+the currency table of the client database, the main database will be 
+altered to match.  If you create or delete currency records in the main 
+database, the corresponding changes will be made in the client database.  
+Likewise, if you delete a record in the client database the corresponding 
+record is deleted in the main database.  If you create a new currency 
+record in the client database, though, no corresponding record appears in 
+the main database (as the currency table could be aggregating information 
+from a number of databases, and there is no automatic way of saying which 
+one should get the extra record); instead, in this example the CL code 
+attached to the client database aborts the transaction.  
+  
+------ FILES: ------ 
+
+tables.sql          -- SQL to create schema for client database
+		       (just used for initialisation)
+data.sql            -- initial data for client database
+		       (just used for initialisation)  
+test.dat            -- database save file containing data for demo
+query.cl, query.sql -- some generic code handling connections to other
+                       Polyhedra data servers, and managing active
+		       queries over these connections. 
+db.cl               -- the application-specific code for launching the
+                       active query on the demo_1 database, building on
+		       the query.* stuff.  
+poly.cfg            -- config file for this demo
+
+
+-------------------------------------------------------------------------------
+--                        E n d   o f   f i l e
+-------------------------------------------------------------------------------

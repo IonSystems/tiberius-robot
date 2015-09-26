@@ -1,0 +1,22 @@
+------------------------------------------------------------------------------
+Project:	Polyhedra
+Copyright:	Copyright (C) 1994-2014 by Enea Software AB
+		All Rights Reserved
+Date:           $Date: 2014/01/06 14:49:01 $
+Revision:	$Id: 05_CL_code.txt,v 1.10 2014/01/06 14:49:01 andy Exp $
+Author:	        Dave Stow
+Description:	
+------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- NOTE: this is ILLUSTRATIVE CODE, provided on an 'as is' basis to help
+-- demonstrate one or more features of the Polyhedra product.
+-- It may well need adaption for use in a live installation, and
+-- Enea Software AB and its agents and distributors do not warrant this code.
+-------------------------------------------------------------------------------
+
+Demo 5 - CL Code
+
+If using Polyhedra Flash DBMS, the optional CL module must be linked into the
+RTRDB to run this demonstration.
+
