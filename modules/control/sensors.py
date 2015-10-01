@@ -2,6 +2,7 @@
 import cmps11
 import srf08
 import picamera
+#import gps
 
 class Ultrasonic:
 	'''
@@ -77,3 +78,5 @@ class Compass:
 			angle += 360
 		return angle 
 		
+#class GPS:
+	#gps = 

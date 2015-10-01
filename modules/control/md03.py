@@ -15,8 +15,9 @@ class MotorDriver:
 
 	'''Returns a current value between 0(0A) and 186(20A)'''
 	def current(self):
-		current = self.bus.read_byte(self.current_register)
-		return current
+		current = self.bus.read_byte_data(self.address, self.current_register)
+		amps = round(((current / 186.0) * 20.0), 3)
+		return amps
 
 	'''	Returns the status register bits:
 		0: Acceleration in progress LSB
@@ -25,11 +26,13 @@ class MotorDriver:
 		The bits are returned in dictionary form.
 	'''
 	def status(self):
-		status = self.bus.read_byte(self.status_register)
-		accel = status & 1
-		over-current = (status >> 1) & 1
-		over-temp = (stats >> 2) & 1
-		return ['accel' : accel, 'over-current' : over-current, 'over-temp' : over-temp]
+		status = self.bus.read_byte_data(self.address, self.status_register)
+		return status
+		#print str(status)
+		#accel = status & 1
+		#over-current = (status >> 1) & 1
+		#over-temp = (stats >> 2) & 1
+		#return {'accel' : accel, 'over-current' : over-current, 'over-temp' : over-temp}
 
 	def move(self, speed, accel):
 		try:

@@ -72,28 +72,28 @@ class Control:
                                 #Reduce speed on approach to desired bearing
                                 #Positive error is a left turn
                                 if(error < 60):
-                                        self.motors.setSpeedPercent(70)
+                                        self.motors.setSpeed(70)
                                         self.motors.turnLeft()
                                 if(error < 30):
-                                        self.motors.setSpeedPercent(40)
+                                        self.motors.setSpeed(40)
                                         self.motors.turnLeft()	
                                 if(error < 5):
-                                        self.motors.setSpeedPercent(20)
+                                        self.motors.setSpeed(20)
                                         self.motors.turnLeft()
                         if(error < 0):
                                 print 'error > 0 turning right'
-                                self.motors.setSpeedPercent(100)
+                                self.motors.setSpeed(100)
 				self.motors.turnRight()
 
                                 #Negative error is a right turn
                                 if(error > -60):
-                                        self.motors.setSpeedPercent(70)
+                                        self.motors.setSpeed(70)
                                         self.motors.turnRight()
                                 if(error > -30):
-                                        self.motors.setSpeedPercent(40)
+                                        self.motors.setSpeed(40)
                                         self.motors.turnRight()	
                                 if(error > -5):
-                                        self.motors.setSpeedPercent(20)
+                                        self.motors.setSpeed(20)
                                         self.motors.turnRight()
 			
 
@@ -185,8 +185,6 @@ class Control:
 			
 			if error != 0:
 				self.turnTo(desired_bearing)
-				self.motors.moveForward()
-
 			else:
 				self.motors.moveForward()
 			time.sleep(0.1)
