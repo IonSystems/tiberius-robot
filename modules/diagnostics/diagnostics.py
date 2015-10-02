@@ -1,7 +1,10 @@
 import sys
-sys.path.insert(0, '../control')
+import logging
 
+sys.path.insert(0, '../control')
 from control import Control
+
+d_logger = logging.getLogger('tiberius.diagnostics')
 
 class Diagnostics:
 	'''
@@ -9,8 +12,9 @@ class Diagnostics:
 	'''
 	c = Control()
 
-	#def __init__(self):
-			
+	def __init__(self):
+		self.logger = logging.getLogger('tiberius.diagnostics.Diagnostics')
+		self.logger.info('Creating instance of Diagnostics')
 	def getMotorCurrent(self):
 		fl = self.c.motors.front_left.current()		
 		fr = self.c.motors.front_right.current()		

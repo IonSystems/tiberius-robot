@@ -1,11 +1,15 @@
 #!/usr/bin/python
 
 import smbus
+import logging
 
 class MotorDriver:
 	'''Motor Driver'''
 
 	def __init__(self, address, debug=False):
+		self.logger = logging.getLogger('tiberius.control.MotorDriver')
+		self.logger.info('Creating an instance of MotorDriver')
+
 		self.bus = smbus.SMBus(1)
 		self.address = address
 		self.debug = debug
@@ -64,4 +68,5 @@ class MotorDriver:
 			return 1
 
 		except IOError:
-			print 'IO error move', hex(self.address)
+			self.logger.warn('IO error on I2C bus, address ', hex(self.address))
+			

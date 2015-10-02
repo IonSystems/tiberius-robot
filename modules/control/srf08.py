@@ -2,6 +2,7 @@
 
 import smbus
 import time
+import logging
 
 class UltrasonicRangefinder:
     '''Ultrasonic rangefinder'''
@@ -20,13 +21,16 @@ class UltrasonicRangefinder:
     value = 0.0
 
     def __init__(self, address):
+	self.logger = logging.getLogger('tiberius.control.UltrasonicRangefinder')
+	self.logger.info('Creating an instance of UltrasonicRangefinder')
+
         self.bus = smbus.SMBus(1)
         self.address = address
         try:
             self.bus.write_byte_data(self.address, self.rangereg, self.range_value)
             self.bus.write_byte_data(self.address, self.gainreg, self.gain_value)
         except IOError:
-            print 'IO error init ', hex(self.address)
+            self.logger.error('I2C write error ', hex(self.address))
 
     def doranging(self):
         try:
@@ -41,7 +45,7 @@ class UltrasonicRangefinder:
             self.bus.write_byte_data(0x75, self.commandreg, self.cm_mode)
             time.sleep(0.065)
         except IOError:
-            print 'IO error doranging'
+            self.logger.error('I2C write error', hex(self.address))
 
     def getranging(self):
         try:
@@ -55,6 +59,6 @@ class UltrasonicRangefinder:
 	    return value
 	
 	except IOError:
-	    print 'IO error getranging ',hex(self.address)
+	    self.logger.error('IO error getranging ',hex(self.address))
             return 222.2
 

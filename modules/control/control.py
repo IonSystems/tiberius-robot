@@ -5,6 +5,9 @@ import srf08
 import sensors
 import actuators
 import time
+import logging
+
+c_logger = logging.getLogger('tiberius.control')
 
 class Control:
 	'''
@@ -18,12 +21,16 @@ class Control:
 	compass = sensors.Compass()
 	motors = actuators.Motor()
 
+	def __init__(self):
+		self.logger = logging.getLogger('tiberius.control.Control')
+		self.logger.info('Creating an instance of Control')
+
 	def frontNotHit(self, distance):
 		fl = self.ultrasonics.senseUltrasonic()['fl'] > distance
 		fc = self.ultrasonics.senseUltrasonic()['fc'] > distance
 		fr = self.ultrasonics.senseUltrasonic()['fr'] > distance
 		if (fl or fc or fr):
-			print 'Front Right : ' + str(fr) + ' ,Front Centre: ' + str(fc) + ' , Front Left: ' + str(fl)
+			self.logger.debug('Front Right : ' + str(fr) + ' ,Front Centre: ' + str(fc) + ' , Front Left: ' + str(fl))
 		return fl and fc and fr
 	
 	def rearNotHit(self, distance):
@@ -31,7 +38,7 @@ class Control:
 		rc = self.ultrasonics.senseUltrasonic()['rc'] > distance
 		rl = self.ultrasonics.senseUltrasonic()['rl'] > distance
 		if(rr or rc or rl):
-			print 'Rear Right : ' + str(rr) + ' ,Rear Centre: ' + str(rc) + ' , Rear Left: ' + str(rl)
+			self.logger.debug('Rear Right : ' + str(rr) + ' ,Rear Centre: ' + str(rc) + ' , Rear Left: ' + str(rl))
 		return rr and rc and rl
 
         def driveForwardUntilWall(self, stop_distance, speed = 50):
@@ -51,11 +58,11 @@ class Control:
 			time.sleep(0.1)
                         actual_bearing = self.compass.headingNormalized()
                         error = actual_bearing - desired_bearing
-                        print 'Heading: ' + str(actual_bearing)
-                        print 'Desired: ' + str(desired_bearing)
+                        self.logger.debug('Heading: ' + str(actual_bearing))
+                        self.logger.debug('Desired: ' + str(desired_bearing))
                          
                         if(error < 5 and error > -5):
-                                print 'At heading: ' + str(actual_bearing)
+                                self.logger.debug('At heading: ' + str(actual_bearing))
                                 self.motors.stop()
                                 break
                         if(error > 180):
