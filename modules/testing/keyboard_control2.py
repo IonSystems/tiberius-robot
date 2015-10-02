@@ -52,6 +52,7 @@ if __name__ == "__main__":
         elif(key == ' '):
 	    c.motors.stop()
             time.sleep(0.1)
-        #c.motors.stop()
+#	elif(key == None):
+	     c.motors.stop()
         
 
