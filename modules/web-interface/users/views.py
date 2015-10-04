@@ -3,17 +3,13 @@ from django.template import RequestContext, loader
 from django.shortcuts import render_to_response
 from users.forms import LoginForm
 from django.contrib import auth
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 
 # Create your views here.
 def index(request):
-    tib = 'Hello'
-    template = loader.get_template('login.html')
-    context = RequestContext(request, {
-        'tib': tib,
-    })
-    return HttpResponse(template.render(context))
-
+    #TODO: There is probably a proper way of doing this
+    return redirect('login')
 
 def login(request):
     context = RequestContext(request)
@@ -36,7 +32,11 @@ def login(request):
 
 
 def logout(request):
-    # TODO make logout POST only with js
-    if request.method == "POST":
-        auth.logout(request)
-        return HttpResponse("success")
+    auth.logout(request)
+    return HttpResponse("success")
+
+# def change_password(request):
+#     form = ChangePasswordForm()
+#     u = User.objects.get(username='john')
+#     u.set_password('new password')
+#     u.save()
