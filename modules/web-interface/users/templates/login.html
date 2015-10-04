@@ -44,27 +44,36 @@
       </div>
 
       <div class="box-content padded">
-        <form class="separate-sections">
+        <form class="separate-sections" method = "post">
+            {% csrf_token %}
           <div class="input-group addon-left">
             <span class="input-group-addon" href="#">
               <i class="icon-user"></i>
             </span>
-            <input type="text" placeholder="username">
+            {{ form.username }}
           </div>
-
+          <ul class="errors">
+            {{ form.username.errors}}
+          </ul>
           <div class="input-group addon-left">
             <span class="input-group-addon" href="#">
               <i class="icon-key"></i>
             </span>
-            <input type="password" placeholder="password">
+            {{ form.password }}
           </div>
+          <ul class="errors">
+            {{ form.password.errors}}
+          </ul>
 
-          <div>
-            <a class="btn btn-blue btn-block" href="../dashboard/dashboard.html">
-                Login <i class="icon-signin"></i>
-            </a>
+          <div class = "form-actions">
+            <button type="submit"  class="btn btn-blue btn-block">
+              <span>Login</span>
+              <span class="small-circle"><i class="icon-signin"></i></span>
+            </button>
           </div>
-
+          <ul class="errors">
+            {{ form.non_field_errors }}
+          </ul>
         </form>
 
         <div>
