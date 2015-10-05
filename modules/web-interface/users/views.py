@@ -36,8 +36,10 @@ def login(request):
 
 
 def logout(request):
+    context = RequestContext(request)
     auth.logout(request)
-    return HttpResponse("success")
+    message = "You have succesfully logged out."
+    return render_to_response('logout.html', {"message": message}, context)
 
 def register(request):
     if request.method == 'POST':
