@@ -5,6 +5,10 @@ from users.forms import LoginForm
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django.http import HttpResponse
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
 
 # Create your views here.
 def index(request):
@@ -35,6 +39,17 @@ def logout(request):
     auth.logout(request)
     return HttpResponse("success")
 
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            new_user = form.save()
+            return redirect('dashboard')
+    else:
+        form = UserCreationForm()
+    return render(request, "register.html", {
+        'form': form,
+    })
 # def change_password(request):
 #     form = ChangePasswordForm()
 #     u = User.objects.get(username='john')
