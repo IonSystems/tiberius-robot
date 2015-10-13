@@ -1,0 +1,11 @@
+Metadata-Version: 1.0
+Name: pynmea
+Version: 0.6.0
+Summary: Python NMEA Library - a small library to help read and parse
+NMEA data
+Home-page: https://code.google.com/p/pynmea/
+Author: Becky Lewis
+Author-email: pynmea@scaryclam.co.uk
+License: MIT
+Description: UNKNOWN
+Platform: UNKNOWN
