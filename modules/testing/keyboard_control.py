@@ -1,9 +1,11 @@
 import sys
 sys.path.insert(0, '../control')
-
+sys.path.insert(0, '../logger')
+from logger import logger as logger
+import logging
+d_logger = logging.getLogger('tiberius' + __name__)
 from control import Control
 import tty, termios, time
-import logging
 
 c = Control()
 
@@ -16,12 +18,12 @@ def getKey():
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
         return ch
-    
+
 if __name__ == "__main__":
     while(True):
 
         key = getKey()
-        logging.debug("Key " + key + " pressed")
+        d_logger.debug("Key " + key + " pressed")
         if(key == 'c'):
             c.motors.stop()
             sys.exit(0)
@@ -53,5 +55,3 @@ if __name__ == "__main__":
 	    c.motors.stop()
             time.sleep(0.1)
         #c.motors.stop()
-        
-
