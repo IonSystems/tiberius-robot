@@ -17,10 +17,13 @@ console_handler.setLevel(logging.DEBUG)
 null_handler = logging.NullHandler()
 
 #Create a formatter for the log messages
-formatter = logging.Formatter('%(asctime) - %(name) - %(levelname) - %(message)')
-
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+console_handler.setFormatter(formatter)
 #Adding handlers to logger
 
 logger.addHandler(file_handler)
-logger.addHandler(console_handler)			
+logger.addHandler(console_handler)
 logger.addHandler(null_handler)
+
+logger.info("Logging Configured")
