@@ -7,16 +7,16 @@ import actuators
 import time
 import logging
 
-c_logger = logging.getLogger('tiberius.control')
+c_logger = logging.getLogger('tiberius.control.Control')
 
 class Control:
 	'''
 		Provides methods to control the motors,
 		via the I2C interface to the motor drivers.
-		
+
 		Uses sensor feedback to accurately manoeuvre the vehicle.
 	'''
-	
+
 	ultrasonics = sensors.Ultrasonic()
 	compass = sensors.Compass()
 	motors = actuators.Motor()
@@ -32,7 +32,7 @@ class Control:
 		if (fl or fc or fr):
 			self.logger.debug('Front Right : ' + str(fr) + ' ,Front Centre: ' + str(fc) + ' , Front Left: ' + str(fl))
 		return fl and fc and fr
-	
+
 	def rearNotHit(self, distance):
 		rr = self.ultrasonics.senseUltrasonic()['rr'] > distance
 		rc = self.ultrasonics.senseUltrasonic()['rc'] > distance
@@ -60,7 +60,7 @@ class Control:
                         error = actual_bearing - desired_bearing
                         self.logger.debug('Heading: ' + str(actual_bearing))
                         self.logger.debug('Desired: ' + str(desired_bearing))
-                         
+
                         if(error < 5 and error > -5):
                                 self.logger.debug('At heading: ' + str(actual_bearing))
                                 self.motors.stop()
@@ -83,7 +83,7 @@ class Control:
                                         self.motors.turnLeft()
                                 if(error < 30):
                                         self.motors.setSpeedPercent(40)
-                                        self.motors.turnLeft()	
+                                        self.motors.turnLeft()
                                 if(error < 5):
                                         self.motors.setSpeedPercent(20)
                                         self.motors.turnLeft()
@@ -98,43 +98,43 @@ class Control:
                                         self.motors.turnRight()
                                 if(error > -30):
                                         self.motors.setSpeedPercent(40)
-                                        self.motors.turnRight()	
+                                        self.motors.turnRight()
                                 if(error > -5):
                                         self.motors.setSpeedPercent(20)
                                         self.motors.turnRight()
-			
 
-			
+
+
                         print str(error)
 
         def turnRight90Degrees(self):
                 old_bearing = self.compass.headingNormalized()
-		 
+
 		desired_bearing = (old_bearing + 90)
 		if(desired_bearing > 180):
 			desired_bearing -= 360
-		
-		print desired_bearing	
-		self.turnTo(desired_bearing)	
+
+		print desired_bearing
+		self.turnTo(desired_bearing)
 
         def turnLeft90Degrees(self):
                 old_bearing = self.compass.headingNormalized()
-		 
+
 		desired_bearing = (old_bearing - 90)
 		if(desired_bearing < -180):
 			desired_bearing += 360
-		
-		print desired_bearing	
+
+		print desired_bearing
 		self.turnTo(desired_bearing)
 
 	#def driveForwardDistance(self, distance_metres):
-                
+
 	def driveStraight(self, speed_percent, duration):
 		desired_heading = self.compass.headingNormalized()
                 t = 0
 		p_factor = 400 #Error multiplier
 		integral = 0 #Sum of all errors over time
-		i_factor = 100 
+		i_factor = 100
 		derivative = 0 #last error - current error
 		d_factor = 100
 		previous_error = 0
@@ -179,17 +179,17 @@ class Control:
 				print 'Derivative  : ' + str(derivative * d_factor)
 			self.motors.moveForwardDualSpeed(l,r)
 			time.sleep(0.1)
-			t += 0.1 
+			t += 0.1
 		self.motors.stop()
-	
+
 	def driveStraightStopStart(self, speed_percent, duration):
 		desired_bearing = self.compass.headingNormalized()
 		t = 0
 		self.motors.setSpeedPercent(speed_percent)
-		while(t < duration):				
+		while(t < duration):
 			actual_bearing = self.compass.headingNormalized()
 			error = actual_bearing - desired_bearing
-			
+
 			if error != 0:
 				self.turnTo(desired_bearing)
 				self.motors.moveForward()

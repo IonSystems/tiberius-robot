@@ -1,6 +1,10 @@
 #!/usr/bin/python
 
 import smbus
+import sys
+sys.path.insert(0, '../logger')
+#import logger.logger as logger
+from logger import logger as logger
 import logging
 
 class MotorDriver:
@@ -36,7 +40,33 @@ class MotorDriver:
 		#accel = status & 1
 		#over-current = (status >> 1) & 1
 		#over-temp = (stats >> 2) & 1
-		#return {'accel' : accel, 'over-current' : over-current, 'over-temp' : over-temp}
+#return {'accel' : accel, 'over-current' : over-current, 'over-temp' : over-temp}
+	def check_range(self, min, max, val):
+		if val > max:
+			return 1
+		elif val < min:
+			return -1
+		return 0
+
+	def speed_restrict(self, speed):
+		r = self.check_range(-255, 255, speed)
+		if r > 0:
+			speed = 255
+			self.logger.warn('Speed parameter out of range.')
+		elif r < 0:
+			speed = -255
+			self.logger.warn('Speed parameter out of range.')
+		return speed
+
+		def accel_restrict(self, accel):
+			r = self.check_range(0, 255, accel)
+			if r > 0:
+				accel = 255
+				self.logger.warn('Acceleration parameter out of range.')
+			elif r < 0:
+				accel = 0
+				self.logger.warn('Acceleration parameter out of range.')
+			return accel
 
 	def move(self, speed, accel):
 		try:
@@ -69,4 +99,3 @@ class MotorDriver:
 
 		except IOError:
 			self.logger.warn('IO error on I2C bus, address ', hex(self.address))
-			

@@ -1,7 +1,16 @@
 import serial
+import sys
+sys.path.insert(0, '../logger')
+#import logger.logger as logger
+from logger import logger as logger
 import logging
 from pynmea import nmea
+'''
+	Reads GPS data. GPS data comes in many formats, currently we are only interested
+	in the NMEA GPGGA sentences (Global Positioning System Fix Data).
 
+
+'''
 class GlobalPositioningSystem:
 	port = '/dev/ttyACM0'
 	baud = 9600
@@ -42,4 +51,3 @@ if __name__ == "__main__":
 		gps.update()
 		gps.print_data()
 		time.sleep(1)
-
