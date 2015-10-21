@@ -3,7 +3,7 @@ sys.path.insert(0, '../control')
 sys.path.insert(0, '../logger')
 from logger import logger as logger
 import logging
-d_logger = logging.getLogger('tiberius' + __name__)
+d_logger = logging.getLogger('tiberius.testing.keyboard_control')
 from control import Control
 import tty, termios, time
 
@@ -23,7 +23,7 @@ if __name__ == "__main__":
     while(True):
 
         key = getKey()
-        d_logger.debug("Key " + key + " pressed")
+        d_logger.debug("Key %s pressed", key)
         if(key == 'c'):
             c.motors.stop()
             sys.exit(0)
