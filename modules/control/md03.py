@@ -98,5 +98,5 @@ class MotorDriver:
 					self.bus.write_byte_data(self.address,0,1)
 			return 1
 
-		except IOError:
-			self.logger.warn('IO error on I2C bus, address %s', hex(self.address))
+		except IOError, e:
+			self.logger.warn('IO error on I2C bus, address %s (%s)', hex(self.address), e)
