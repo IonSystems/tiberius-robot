@@ -11,7 +11,7 @@ class UltrasonicRangefinder:
     commandreg = 0x00
     gainreg = 0x01
     rangereg = 0x02
-    
+
     #Set ranging mode to centimeters
     cm_mode = 0x51
     first_echo_low = 0x03
@@ -30,7 +30,7 @@ class UltrasonicRangefinder:
             self.bus.write_byte_data(self.address, self.rangereg, self.range_value)
             self.bus.write_byte_data(self.address, self.gainreg, self.gain_value)
         except IOError:
-            self.logger.error('I2C write error ', hex(self.address))
+            self.logger.error('I2C write error %s', hex(self.address))
 
     def doranging(self):
         try:
@@ -45,20 +45,19 @@ class UltrasonicRangefinder:
             self.bus.write_byte_data(0x75, self.commandreg, self.cm_mode)
             time.sleep(0.065)
         except IOError:
-            self.logger.error('I2C write error', hex(self.address))
+            self.logger.error('I2C write error %s', hex(self.address))
 
     def getranging(self):
         try:
             high_byte = self.bus.read_byte_data(self.address, self.first_echo_high)
-            low_byte = self.bus.read_byte_data(self.address, self.first_echo_low)	    
+            low_byte = self.bus.read_byte_data(self.address, self.first_echo_low)
             if (((high_byte << 8) + low_byte)==0):
                 #assign a random value when srf08 failed to range
                 value = 222.2
             else:
                 value = (high_byte << 8) + low_byte
 	    return value
-	
-	except IOError:
-	    self.logger.error('IO error getranging ',hex(self.address))
-            return 222.2
 
+	except IOError:
+	    self.logger.error('IO error getranging %s',hex(self.address))
+            return 222.2
