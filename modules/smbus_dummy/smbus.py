@@ -17,14 +17,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-"""This module defines an object type that allows SMBus transactions
-on hosts running the Linux kernel.  The host kernel must have I2C
-support, I2C device interface support, and a bus adapter driver.
-All of these can be either built-in to the kernel, or loaded from
-modules.
-
-Because the I2C device interface is opened R/W, users of this
-module usually must have root permissions."""
+'''
+    This module simulates an I2C network for platforms with no I2C capability.
+    The module is based on https://github.com/bivab/smbus-cffi.
+'''
 
 import os
 import sys
@@ -32,26 +28,14 @@ sys.path.insert(0, '../logger')
 #import logger.logger as logger
 from logger import logger as logger
 import logging
+
 from util import validate
-from util import int2byte
-from fcntl import ioctl
-
-
-MAXPATH = 16
-
 
 class SMBus(object):
     """SMBus([bus]) -> SMBus
     Return a new SMBus object that is (optionally) connected to the
     specified I2C device interface.
     """
-
-    _fd = -1
-    _addr = -1
-    _pec = 0
-    # compat mode, enables some features that are not compatible with the
-    # original smbusmodule.c
-    _compat = False
 
     def __init__(self, bus=-1):
         self.logger = logging.getLogger('tiberius.smbus_dummy.SMBus')
@@ -103,6 +87,7 @@ class SMBus(object):
         Perform SMBus Read Byte transaction.
         """
         self.logger.info('Write block data (%s)', addr)
+        return 0
 
     @validate(addr=int, val=int)
     def write_byte(self, addr, val):
@@ -119,6 +104,7 @@ class SMBus(object):
         Perform SMBus Read Byte Data transaction.
         """
         self.logger.info('Read byte data (%s, %s)', addr, cmd)
+        return 0
 
     @validate(addr=int, cmd=int, val=int)
     def write_byte_data(self, addr, cmd, val):
@@ -135,6 +121,7 @@ class SMBus(object):
         Perform SMBus Read Word Data transaction.
         """
         self.logger.info('Read word data (%s, %s)', addr, cmd)
+        return 0
 
     @validate(addr=int, cmd=int, val=int)
     def write_word_data(self, addr, cmd, val):
@@ -166,6 +153,7 @@ class SMBus(object):
         # XXX untested, the raspberry pi i2c driver does not support this
         # command
         self.logger.info('Read block data (%s, %s)', addr, cmd)
+        return 0
 
     @validate(addr=int, cmd=int, vals=list)
     def write_block_data(self, addr, cmd, vals):
@@ -190,6 +178,7 @@ class SMBus(object):
         Perform I2C Block Read transaction.
         """
         self.logger.info('I2C read block data (%s, %s, %s)', addr, cmd, len)
+        return 0
 
     @validate(addr=int, cmd=int, vals=list)
     def write_i2c_block_data(self, addr, cmd, vals):
