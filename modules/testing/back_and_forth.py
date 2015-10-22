@@ -1,16 +1,15 @@
 import time
 import os
-
-#TODO: rename module or something
-from control.control import Control
+import sys
+sys.path.insert(0, '../control')
+from control import Control
 
 c = Control()
 stop_distance = 20
 
-
-
-#Drive arounf em301
+#Drive around em301
 if  __name__ =='__main__':
 	while(True):
-		c.driveForwardUntilWall(30,100)	
-		c.driveBackwardUntilWall(30,100)
+		c.motors.setSpeedPercent(100)
+		c.driveForwardUntilWall(30)
+		c.driveBackwardUntilWall(30)
