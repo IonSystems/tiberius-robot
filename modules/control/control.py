@@ -44,13 +44,15 @@ class Control:
         def driveForwardUntilWall(self, stop_distance, speed = 50):
 		#Wait until Tiberius is 5cm away from the wall.
 		while(self.frontNotHit(stop_distance)):
-			self.motors.moveForward(speed)
+			self.motors.setSpeedPercent(speed)
+			self.motors.moveForward()
 		self.motors.stop()
 
         def driveBackwardUntilWall(self, stop_distance, speed = 50):
 		#Wait until Tiberius is 5cm away from the wall.
 		while(self.rearNotHit(stop_distance)):
-			self.motors.moveBackward(speed)
+			self.motors.setSpeedPercent(speed)
+			self.motors.moveBackward()
 		self.motors.stop()
 
         def turnTo(self, desired_bearing):

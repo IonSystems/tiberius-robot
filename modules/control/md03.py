@@ -1,7 +1,11 @@
 #!/usr/bin/python
-
-import smbus
 import sys
+sys.path.insert(0,'../utils')
+import detection
+#If not running on a raspberry pi, use the dummy smbus library to allow simulation of I2C transactions.
+if not detection.detect_pi():
+	sys.path.insert(0,'../smbus_dummy')
+import smbus
 sys.path.insert(0, '../logger')
 #import logger.logger as logger
 from logger import logger as logger
