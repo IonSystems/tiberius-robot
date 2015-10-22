@@ -1,0 +1,399 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+        "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+<title>
+PyODB Quickstart Guide
+</title>
+<link rel=stylesheet type="text/css" href="stylesheet.css" />
+</head>
+<body>
+<h1 class=centred>
+PyODB Quickstart Guide
+</h1>
+<hr />
+<h2>Contents</h2>
+<ol>
+<li><a href="quickstart.html#intro">Introduction</a></li>
+<li><a href="quickstart.html#extract">Extracting pyodb</a></li>
+<li><a href="quickstart.html#install">Building and installing pyodb</a></li>
+<li><a href="quickstart.html#example">Running the example code</a></li>
+<li><a href="quickstart.html#example">Programming interface</a></li>
+</ol>
+<hr>
+<h2><a name="intro">1. Introduction</a></h2>
+<p>
+This guide is intended to help users get started using the Python ODBC
+extension module <i>pyodb</i>. This module has been designed to provide
+the basic features of ODBC to allow programmers to easily develop database
+applications in Python. The main prerequisites are the Python interpreter,
+unixODBC, a database with suitable ODBC drivers and some free time!
+</p>
+<hr>
+<h2><a name="extract">2. Extracting PyODB<a/></h3>
+<p>
+The module is packaged using a gzip tar file. The files can be extracted
+using the command:
+</p>
+<pre>
+tar zxvf pyodb-0.6.tar.gz
+</pre>
+<p>
+This will create a top-level directory <code>pyodb-0.6</code> which
+contains the module files. You will need to change to this directory
+to build and install the module.
+</p>
+<hr>
+<h2><a name="install">3. Building and installing PyODB<a/></h3>
+<p>
+The module has been packaged using the standard Python Distribution Utilities
+(Distutils). To build and install the module, first check the settings of
+<code>runtime_library_dirs</code> and <code>library_dirs</code> in the file 
+<i>setup.py</i>. These should contain the directory location of the unixODBC 
+library. Then run the following commands to build and install the module:
+<pre>
+python setup.py build
+python setup.py install (as root)
+</pre>
+<hr>
+<h2><a name="install">4. Running the example code<a/></h3>
+<p>
+To help get started an example code file <code>example.py</code> is
+supplied. This will demonstrate some of the features of the module.
+See the comments in the source code for more information.
+You will need to have build and installed the <i>pyodb</i> module
+and have configured an ODBC data source named <code>test1</code>.
+The <i>odbc.ini</i> file that contains the data source definition 
+should also contain <code>UserName</code> and <code>Password</code>
+entries for the data source to allow the connection to be 
+successful. If you know the connection string for your database
+driver, then you can use this to directly access the driver without
+the need to define a DSN. It is assumed the user has some familiarity 
+will setting up and configuring ODBC.
+</p>
+<p>
+Run the sample code using:
+</p>
+<pre>
+python example.py
+</pre>
+<p>
+The output should look something like:
+<pre>
+[['one', 'two', 'three'], ['four', 'five', 'six'], ['seven', 'eight', 'nine']]
+one two three
+four five six
+seven eight nine
+</pre>
+</p>
+<hr>
+<h2><a name="install">5. Programming interface<a/></h3>
+<p>
+This section describes the programming interface for the <i>pyodb</i>
+module.
+</p>
+<br />
+<h3>Class Connect</h3>
+<blockquote>
+<h4>Description</h4>
+<blockquote>
+<p>
+The Connect class provides a way to connect to a database via an ODBC DSN 
+or directly to the database driver using a connection string. The module 
+allows multiple database connections. The connection remains active until 
+the class instance is destroyed, or if an explicit call is made to the 
+<i>disconnect()</i> method.
+</p>
+</blockquote>
+<h4>Synopsis</h4>
+<pre>
+<b>Connect</b>([[<i>data-source</i>][,[<i>username</i>],[<i>password</i>]]])
+
+<b>Connect</b>(conn=<i>connection-string</i>)
+</pre>
+<h4>Return Value</h4>
+<blockquote>
+<p>
+A connection object
+</p>
+</blockquote>
+<h4>Exceptions</h4>
+<blockquote>
+<p>
+<code><b>ConnectError</b></code> - Failed to connect to the database
+</p>
+</blockquote>
+<h4>Comments</h4>
+<blockquote>
+<p>
+There are four ways to create a Connect class instance:
+</p>
+</blockquote>
+<center>
+<table width="85%" cellpadding="5">
+<tr>
+    <td valign="top" width="50%"><code>Connect()</code></td>
+    <td>Creates a connection to the <i>default</i> data source, using the username and password from the <i>odbc.ini</i> file</td>
+</tr>
+<tr>
+    <td valign="top"><code>Connect(<i>data-source</i>)</code></td>
+    <td>Creates a connection to the named data source, using the username and password from the <i>odbc.ini</i> file</td>
+</tr>
+<tr>
+    <td valign="top"><code>Connect(<i>data-source</i>, <i>username</i>)</code></td>
+    <td>Creates a connection to the named data source, using the supplied username and password from the <i>odbc.ini</i> file</td>
+</tr>
+<tr>
+    <td valign="top"><code>Connect(<i>data-source</i>, <i>username</i>, <i>password</i>)</code></td>
+    <td>Creates a connection to the named data source, using the supplied username and password</td>
+</tr>
+<tr>
+    <td valign="top"><code>Connect(conn=<i>connection-string</i>)</code></td>
+    <td>Creates a connection directly to the database driver, using the supplied connection string. The syntax for the connection string is driver-specific.</td>
+</tr>
+</table>
+</center>
+</blockquote>
+<blockquote>
+<hr />
+</blockquote>
+<h3>Method execute</h3>
+<blockquote>
+<h4>Description</h4>
+<blockquote>
+<p>
+The execute method provides a way to execute an arbitary sql statement using
+the connection object. 
+</p>
+</blockquote>
+<h4>Synopsis</h4>
+<pre>
+<b>execute</b>(<i>sql-statement</i>)
+</pre>
+<h4>Return Value</h4>
+<blockquote>
+<p>
+The number of rows affected by an <i>updated</i>, <i>insert</i> or 
+<i>delete</i> sql statement.
+</p>
+</blockquote>
+<h4>Exceptions</h4>
+<blockquote>
+<p>
+<code><b>NotConnectedError</b></code> - The data source is not connected
+<br />
+<code><b>ExecuteError</b></code> - Failed to execute the sql statement
+<br />
+</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<hr />
+</blockquote>
+<h3>Method fetch</h3>
+<blockquote>
+<h4>Description</h4>
+<blockquote>
+<p>
+The fetch method provides a way to retrieve the rows returned by a 
+previous <i>execute()</i>
+</p>
+</blockquote>
+<h4>Synopsis</h4>
+<pre>
+<b>fetch</b>(<i>[number-of-rows]</i></i>)
+</pre>
+<h4>Return Value</h4>
+<blockquote>
+<p>
+A list of lists. With no argument, then all rows are returned. With a 
+positive integer argument, then a maximum of this number of rows is
+returned.
+</p>
+</blockquote>
+<h4>Exceptions</h4>
+<blockquote>
+<p>
+<code><b>NotConnectedError</b></code> - The data source is not connected
+<br />
+<code><b>FetchError</b></code> - Failed to execute the sql statement
+</p>
+</blockquote>
+<h4>Comments</h4>
+<blockquote>
+<p>
+If there are still rows to return a successive call to <i>fetch</i> will
+return the next set of rows.
+</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<hr />
+</blockquote>
+<h3>Method begin</h3>
+<blockquote>
+<h4>Description</h4>
+<blockquote>
+<p>
+The begin method provides a way to start a transaction.
+</p>
+</blockquote>
+<h4>Synopsis</h4>
+<pre>
+<b>begin</b>()
+</pre>
+<h4>Return Value</h4>
+<blockquote>
+<p>
+None
+</p>
+</blockquote>
+<h4>Exceptions</h4>
+<blockquote>
+<p>
+<code><b>NotConnectedError</b></code> - The data source is not connected
+<br />
+<code><b>TransactionError</b></code> - Failed to begin transaction
+</p>
+</blockquote>
+<h4>Comments</h4>
+<blockquote>
+<p>
+The data source must support transactions.
+</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<hr />
+</blockquote>
+<h3>Method commit</h3>
+<blockquote>
+<h4>Description</h4>
+<blockquote>
+<p>
+The commit method provides a way to commit a transaction.
+</p>
+</blockquote>
+<h4>Synopsis</h4>
+<pre>
+<b>commit</b>()
+</pre>
+<h4>Return Value</h4>
+<blockquote>
+<p>
+None
+</p>
+</blockquote>
+<h4>Exceptions</h4>
+<blockquote>
+<p>
+<code><b>NotConnectedError</b></code> - The data source is not connected
+<br />
+<code><b>TransactionError</b></code> - Failed to commit transaction
+</p>
+</blockquote>
+<h4>Comments</h4>
+<blockquote>
+<p>
+The data source must support transactions.
+</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<hr />
+</blockquote>
+<h3>Method rollback</h3>
+<blockquote>
+<h4>Description</h4>
+<blockquote>
+<p>
+The rollback method provides a way to roll back a transaction.
+</p>
+</blockquote>
+<h4>Synopsis</h4>
+<pre>
+<b>rollback</b>()
+</pre>
+<h4>Return Value</h4>
+<blockquote>
+<p>
+None
+</p>
+</blockquote>
+<h4>Exceptions</h4>
+<blockquote>
+<p>
+<code><b>NotConnectedError</b></code> - The data source is not connected
+<br />
+<code><b>TransactionError</b></code> - Failed to roll back transaction
+</p>
+</blockquote>
+<h4>Comments</h4>
+<blockquote>
+<p>
+The data source must support transactions.
+</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<hr />
+</blockquote>
+<h3>Method disconnect</h3>
+<blockquote>
+<h4>Description</h4>
+<blockquote>
+<p>
+The disconnect method provides a way to perform an explicit disconnect
+of the data source.
+</p>
+</blockquote>
+<h4>Synopsis</h4>
+<pre>
+<b>disconnect</b>()
+</pre>
+<h4>Return Value</h4>
+<blockquote>
+<p>
+None
+</p>
+</blockquote>
+<h4>Exceptions</h4>
+<blockquote>
+<p>
+None
+</p>
+</blockquote>
+<h4>Comments</h4>
+<blockquote>
+<p>
+If no explicit disconnect is made, then the connection is terminated when
+the connection object is destroyed.
+</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<hr />
+</blockquote>
+<h2>Error Messages</h2>
+<p>
+As far as possible all error messages will contain the <b>SQLSTATE</b>
+and a text message describing the error. 
+</p>
+<p>
+For example:
+</p>
+<pre>
+pyodb.ConnectError: Failed to connect to the data source (08S01:Communication link failure)
+</pre>
+</p>
+<br />
+<br />
+<br />
+<table width="100%">
+<tr>
+<td align="left"><p>Revision: 1.0</p></td>
+<td align="right"><p>Date: 10th August 2006</p></td>
+</tr>
+</table>
+</body>
+</html>

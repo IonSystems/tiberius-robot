@@ -1,0 +1,30 @@
+PyODB is an ODBC Python module. It presents a simplified interface to the
+unixODBC API allowing users to connect to one or more data sources, execute 
+raw SQL commands and fetch the results of queries. The Python unixODBC 
+bindings were created using SWIG (http://www.swig.org).
+
+Requirements:
+	python - http://www.python.org
+	unixODBC - http://www.unixodbc.org
+	database - any that supports unixODBC (PostgreSQL, Informix, etc)
+
+Build:
+	Check the settings of runtime_library_dirs and library_dirs 
+	in the setup.py:
+
+	runtime_library_dirs - location of the unixODBC runtime library
+	library_dirs - location of the unixODBC library
+
+	Run command: python setup.py build
+
+Install:
+	Run command: python setup.py install (as root)
+
+Usage:
+	See the sample code in example.py and read the quickstart.html
+
+Hopefully this is enough information to get started.
+
+Neil Moses (ndmoses@ntlworld.com)
+
+22th July 2009
