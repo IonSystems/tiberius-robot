@@ -56,7 +56,7 @@ ROOT_URLCONF = 'web_interface.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'web_interface/templates'), 'web_interface/templates', 'users/templates', 'dashboard/templates'],
+        'DIRS': [os.path.join(BASE_DIR, 'web_interface/templates/color-admin')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
