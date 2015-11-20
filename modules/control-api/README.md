@@ -1,0 +1,3 @@
+# Control API
+## Introduction
+The control API will run on a Raspberry Pi, on Tiberius. The API will allow connections from the Android application, web interface and other modules seeking control of Tiberius. All control MUST pass through the API in order to keep track of who and what has current control. Only one controlling connection is allowed at once, to prevent conflicting control. Other connections are allowed, but any control requests are ignored, non-controlling users can request sensor data and other non-controlling requests. Non-controlling connections may ask for control, and access will be transferred to that connection, if a valid control key is provided.
