@@ -42,3 +42,7 @@ def validate_params(req, resp, resource, params):
     if req.content_type not in ALLOWED_IMAGE_TYPES:
         msg = 'Image type not allowed. Must be PNG, JPEG, or GIF'
         raise falcon.HTTPBadRequest('Bad request', msg)
+
+if __name__ == '__main__':
+    httpd = simple_server.make_server('127.0.0.1', 8000, app)
+    httpd.serve_forever()
