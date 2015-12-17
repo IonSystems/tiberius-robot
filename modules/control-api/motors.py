@@ -25,7 +25,7 @@ class MotorResource(object):
         if('left' in req.params):
             speed = int(req.params['left'])
             self.motor_control.setSpeedPercent(speed)
-            motor_control.turnLeft()
+            self.motor_control.turnLeft()
             resp.body = '{"status":{"motors": "left"}}'
         elif('right' in req.params):
             speed = int(req.params['right'])
