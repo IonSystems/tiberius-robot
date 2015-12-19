@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'control',
+    'missionplanner'
 )
 
 MIDDLEWARE_CLASSES = (
