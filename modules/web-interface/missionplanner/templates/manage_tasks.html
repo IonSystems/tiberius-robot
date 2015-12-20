@@ -1,0 +1,142 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<head>
+	{% include "head.html" %}
+	<title>Manage Tasks</title>
+
+</head>
+<body>
+	<!-- begin #page-loader -->
+	<div id="page-loader" class="fade"><span class="spinner"></span></div>
+	<!-- end #page-loader -->
+
+	<!-- begin #page-container -->
+	<div id="page-container" class="fade in page-sidebar-fixed page-header-fixed">
+		<!-- begin #header -->
+		<div id="header" class="header navbar navbar-default navbar-fixed-top">
+			{% include "top_bar_populated.html" %}
+		</div>
+		<!-- end #header -->
+
+		<!-- begin #sidebar -->
+		<div id="sidebar" class="sidebar">
+			{% include "sidebar.html" %}
+		</div>
+		<div class="sidebar-bg"></div>
+		<!-- end #sidebar -->
+
+		<!-- begin #content -->
+		<div id="content" class="content">
+			<!-- begin breadcrumb -->
+			<ol class="breadcrumb pull-right">
+				<li><a href="javascript:;">Home</a></li>
+				<li><a href="javascript:;">Mission Planner</a></li>
+				<li><a href="active">Manage Tasks</a></li>
+			</ol>
+			<!-- end breadcrumb -->
+			<!-- begin page-header -->
+			<h1 class="page-header">Manage Tasks <small>for the greater good</small></h1>
+			<!-- end page-header -->
+
+			<!-- begin row -->
+			<div class="row">
+			    <!-- begin col-2 -->
+			    <div class="col-md-2">
+			        <h5>
+			            Key features include:
+			        </h5>
+                    <ul class="p-l-25 m-b-15">
+                        <li>Extend your responsive design to HTML tables</li>
+                        <li>Full control over column visibility at breakpoints, or automatic visibility</li>
+                        <li>Collapsed information from the table shown in a child row</li>
+                        <li>Seamlessly integrates with DataTables (v1.10.1 or newer required)</li>
+                        <li>Works with Bootstrap, Foundation and other responsive CSS frameworks</li>
+                    </ul>
+                    <p class="m-b-20">
+                        <a href="http://www.datatables.net/extensions/responsive/" target="_blank" class="btn btn-inverse btn-sm">View Official Website</a>
+			        </p>
+			    </div>
+			    <!-- end col-2 -->
+			    <!-- begin col-10 -->
+			    <div class="col-md-10">
+			        <!-- begin panel -->
+                    <div class="panel panel-inverse">
+                        <div class="panel-heading">
+                            <div class="panel-heading-btn">
+                                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
+                                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-reload"><i class="fa fa-repeat"></i></a>
+                                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
+                                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-danger" data-click="panel-remove"><i class="fa fa-times"></i></a>
+                            </div>
+                            <h4 class="panel-title">DataTable - Responsive</h4>
+                        </div>
+                        <div class="alert alert-warning fade in">
+                            <button type="button" class="close" data-dismiss="alert">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            In the modern world of responsive web design tables can often cause a particular problem for designers due to their row based layout. Responsive is an extension for DataTables that resolves that problem by optimising the table's layout for different screen sizes through the dynamic insertion and removal of columns from the table.
+                        </div>
+                        <div class="panel-body">
+                            <table id="data-table" class="table table-striped table-bordered nowrap" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Supported Platforms</th>
+                                        <th>Estimated Duration</th>
+                                        <th>Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+																	 {% for task in tasks %}
+	                                    <tr class="gradeU">
+	                                        <td>{{ task.name }}</td>
+	                                        <td>{{ task.description }}</td>
+	                                        <td>-</td>
+	                                        <td>-</td>
+	                                        <td>U</td>
+	                                    </tr>
+																		{% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- end panel -->
+                </div>
+                <!-- end col-10 -->
+            </div>
+            <!-- end row -->
+		</div>
+		<!-- end #content -->
+
+        <!-- begin theme-panel -->
+        <div class="theme-panel">
+            {% include "theme_panel.html" %}
+        </div>
+        <!-- end theme-panel -->
+
+		<!-- begin scroll to top btn -->
+		<a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top fade" data-click="scroll-top"><i class="fa fa-angle-up"></i></a>
+		<!-- end scroll to top btn -->
+	</div>
+	<!-- end page container -->
+
+	{% include "script.html" %}
+	<script src="{% static 'color-admin/plugins/DataTables/media/js/jquery.dataTables.js' %}"></script>
+	<script src="{% static 'color-admin/plugins/DataTables/media/js/dataTables.bootstrap.min.js' %}"></script>
+	<script src="{% static 'color-admin/plugins/DataTables/extensions/Responsive/js/dataTables.responsive.min.js' %}"></script>
+	<script src="{% static 'color-admin/js/table-manage-responsive.demo.min.js' %}"></script>
+	<script src="{% static 'color-admin/js/apps.min.js' %}"></script>
+
+	<script>
+		$(document).ready(function() {
+			App.init();
+			TableManageResponsive.init();
+		});
+	</script>
+</body>
+</html>

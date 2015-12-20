@@ -4,6 +4,7 @@ from django.template import RequestContext, loader
 from django.contrib.auth.decorators import login_required
 
 from .models import Mission
+from .models import Task
 
 @login_required(login_url='/users/login/')
 def manage(request):
@@ -12,6 +13,16 @@ def manage(request):
     missions = Mission.objects.all()
     context = RequestContext(request, {
         'missions': missions,
+    })
+    return HttpResponse(template.render(context))
+
+@login_required(login_url='/users/login/')
+def manage_tasks(request):
+
+    template = loader.get_template('manage_tasks.html')
+    tasks = Task.objects.all()
+    context = RequestContext(request, {
+        'tasks': tasks,
     })
     return HttpResponse(template.render(context))
 

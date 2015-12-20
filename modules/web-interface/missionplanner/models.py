@@ -2,7 +2,7 @@ from django.db import models
 
 from django.contrib.auth.models import User
 
-from control.models import TiberiusRobot
+from fleet.models import Robot
 
 class Waypoint(models.Model):
     latitude = models.DecimalField(max_digits=9, decimal_places=6)
@@ -12,6 +12,7 @@ class Waypoint(models.Model):
 class Task(models.Model):
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=50, null = True)
+    supported_platforms = models.ManyToManyField(Robot, related_name = "task_supported_platforms")
 
 '''
     A mission is a collection of MissionAssignments.
@@ -19,8 +20,12 @@ class Task(models.Model):
 class Mission(models.Model):
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=500, null = True)
+
+    #The creator of the mission
     creator = models.ForeignKey(User, on_delete=models.CASCADE, default = '0')
-    robot = models.ForeignKey(TiberiusRobot, on_delete=models.CASCADE, default = '0')
+
+    #The robot the mision is assigned to
+    robot = models.ForeignKey(Robot, on_delete=models.CASCADE, default = '0')
     #tasks = models.ManyToManyField(Task, through='MissionAssignment')
     #waypoints = models.ManyToManyField(Waypoint, through='MissionAssignment')
 

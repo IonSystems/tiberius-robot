@@ -39,7 +39,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'control',
     'missionplanner',
-    'users'
+    'users',
+    'fleet',
 )
 
 MIDDLEWARE_CLASSES = (
