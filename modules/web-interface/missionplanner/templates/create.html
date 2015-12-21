@@ -60,7 +60,7 @@
 		                            <h4 class="panel-title">Form Wizards</h4>
 		                        </div>
 		                        <div class="panel-body">
-		                            <form action="/" method="POST">
+		                            <form action="create" method="POST">
 																	{% csrf_token %}
 										<div id="wizard">
 											<ol>
@@ -92,6 +92,7 @@
 															<div class="form-group">
 																<label>Mission Name</label>
 																{{ form.name }}
+																{{ form.name.errors }}
 															</div>
 		                                                </div>
 		                                                <!-- end col-4 -->
@@ -100,6 +101,7 @@
 															<div class="form-group">
 																<label>Mission Description</label>
 																{{ form.description }}
+																{{ form.description.errors }}
 															</div>
 		                                                </div>
 		                                                <!-- end col-4 -->
@@ -119,6 +121,7 @@
 															<div class="form-group">
 																<label>Supported Platforms</label>
 																{{ form.supported_platforms }}
+																{{ form.supported_platforms.errors }}
 															</div>
 		                                                </div>
 		                                                <!-- end col-6 -->
@@ -140,6 +143,7 @@
 		                                                        <label>Scheduled Start Time</label>
 		                                                        <div class="controls">
 		                                                            {{ form.scheduled_start }}
+																																{{ form.scheduled_start.errors }}
 		                                                        </div>
 		                                                    </div>
 		                                                </div>

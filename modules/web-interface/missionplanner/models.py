@@ -22,13 +22,13 @@ class Mission(models.Model):
     description = models.CharField(max_length=500, null = True)
 
     #The creator of the mission
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, default = '0')
+    #creator = models.ForeignKey(User, on_delete=models.CASCADE, default = '0')
 
     #The robot the mision is assigned to
-    robot = models.ForeignKey(Robot, on_delete=models.CASCADE, default = '0')
+    #robot = models.ForeignKey(Robot, on_delete=models.CASCADE, default = '0')
     supported_platforms = models.ManyToManyField(Robot, related_name = "mission_supported_platforms")
 
-    estimated_duration = models.DurationField()
+    #estimated_duration = models.DurationField()
 
     scheduled_start = models.DateTimeField(auto_now=False, auto_now_add=False)
 

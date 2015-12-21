@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+
 from django.template import RequestContext, loader
 from django.contrib.auth.decorators import login_required
 
@@ -38,7 +39,11 @@ def create(request):
             # process the data in form.cleaned_data as required
             # ...
             # redirect to a new URL:
-            return HttpResponseRedirect('/plotting/')
+            form.save()
+            return render(request, 'create.html', {'form': form})
+
+        else:
+            return render(request, 'create.html', {'form': form})
 
     # if a GET (or any other method) we'll create a blank form
     else:
