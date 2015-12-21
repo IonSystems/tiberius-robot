@@ -28,13 +28,13 @@ def send_control_request(request):
             response = r.text
         except ConnectionError:
             response = "ConnectionError"
-    if request.POST.get('forward'):
+    elif request.POST.get('forward'):
         try:
             r = requests.get('http://10.113.211.251:8000/motors?forward=50')
             response = r.text
         except ConnectionError:
             response = "ConnectionError"
-    if request.POST.get('backward'):
+    elif request.POST.get('backward'):
         try:
             r = requests.get('http://10.113.211.251:8000/motors?backward=50')
             response = r.text
