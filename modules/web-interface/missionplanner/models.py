@@ -26,8 +26,12 @@ class Mission(models.Model):
 
     #The robot the mision is assigned to
     robot = models.ForeignKey(Robot, on_delete=models.CASCADE, default = '0')
-    #tasks = models.ManyToManyField(Task, through='MissionAssignment')
-    #waypoints = models.ManyToManyField(Waypoint, through='MissionAssignment')
+    supported_platforms = models.ManyToManyField(Robot, related_name = "mission_supported_platforms")
+
+    estimated_duration = models.DurationField()
+
+    scheduled_start = models.DateTimeField(auto_now=False, auto_now_add=False)
+
 
 
 '''
