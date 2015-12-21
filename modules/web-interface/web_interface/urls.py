@@ -23,4 +23,6 @@ urlpatterns = [
     url(r'^control/', include('control.urls')),
     url(r'^users/', include('users.urls')),
     url(r'^dashboard/', include('dashboard.urls')),
+    url(r'^missionplanner/', include('missionplanner.urls')),
+    url(r'^fleet/', include('fleet.urls')),
 ]

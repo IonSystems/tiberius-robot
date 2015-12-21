@@ -1,3 +1,4 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
 <!--[if !IE]><!-->
@@ -62,6 +63,7 @@
 	<!-- end page container -->
 
 	{% include "script.html" %}
+	<script src="{% static 'color-admin/js/apps.min.js' %}"></script>
 
 	<script>
 		$(document).ready(function() {

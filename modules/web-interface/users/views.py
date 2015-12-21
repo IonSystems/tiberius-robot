@@ -9,6 +9,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def index(request):
@@ -34,7 +35,7 @@ def login(request):
 
     return render_to_response('login.html', {"form": form}, context)
 
-
+@login_required(login_url='/users/login/')
 def logout(request):
     context = RequestContext(request)
     auth.logout(request)
@@ -52,6 +53,11 @@ def register(request):
     return render(request, "register.html", {
         'form': form,
     })
+@login_required(login_url='/users/login/')
+def profile(request):
+    user = request.user
+    context = RequestContext(request)
+    return render_to_response('profile.html', {'user' : user}, context)
 # def change_password(request):
 #     form = ChangePasswordForm()
 #     u = User.objects.get(username='john')
