@@ -1,4 +1,6 @@
-from control.control import Control
+import sys
+sys.path.insert(0, "../../control")
+from control import Control
 c = Control()
 if __name__ == "__main__":
 	try:
@@ -6,6 +8,6 @@ if __name__ == "__main__":
 		c.turnRight90Degrees()
 		c.driveStraight(50, 15)
 		c.turnRight90Degrees()
-		
+
 	except KeyboardInterrupt:
 		c.motors.stop()

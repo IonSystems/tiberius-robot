@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(0, '../control')
+sys.path.insert(0, '../../control')
 
 from control import Control
 import time

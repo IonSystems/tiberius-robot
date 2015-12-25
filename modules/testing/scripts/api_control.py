@@ -1,13 +1,12 @@
 import sys
-sys.path.insert(0, '../control')
-sys.path.insert(0, '../logger')
+sys.path.insert(0, '../../logger')
 from logger import logger as logger
 import logging
-d_logger = logging.getLogger('tiberius.testing.keyboard_control')
-from control import Control
+d_logger = logging.getLogger('tiberius.testing.api_control')
 import tty, termios, time
+import urllib2
 
-c = Control()
+
 
 def getKey():
         fd = sys.stdin.fileno()
@@ -20,6 +19,8 @@ def getKey():
         return ch
 
 if __name__ == "__main__":
+
+    motors_url = "http://10.113.211.251:8000/motors"
     while(True):
 
         key = getKey()
@@ -28,30 +29,23 @@ if __name__ == "__main__":
             c.motors.stop()
             sys.exit(0)
         elif(key == 'w'):
-            c.motors.setSpeedPercent(50)
-            c.motors.moveForward()
+            urllib2.urlopen(motors_url + "?forward=50").read()
         elif(key == 'W'):
-            c.motors.setSpeedPercent(100)
-            c.motors.moveForward()
+            urllib2.urlopen(motors_url + "?forward=100").read()
         elif(key == 'a'):
-            c.motors.setSpeedPercent(40)
-            c.motors.turnLeft()
+            urllib2.urlopen(motors_url + "?left=40").read()
         elif(key == 'A'):
-            c.motors.setSpeedPercent(100)
-            c.motors.turnLeft()
+            urllib2.urlopen(motors_url + "?left=100").read()
         elif(key == 's'):
-            c.motors.setSpeedPercent(50)
-            c.motors.moveBackward()
+            urllib2.urlopen(motors_url + "?backward=50").read()
         elif(key == 'S'):
-            c.motors.setSpeedPercent(100)
-            c.motors.moveBackward()
+            urllib2.urlopen(motors_url + "?backward=100").read()
         elif(key == 'd'):
-            c.motors.setSpeedPercent(50)
-            c.motors.turnRight()
+            urllib2.urlopen(motors_url + "?right=40").read()
         elif(key == 'D'):
-            c.motors.setSpeedPercent(100)
-            c.motors.turnRight()
+            urllib2.urlopen(motors_url + "?right=100").read()
         elif(key == ' '):
-	    c.motors.stop()
+	    urllib2.urlopen(motors_url + "?stop=true").read()
             time.sleep(0.1)
+
         #c.motors.stop()

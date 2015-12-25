@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(0, '../logger')
+sys.path.insert(0, '../../logger')
 #import logger.logger as logger
 from logger import logger as logger
 import logging

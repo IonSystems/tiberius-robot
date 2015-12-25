@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(0, '../control')
+sys.path.insert(0, '../../control')
 
 from control import Control
 import tty, termios, time
@@ -16,7 +16,7 @@ def getKey():
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
         return ch
-    
+
 if __name__ == "__main__":
     while(True):
 
@@ -54,5 +54,3 @@ if __name__ == "__main__":
             time.sleep(0.1)
 #	elif(key == None):
 	     c.motors.stop()
-        
-
