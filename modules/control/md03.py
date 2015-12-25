@@ -10,6 +10,7 @@ sys.path.insert(0, '../logger')
 #import logger.logger as logger
 from logger import logger as logger
 import logging
+from enum import Enum
 
 class MotorDriver:
 	'''Motor Driver'''
@@ -23,8 +24,32 @@ class MotorDriver:
 		self.debug = debug
 		self.inverted = inverted
 
-		self.current_register = 0x05
+		self.direction_register = 0x00
 		self.status_register = 0x01
+		self.speed_register = 0x02
+		self.accel_register = 0x03
+		self.temp_register = 0x04
+		self.current_register = 0x05
+
+	class Direction(Enum):
+		NONE = 0
+		FORWARD = 1
+		BACKWARD = 2
+
+	def direction(self):
+		# 1 = forwards, 2 = reverse
+		direction = self.bus.read_byte_data(self.address, self.direction_register)
+		return direction
+
+	def temperature(self):
+		temp = self.bus.read_byte_data(self.address, self.temp_register)
+		#TODO work out degrees
+		return temp
+
+	'''Gets the current speed of the motor -255 to 255'''
+	def speed(self):
+		speed = self.bus.read_byte_data(self.address, self.speed_register)
+		return speed
 
 	'''Returns a current value between 0(0A) and 186(20A)'''
 	def current(self):
@@ -63,44 +88,55 @@ class MotorDriver:
 			self.logger.warn('Speed parameter out of range.')
 		return speed
 
-		def accel_restrict(self, accel):
-			r = self.check_range(0, 255, accel)
-			if r > 0:
-				accel = 255
-				self.logger.warn('Acceleration parameter out of range.')
-			elif r < 0:
-				accel = 0
-				self.logger.warn('Acceleration parameter out of range.')
-			return accel
+	def accel_restrict(self, accel):
+		r = self.check_range(0, 255, accel)
+		if r > 0:
+			accel = 255
+			self.logger.warn('Acceleration parameter out of range.')
+		elif r < 0:
+			accel = 0
+			self.logger.warn('Acceleration parameter out of range.')
+		return accel
 
+	'''
+		NOTE: Ensure rear facing motors are wired opposite from the rest.
+	'''
 	def move(self, speed, accel):
 		try:
 			if ((speed<-255) or (speed>255)):
-				print 'Speed parameter out of range.'
-				return 0
+				raise OutOfRangeError('Speed parameter out of range.')
 
 			if ((accel<0) or (accel>255)):
-				print 'Acceleration parameter out of range.'
-				return 0
+				raise OutOfRangeError('Acceleration parameter out of range.')
 
-			self.bus.write_byte_data(self.address,3,accel)
-			if (speed>=0):
-				if (self.debug): print speed
-				self.bus.write_byte_data(self.address,2,int(speed))
-				#the way the motors are installed on the robot
-				#0x59 and 0x5B go forward when receive reverse command
-				if ((self.address==0x58) or (self.address==0x5A)):
-					self.bus.write_byte_data(self.address,0,1)
-				if ((self.address==0x59) or (self.address==0x5B)):
-					self.bus.write_byte_data(self.address,0,2)
-			if (speed<0):
-				if (self.debug): print speed
-				self.bus.write_byte_data(self.address,2,int(-speed))
-				if ((self.address==0x58) or (self.address==0x5A)):
-					self.bus.write_byte_data(self.address,0,2)
-				if ((self.address==0x59) or (self.address==0x5B)):
-					self.bus.write_byte_data(self.address,0,1)
-			return 1
+			#Set acceleration, must be done before direction register.
+			self.bus.write_byte_data(self.address, self.accel_register, accel)
+
+			if speed == 0:
+				#Make sure to set speed and acceleration before issuing direction
+				# to ensure the motors don't start turning in the wrong direction
+				self.bus.write_byte_data(self.address, self.speed_register,speed)
+				self.bus.write_byte_data(self.address, self.direction_register, self.Direction.NONE.value)
+
+			#If we want to go forward, set direction reg to 1
+			elif (speed > 0):
+				#Make sure to set speed and acceleration before issuing direction
+				# to ensure the motors don't start turning in the wrong direction
+				self.bus.write_byte_data(self.address, self.speed_register,speed)
+				self.bus.write_byte_data(self.address, self.direction_register, self.Direction.FORWARD.value)
+
+			#If we want to go backward, set direction register to 2
+			elif (speed < 0):
+				#Make sure to set speed and acceleration before issuing direction
+				# to ensure the motors don't start turning in the wrong direction
+				self.bus.write_byte_data(self.address, self.speed_register,-speed)
+				self.bus.write_byte_data(self.address, self.direction_register, self.Direction.BACKWARD.value)
 
 		except IOError, e:
 			self.logger.warn('IO error on I2C bus, address %s (%s)', hex(self.address), e)
+
+	class OutOfRangeError(Exception):
+		def __init__(self, value):
+			self.value = values
+		def __str__(self):
+			return repr(value)

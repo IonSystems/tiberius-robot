@@ -26,9 +26,9 @@ class Motor:
 
 	def moveForward(self):
 		self.front_left.move(self.speed, self.accel)
-	        self.rear_left.move(self.speed, self.accel)
-        	self.front_right.move(self.speed, self.accel)
-   		self.rear_right.move(self.speed, self.accel)
+		self.rear_left.move(self.speed, self.accel)
+		self.front_right.move(self.speed, self.accel)
+		self.rear_right.move(self.speed, self.accel)
 
 	def moveBackward(self):
 		self.front_left.move(-self.speed, self.accel)
