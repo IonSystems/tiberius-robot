@@ -1,10 +1,9 @@
 import unittest
 import time
 import os
-
-#TODO: rename module or something
-from control.control import Control
-
+import sys
+sys.path.insert(0, '../control')
+from control import Control
 c = Control()
 stop_distance = 20
 
@@ -30,7 +29,7 @@ class DriveForwardUntilWall(unittest.TestCase):
 
 		#Cannot take any more than 30 seconds
 		#self.assertLess(count, 300)
-		
+
 class DriveBackwardUntilWall(unittest.TestCase):
 	'''Drive backward in a straight line until an obsacle is detected from the front ultrasonic sensor.'''
 	@unittest.skipUnless(os.uname()[4].startswith("arm") , "requires Raspberry Pi")
@@ -50,12 +49,12 @@ class DriveBackwardUntilWall(unittest.TestCase):
 
 def turnTo(desired_bearing):
 	while(True):
-		
+
 		actual_bearing = c.compass.headingNormalized()
 		error = actual_bearing - desired_bearing
 		print 'Heading: ' + str(actual_bearing)
 		print 'Desired: ' + str(desired_bearing)
-		 
+
 		if(error == 0):
 			print 'At heading: ' + str(actual_bearing)
 			c.motors.stop()
@@ -74,14 +73,14 @@ def turnTo(desired_bearing):
 			c.motors.turnRight(50)
 		print str(error)
 
-			
-		
+
+
 class TurnRight90Degrees(unittest.TestCase):
 	'''Turn on the spot, clockwise until Tiberius has rotated 90 degrees.'''
 	@unittest.skipUnless(os.uname()[4].startswith("arm") , "requires Raspberry Pi")
 	def runTest(self):
 		old_bearing = c.compass.headingNormalized()
-		 
+
 		desired_bearing = (old_bearing + 90)
 		while(True):
 			if(desired_bearing > 180):
@@ -90,22 +89,22 @@ class TurnRight90Degrees(unittest.TestCase):
 				desired_bearing += 360
 			if(desired_bearing > -180 and desired_bearing < 180):
 				break
-		print desired_bearing	
-		c.turnTo(desired_bearing)		
-		c.turnTo(desired_bearing)		
-		
+		print desired_bearing
+		c.turnTo(desired_bearing)
+		c.turnTo(desired_bearing)
+
 		#Cannot take any less than 1 second
 		#self.assertGreater(time, 10)
 
 		#Cannot take any more than 6 seconds
 		#self.assertLess(time, 60)
-		
+
 class TurnLeft90Degrees(unittest.TestCase):
 	'''Turn on the spot, anti-clockwise until Tiberius has rotated 90 degrees.'''
 	@unittest.skipUnless(os.uname()[4].startswith("arm") , "requires Raspberry Pi")
 	def runTest(self):
 		old_bearing = c.compass.headingNormalized()
-		 
+
 		desired_bearing = (old_bearing - 90)
 		while(True):
 			if(desired_bearing > 180):
@@ -113,10 +112,10 @@ class TurnLeft90Degrees(unittest.TestCase):
 			if(desired_bearing < -180):
 				desired_bearing += 360
 			if(desired_bearing < 180 and desired_bearing > -180):
-				break		
-		print desired_bearing	
-		c.turnTo(desired_bearing)		
-		c.turnTo(desired_bearing)		
+				break
+		print desired_bearing
+		c.turnTo(desired_bearing)
+		c.turnTo(desired_bearing)
 		#Cannot take any less than 1 second
 		#self.assertGreater(time, 10)
 
@@ -137,9 +136,9 @@ if  __name__ =='__main__':
 		#d.runTest()
 	#c.motors.turnRight(30)
 	#time.sleep(1)
-	
+
 	#c.motors.stop()
-	
+
 #	while(True):
 #		d = DriveForwardUntilWall()
 #		d.runTest()
