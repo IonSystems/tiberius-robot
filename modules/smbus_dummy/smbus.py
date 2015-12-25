@@ -28,7 +28,7 @@ sys.path.insert(0, '../logger')
 #import logger.logger as logger
 from logger import logger as logger
 import logging
-
+import smbus_database as db
 from util import validate
 
 class SMBus(object):
@@ -103,8 +103,9 @@ class SMBus(object):
 
         Perform SMBus Read Byte Data transaction.
         """
+        value = db.get_value(addr, cmd)
         self.logger.info('Read byte data (%s, %s)', addr, cmd)
-        return 0
+        return value
 
     @validate(addr=int, cmd=int, val=int)
     def write_byte_data(self, addr, cmd, val):
@@ -112,6 +113,7 @@ class SMBus(object):
 
         Perform SMBus Write Byte Data transaction.
         """
+        db.set_value(addr, cmd, val)
         self.logger.info('Write byte data (%s, %s, %s)', addr, cmd, val)
 
     @validate(addr=int, cmd=int)
@@ -177,6 +179,7 @@ class SMBus(object):
 
         Perform I2C Block Read transaction.
         """
+        #value = get_value()
         self.logger.info('I2C read block data (%s, %s, %s)', addr, cmd, len)
         return 0
 
