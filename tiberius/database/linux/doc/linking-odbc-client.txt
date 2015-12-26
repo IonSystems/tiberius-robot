@@ -1,0 +1,71 @@
+-------------------------------------------------------------------------------
+--                       P O L Y H E D R A
+--                   Copyright (C) 2006-2014 by Enea Software AB
+-------------------------------------------------------------------------------
+--    Filename      : linking-odbc-client.txt
+--    Description   : How to link an ODBC client executable.
+--    Author        : Don More
+--
+--    CVSID         : $Id: linking-odbc-client.txt,v 1.16 2014/08/27 07:08:16 andy Exp $
+--
+-------------------------------------------------------------------------------
+
+Linking an ODBC client Executable
+=================================
+
+Notes
+-----
+
+An ODBC client is built from your code and a number of Polyhedra object
+files and libraries.
+
+The POLYHEDRAVERSION/PLATFORM/TARGET/COMPILER/lib directory contains the
+object files and libraries.
+
+Since the libraries contain C++ code, ensure that the linking is
+performed with the C++ compiler. e.g. Use g++ when using the
+gcc compiler.
+
+When compiling a client, the include files in POLYHEDRAVERSION/include should
+be available. e.g.
+
+gcc -c -I ~/POLYHEDRAVERSION/include active.c
+
+In addition, the files in POLYHEDRAVERSION/examples/clients/perform should
+be available when compiling a client which is under that directory. e.g.
+
+gcc -c -I ~/POLYHEDRAVERSION/include -I ~/POLYHEDRAVERSION/examples/clients/perform perform.c
+
+For 64-bit, compile with -DSIXTYFOURBIT.
+
+Components For Link Command
+---------------------------
+
+Note the order of the object files and libraries IS important.
+
+YOUR OBJECTS    : Place before Polyhedra object files and libraries.
+polyposix.o     : Implementation of embedded interface - may be replaced.
+polylinx.o      : Include on Linux platform to support the optional LINX transport.
+-lpolyodbc      : Required.
+-ldbbase        : Required.
+-lpat           : Required.
+-lmem           : Include to use tailored Polyhedra implementation of new/delete.
+-lnomem         : Include to use own versions of new/delete.
+-ldl		: Required on Linux platforms that support the optional SSL transport.
+-lpthread	: Required to provide threading functionality.
+-lsocket        : Required on Solaris to provide socket functionality.
+-lnsl           : Required on Solaris to provide gethostbyaddr functionality.
+-lrt            : Required to provide threading/semaphore functionality.
+-llinx          : Include on Linux to support the optional LINX transport.
+
+Examples
+--------
+
+This command links the example ODBC client active taken from
+POLYHEDRAVERSION/examples/clients/active/odbc.
+
+g++ -L ~/POLYHEDRAVERSION/PLATFORM/TARGET/COMPILER/lib -o odbcactive active.o ~/POLYHEDRAVERSION/PLATFORM/TARGET/COMPILER/lib/polyposix.o -lpolyodbc -ldbbase -lpat -lnomem -ldl -lpthread -lrt
+
+-------------------------------------------------------------------------------
+--                        E n d   o f   f i l e
+-------------------------------------------------------------------------------

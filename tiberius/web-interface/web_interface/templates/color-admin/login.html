@@ -1,0 +1,74 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<head>
+	{% include "head.html" %}
+  <title>Login</title>
+</head>
+<body class="pace-top">
+	<!-- begin #page-loader -->
+	<div id="page-loader" class="fade in"><span class="spinner"></span></div>
+	<!-- end #page-loader -->
+
+	<!-- begin #page-container -->
+	<div id="page-container" class="fade">
+	    <!-- begin login -->
+        <div class="login bg-black animated fadeInDown">
+            <!-- begin brand -->
+            <div class="login-header">
+                <div class="brand">
+                    <span class="logo"></span> Tiberius Web Interface
+                    <small>explore, monitor, plan, discover</small>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-sign-in"></i>
+                </div>
+            </div>
+            <!-- end brand -->
+            <div class="login-content">
+                <form method="POST" class="margin-bottom-0">
+                    {% csrf_token %}
+                    <div class="form-group m-b-20">
+                        {{ form.username }}
+                    </div>
+                    <ul class="errors">
+                      {{ form.username.errors}}
+                    </ul>
+                    <div class="form-group m-b-20">
+                      {{ form.password }}
+                    </div>
+                    <ul class="errors">
+                      {{ form.password.errors}}
+                    </ul>
+                    <ul class="errors">
+                      {{ form.non_field_errors }}
+                    </ul>
+                    <div class="checkbox m-b-20">
+                        <label>
+                            <input type="checkbox" /> Remember Me
+                        </label>
+                    </div>
+                    <div class="login-buttons">
+                        <button type="submit" class="btn btn-success btn-block btn-lg">Sign me in</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- end login -->
+
+	</div>
+	<!-- end page container -->
+
+	{% include "script.html" %}
+	<script src="{% static 'color-admin/js/apps.min.js' %}"></script>
+
+	<script>
+		$(document).ready(function() {
+			App.init();
+		});
+	</script>
+</body>
+</html>

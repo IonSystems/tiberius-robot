@@ -1,0 +1,1118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- ----------------------------------------------------------------------+-//
+-------------------------------------------------------------------------------
+--     P O L Y H E D R A   P E R F O R M A N C E   T E S T   L I B R A R Y
+--               Copyright (C) 2005-2014 by Enea Software AB
+-------------------------------------------------------------------------------
+//	
+//-+ Description : Polyhedra timer tests - a description and some results.
+//			
+//-+ CVSID : $Id: perform.htm,v 1.8 2014/01/06 14:49:02 andy Exp $
+//
+//-+----------------------------------------------------------------------- -->
+
+<HTML>
+<HEAD>
+  <TITLE>Polyhedra Performance tests</TITLE>
+  <META content="text/html" http-equiv=Content-Type>
+</HEAD>
+
+<BODY bgColor="#ffffff">
+
+<P>
+<CENTER>
+
+  <HR>
+  <H1>Some Simple Polyhedra IMDB Performance tests</H1>
+  <HR>
+  
+
+</CENTER>
+
+
+<P> This report describes a set of tests that have been carried out to 
+measure the performance of a previous release (version 8.1) of the Polyhedra in-memory DBMS.  
+The tests cover basic operations, such as queries, inserts, updates and 
+deletions.  
+
+<P> Performance results from the released software can be found on the <A HREF="http://support.polyhedra.com/8.2/perform.htm">Polyhedra Support website</A>
+
+<P>
+The main test results can be summarised as follows, with the figures representing the 
+average number of records inserted, updated, deleted or queried per second, when 
+both the client and server are on the same <A NAME="table">machine</A>:
+
+<P>
+<CENTER>
+  <TABLE CELLPADDING="2" CELLSPACING="2" BORDER="0">
+
+    <TR BGCOLOR="LIGHTSKYBLUE">
+      <TH COLSPAN="2" ROWSPAN="4"><FONT SIZE="+2">Polyhedra<sup>&reg;&nbsp;</sup>IMDB<BR>performance<BR>tests</FONT>
+      <TH COLSPAN="4"><A HREF="#asterisk">Performance,*</A> records affected or 
+      retrieved per second
+        <!-- colspan above should match number of platforms, see next 3 rows... -->
+        <TH ROWSPAN="4">name of test
+        
+    <TR BGCOLOR="LIGHTSKYBLUE">
+     
+      <TH COLSPAN="4"><EM>AMD Athlon64</EM>
+      
+    
+    <TR BGCOLOR="LIGHTSKYBLUE">
+      
+      <TH COLSPAN="4"><A HREF="#amd64">Athlon64 3000+</A>
+      
+    <TR BGCOLOR="LIGHTSKYBLUE">
+    
+      <!-- Ideq -->
+      <TH><A HREF="#amd64_windows">Windows XP</A><BR>&nbsp;
+      <TH><A HREF="#amd64_linux">Linux (32-bit)</A><BR>&nbsp;
+      <TH><A HREF="#amd64_linux64">Linux (64-bit)</A><BR>&nbsp;
+      <TH><A HREF="#amd64_linux64">Linux (64-bit)</A><BR>Polyhedra64
+
+    <TR BGCOLOR="LIGHTSKYBLUE">
+      <TH WIDTH="100" ROWSPAN="3"><A HREF="#insert">Inserting records</A>
+
+        <TD WIDTH="200">Simple inserts
+        <!-- Ideq -->
+        <TD ALIGN="RIGHT"><CODE> 10 325 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 24 691 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 22 989 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 22 472 </CODE>
+        <TH><A HREF="#simpleinsert">I5</A>
+            
+    <TR BGCOLOR="LIGHTSKYBLUE">
+        <TD WIDTH="200">Simple inserts of larger records
+        <!-- Ideq -->
+        <TD ALIGN="RIGHT"><CODE>  6 700 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 12 121 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 11 628 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 12 422 </CODE>
+        <TH><A HREF="#largeinserts">I50</A>
+    
+    <TR BGCOLOR="LIGHTSKYBLUE">
+        <TD WIDTH="200">Simple batched inserts
+        <!-- Ideq -->
+        <TD ALIGN="RIGHT"><CODE>91 324 </CODE>
+        <TD ALIGN="RIGHT"><CODE>142 857 </CODE>
+        <TD ALIGN="RIGHT"><CODE>142 857 </CODE>
+        <TD ALIGN="RIGHT"><CODE>166 667 </CODE>
+        <TH><A HREF="#batchedinserts">I5B</A>
+
+    <TR BGCOLOR="LIGHTSKYBLUE">
+      <TH ROWSPAN="3" WIDTH="100"><A HREF="#queries">Querying the database</A>
+
+        <TD WIDTH="200">Retrieving one record by an indexed value
+        <!-- Ideq -->
+        <TD ALIGN="RIGHT"><CODE>  9 079 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 21 739 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 20 833 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 19 608 </CODE>
+        <TH><A HREF="#simplequery">Q5</A>
+
+    <TR BGCOLOR="LIGHTSKYBLUE">
+        <TD WIDTH="200">Retrieving a large record by an indexed value
+        <!-- Ideq -->
+        <TD ALIGN="RIGHT"><CODE>  6 066 </CODE>
+        <TD ALIGN="RIGHT"><CODE>  9 569 </CODE>
+        <TD ALIGN="RIGHT"><CODE>  9 662 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 10 526 </CODE>
+        <TH><A HREF="#largequery">Q50</A>
+
+    <TR BGCOLOR="LIGHTSKYBLUE">
+        <TD WIDTH="200">Retrieving multiple records per query
+        <!-- Ideq -->
+        <TD ALIGN="RIGHT"><CODE> 64 103 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 83 333 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 83 333 </CODE>
+        <TD ALIGN="RIGHT"><CODE>105 263 </CODE>
+        <TH><A HREF="#multiquery">Q5B</A>
+
+    <TR BGCOLOR="LIGHTSKYBLUE">
+      <TH ROWSPAN="3" WIDTH="100"><A HREF="#updates">Updating records in the database</A>
+        <TD WIDTH="200">Updating one record identified by an indexed value
+        <!-- Ideq -->
+        <TD ALIGN="RIGHT"><CODE> 10 677 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 22 727 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 21 053 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 21 053 </CODE>
+        <TH><A HREF="#simpleupdate">U5</A>
+
+    <TR BGCOLOR="LIGHTSKYBLUE">
+        <TD WIDTH="200">Updating many attributes of a record identified by an indexed 
+        value
+        <!-- Ideq -->
+        <TD ALIGN="RIGHT"><CODE>  6 918 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 11 050 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 10 870 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 11 696 </CODE>
+        <TH><A HREF="#largeupdate">U50</A>
+
+    <TR BGCOLOR="LIGHTSKYBLUE">
+        <TD WIDTH="200">Updating multiple records
+        <!-- Ideq -->
+        <TD ALIGN="RIGHT"><CODE>  98 522 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 117 647 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 125 000 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 142 857 </CODE>
+        <TH><A HREF="#batchedupdates">U5B</A>
+      
+    <TR BGCOLOR="LIGHTSKYBLUE">
+      <TH ROWSPAN="3" WIDTH="100"><A HREF="#deletes">Deleting from the database</A>
+
+        <TD WIDTH="200">Deleting individual records
+        <!-- Ideq -->
+        <TD ALIGN="RIGHT"><CODE> 11 325 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 26 316 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 24 390 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 24 390 </CODE>
+        <TH><A HREF="#simpledelete">D5</A>
+
+    <TR BGCOLOR="LIGHTSKYBLUE">
+        <TD WIDTH="200">Deleting multiple records
+        <!-- Ideq -->
+        <TD ALIGN="RIGHT"><CODE> 183 486 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 250 000 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 250 000 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 285 714 </CODE>
+        <TH><A HREF="#batcheddeletes">D5B</A>
+
+  </TABLE>
+</CENTER>
+
+<P> <STRONG><A NAME="asterisk"><SUP>*</SUP></A> Some notes on the 
+results.</STRONG> 
+<p><ul><li>In these tests, the larger the number, the better the 
+performance!  
+
+<p><li>The figures given are for the best-available transport for client-server 
+communications. 
+Polyhedra supports TCP/IP for client-server communications on all platforms 
+(both for local communications and for connections to remote servers), but on selected
+platforms additional tranport protocols can be used - for example, on Linux and Unix
+platforms Unix sockets can be used to connect to local servers, and on 
+Linux and OSE Linx can be used to connect to local and remote servers.
+Using a platform-specific transport usually gives better results for small 
+interactions, but makes only a small difference where transport and 
+process switching costs are less significant - for example, where batching 
+is used.  
+
+<P><li>As in many parts of Europe a comma is used to separate off the 
+fractional part of a number, instead of representing a value such as 
+285714 in the British fashion as 285,714 (which could be confused by some 
+readers with the value 285.714), a space is used to separate of the 
+'thousands', viz: 285 714.  
+
+<P><li>Except where explicitly indicated, all performance were run using the 
+32-bit version of Polyhedra IMDB, not Polyhedra64 IMDB.  The tests measure ELAPSED 
+time, including the time spent in the client and the inter-process 
+communication, and so are a fair measurement of the actual performance 
+that can be achieved on a single-processor machine with all operations 
+serialised.  
+
+<P><li><STRONG>Please note in particular</STRONG> that while the figures in 
+this document record actual results achieved in a test run, the exact 
+values depend on the machine configuration, other activity in the machine 
+and the granularity of the system clock.  Consequently, even on the same 
+machine, they can vary from run to run by more than 10%.  The figures 
+given in this document are thus only indicative, and should not be taken 
+as performance guarantees!  
+</ul>
+
+<!-- ----------------------------------------------------------------------- -->
+<!-- ----------------------------------------------------------------------- -->
+
+<P>
+<HR>
+<H1><A NAME="basic">Basic database operations</A></H1>
+<HR>
+<P>
+
+We first look at the basic operations which are repeatedly used in 
+realtime applications, the speed of which can affect the overall 
+performance of the system: simple alterations and queries.  (More complex 
+operations are considered in the following sections, including the 
+interactions of features of the database management system.) 
+
+<P> In each of the tests described in this section, the following <A 
+NAME="basicschema">schema</A> 
+
+is used:
+
+<UL>
+  <UL>
+    <P>
+    <PRE>create table test1
+( persistent
+, ID    integer primary key
+, COL2  real
+, COL3  real
+, COL4  integer
+, COL5  integer
+);
+
+create table test2
+( persistent
+, ID    integer primary key
+, COL2  real
+, COL3  real
+, COL4  integer
+, COL5  integer
+, ..
+, COL50 integer
+); </PRE>
+  </UL>
+</UL>
+
+<P>
+Each test starts with an empty database, and creates and populates the tables as 
+needed for the test; at the end of the test, the tables are dropped, leaving the 
+database in an empty state (ready for another test). The time taken for the 
+client to connect to the database and set it up ready for the test is not 
+included in the test timings.
+
+<P> No journalling or fault tolerance is being performed - these topics 
+will eventually be covered in a later section, as will be a comparison 
+between the speed benefits of the various APIs.  
+
+<P> In the test descriptions, mention is made of 'the required number' of 
+insertions, updates, etc.; on most platforms, the value of 5 000 is 
+appropriate, being enough so that the time taken for the measured part of 
+each test is sufficiently long to allow meaningful estimates of 
+performance.  This number is also sufficiently small that the complete 
+test suite does not take too long, and that the memory usage does not rule 
+out running the test suite on small machines.  For flexibility, the test 
+suite is designed to allow alternative values to be passed in via 
+command-line parameters, for use on machines at either end of the 
+size/performance spectrum - so for a fast PC, 20&nbsp;000 is suitable, 
+where for a low-power embedded computer 1 000 would be sufficient.  
+Note that issues of scaleability - viz., does performance deteriorate as 
+the database size increases - are specifically addressed by the test 
+suite.  (Where the a repeat count is too small, an individual test may be 
+completed in too-few clock ticks an accurate value, giving rise to figures 
+that are 'round' or simple fractions of a round figure (for example, 
+25&nbsp;000 and 16&nbsp;666).  The timing figures are calculated erring on 
+the side of caution, and thus repeating the test with a larger repeat 
+count normally yields a higher figure.) 
+
+</P>
+<!-- ----------------------------------------------------------------------- -->
+<P>
+<HR WIDTH="50%" ALIGN="LEFT">
+<H2><A NAME="insert">Inserting records</A></H2>
+
+<P>
+This test is in a number of parts, examining the effect of record size, 
+transaction batching, and database size.  Each part is performed independently, 
+each setting up the database as needed and tidying up afterwards.
+<!-- ----------------------------------------------------------------------- -->
+
+<P>
+<HR WIDTH="50%" ALIGN="LEFT">
+<H3><A NAME="simpleinsert">I5</A>: Simple inserts</H3>
+
+<P>
+<B>Purpose of the test:</B> to determine how fast a simple client can insert 
+records into the database, with no batching of the inserts into larger 
+transactions.
+
+<P>
+<B>Details of the test:</B>The client connects to an empty database, creates 
+then table it needs, and then performs the following actions:
+
+<P>
+<UL>
+  <LI>
+    it records the time;
+  <LI>
+    it runs through a loop inserting a number of records, one per transaction, and 
+    using SQL of the form: <CODE>
+    <UL>
+      insert into test1 (ID,COL2,COL3,COL4,COL5) values (&lt;i&gt;, 2.0, 3.0, 4, 5)
+    </UL>
+    </CODE> ... where <CODE>&lt;i&gt;</CODE> is the iteration count, and all 5 
+    attribute values will be passed from client to the server for every insertion (either 
+    as parameters or embedded in the SQL string).
+  <LI>
+    it determines the elapsed time, and prints out the average number of insertions 
+    per second.
+  <LI>
+    finally, it drops the table and closes the connection.
+</UL>
+
+<P>See the <A HREF="#table">main table</A> at the front of this document for information about some results achieved on this test.
+
+<!-- ----------------------------------------------------------------------- -->
+<P>
+<HR WIDTH="50%" ALIGN="LEFT">
+<H3><A NAME="largeinserts">I50</A>: Simple inserts of larger records</H3>
+
+<P>
+<B>Purpose of the test:</B> to determine the degree to which the insert rate 
+depends on the amount of data that is specified by the client (by comparing the 
+figures for this subtest with the figures of the previous subtest).
+<P>
+<B>Details of the test:</B> The client connects to an empty database, creates 
+the table it needs, and then performs the following actions:
+
+<P>
+<UL>
+  <LI>
+    it records the time;
+  <LI>
+    it runs through a loop inserting a number of records, one per transaction, using 
+    SQL of the form:<CODE>
+    <UL>
+      insert into test2 (ID,COL2,COL3,COL4,COL5, ...,COL50) values (&lt;i&gt;, 2.0, 3.0, 4, 5, ..., 50)
+    </UL>
+    </CODE> ... where <CODE>&lt;i&gt;</CODE> is the iteration count, and all 50 
+    attribute values will be passed from client to the server for every insertion (either 
+    as parameters or embedded in the SQL string).
+  <LI>
+    it determines the elapsed time, and prints out the average number of insertions 
+    per second.
+  <LI>
+    finally, it drops the table and closes the connection.
+</UL>
+
+<P>See the <A HREF="#table">main table</A> at the front of this document for information about some results achieved on this test.
+
+<!-- ----------------------------------------------------------------------- -->
+<P>
+<HR WIDTH="50%" ALIGN="LEFT">
+<H3><A NAME="batchedinserts">I5B: Simple batched inserts</A></H3>
+
+<P>
+<B>Purpose of the test:</B> to determine the improvement that can be gained by 
+batching multiple inserts into larger transactions, thereby reducing the 
+transactional overhead and the number of client-server interactions.
+
+<P>
+<B>Details of the test:</B> The client connects to an empty database, create the 
+table it needs, and then performs the following actions:
+
+<P>
+<UL>
+  <LI>
+    it records the time;
+  <LI>
+    it runs through a loop, performing one transaction each time, each inserting 100 
+    records, using SQL of the form:
+    <UL>
+      <PRE>insert into test1(ID, COL2,COL3,COL4,COL5) values (&lt;i&gt;,2.0,3.0,4,5)</PRE>
+    </UL>
+    ... where &lt;i&gt; is the number of records inserted so far, and all 5 
+    attribute values will be passed from client to the server for every insertion (either 
+    as parameters or embedded in the SQL string). This process is repeated until the 
+    required number of records have been inserted.
+
+  <LI>
+    it determines the elapsed time, and prints out the average number of insertions 
+    per second.
+  <LI>
+    finally, it drops the table and closes the connection.
+</UL>
+
+<P>
+The expectation is that the insert rate will be significantly better than the 
+corresponding figures from the first subtest of this set, where one record was 
+being inserted per transaction. 
+See the <A HREF="#table">main table</A> at the front of this document for information about some results achieved on this test.
+
+<!-- ----------------------------------------------------------------------- -->
+<P>
+<HR WIDTH="50%" ALIGN="LEFT">
+<H3><A NAME="populatedinserts">I5P: Inserts into a populated table</A></H3>
+
+<P> Purpose of the test: to determine whether there is a significant 
+performance degradation if one is inserting into a populated table, when 
+compared with the performance when the table is empty.  
+
+<P><B>Details of the test:</B> The client connects to an empty database, 
+and creates the table it needs; it then performs the following actions: 
+
+<P>
+<UL>
+  <LI>
+    it creates 10 times the required number of records (in batches, for speed);
+  <LI>
+    it records the time;
+  <LI>
+    it runs through a loop inserting the required number of records, one per 
+    transaction, and using SQL of the form:<CODE>
+    <UL>
+      insert into test1 (ID,COL2,COL3,COL4,COL5) values (&lt;i&gt;,2.0,3.0,4,5)
+    </UL>
+    </CODE> ... where <CODE>&lt;i&gt;</CODE> is the number of records inserted so 
+    far, and all 5 attribute values will be passed from client to the server for 
+    every insertion (either as parameters or embedded in the SQL string).
+  <LI>
+    it determines the elapsed time for the above stage, and prints out the average 
+    number of insertions per second.
+  <LI>
+    finally, it drops the table and closes the connection.
+</UL>
+<P>
+The expectation is that the results produced will be approximately the same as 
+the result produce by the first subtest of this set, where individual records 
+were being inserted in a table that was initially empty; any differences are 
+likely to be caused by the granularity of the system clock, or be the result of 
+other work being performed by the computer running the test.
+
+<P>
+<UL>
+  <TABLE CELLPADDING="2" CELLSPACING="2" BORDER="0">
+
+    <TR BGCOLOR="LIGHTSKYBLUE">
+      <TH ROWSPAN=5>I5P
+      
+      <TH COLSPAN="4"><A HREF="#asterisk">Performance,*</A> records affected or 
+      retrieved per second
+        <!-- colspan above should match number of platforms, see next 3 rows... -->
+        
+    <TR BGCOLOR="LIGHTSKYBLUE">
+     
+      <TH COLSPAN="4"><EM>AMD Athlon64</EM>
+      
+    
+    <TR BGCOLOR="LIGHTSKYBLUE">
+      
+      <TH COLSPAN="4"><A HREF="#amd64">Athlon64 3000+</A>
+      
+    <TR BGCOLOR="LIGHTSKYBLUE">
+      <TH><A HREF="#amd64_windows">Windows XP</A><BR>&nbsp;
+      <TH><A HREF="#amd64_linux">Linux (32-bit)</A><BR>&nbsp;
+      <TH><A HREF="#amd64_linux64">Linux (64-bit)</A><BR>&nbsp;
+      <TH><A HREF="#amd64_linux64">Linux (64-bit)</A><BR>Polyhedra64
+      
+
+    <TR BGCOLOR="LIGHTSKYBLUE">
+
+        <!-- Ideq -->
+        <TD ALIGN="RIGHT"><CODE> 10 325 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 23 810 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 21 978 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 21 978 </CODE>
+            
+  </TABLE>
+</UL>
+
+
+<!-- ----------------------------------------------------------------------- -->
+<!-- ----------------------------------------------------------------------- -->
+<P>
+<HR WIDTH="50%" ALIGN="LEFT">
+<H2><A NAME="queries">Querying the database</A></H3>
+
+<P>
+Whilst in many cases the use of the Polyhedra active query mechanism can avoid 
+or reduce the need to launch specific queries to retrieve the current values in 
+a given record, there will be cases where - for simplicity of coding, or to 
+retrieve supplementary information, say - a client will during its lifetime make 
+large numbers of queries to retrieve up to date data. This test is in a number 
+of parts, examining the effect of record size, transaction batching, and 
+database size. Each use the same table as the earlier, insert tests (as 
+described at the
+
+<A HREF="#basicschema">start</A>
+
+of this section).
+
+<!-- ----------------------------------------------------------------------- -->
+
+<P>
+<HR WIDTH="50%" ALIGN="LEFT">
+<H3><A NAME="simplequery">Q5: Retrieving one record by an indexed value</A></H2>
+
+
+<P>
+<B>Purpose of the test:</B> to determine how fast individual records can be 
+retrieved from a Polyhedra server.
+<P>
+
+<B>Details of the test:</B>
+
+The client connects to an empty database, and creates the table it needs, which 
+it then populates with 1 000 records; the records will have consecutive ID 
+numbers, from 1 upwards, and the other 4 attributes will hold non-null values (the 
+actual values in these attributes is immaterial for this test).
+
+The client then performs the following actions:
+
+<P>
+<UL>
+  <LI>
+    it records the time;
+  <LI>
+    it runs through a loop retrieving the COL2, COL3, COL4 and COL5 attributes of a 
+    chosen record, using SQL of the form:<CODE>
+    <UL>
+      select COL2,COL3,COL4,COL5 from test1 where ID=&lt;i&gt;
+    </UL>
+    </CODE> ...  where <CODE>&lt;i&gt;</CODE> is 1 plus the iteration count modulo 
+    1000.  The loop will be repeated for the number of times specified by a command 
+    line argument.
+  <LI>
+    it determines the elapsed time, and prints out the average number of retrievals 
+    per second.
+  <LI>
+    finally, it drops the table and closes the connection.
+</UL>
+
+<P>See the <A HREF="#table">main table</A> at the front of this document for information about some results achieved on this test.
+
+<!-- ----------------------------------------------------------------------- -->
+<P>
+<HR WIDTH="50%" ALIGN="LEFT">
+<H3><A NAME="largequery">Q50: Retrieving a larger record by an indexed value</A></H3>
+
+<P>
+<B>Purpose of the test:</B> to determine how retrieval speed is affected when 
+the record being returned has more data.
+<P>
+
+<B>Details of the test:</B>
+
+The client connects to an empty database, and creates the table it needs, which 
+it then populates with 1 000 records; the records will have consecutive ID 
+numbers, from 1 upwards, and the other 49 attributes will hold non-null values (the 
+actual values in these attributes is immaterial for this test).
+
+The client then performs the following actions:
+
+<P>
+<UL>
+  <LI>
+    it records the time;
+  <LI>
+    it runs through a loop retrieving all 50 attributes of a chosen record, using 
+    SQL of the form:<CODE>
+    <UL>
+      select COL2,COL3,COL4,COL5,...,COL50 from test2 where ID=&lt;i&gt;
+    </UL>
+    </CODE> ...  where <CODE>&lt;i&gt;</CODE> is 1 plus the iteration count modulo 
+    1000.  The loop will be repeated for the number of times specified by a command 
+    line argument.
+  <LI>
+    it determines the elapsed time, and prints out the average number of retrievals 
+    per second.
+  <LI>
+    finally, it drops the table and closes the connection.
+</UL>
+
+<P>See the <A HREF="#table">main table</A> at the front of this document for information about some results achieved on this test.
+
+
+<!-- ----------------------------------------------------------------------- -->
+<P>
+<HR WIDTH="50%" ALIGN="LEFT">
+<H3><A NAME="multiquery">Q5B: Retrieving multiple records</A></H3>
+
+<P>
+<B>Purpose of the test:</B> to determine how retrieval speed is affected when 
+multiple records are being returned per request.
+<P>
+
+<B>Details of the test:</B>
+
+The client connects to an empty database, and creates the table it needs, which 
+it then populates with 1 000 records; the records will have consecutive ID 
+numbers, from 1 upwards, and the COL2, COL3, COL4 and COL5 attributes will hold 
+non-null values.
+
+The client then performs the following actions:
+
+<P>
+<UL>
+  <LI>
+    it records the time;
+  <LI>
+    it runs through a loop retrieving 5 attributes from 50 records at a time, using 
+    SQL of the form:<CODE>
+    <UL>
+      select ID,COL2,COL3,COL4,COL5 from test1 where id in (...)</CODE>
+    </UL>
+    The client code will retrieve but not store the results of the query. The loop 
+    will be repeated 20 times (more often on faster machines).
+  <LI>
+    it determines the elapsed time, and prints out the average number of record 
+    retrievals per second (e.g., 50 times the average number of queries performed 
+    per second, as each retrieves 50 records).
+  <LI>
+    finally, it drops the table and closes the connection.
+</UL>
+
+<P>See the <A HREF="#table">main table</A> at the front of this document for information about some results achieved on this test.
+
+
+<!-- ----------------------------------------------------------------------- -->
+<!-- ----------------------------------------------------------------------- -->
+<P>
+<HR WIDTH="50%" ALIGN="LEFT">
+<H2><A NAME="updates">Updating the database</A></H3>
+
+<P>
+Apart from queries - the need for which can be obviated in many applications by 
+the use of Polyhedra's active query mechanism - the most common operation in 
+most embedded applications will be to update one or more records in a 
+transaction.
+
+This test is in a number of parts, examining the effect of record size, 
+transaction batching, and database size.  Each part uses the same table as the 
+earlier, insert tests (as described at the
+
+<A HREF="#basicschema">start</A>
+
+of this section).
+<!-- ----------------------------------------------------------------------- -->
+<P>
+<HR WIDTH="50%" ALIGN="LEFT">
+<H3><A NAME="simpleupdate">U5: Updating one record identified by an indexed 
+value</A></H2>
+
+
+<P>
+<B>Purpose of the test:</B> to determine how fast individual records can be 
+updated in a Polyhedra server.
+<P>
+
+<B>Details of the test:</B>
+
+The client connects to an empty database, and creates the table it needs, which 
+it then populates with 1 000 records; the records will have consecutive ID 
+numbers, from 1 upwards, and the COL2, COL3, COL4 and COL5 attributes will hold 
+non-null values.
+
+The client then performs the following actions:
+
+<P>
+<UL>
+  <LI>
+    it records the time;
+  <LI>
+    it runs through a loop updating the COL2, COL3, COL4 and COL5 attributes of a 
+    chosen record, using SQL of the form:<CODE>
+    <UL>
+      update test1
+      <UL>
+        set COL2=&lt;val2&gt;, COL3=&lt;val3&gt;, COL4=&lt;val4&gt;, COL5=&lt;val5&gt;
+
+        <BR>
+        where ID=&lt;i&gt;
+      </UL>
+    </UL>
+    </CODE> ...  where <CODE>&lt;i&gt;</CODE> is 1 plus the iteration count modulo 
+    1000, and &lt;val2&gt; to &lt;val5&gt; will each be set to 200&nbsp;000 plus the 
+    iteration count. The loop will be repeated for the required number of times, to 
+    enable a meaningful estimate of the average time to be determined.
+  <LI>
+    it determines the elapsed time, and prints out the average number of updates per 
+    second.
+  <LI>
+    finally, it drops the table and closes the connection.
+</UL>
+
+<P>See the <A HREF="#table">main table</A> at the front of this document for information about some results achieved on this test.
+
+
+<!-- ----------------------------------------------------------------------- -->
+<P>
+<HR WIDTH="50%" ALIGN="LEFT">
+<H3><A NAME="largeupdate">U50: Updating many fields of a record identified by an 
+indexed value</A></H2>
+
+<P>
+<B>Purpose of the test:</B> to determine how fast many attributes of individual 
+records can be updated in a Polyhedra server.
+<P>
+
+<B>Details of the test:</B>
+
+The client connects to an empty database, and creates the table it needs, which 
+it then populates with 1 000 records; the records will have consecutive ID 
+numbers, from 1 upwards, and the other 49 attributes will hold non-null values (the 
+actual values in these attributes is immaterial for this test).
+
+The client then performs the following actions:
+
+<P>
+<UL>
+  <LI>
+    it records the time;
+  <LI>
+    it runs through a loop updating the COL2, COL3, COL4, ... COL50 attributes of a 
+    chosen record, using SQL of the form:<CODE>
+    <UL>
+      update test2
+      <UL>
+        set COL2=&lt;val2&gt;, COL3=&lt;val3&gt;, COL4=&lt;val4&gt;, ..., COL50=&lt;val50&gt;
+        <BR>
+        where ID=&lt;i&gt;
+      </UL>
+    </UL>
+    </CODE> ...  where <CODE>&lt;i&gt;</CODE> is 1 plus the iteration count modulo 
+    1000, and &lt;val2&gt; to &lt;val50&gt; will each be set to a value that will 
+    differ from that already in the record being updated. The loop will be repeated 
+    for the required number of times, to enable a meaningful estimate of the 
+    performance to be made.
+  <LI>
+    it determines the elapsed time, and prints out the average number of updates per 
+    second.
+  <LI>
+    finally, it drops the table and closes the connection.
+</UL>
+
+<P>See the <A HREF="#table">main table</A> at the front of this document for information about some results achieved on this test.
+
+
+<!-- ----------------------------------------------------------------------- -->
+<P>
+<HR WIDTH="50%" ALIGN="LEFT">
+<H3><A NAME="batchedupdates">U5B: Simple batched updates</A></H3>
+
+<P>
+<B>Purpose of the test:</B> to determine the improvement that can be gained by 
+batching multiple updates into larger transactions, thereby reducing the 
+transactional overhead and the number of clint-server interactions.
+
+<P>
+<B>Details of the test:</B>
+
+The client connects to an empty database, and creates the table it needs, which 
+it then populates with 1000 records; the records will have consecutive ID 
+numbers, from 1 upwards, and the COL2, COL3, COL4 and COL5 attributes will hold 
+non-null values.
+
+The client then performs the following actions:
+
+<P>
+<UL>
+  <LI>
+    it records the time;
+  <LI>
+    it runs through a loop, performing one transaction each time, each updating 50 
+    records, using SQL of the form:<CODE>
+    <UL>
+      update test1
+      <UL>
+        set COL2=&lt;val2&gt;, COL3=&lt;val3&gt;, COL4=&lt;val4&gt;, COL5=&lt;val5&gt;
+
+        <BR>
+        where ID=&lt;i&gt;
+      </UL>
+    </UL>
+    </CODE> ...  where <CODE>&lt;i&gt;</CODE> is 1 plus the number of records 
+    updated so far modulo 1000, and &lt;val2&gt; to &lt;val5&gt; will each be set to 
+    a value that will differ from that already in the record being updated. This 
+    process is repeated until the required number of records have been updated, to 
+    enable a meaningful estimate of the performance to be made.
+
+  <LI>
+    it determines the elapsed time, and prints out the average number of records 
+    updated per second.
+
+  <LI>
+    finally, it drops the table and closes the connection.
+</UL>
+
+<P> The expectation is that the update rate will be significantly better 
+than the corresponding figures from the first test of this set, where one 
+record was being updated per transaction.  See the <A HREF="#table">main 
+table</A> at the front of this document for information about some results 
+achieved on this test.  
+
+
+<!-- ----------------------------------------------------------------------- -->
+<!-- ----------------------------------------------------------------------- -->
+<P>
+<HR WIDTH="50%" ALIGN="LEFT">
+<H2><A NAME="deletes">Deleting from the database</A></H3>
+
+<P>
+In real-time databases, deleting records is often not as common as updating 
+records, but in some applications the normal mode of operation will have 
+individual records being created and deleted rapidly rather than being updated. 
+For this reason, it is important that simple record deletion is fast.
+
+This test is in a number of parts, examining the effect of transaction batching, 
+and database size.  Each part uses the same table as the earlier, insert tests (as 
+described at the
+
+<A HREF="#basicschema">start</A>
+
+of this section).
+<!-- ----------------------------------------------------------------------- -->
+
+<P>
+<HR WIDTH="50%" ALIGN="LEFT">
+<H3><A NAME="simpledelete">D5: Deleting one record identified by an indexed 
+value</A></H2>
+
+
+<P>
+<B>Purpose of the test:</B> to determine how fast individual records can be 
+deleted in a Polyhedra server.
+<P>
+
+<B>Details of the test:</B>
+
+The client connects to an empty database, and creates the table it needs, which 
+it then populates with the required number of records; the records will have 
+consecutive ID numbers, from 1 upwards, and the COL2, COL3, COL4 and COL5 
+attributes will hold non-null values.
+
+The client then performs the following actions:
+
+<P>
+<UL>
+  <LI>
+    it records the time;
+  <LI>
+    it runs through a loop deleting individual records, using SQL of the form:<CODE>
+    <UL>
+      delete from test1 where ID=&lt;x&gt;
+    </UL>
+    </CODE> ...  where <CODE>&lt;x&gt;</CODE> iterates through the records created 
+    earlier in the test, until all are deleted.
+  <LI>
+    it determines the elapsed time, and prints out the average number of updates per 
+    second.
+  <LI>
+    finally, it drops the table and closes the connection.
+</UL>
+
+<P>See the <A HREF="#table">main table</A> at the front of this document for information about some results achieved on this test.
+
+
+<!-- ----------------------------------------------------------------------- -->
+<P>
+<HR WIDTH="50%" ALIGN="LEFT">
+<H3><A NAME="batcheddeletes">D5B: Simple batched deletions</A></H3>
+
+<P>
+<B>Purpose of the test:</B> to determine the improvement that can be gained by 
+batching multiple deletions into larger transactions, thereby reducing the 
+transactional overhead and the number of client-server interactions.
+
+<P>
+<B>Details of the test:</B>
+
+The client connects to an empty database, and creates the table it needs, which 
+it then populates with the required number of records; the records will have 
+consecutive ID numbers, from 1 upwards - the state of the other attributes is 
+immaterial for this test. The client then performs the following actions:
+
+<P>
+<UL>
+  <LI>
+    it records the time;
+  <LI>
+    it runs through a loop, performing one transaction each time, each deleting 50 
+    records. This process is repeated until all the records previously created have 
+    been deleted.
+
+  <LI>
+    it determines the elapsed time, and prints out the average number of records 
+    deleted per second.
+  <LI>
+    finally, it drops the table and closes the connection.
+</UL>
+
+<P>
+The expectation is that the deletion rate will be significantly better than the 
+corresponding figures from the first subtest of this set, where one record was 
+being deleted per transaction.
+
+<!-- ----------------------------------------------------------------------- -->
+<P>
+<HR WIDTH="50%" ALIGN="LEFT">
+<H3><A NAME="populateddelete">D5P: Deleting one record identified by an indexed 
+value from a table with a large number of records</A></H2>
+
+
+<P>
+<B>Purpose of the test:</B> to determine whether deletion time is significantly 
+affected by the number of records in the table.
+<P>
+
+<B>Details of the test:</B>
+
+The client connects to an empty database, and creates the table it needs, which 
+it then populates with 10 times the number of records for which we will be timing the deletion; the records will 
+have consecutive ID numbers, from 1 upwards, with the state of the other 
+attributes being immaterial for this test.
+
+
+<P>
+The required number of records is then created in a similar fashion as a second 
+step. The client then performs the following actions:
+<P>
+<UL>
+  <LI>
+    it records the time;
+  <LI>
+    it runs through a loop deleting individual records that were created in the 
+    second step, using SQL of the form:<CODE>
+    <UL>
+      delete from test1 where ID=&lt;x&gt;
+    </UL>
+    </CODE> ...  where <CODE>&lt;x&gt;</CODE> iterates through the records created 
+    during the second step of the test, until all are deleted.
+  <LI>
+    it determines the elapsed time, and prints out the average number of updates per 
+    second.
+  <LI>
+    finally, it drops the table and closes the connection.
+</UL>
+
+<P>
+The expectation is that the deletion rate will be approximately the same as the 
+corresponding figures from the first deletion test, where the database table was 
+relatively empty; this would indicate that the table size does not affect the 
+speed of deleting records when the record can be identified through an index.
+
+<P>
+<UL>
+  <TABLE CELLPADDING="2" CELLSPACING="2" BORDER="0">
+
+    <TR BGCOLOR="LIGHTSKYBLUE">
+      <TH ROWSPAN=5>D5P
+      
+      <TH COLSPAN="4"><A HREF="#asterisk">Performance,*</A> records affected or 
+      retrieved per second
+        <!-- colspan above should match number of platforms, see next 3 rows... -->
+        
+    <TR BGCOLOR="LIGHTSKYBLUE">
+     
+      <TH COLSPAN="4"><EM>AMD Athlon64</EM>
+      
+    
+    <TR BGCOLOR="LIGHTSKYBLUE">
+      
+      <TH COLSPAN="4"><A HREF="#amd64">Athlon64 3000+</A>
+      
+    <TR BGCOLOR="LIGHTSKYBLUE">
+        <!-- Ideq -->
+      <TH><A HREF="#amd64_windows">Windows XP</A><BR>&nbsp;
+      <TH><A HREF="#amd64_linux">Linux (32-bit)</A><BR>&nbsp;
+      <TH><A HREF="#amd64_linux64">Linux (64-bit)</A><BR>&nbsp;
+      <TH><A HREF="#amd64_linux64">Linux (64-bit)</A><BR>Polyhedra64
+      
+
+    <TR BGCOLOR="LIGHTSKYBLUE">
+
+        <!-- Ideq -->
+        <TD ALIGN="RIGHT"><CODE> 10 406 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 26 316 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 24 390 </CODE>
+        <TD ALIGN="RIGHT"><CODE> 24 096 </CODE>
+            
+  </TABLE>
+</UL>
+
+<!-- ----------------------------------------------------------------------- -->
+<!-- ----------------------------------------------------------------------- -->
+<P>
+<HR>
+<H1><A NAME="platforms">Appendix: the platforms used for testing</A></H1>
+<HR>
+
+Listed below is a description of the machines that were used to produce 
+the test results in the main body of the report.  For each machine, 
+information is given about its processor, memory, the version of the 
+operating system used, and other information we had available that might 
+have had an affect on performance.  We have also listed some performance 
+indexes gleaned by running a simple C-coded test program on the machine; a 
+copy of this can be made available on request to help in determining the 
+performance that Polyhedra should achieve on your own systems.  Note that 
+these indexes are not just influenced by the hardware but also by the 
+compilers and operating system in use; whilst it is clear that the 
+implementation of, say, the TCP/IP stack will affect the speed of 
+communications, an operating system that consumes background resources or 
+that does not enable the processor caches will affect the CPU index as 
+well.  
+
+
+<UL>
+    <!-- ----------------------------------------------------------------------- -->
+    <P>
+  <LI>
+    <B><A NAME="amd64">'AMD Athlon64 3000+'</A></B>
+
+    <P>
+    A desktop small form factor computer, with the following specification:
+    <P>
+    <UL>
+      <LI>
+        AMD Athlon64 3000+ CPU
+      <LI>
+        1024MB DDR3200
+      <LI>
+      160GB 7200rpm SATA disk drive
+    </UL>
+
+    <P>
+    Operating systems/Performance indexes:
+    <UL>
+      <P>
+      <TABLE CELLPADDING="2" CELLSPACING="2" BORDER="0">
+        <TR BGCOLOR="LIGHTSKYBLUE">
+          <TH ROWSPAN="2"><A NAME="amd64_linux">Linux/x86</A> <BR>
+            (32-bit Ubuntu 9.04 distribution, 'Jaunty Jackalope')
+            <BR>ext4 filing system
+          <TD>system clock granularity, ticks/sec
+          <TD ALIGN="RIGHT">100
+        <TR BGCOLOR="LIGHTSKYBLUE">
+          <TD>comms index, round trips/sec
+          <TD ALIGN="RIGHT">160 824
+
+        <TR BGCOLOR="LIGHTSKYBLUE">
+          <TH ROWSPAN="2"><A NAME="amd64_linux64">Linux/x86_64</A> <BR>
+            (64-bit Ubuntu 9.04 distribution, 'Jaunty Jackalope')
+            <BR>ext4 filing system
+          <TD>system clock granularity, ticks/sec
+          <TD ALIGN="RIGHT">100
+        <TR BGCOLOR="LIGHTSKYBLUE">
+          <TD>comms index, round trips/sec
+          <TD ALIGN="RIGHT">(32-bit app) 160 824<BR>
+                                       (64-bit app) 170 223
+
+        <TR BGCOLOR="LIGHTSKYBLUE">
+          <TH ROWSPAN="2"><A NAME="amd64_windows">Windows XP</A> <BR>
+            with SP3 installed, Windows Firewall disabled
+            <BR>NTFS filing system
+          <TD>system clock granularity, ticks/sec
+          <TD ALIGN="RIGHT">100
+        <TR BGCOLOR="LIGHTSKYBLUE">
+          <TD>comms index, round trips/sec
+          <TD ALIGN="RIGHT">31 297
+      </TABLE>
+    </UL>
+    
+    <P>For this machine, all tests were run with an iteration count of 20&nbsp;000.
+    
+    <!-- ----------------------------------------------------------------------- -->
+    <!-- end of platform list -->
+</UL>
+<!-- ----------------------------------------------------------------------- -->
+<P>
+<HR>
+
+  <FONT SIZE=0>
+  
+The small print: <BR>
+
+Copyright &copy;2009-2014 by Enea Software AB.  This document is not to be
+further distributed, electronically or otherwise, without the prior
+permission in writing or by email by an authorised person in
+Enea Software AB.  Whilst every effort is made to ensure the results 
+reported in this document are accurate and fair, there may still be 
+errors; additionally these figures are not to be taken as any kind of guarantee 
+as to the performance that can be achieved in a particular application.  
+  
+<BR><CENTER>$Id: perform.htm,v 1.8 2014/01/06 14:49:02 andy Exp $ </FONT></CENTER> <HR> 
+
+
+</BODY>
+</HTML>
+

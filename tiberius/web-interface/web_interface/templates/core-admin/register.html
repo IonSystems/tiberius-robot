@@ -1,0 +1,73 @@
+{% load staticfiles %}
+<!doctype html>
+<html>
+{% include "head.html" %}
+<body>
+    {% include "top_bar_plain.html" %}
+
+<div class="main-content">
+
+
+
+
+  <div class="container">
+
+
+
+  <div class="col-md-4 col-md-offset-4">
+    <div class="padded">
+      <div class="login box" style="margin-top: 80px;">
+      <div class="box-header">
+        <span class="title">Register</span>
+      </div>
+
+      <div class="box-content">
+
+        <form method = "post" class="form-horizontal fill-up validatable">
+          {% csrf_token %}
+          <div class="padded">
+
+            <div class="form-group">
+              <label class="control-label col-lg-2">Username</label>
+              <div class="col-lg-10">
+                {{ form.username }}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="control-label col-lg-2">Password</label>
+              <div class="col-lg-10">
+                {{ form.password1 }}
+                <span class="help-block note"><i class="icon-warning-sign"></i> Please use a secure password.</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="control-label col-lg-2">Confirmation</label>
+              <div class="col-lg-10">
+                {{ form.password2 }}
+              </div>
+            </div>
+
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-blue">Register</button>
+          </div>
+          <ul class="errors">
+            {{ form.error_messages }}
+          </ul>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+
+  </div>
+</div>
+
+</body>
+</html>

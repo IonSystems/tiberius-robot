@@ -1,0 +1,74 @@
+{% load staticfiles %}
+<!doctype html>
+<html>
+{% include "head.html" %}
+<body>
+    {% include "top_bar_plain.html" %}
+<div class="container">
+
+<div class="col-md-4 col-md-offset-4">
+
+
+  <div class="padded">
+    <div class="login box" style="margin-top: 80px;">
+
+      <div class="box-header">
+        <span class="title">Login</span>
+      </div>
+
+      <div class="box-content padded">
+        <form class="separate-sections" method = "post">
+            {% csrf_token %}
+          <div class="input-group addon-left">
+            <span class="input-group-addon" href="#">
+              <i class="icon-user"></i>
+            </span>
+            {{ form.username }}
+          </div>
+          <ul class="errors">
+            {{ form.username.errors}}
+          </ul>
+          <div class="input-group addon-left">
+            <span class="input-group-addon" href="#">
+              <i class="icon-key"></i>
+            </span>
+            {{ form.password }}
+          </div>
+          <ul class="errors">
+            {{ form.password.errors}}
+          </ul>
+
+          <div class = "form-actions">
+            <button type="submit"  class="btn btn-blue btn-block">
+              <span>Login</span>
+              <span class="small-circle"><i class="icon-signin"></i></span>
+            </button>
+          </div>
+          <ul class="errors">
+            {{ form.non_field_errors }}
+          </ul>
+        </form>
+
+        <div>
+          <a href="sign_up.html">
+              Don't have an account? <strong>Sign Up</strong>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <a href="#" class="btn btn-facebook btn-block"><i class="icon-facebook-sign"></i> Facebook</a>
+      </div>
+      <div class="col-md-6">
+        <a href="#" class="btn btn-twitter btn-block"><i class="icon-twitter"></i> Twitter</a>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+</body>
+</html>

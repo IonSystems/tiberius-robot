@@ -1,0 +1,102 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/background_blue"
+                tools:context="tiberius.tiberius.Manual">
+
+    <!-- *************************************** HEADER *************************************** -->
+    <TextView android:id="@+id/manual_header"
+              android:layout_width="550dp"
+              android:layout_height="80dp"
+              android:layout_centerHorizontal="true"
+              android:layout_marginTop="10dp"
+              android:text="@string/manual_header"
+              android:textStyle="italic|bold"
+              android:textSize="50sp"
+              android:textColor="@android:color/white"
+              android:gravity="center"/>
+
+    <!-- *************************************** WEBVIEW ****************************************** -->
+    <WebView android:id="@+id/webcam_manual"
+             android:layout_centerHorizontal="true"
+             android:layout_below="@id/manual_header"
+             android:layout_marginTop="15dp"
+             android:layout_width="550dp"
+             android:layout_height="380dp"></WebView>
+
+    <!-- *************************************** MENU BUTTON *************************************** -->
+    <Button android:id="@+id/menu_manual"
+            android:layout_width="110dp"
+            android:layout_height="70dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:text="@string/menu_btn"
+            android:background="@android:color/white"
+            android:onClick="goMenu"/>
+
+    <!-- *************************************** LEFT SPEED SET *************************************** -->
+    <SeekBar android:id="@+id/left_seekbar"
+        android:layout_width="300dp"
+        android:layout_height="350dp"
+        android:maxHeight="350dp"
+        android:rotation="270"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="-50dp"
+        android:max="510"
+        android:progress="255"
+        android:thumb="@drawable/seek_thumb"/>
+
+    <TextView android:id="@+id/left_speed_txt"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_above="@id/left_seekbar"
+        android:layout_marginLeft="20dp"
+        android:text="@string/left_speed"
+        android:textStyle="italic"
+        android:gravity="center"
+        android:background="@android:color/white"/>
+
+    <TextView android:id="@+id/left_speed"
+        android:layout_width="60dp"
+        android:layout_height="50dp"
+        android:layout_toRightOf="@id/left_speed_txt"
+        android:layout_alignTop="@id/left_speed_txt"
+        android:gravity="center"
+        android:background="@android:color/white"/>
+
+    <!-- *************************************** RIGHT SPEED SET *************************************** -->
+    <SeekBar android:id="@+id/right_seekbar"
+             android:layout_width="300dp"
+             android:layout_height="350dp"
+             android:maxHeight="350dp"
+             android:rotation="270"
+             android:layout_alignParentBottom="true"
+             android:layout_alignParentRight="true"
+             android:layout_marginRight="-50dp"
+             android:max="510"
+             android:progress="255"
+             android:thumb="@drawable/seek_thumb"/>
+
+    <TextView android:id="@+id/right_speed_txt"
+              android:layout_width="100dp"
+              android:layout_height="50dp"
+              android:layout_above="@id/right_seekbar"
+              android:layout_toEndOf="@id/webcam_manual"
+              android:layout_marginLeft="20dp"
+              android:text="@string/right_speed"
+              android:textStyle="italic"
+              android:gravity="center"
+              android:background="@android:color/white"/>
+
+    <TextView android:id="@+id/right_speed"
+              android:layout_width="60dp"
+              android:layout_height="50dp"
+              android:layout_toRightOf="@id/right_speed_txt"
+              android:layout_alignTop="@id/right_speed_txt"
+              android:gravity="center"
+              android:background="@android:color/white"/>
+
+</RelativeLayout>

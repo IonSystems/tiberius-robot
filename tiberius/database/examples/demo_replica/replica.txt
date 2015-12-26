@@ -1,0 +1,53 @@
+-------------------------------------------------------------------------------
+--                       P O L Y H E D R A    D E M O
+--                   Copyright (C) 2005-2014 by Enea Software AB
+-------------------------------------------------------------------------------
+--    Filename      : replica.txt
+--    Description   : description of the db_replica demo.
+--    Author        : Nigel Day
+--
+--    CVSID         : $Id: replica.txt,v 1.10 2014/01/06 14:49:02 andy Exp $
+-------------------------------------------------------------------------------
+-- NOTE: this is ILLUSTRATIVE CODE, provided on an 'as is' basis to help
+-- demonstrate one or more features of the Polyhedra product.
+-- It may well need adaption for use in a live installation, and
+-- Enea Software AB and its agents and distributors do not warrant this code.
+-------------------------------------------------------------------------------
+
+This demonstration uses the data replication feature and so is not applicable
+to all editions of Polyhedra. Please refer to the feature.txt file for a list
+of features supported by each edition of Polyhedra.
+
+This demo provides a poly.cfg file illustrating how to configure a pair of
+read-only replicas of a fault-tolerant database.
+
+Running the demo
+----------------
+
+Start demo_4 running first, then come back to this directory and run
+
+	rtrdb db3 &
+       
+... if on a Unix/Linux platform, or, on Windows,
+
+	start rtrdb db3
+	
+Now you should be able to connect to the replica using the command 
+
+	sqlc sql3
+	
+(using 'sql1' or 'sql2' in place of 'sql3' in the above will connect you 
+to the two databases of the FT pair, if running.)
+
+To demonstrate you can have more than one replica of a database service,
+you can use db4 and sql4 in place of db3 and sql3 in the above examples. 
+
+Note that it is also possible to start up a replica of a stand-alone 
+database; merely ensure that the server to be replicated had a 
+journal_service resource defined.
+  
+
+-------------------------------------------------------------------------------
+--                        E n d   o f   F i l e
+-------------------------------------------------------------------------------
+
