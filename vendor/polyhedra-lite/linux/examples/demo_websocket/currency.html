@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<!--
+//------------------------------------------------------------------------------
+// Project:	Polyhedra
+// Copyright:	Copyright (C) 1994-2015 by Enea Software AB
+//		All Rights Reserved
+// Description:	Web page for the Polyhedra Websocket example.
+//------------------------------------------------------------------------------
+-->
+
+<head>
+<meta charset="utf-8" />
+<title>Polyhedra Currency Example</title>
+
+<style type="text/css">
+body { font-family: Arial; }
+
+.fixed { font-family: "Courier"; font-size:75%}
+
+.usdollar { text-align:right; }
+
+table { border-collapse:collapse; }
+
+#currencyTable table, #currencyTable th, #currencyTable td
+{ border:1px solid black }
+
+#title { font-size:200%; }
+
+</style>
+
+</head>
+<body>
+<script language="javascript" type="text/javascript" src="currency.js"></script>
+<img align="right" src="enea-logo.png">
+<P>
+<B id="title">Polyhedra Currency Example</B>
+<P/>
+<p>This table shows the live state of the SQL query <span class="fixed">"select code, usdollar, country, name from currency"</span>. The web page shows data changes that are pushed from the Polyhedra RTRDB via a websocket client application. No polling is performed by the web page or the websocket client application.
+</p>
+<table id="currencyTable">
+  <tr><th>Code</th><th>Name</th><th>Country</th><th>US Dollar</th><th>Change</></tr>
+</table>
+<p></p>
+<hr>
+<input id="loggingButton" type="button" value="Disable Logging" onclick="toggleLogging()"/>
+<input type="button" value="Clear Log" onclick="clearLog()"/>
+
+<p>A log of the JSON-formatted messages received by the web page from the Websocket client application (websock):</p>
+<table id="logTable">
+</table>
+<hr>
+
+</body>
+</html>

@@ -1,0 +1,151 @@
+-------------------------------------------------------------------------------
+--                       P O L Y H E D R A   D E M O
+--                  Copyright (C) 2005-2015 by Enea Software AB
+-------------------------------------------------------------------------------
+--    Filename      : subscription.txt
+--    Description   : description of the subscription demo.
+--
+-------------------------------------------------------------------------------
+-- NOTE: this is ILLUSTRATIVE CODE, provided on an 'as is' basis to help
+-- demonstrate one or more features of the Polyhedra product. 
+-- It may well need adaption for use in a live installation, and
+-- Enea Software AB and its agents and distributors do not warrant this code.
+-------------------------------------------------------------------------------
+
+This demonstration uses the subscription feature and so is not
+applicable to all editions of Polyhedra. Please refer to the
+feature.txt file for a list of features supported by each edition of
+Polyhedra.
+
+This directory illustrates the subscription feature of the RTRDB. The
+subscription feature can fill a table from the contents of a table in
+a remote database and then maintain that relationship as data changes
+in the remote table. Subscriptions are configured using the
+journalsession and journalsubscription tables.
+
+
+-----------------
+RUNNING SEQUENCE:
+-----------------
+
+if you need to recreate the saved databases, issue the commands
+
+	start rtrdb empty
+	sqlc sql
+
+... if running on Windows, or
+
+	rtrdb empty &
+	sqlc sql
+
+... if running on a Unix-like platform. inside the sqlc program.
+
+Issue the commands:
+
+	include 'reset.sql';
+
+the database files will be recreated and the empty database shut down.
+
+In the instructions that follow
+
+        rtrdb XXX &
+
+should be used on Linux and Unix-like operating systems and
+
+        start rtrdb XXX
+
+should be used on Windows operating systems.
+
+Start a database containing the source data.
+
+        rtrdb london &
+
+Start the database that will subscribe to the data.
+
+        rtrdb db1 &
+
+The db1 database contains a currency table. The journalsession and
+journalsubscription tables contain entries that cause the database to
+automatically connect to the london database and link the currency
+table to the remote currency table.
+
+Check the contents by running 'active' in a separate window against db1.
+
+        active 8000
+
+Now make changes to the London database using 'animate' and see the
+changes reflected in the db1 database via 'active' in the separate
+window.
+
+        animate 8001
+
+Use sqlc to connect to db1.
+
+	sqlc sql
+
+Disable the subscription.
+
+	SQL> update journalsession set enable = false;
+	SQL> commit;
+
+Note that 'active' is not showing any changes. Restart the subscription.
+
+	SQL> update journalsession set enable = true;
+	SQL> commit;
+
+Note that 'active' is now showing changes in db1.
+
+Finally shut db1 down. Note that the london database does not
+automatically shut down. We shall use this database in the next part
+of the demonstration.
+
+	SQL> shutdown;
+
+We shall now demonstrate the aggregation of data from three sources
+into one table using subscription. Firstly start up two more source databases.
+
+	rtrdb shanghai &
+	rtrdb tokyo &
+
+Now start up the aggregating database.
+
+	rtrdb db2 &
+
+The currency table now contains the results of subscriptions to the
+shanghai, tokyo and london databases. Note the new market_id column
+that is part of the primary key of the currency table and is used to
+partition the contents of the table.
+
+The new market_id column is a foreign key to the journalsessions table
+which contains an extra market_name field to describe the remote
+database.
+
+Run the 'active' client in a separate window to view the aggregated data.
+
+	active 8000
+
+Run animate clients for different databases in a separate window.
+
+	animate 8002
+	animate 8003
+
+Note how the changes made to the different market databases appear in
+the aggregating database.
+
+
+------ FILES: ------
+
+reset.sql	-- SQL to re-create the demonstration database files.
+		   (just used for initialisation)
+london.dat	-- database save file containing data for demo.
+shanghai.dat	-- database save file containing data for demo.
+tokyo.dat	-- database save file containing data for demo.
+db1.dat		-- database save file for subscriber database.
+db2.dat		-- database save file for aggregation subscriber database.
+poly.cfg	-- config file for this demo
+
+in addition, various files from ../demo_4 are used by reset.sql.
+
+-------------------------------------------------------------------------------
+--                        E n d   o f   f i l e
+-------------------------------------------------------------------------------

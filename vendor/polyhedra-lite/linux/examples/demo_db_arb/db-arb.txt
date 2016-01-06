@@ -1,0 +1,106 @@
+-------------------------------------------------------------------------------
+--                       P O L Y H E D R A   D E M O
+--                  Copyright (C) 2005-2015 by Enea Software AB
+-------------------------------------------------------------------------------
+--    Filename      : db-arb.sql
+--    Description   : description of the db-arb demo.
+--    Author        : Nigel Day
+--
+-------------------------------------------------------------------------------
+-- NOTE: this is ILLUSTRATIVE CODE, provided on an 'as is' basis to help
+-- demonstrate one or more features of the Polyhedra product. 
+-- It may well need adaption for use in a live installation, and
+-- Enea Software AB and its agents and distributors do not warrant this code.
+-------------------------------------------------------------------------------
+
+This demonstration uses the fault-tolerance feature and so is not applicable to
+all editions of Polyhedra. Please refer to the feature.txt file for a list of
+features supported by each edition of Polyhedra.
+
+This directory illustrates the use of a database as an arbitrator for a 
+fault-tolerant configuration of Polyhedra.  In use, all three databases 
+will be running on the same machine, the demo uses the load_file_directory 
+resource for the rtrdb to make sure the snapshot files for the 
+fault-tolerant pair of servers are in separate directories: such 
+precautions are only needed when running the FT servers on separate 
+machines if the servers are actually using the same, cross-mounted 
+filesystem (via NFS, say).
+
+The CL code in dba.cl controls the arbitrator; in this case, it has been 
+adapted to allow one of the servers of the FT pair to be marked as 
+'preferred'; if it is started up as standby, then after a short while it 
+will automatically be promoted to master.  Such behaviour may not be 
+appropriate in a 'real' scenario, but is provided to show the flexibility 
+of having a CL-controlled arbitration mechanism.
+
+-----------------
+RUNNING SEQUENCE:
+-----------------
+
+if you need to recreate the saved databases, issue the commands
+
+	start rtrdb empty
+	sqlc sql
+	
+... if running on Windows, or 
+
+	rtrdb empty &
+	sqlc sql
+	
+... if running on a Unix-like platform. inside the sqlc program, issue the commands:
+
+	include 'tables.sql';
+	
+the database should now be restarted using 'start rtrdb db' or 'rtrdb db &' as
+appropriate.  Using SQLC, issue the commands:
+
+	include 'data.sql';
+	
+(the script automatically saves a copy of the database into both logdir1 
+and logdir2, ready for use in an FT configuration.)  
+
+To start running in FT mode, 
+
+* start up the arbitrator by 'start rtrdb dba' (if on Windows) or 
+  'rtrdb dba &' (if on Unix or Linux).
+
+* start the first FT server by a command such as 'start rtrdb db1'
+  or 'rtrdb db1&' as appropriate.
+  
+* start the second FT server by a command such as 'start rtrdb db2'
+  or 'rtrdb db2&' as appropriate.
+  
+When it starts up, the arbitrator will wait a few seconds to allow the FT 
+servers to tell it which mode they are operating (in case we are 
+restarting the arbitrator after a failure).  If not told, it will pick one
+of the two servers to act as master, and the other as standby.  To 
+illustrate the fault tolerant nature of the system, try killing one of the 
+three databases, looking to see what happens, and then restarting it.  
+Note that if you kill two of the databases, then if the survivor is one of 
+the FT pair it will commit suicide.  
+
+to look at the arbitrator database, use the command 'sqlc sqla'; to look at 
+the 1st FT server (regardless of whether it is master or standby) use 
+'sqlc sql1'; 'sqlc sql2' connects to the 2nd server, and 'sqlc sql-ft' 
+connects to whichever is master (and switches to the other whenever 
+failover occurs).  Note that if the 'shutdown' command is sent to the 
+master, the overall service shuts down, and both servers stop running.  
+  
+------ FILES: ------ 
+
+tables.sql	-- SQL to create schema for main database
+		   (just used for initialisation)
+data.sql	-- initial data for main database
+		   (just used for initialisation)
+dba.sql         -- SQL to create schema for arbitrator database  
+		   (just used for initialisation)
+dbadata.sql     -- initial data for arbitrator database  
+test.dat	-- database save file containing data for demo
+dba.cl		-- cl script for arbitrator database
+poly.cfg	-- config file for this demo
+
+in addition, various files from ../demo_5 are used.
+
+-------------------------------------------------------------------------------
+--                        E n d   o f   f i l e
+-------------------------------------------------------------------------------

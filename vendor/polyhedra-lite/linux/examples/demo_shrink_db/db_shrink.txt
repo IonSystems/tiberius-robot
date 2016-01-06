@@ -1,0 +1,53 @@
+-------------------------------------------------------------------------------
+--                       P O L Y H E D R A    D E M O
+--                   Copyright (C) 2005-2015 by Enea Software AB
+-------------------------------------------------------------------------------
+--    Description   : description of the db_shrink demo.
+--    Author        : Nigel Day
+--
+-------------------------------------------------------------------------------
+-- NOTE: this is ILLUSTRATIVE CODE, provided on an 'as is' basis to help
+-- demonstrate one or more features of the Polyhedra product.
+-- It may well need adaption for use in a live installation, and
+-- Enea Software AB and its agents and distributors do not warrant this code.
+-------------------------------------------------------------------------------
+ 
+This demonstration uses the journaling feature and so is not applicable to all
+editions of Polyhedra. Please refer to the feature.txt file for a list of
+features supported by each edition of Polyhedra.
+
+If journal logging is enabled, the file containing the saved database will 
+gradually grow, since journal records will be appended to it.  If the 
+database is stopped and restarted, the snapshot is read and then all 
+appended journal records are applied in turn - so restart can take a long 
+time if the save file has grown large.  To avoid this problem, one can 
+'shrink' the saved database by issuing the SQL 'save' command (a Polyhedra 
+extension).  
+
+One can issue the save command periodically (either by use of an external 
+client or by use of CL attached to a table derived from the 'timer' 
+table'), or whenever the database gets to big.  (The approaches can be 
+used in combination, of course.) This example illustrates the latter 
+approach, using attached CL.  An external client to do this job would 
+first enable events (if using ODBC) and then launch a query of the form: 
+
+	select id, file_size from journalcontrol
+	where file_size > 10000
+
+Whenever a record appeared in the result set, a transaction consisting of 
+the single word 'save' would be issued.  If the database gets too large, 
+the file_size won't shrink below the target; to cope with this case, if 
+the file size is seen to decrease at any time, then cancel the query and 
+restart it with a bigger target.  
+
+To use the demo, start the RTRDB with the command
+
+	rtrdb dbcl
+
+and then run the animate client.  The RTRDB will do an automatic save each
+time the load file grows larger than 10000 bytes.
+
+-------------------------------------------------------------------------------
+--                        E n d   o f   f i l e
+-------------------------------------------------------------------------------
+

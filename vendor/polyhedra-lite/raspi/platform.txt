@@ -1,0 +1,231 @@
+===========================================================
+Project:        Polyhedra
+Copyright:      Copyright (C) 1994-2015 by Enea Software AB
+                All Rights Reserved
+Description:    Supported platforms
+===========================================================
+
+Standard Polyhedra supported platforms:
+
+-----------------------------------------------------------
+Platform:               WIN32
+Target:                 i386
+Compiler:               Microsoft Visual C++ 2012         *
+                        Microsoft Visual C++ 2013
+Operating Systems:      Microsoft Windows Server 2012 R2
+                        Microsoft Windows Server 2008
+                        Microsoft Windows 8.1             *
+                        Microsoft Windows 7
+Transports:             TCP/IP (IPv4)
+                        TLS 1.0 (OpenSSL 1.0.1g)         **
+-----------------------------------------------------------
+Platform:               LINUX
+Target:                 i386
+Compiler:               GNU C/C++ 4.8.0
+Operating Systems:      Linux Fedora 5 (kernel 2.6.15)    *
+                        Linux Centos 6.4 (kernel 2.6.32)
+Transports:             TCP/IP (IPv4, IPv6)
+                        LINX 2.5.0
+                        TLS 1.0 (OpenSSL 1.0.1g)         **
+-----------------------------------------------------------
+Platform:               LINUX
+Target:                 powerpc
+Compiler:               GNU C/C++ 4.8.0
+Operating Systems:      Linux Ubuntu 10.04.2 (kernel 2.6.32)*
+Transports:             TCP/IP (IPv4, IPv6)
+                        LINX 2.5.0
+-----------------------------------------------------------
+Platform:               LINUX
+Target:                 powerpc-8548
+Compiler:               GNU C/C++ 4.8.2
+Operating System:       Enea Linux 4.0                    *
+Transports:             TCP/IP (IPv4, IPv6)
+-----------------------------------------------------------
+Platform:               LINUX
+Target:                 arm (ARMv7)
+Compiler:               GNU C/C++ 4.8.2
+Operating System:       Enea Linux 4.0                    *
+Transports:             TCP/IP (IPv4, IPv6)
+			LINX 2.6.5
+-----------------------------------------------------------
+Platform:               LINUX
+Target:                 mips
+Compiler:               GNU C/C++ 4.3.2
+Operating System:       Linux (XLP-Linux) 2.6.32.9        *
+Transports:             TCP/IP (IPv4, IPv6)
+                        LINX 2.5.0
+-----------------------------------------------------------
+Platform:               SOLARIS
+Target:                 sparc
+Compiler:               GNU C/C++ 4.8.0
+Operating Systems:      Solaris 10 (SunOS 5.10)
+                        Solaris 9 (SunOS 5.9)             *
+Transport:              TCP/IP (IPv4)
+-----------------------------------------------------------
+Platform:               OSE
+Target:                 powerpc
+Hosts:                  Linux 2.6/i386                    *
+Compiler:               GNU C/C++ 4.9.2
+Operating System:       OSE 5.8
+Transports:             TCP/IP (IPv4)
+                        OSE signals
+-----------------------------------------------------------
+Platform:               OSE
+Target:                 sfk-linux
+Host:                   Linux 2.6/i386                    *
+Compiler:               GNU C/C++ 4.9.2
+Operating System:       OSE 5.8
+Transports:             TCP/IP (IPv4)
+                        OSE signals
+-----------------------------------------------------------
+Platform:               WIN32-64
+Target:                 x86_64
+Compiler:               Microsoft Visual C++ 2012         *
+                        Microsoft Visual C++ 2013
+Operating Systems:      Microsoft Windows Server 2012 R2  *
+                        Microsoft Windows Server 2008
+                        Microsoft Windows 8.1
+                        Microsoft Windows 7
+Transports:             TCP/IP (IPv4)
+                        TLS 1.0 (OpenSSL 1.0.1e)         **
+-----------------------------------------------------------
+Platform:               LINUX-64
+Target:                 x86_64
+Compiler:               GNU C/C++ 4.8.0
+Operating System:       Linux Fedora 8 (kernel 2.6.23)    *
+Transports:             TCP/IP (IPv4, IPv6)
+                        LINX 2.5.0
+                        TLS 1.0 (OpenSSL 1.0.1e)         **
+===========================================================
+
+Polyhedra Flash DBMS supported platforms:
+
+-----------------------------------------------------------
+Platform:               LINUX
+Target:                 i386
+Compiler:               GNU C/C++ 4.8.0
+Operating System:       Linux Centos 6.4 (kernel 2.6.32)  *
+Transports:             TCP/IP (IPv4, IPv6)
+                        LINX 2.5.0
+                        TLS 1.0 (OpenSSL 1.0.1e)         **
+-----------------------------------------------------------
+Platform:               OSE
+Target:                 powerpc
+Hosts:                  Linux 2.6/i386                    *
+Compiler:               GNU C/C++ 4.9.2
+Operating System:       OSE 5.8
+Transports:             TCP/IP (IPv4)
+                        OSE signals
+===========================================================
+* indicates a configuration supported for building
+  Polyhedra from source.
+** the SSL transport is available as a supplementary
+  product, which is subject to export controls.
+
+Polyhedra Lite supported platforms:
+
+-----------------------------------------------------------
+Platform:               WIN32
+Target:                 i386
+Compiler:               Microsoft Visual C++ 2008
+Operating Systems:      Microsoft Windows Server 2012 R2
+                        Microsoft Windows Server 2008
+                        Microsoft Windows 8.1
+                        Microsoft Windows 7
+Transport:              TCP/IP (IPv4)
+-----------------------------------------------------------
+Platform:               LINUX
+Target:                 i386
+Compiler:               GNU C/C++ 4.8.0
+Operating Systems:      Linux Fedora 5 (kernel 2.6.15)
+                        Linux Centos 6.4 (kernel 2.6.32)
+Transports:             TCP/IP (IPv4, IPv6)
+                        LINX 2.5.0
+-----------------------------------------------------------
+Platform:               LINUX
+Target:                 powerpc-8548
+Compiler:               GNU C/C++ 4.8.2
+Operating System:       Enea Linux 4.0
+Transports:             TCP/IP (IPv4, IPv6)
+-----------------------------------------------------------
+Platform:               LINUX
+Target:                 arm (ARMv7)
+Compiler:               GNU C/C++ 4.8.2
+Operating System:       Enea Linux 4.0
+Transports:             TCP/IP (IPv4, IPv6)
+			LINX 2.6.5
+-----------------------------------------------------------
+Platform:               LINUX
+Target:                 raspi (Raspberry Pi ARMv6 hard FP)
+Compiler:               GNU C/C++ 4.6.3
+Operating System:       Linux (Raspbian) 3.1.9
+Transports:             TCP/IP (IPv4, IPv6)
+===========================================================
+
+Polyhedra PolyView supported platforms:
+
+-----------------------------------------------------------
+Platform:               WIN32
+Target:                 i386
+Operating Systems:      Microsoft Windows Server 2012 R2
+                        Microsoft Windows Server 2008
+                        Microsoft Windows 8.1
+                        Microsoft Windows 7
+Transport:              TCP/IP (IPv4)
+-----------------------------------------------------------
+Platform:               LINUX
+Target:                 i386
+Operating Systems:      Linux Fedora 5 (kernel 2.6.15)
+                        Linux Centos 6.4 (kernel 2.6.32)
+Transports:             TCP/IP (IPv4, IPv6)
+                        LINX 2.5.0
+-----------------------------------------------------------
+Platform:               SOLARIS
+Target:                 sparc
+Operating Systems:      Solaris 10 (SunOS 5.10)
+                        Solaris 9 (SunOS 5.9)
+Transport:              TCP/IP (IPv4)
+-----------------------------------------------------------
+Platform:               SOLARIS
+Target:                 i386
+Operating Systems:      Solaris 10 (SunOS 5.10)
+Transport:              TCP/IP (IPv4)
+-----------------------------------------------------------
+Platform:               WIN32-64
+Target:                 x86_64
+Operating Systems:      Microsoft Windows Server 2012 R2
+                        Microsoft Windows Server 2008
+                        Microsoft Windows 8.1
+                        Microsoft Windows 7
+Transport:              TCP/IP (IPv4)
+-----------------------------------------------------------
+Platform:               LINUX-64
+Target:                 x86_64
+Operating System:       Linux Fedora 8 (kernel 2.6.23)
+Transports:             TCP/IP (IPv4, IPv6)
+                        LINX 2.5.0
+===========================================================
+
+Polyhedra ODBC Driver supported platforms:
+
+-----------------------------------------------------------
+Platform:               WIN32
+Target:                 i386
+Driver Manager:         Microsoft ODBC 3.5, 3.8
+-----------------------------------------------------------
+Platform:               LINUX
+Target:                 i386
+Driver Manager:         unixODBC 2.3.1
+-----------------------------------------------------------
+Platform:               LINUX
+Target:                 raspi (Raspberry Pi ARMv6 hard FP)
+Driver Manager:         unixODBC 2.3.1
+-----------------------------------------------------------
+Platform:               WIN32-64
+Target:                 x86_64
+Driver Manager:         Microsoft ODBC 3.5, 3.8
+-----------------------------------------------------------
+Platform:               LINUX-64
+Target:                 x86_64
+Driver Manager:         unixODBC 2.3.1
+===========================================================

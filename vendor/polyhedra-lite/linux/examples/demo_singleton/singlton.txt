@@ -1,0 +1,74 @@
+-------------------------------------------------------------------------------
+--			 P O L Y H E D R A   D E M O
+--	 	    Copyright (C) 2005-2015 by Enea Software AB
+-------------------------------------------------------------------------------
+-- 	Filename      : singlton.txt
+-- 	Description   : readme file for the demo
+-- 	Author        : Nigel Day
+--
+-------------------------------------------------------------------------------
+-- NOTE: this is ILLUSTRATIVE CODE, provided on an 'as is' basis to help
+-- demonstrate one or more features of the Polyhedra product. 
+-- It may well need adaption for use in a live installation, and
+-- Enea Software AB and its agents and distributors do not warrant this code.
+-------------------------------------------------------------------------------
+
+If using Polyhedra Flash DBMS, the optional CL module must be linked into 
+the RTRDB to run this demonstration.
+
+This directory contains a demo of 'singletons' - that is, tables in which 
+we expect to have precisely one object.  This is achieved by setting up 
+the object immediately after the table is created, and then attaching CL 
+code (by stopping and restarting the database, but this time telling the 
+database where to find the CL source code)that prevents objects being 
+created or deleted in this table.
+
+The CL code also illustrates how one can have a CL global function that 
+returns a pointer to the singleton.  It is inefficient for CL methods on 
+other tables to call this function frequently, whenever they need to 
+access an attribute value or a method attached to the singleton, so the 
+example also shows how to set up a CL global constant pointing at the 
+singleton.  It relies on the fact that the values associated with global 
+constants can be defined by expressions, and these expressions are 
+evaluated whenever the database is started.  
+
+-----------------
+RUNNING SEQUENCE:
+-----------------
+
+if you need to recreate the saved database, issue the commands
+
+	start rtrdb empty
+	sqlc sql
+	
+... if running on Windows, or 
+
+	rtrdb empty &
+	sqlc sql
+	
+... if running on a Unix-like platform. inside the sqlc program, issue the commands:
+
+	include 'tables.sql';
+	save into 'test.dat';
+	shutdown;
+	
+the database can be restarted using 'start rtrdb db' or 'rtrdb db &' as 
+appropriate.  Using SQLC you can check the CL scripts are working by 
+checking the sql code in data.sql gives failure nessages.  
+
+------
+FILES:
+------
+
+tables.sql	-- CREATE SCHEMA for database
+		   (just used for initialisation)
+data.sql	-- initial data for database
+		   (just used for testing)
+test.dat	-- database save file containing data for demo
+db.cl		-- cl script for database
+poly.cfg	-- config file for this demo
+
+
+-------------------------------------------------------------------------------
+--                        E n d   o f   f i l e
+-------------------------------------------------------------------------------
