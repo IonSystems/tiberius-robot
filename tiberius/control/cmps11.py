@@ -9,7 +9,7 @@ else:
 
 class TiltCompensatedCompass:
 
-	def __init__(self, address = 0x60):
+	def __init__(self, address):
 		self.bus = smbus.SMBus(1)
 		self.address = address
 

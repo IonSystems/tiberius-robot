@@ -42,6 +42,15 @@ class GetUltrasonicAddresses(unittest.TestCase):
          self.assertTrue(isinstance(fr,(int, long)))
          self.assertTrue(isinstance(fc,(int, long)))
 
+class GetCompassAddress(unittest.TestCase):
+    def runTest(self):
+         addr = config.getCompassAddress()
+
+         minAddress = 0
+         maxAddress = 255
+
+         self.assertTrue(isinstance(addr,(int, long)))
+
 class GetSteeringType(unittest.TestCase):
     def runTest(self):
         st = config.getSteeringType()

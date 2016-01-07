@@ -1,6 +1,8 @@
 #import rplidar
 import cmps11
 import srf08
+import time
+from tiberius.config.config_parser import TiberiusConfigParser
 #import picamera
 #import gps
 
@@ -9,24 +11,31 @@ class Ultrasonic:
 		Contains the ultrasonic sensors, and methods to receive data from them.
 		Data is returned from teh sensors in centimeters.
 	'''
-
+	__config = TiberiusConfigParser()
 	#Front Right
-	srffr = srf08.UltrasonicRangefinder(0x72)
+	srffr = srf08.UltrasonicRangefinder(__config.getUltrasonicFrontRightAddress())
 	#Front Centre
-	srffc = srf08.UltrasonicRangefinder(0x71)
+	srffc = srf08.UltrasonicRangefinder(__config.getUltrasonicFrontCentreAddress())
 	#Front Left
-	srffl = srf08.UltrasonicRangefinder(0x70)
+	srffl = srf08.UltrasonicRangefinder(__config.getUltrasonicFrontLeftAddress())
 	#Rear Right
-	srfrr = srf08.UltrasonicRangefinder(0x73)
+	srfrr = srf08.UltrasonicRangefinder(__config.getUltrasonicRearRightAddress())
 	#Rear Centre
-	srfrc = srf08.UltrasonicRangefinder(0x74)
+	srfrc = srf08.UltrasonicRangefinder(__config.getUltrasonicRearCentreAddress())
 	#Rear Left
-	srfrl = srf08.UltrasonicRangefinder(0x75)
+	srfrl = srf08.UltrasonicRangefinder(__config.getUltrasonicRearLeftAddress())
 
 	def senseUltrasonic(self):
 		#Tell sensors to write data to it's memory
-		# TODO: Currently the doranging() method does all sensors, a bit dodgy
 		self.srfrr.doranging()
+		self.srffc.doranging()
+		self.srffl.doranging()
+		self.srfrr.doranging()
+		self.srfrc.doranging()
+		self.srfrl.doranging()
+
+		#We need to wait for the measurement to be made before reading thr result.
+		time.sleep(0.065)
 
 		# Read the data from sensor's memory
 		fr = self.srffr.getranging()
@@ -60,7 +69,8 @@ class Compass:
 	'''
 		Provides compass related methods, what more can I say?
 	'''
-	compass = cmps11.TiltCompensatedCompass()
+	__config = TiberiusConfigParser()
+	compass = cmps11.TiltCompensatedCompass(__config.getCompassAddress())
 
 	def headingDegrees(self):
 		# Get the heading in degrees.

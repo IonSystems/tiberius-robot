@@ -11,6 +11,7 @@ class TiberiusConfigParser():
 	INSTALLED = 'installed'
 	LIDAR_SECTION = 'lidar'
 	ULTRASONICS_SECTION = 'ultrasonics'
+	COMPASS_SECTION = 'compass'
 	STEERING_SECTION = 'steering'
 	POWER_SECTION = 'power'
 	NETWORKING_SECTION = 'networking'
@@ -49,6 +50,14 @@ class TiberiusConfigParser():
 
 	def getUltrasonicRearRightAddress(self):
 		addr = self.parser.get(self.ULTRASONICS_SECTION, 'rear_right')
+		return int(addr)
+
+	'''******************************************
+		Compass
+	******************************************'''
+
+	def getCompassAddress(self):
+		addr = self.parser.get(self.COMPASS_SECTION, 'address')
 		return int(addr)
 
 	'''******************************************
