@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from setuptools import setup
 
 setup(name='Tiberius',
       version='1.0',
@@ -15,4 +15,5 @@ setup(name='Tiberius',
                             #('/etc/tiberius', ['tiberius/database/polyhedra_databse.db'])
                         ],
       platforms=['Raspberry Pi 2', 'Raspberry Pi 1'],
+      install_requires=['smbus-cffi'],
      )
