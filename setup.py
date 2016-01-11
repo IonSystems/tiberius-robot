@@ -11,8 +11,8 @@ class PostInstallDependencies(install):
 		self.install_if_missing("libi2c-dev")
 		self.install_if_missing("i2c-tools")
 		self.install_if_missing("python-dev")
-		self.install_if_missing("python-enum")
-
+		self.install_if_missing("libffi-dev")
+		
 		print "Removing I2C from blacklist on Raspberry Pi"
 		blacklist_dir = "/etc/modprobe.d/raspi-blacklist.conf"
 		enable_command = "sed -i 's/blacklist i2c-bcm2708/#blacklist i2c-bcm2708/g' " + blacklist_dir
@@ -35,7 +35,7 @@ class PostInstallDependencies(install):
 			check_output(enable_command, shell = True)
 
 		#Continue with the rest of the installation process.
-		install.run(self)
+		install.do_egg_install(self)
 
 	def is_text_found(self, text, file):
 		try:
@@ -48,15 +48,19 @@ class PostInstallDependencies(install):
 
 	def is_package_installed(self, package_name):
 		try:
-			result = check_output("dpkg-query -l " + package_name, shell = True)
-			if("no packages found" in result):
+			result = check_output("dpkg-query -W -f='${Status} ${Version}\n' " + package_name, shell = True)
+			if("not-installed" in result):
 				return False
 			else:
 				return True
 		except CalledProcessError:
 			return False
+
 	def install_package(self, package_name):
-		check_output("sudo apt-get --force-yes install " + package_name)
+		try:
+			res = check_output("sudo apt-get -y install " + package_name, shell = True)
+		except CalledProcessError:
+			print package_name + " failed to install."
 
 	def install_if_missing(self, package_name):
 		if not (self.is_package_installed(package_name)):
