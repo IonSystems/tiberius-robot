@@ -1,15 +1,17 @@
 import md03
-
+from tiberius.config import TiberiusConfigParser
 class Motor:
 	'''
 		Tiberius's four motors.
 		Contains basic motor movement methods.
 		Does not contain any feedback.
 	'''
-	front_left = md03.MotorDriver(0x58)
-	rear_left = md03.MotorDriver(0x5A)
-	front_right = md03.MotorDriver(0x5B)
-	rear_right = md03.MotorDriver(0x59)
+	__config = TiberiusConfigParser()
+
+	front_left = md03.MotorDriver(__config.getMotorFrontLeftAddress())
+	rear_left = md03.MotorDriver(__config.getMotorRearLeftAddress())
+	front_right = md03.MotorDriver(__config.getMotorFrontRightAddress())
+	rear_right = md03.MotorDriver(__config.getMotorRearRightAddress())
 
 	# 0 - 255
 	speed = 255
@@ -19,10 +21,10 @@ class Motor:
 		self.speed = (255 * speed_percent) / 100
 
 	def stop(self):
-		self.front_left.move(0, self.accel)
-		self.rear_left.move(0, self.accel)
-		self.front_right.move(0, self.accel)
-		self.rear_right.move(0, self.accel)
+		self.front_left.move(0, 0)
+		self.rear_left.move(0, 0)
+		self.front_right.move(0, 0)
+		self.rear_right.move(0, 0)
 
 	def moveForward(self):
 		self.front_left.move(self.speed, self.accel)
