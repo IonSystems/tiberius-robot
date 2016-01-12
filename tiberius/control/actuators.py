@@ -1,5 +1,5 @@
 import md03
-from tiberius.config import TiberiusConfigParser
+from tiberius.config.config_parser import TiberiusConfigParser
 class Motor:
 	'''
 		Tiberius's four motors.
