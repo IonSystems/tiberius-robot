@@ -28,6 +28,7 @@ class MotorDriver:
 		self.accel_register = 0x03
 		self.temp_register = 0x04
 		self.current_register = 0x05
+		self.version_register = 0x07
 
 	class Direction(Enum):
 		NONE = 0
@@ -54,6 +55,9 @@ class MotorDriver:
 		current = self.bus.read_byte_data(self.address, self.current_register)
 		amps = round(((current / 186.0) * 20.0), 3)
 		return amps
+	def version(self):
+		version = self.bus.read_byte_data(self.address, self.version_register)
+		return version
 
 	'''	Returns the status register bits:
 		0: Acceleration in progress LSB
