@@ -82,6 +82,6 @@ setup(name='Tiberius',
                             #('/etc/tiberius', ['tiberius/database/polyhedra_databse.db'])
                         ],
       platforms=['Raspberry Pi 2', 'Raspberry Pi 1'],
-      install_requires=['enum34', 'smbus-cffi'],
+      install_requires=['enum34', 'smbus-cffi', 'pyttsx'],
       cmdclass={'install':PostInstallDependencies},
      )
