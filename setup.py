@@ -75,7 +75,7 @@ setup(name='Tiberius',
       author='Cameron A. Craig',
       author_email='camieac@gmail.com',
       url='https://github.com/IonSystems/tiberius-robot/',
-      packages=['tiberius', 'tiberius/control', 'control-api', 'tiberius/logger', 'tiberius/database', 'tiberius/utils', 'tiberius/config', 'tiberius/smbus_dummy'],
+      packages=['tiberius', 'tiberius/control', 'tiberius/control_api', 'tiberius/logger', 'tiberius/database', 'tiberius/utils', 'tiberius/config', 'tiberius/smbus_dummy'],
       data_files    =   [
                             ('/etc/tiberius', ['tiberius/config/tiberius_conf.conf']),
                             ('/etc/tiberius', ['tiberius/smbus_dummy/smbus_database.db']),
