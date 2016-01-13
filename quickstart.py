@@ -9,6 +9,7 @@ class Action(Enum):
     RUN_TESTS = 1
     WEB_SERVER = 2
     API_SERVER = 3
+    I2C_CHECK = 4
 
 parser = OptionParser()
 
@@ -24,6 +25,10 @@ parser.add_option("-w", "--web-server",
 parser.add_option("-a", "--api-server",
                   action="store_const", const=Action.API_SERVER, dest="action",
                   help="Start the control API.")
+parser.add_option("-i", "--i2c-check",
+                  action="store_const", const=Action.I2C_CHECK, dest="action",
+                  help="Check attached I2C devices.")
+
 
 (options, args) = parser.parse_args()
 
@@ -56,3 +61,8 @@ elif action == Action.API_SERVER:
         except KeyboardInterrupt:
             Popen.kill(server)
             sys.exit()
+
+elif action == Action.I2C_CHECK:
+    print "Checking I2C bus for devices"
+    result = check_output("i2cdetect -y 1", shell = True)
+    print result
