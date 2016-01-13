@@ -13,34 +13,46 @@ import requests
 @ensure_csrf_cookie
 def index(request):
     tib = Robot.objects.order_by('-pub_date')[:5]
-    template = loader.get_template('control.html')
+    template = loader.get_template('index.html')
     context = RequestContext(request, {
         'tib': tib,
+    })
+    return HttpResponse(template.render(context))
+
+@login_required(login_url='/users/login/')
+@ensure_csrf_cookie
+def control(request, id):
+    tib = Robot.objects.get(id = id)
+    template = loader.get_template('control.html')
+    context = RequestContext(request, {
+        'ruc': tib,
     })
     return HttpResponse(template.render(context))
 
 @require_http_methods(["POST"])
 def send_control_request(request):
     response = ""
+    ip_address = request.POST.get('ip_address')
+    print "IP Address: " + str(ip_address)
     if request.POST.get('stop'):
         try:
-            r = requests.get('http://10.113.211.251:8000/motors?stop=True')
+            r = requests.get('http://' + ip_address + ':8000/motors?stop=True')
             response = r.text
         except ConnectionError:
             response = "ConnectionError"
     elif request.POST.get('forward'):
         try:
-            r = requests.get('http://10.113.211.251:8000/motors?forward=50')
+            r = requests.get('http://' + ip_address + ':8000/motors?forward=50')
             response = r.text
         except ConnectionError:
             response = "ConnectionError"
     elif request.POST.get('backward'):
         try:
-            r = requests.get('http://10.113.211.251:8000/motors?backward=50')
+            r = requests.get('http://' + ip_address + ':8000/motors?backward=50')
             response = r.text
         except ConnectionError:
             response = "ConnectionError"
     else:
-        r = requests.get('http://10.113.211.251:8000/motors?stop=True')
+        r = requests.get('http://' + ip_address + ':8000/motors?stop=True')
         response = r.text
     return HttpResponse("Done: " + response)
