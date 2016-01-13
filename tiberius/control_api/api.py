@@ -8,10 +8,9 @@ import motors
 # #Import control module
 from tiberius.control.control import Control
 from tiberius.control.actuators import Motor
-from tiberius.control-api.middleware import AuthMiddleware
+from tiberius.control_api.middleware import AuthMiddleware
 m = Motor()
-api = application = falcon.API(media_type='application/json; charset=utf-8',
-                                middleware=AuthMiddleware)
+api = application = falcon.API(media_type='application/json; charset=utf-8')
 
 sensors = sensors.SensorResource()
 motors = motors.MotorResource(m)
