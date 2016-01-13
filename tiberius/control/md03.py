@@ -6,10 +6,7 @@ if not detection.detect_pi():
 	from tiberius.smbus_dummy import smbus
 else:
 	import smbus
-import smbus
 from tiberius.logger import logger
-#import logger.logger as logger
-#from logger import logger as logger
 import logging
 from enum import Enum
 
@@ -112,12 +109,14 @@ class MotorDriver:
 
 			#Set acceleration, must be done before direction register.
 			self.bus.write_byte_data(self.address, self.accel_register, accel)
-
+			self.logger.debug("Address: %s, Accel: %s", hex(self.address), str(accel))
 			if speed == 0:
 				#Make sure to set speed and acceleration before issuing direction
 				# to ensure the motors don't start turning in the wrong direction
 				self.bus.write_byte_data(self.address, self.speed_register,speed)
+				self.logger.debug("Address: %s, Speed: %s", hex(self.address), str(speed))
 				self.bus.write_byte_data(self.address, self.direction_register, self.Direction.NONE.value)
+				self.logger.debug("Address: %s, Direction: %s", hex(self.address), str(self.Direction.NONE.value))
 
 			#If we want to go forward, set direction reg to 1
 			elif (speed > 0):
