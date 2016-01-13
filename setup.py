@@ -3,6 +3,7 @@
 from setuptools import setup
 from setuptools.command.install import install
 from subprocess import check_output, CalledProcessError
+import os
 
 class PostInstallDependencies(install):
 	def run(self):
@@ -11,28 +12,31 @@ class PostInstallDependencies(install):
 		self.install_if_missing("libi2c-dev")
 		self.install_if_missing("i2c-tools")
 		self.install_if_missing("python-dev")
-		self.install_if_missing("libffi-dev")
+		if self.is_pi():
+			self.install_if_missing("libffi-dev")
 		
-		print "Removing I2C from blacklist on Raspberry Pi"
-		blacklist_dir = "/etc/modprobe.d/raspi-blacklist.conf"
-		enable_command = "sed -i 's/blacklist i2c-bcm2708/#blacklist i2c-bcm2708/g' " + blacklist_dir
-		check_output(enable_command, shell = True)
-
-		print "Adding i2c-dev and i2c-bcm2708 to enabled modules"
-		modules_dir = "/etc/modules"
-		if(self.is_text_found("i2c-dev", modules_dir)):
-			print "i2c-dev already enabled"
-		else:
-			print "Enabling i2c-dev"
-			enable_command = "echo 'i2c-dev' | sudo tee -a " + modules_dir
+			print "Removing I2C from blacklist on Raspberry Pi"
+			blacklist_dir = "/etc/modprobe.d/raspi-blacklist.conf"
+			enable_command = "sed -i 's/blacklist i2c-bcm2708/#blacklist i2c-bcm2708/g' " + blacklist_dir
 			check_output(enable_command, shell = True)
 
-		if(self.is_text_found("i2c-bcm2708", modules_dir)):
-			print "i2c-bcm2708 already enabled"
+			print "Adding i2c-dev and i2c-bcm2708 to enabled modules"
+			modules_dir = "/etc/modules"
+			if(self.is_text_found("i2c-dev", modules_dir)):
+				print "i2c-dev already enabled"
+			else:
+				print "Enabling i2c-dev"
+				enable_command = "echo 'i2c-dev' | sudo tee -a " + modules_dir
+				check_output(enable_command, shell = True)
+
+			if(self.is_text_found("i2c-bcm2708", modules_dir)):
+				print "i2c-bcm2708 already enabled"
+			else:
+				print "Enabling i2c-bcm2708"
+				enable_command = "echo 'i2c-bcm2708' | sudo tee -a " + modules_dir
+				check_output(enable_command, shell = True)
 		else:
-			print "Enabling i2c-bcm2708"
-			enable_command = "echo 'i2c-bcm2708' | sudo tee -a " + modules_dir
-			check_output(enable_command, shell = True)
+			print "Some features will be unavailable on this machine."
 
 		#Continue with the rest of the installation process.
 		install.do_egg_install(self)
@@ -69,6 +73,8 @@ class PostInstallDependencies(install):
 		else:
 			print package_name + " already installed"
 
+	def is_pi(self):
+		return os.uname()[4][:3] == 'arm'
 setup(name='Tiberius',
       version='1.0',
       description='Tiberius Robot Software Suite',
