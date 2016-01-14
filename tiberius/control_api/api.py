@@ -4,6 +4,7 @@ from wsgiref import simple_server
 
 import sensors
 import motors
+import debug
 
 # #Import control module
 from tiberius.control.control import Control
@@ -14,8 +15,11 @@ api = application = falcon.API(media_type='application/json; charset=utf-8')
 
 sensors = sensors.SensorResource()
 motors = motors.MotorResource(m)
+debug = debug.DebugResource()
+
 api.add_route('/sensors', sensors)
 api.add_route('/motors', motors)
+api.add_route('/debug', debug)
 
 if __name__ == '__main__':
     httpd = simple_server.make_server('0.0.0.0', 8000, api)
