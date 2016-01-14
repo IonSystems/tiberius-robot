@@ -8,8 +8,8 @@
         <a href="javascript:;"><img src="{% static 'color-admin/img/user-1.jpg' %}" alt="" /></a>
       </div>
       <div class="info">
-        Sean Ngu
-        <small>Front end developer</small>
+        {{ request.user.first_name}} {{ request.user.last_name}}
+        <small>Special robot person</small>
       </div>
     </li>
   </ul>
