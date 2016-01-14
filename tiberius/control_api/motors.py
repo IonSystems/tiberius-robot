@@ -1,12 +1,14 @@
 import falcon
 import sys
-
+from tiberius.logger import logger
+import logging
 '''
     Controls motor speed, direction, steering angle.
 '''
 class MotorResource(object):
     def __init__(self, motor_control):
             self.motor_control = motor_control
+            self.logger = logging.getLogger('tiberius.control_api.MotorResource')
 
     #@falcon.before(validate_params(req, resp, resource, params))
     def on_get(self, req, resp):
@@ -16,6 +18,7 @@ class MotorResource(object):
             speed = int(req.params['forward'])
             self.motor_control.setSpeedPercent(speed)
             self.motor_control.moveForward()
+            self.logger.debug("Moving forward at speed %s", speed)
             resp.body = '{"status":{"motors": "forward"}}'
         elif('backward' in req.params):
             speed = int(req.params['backward'])

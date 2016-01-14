@@ -6,7 +6,7 @@
 <!--<![endif]-->
 <head>
 	{% include "head.html" %}
-	<title>Manage Fleet</title>
+	<title>Modify {{ robot.name}}</title>
 
 </head>
 <body>
@@ -39,26 +39,31 @@
 			</ol>
 			<!-- end breadcrumb -->
 			<!-- begin page-header -->
-			<h1 class="page-header">Manage Fleet <small>for the greater good</small></h1>
+			<h1 class="page-header">Modify {{ robot.name}} <small>hopefully not a gender alteration</small></h1>
 			<!-- end page-header -->
 
 			<!-- begin row -->
 			<div class="row">
 			    <!-- begin col-2 -->
-			    <div class="col-md-2">
-			        <h5>
-			            Key features include:
-			        </h5>
-                    <ul class="p-l-25 m-b-15">
-                        <li>Extend your responsive design to HTML tables</li>
-                        <li>Full control over column visibility at breakpoints, or automatic visibility</li>
-                        <li>Collapsed information from the table shown in a child row</li>
-                        <li>Seamlessly integrates with DataTables (v1.10.1 or newer required)</li>
-                        <li>Works with Bootstrap, Foundation and other responsive CSS frameworks</li>
-                    </ul>
-                    <p class="m-b-20">
-                        <a href="http://www.datatables.net/extensions/responsive/" target="_blank" class="btn btn-inverse btn-sm">View Official Website</a>
-			        </p>
+			    <div class="col-md-10">
+						<div class="panel panel-inverse" data-sortable-id="form-stuff-1">
+											<div class="panel-heading">
+													<div class="panel-heading-btn">
+															<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
+															<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-reload"><i class="fa fa-repeat"></i></a>
+															<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
+															<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-danger" data-click="panel-remove"><i class="fa fa-times"></i></a>
+													</div>
+													<h4 class="panel-title">Modification Form</h4>
+											</div>
+											<div class="panel-body">
+													<form action = "modify" method = "POST">
+														{% csrf_token %}
+														{{ form }}
+    												<input type="submit" value="Submit" />
+													</form>
+											</div>
+									</div>
 			    </div>
 			    <!-- end col-2 -->
 			    <!-- begin col-10 -->
