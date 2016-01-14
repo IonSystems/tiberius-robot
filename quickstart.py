@@ -54,7 +54,7 @@ elif action == Action.WEB_SERVER:
 
 elif action == Action.API_SERVER:
     print "Starting the control API."
-    server = Popen("cd tiberius/control-api && gunicorn api", shell = True)
+    server = Popen("python tiberius/control_api/api.py", shell = True)
     while True:
         try:
             time.sleep(0.1)
