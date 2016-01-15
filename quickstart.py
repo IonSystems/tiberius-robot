@@ -10,6 +10,7 @@ class Action(Enum):
     WEB_SERVER = 2
     API_SERVER = 3
     I2C_CHECK = 4
+    ULTRASONICS_READ = 5
 
 parser = OptionParser()
 
@@ -28,6 +29,9 @@ parser.add_option("-a", "--api-server",
 parser.add_option("-i", "--i2c-check",
                   action="store_const", const=Action.I2C_CHECK, dest="action",
                   help="Check attached I2C devices.")
+parser.add_option("-u", "--ultrasonics",
+                  action="store_const", const=Action.ULTRASONICS_READ, dest="action",
+                  help="Poll all known ultrasonic sensors.")
 
 
 (options, args) = parser.parse_args()
@@ -66,3 +70,13 @@ elif action == Action.I2C_CHECK:
     print "Checking I2C bus for devices"
     result = check_output("i2cdetect -y 1", shell = True)
     print result
+
+elif action == Action.ULTRASONICS_READ:
+    print "Starting the control API."
+    server = Popen("python tiberius/testing/scripts/manual_sensor_read.py", shell = True)
+    while True:
+        try:
+            time.sleep(0.1)
+        except KeyboardInterrupt:
+            Popen.kill(server)
+            sys.exit()
