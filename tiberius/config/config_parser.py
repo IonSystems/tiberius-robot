@@ -1,11 +1,18 @@
 import ConfigParser
 
 ULTRASONICS_SECTION = 'ultrasonics'
+INSTALLED = 'installed'
+LIDAR_SECTION = 'lidar'
+MOTORS_SECTION = 'motors'
+COMPASS_SECTION = 'compass'
+STEERING_SECTION = 'steering'
+POWER_SECTION = 'power'
+NETWORKING_SECTION = 'networking'
+KINECT_SECTION = 'kinect'
+ROBOT_ARM_SECTION = 'arm'
 
 class TiberiusConfigParser():
-	def __init__(self):
-		self.parser = ConfigParser.ConfigParser()
-		self.parser.read('/etc/tiberius/tiberius_conf.conf')
+
 	@staticmethod
 	def getParser():
 		parser =  ConfigParser.ConfigParser()
@@ -14,57 +21,49 @@ class TiberiusConfigParser():
 	'''******************************************
 		Constant values
 	******************************************'''
-	INSTALLED = 'installed'
-	LIDAR_SECTION = 'lidar'
-	MOTORS_SECTION = 'motors'
-	COMPASS_SECTION = 'compass'
-	STEERING_SECTION = 'steering'
-	POWER_SECTION = 'power'
-	NETWORKING_SECTION = 'networking'
-	KINECT_SECTION = 'kinect'
-	ROBOT_ARM_SECTION = 'arm'
+
 
 	'''******************************************
 		LIDAR
 	******************************************'''
-	@classmethod
+	@staticmethod
 	def isLidarEnabled():
-		return TiberiusConfigParser.getParser().getboolean(self.LIDAR_SECTION, 'installed')
+		return TiberiusConfigParser.getParser().getboolean(LIDAR_SECTION, 'installed')
 
 	'''******************************************
-	        Motors
+		Motors
 	******************************************'''
-	@classmethod
+	@staticmethod
 	def getMotorFrontLeftAddress():
-		addr = TiberiusConfigParser.getParser().get(self.MOTORS_SECTION, 'front_left')
+		addr = TiberiusConfigParser.getParser().get(MOTORS_SECTION, 'front_left')
 		return int(addr)
 
-	@classmethod
+	@staticmethod
 	def getMotorFrontRightAddress():
-		addr = TiberiusConfigParser.getParser().get(self.MOTORS_SECTION, 'front_right')
+		addr = TiberiusConfigParser.getParser().get(MOTORS_SECTION, 'front_right')
 		return int(addr)
 
-	@classmethod
+	@staticmethod
 	def getMotorRearRightAddress():
-                addr = TiberiusConfigParser.getParser().get(self.MOTORS_SECTION, 'rear_right')
+                addr = TiberiusConfigParser.getParser().get(MOTORS_SECTION, 'rear_right')
                 return int(addr)
-	
-	@classmethod
+
+	@staticmethod
 	def getMotorRearLeftAddress():
-                addr = TiberiusConfigParser.getParser().get(self.MOTORS_SECTION, 'rear_left')
+                addr = TiberiusConfigParser.getParser().get(MOTORS_SECTION, 'rear_left')
                 return int(addr)
 
 	'''******************************************
 		Ultrasonics
 	******************************************'''
-	@classmethod
+	@staticmethod
 	def getUltrasonicFrontCentreAddress():
-		addr = TiberiusConfigParser.getParser().get(self.ULTRASONICS_SECTION, 'front_centre')
+		addr = TiberiusConfigParser.getParser().get(ULTRASONICS_SECTION, 'front_centre')
 		return int(addr)
-	@classmethod
+	@staticmethod
 
 	def getUltrasonicFrontLeftAddress():
-		addr = TiberiusConfigParser.getParser().get(self.ULTRASONICS_SECTION, 'front_left')
+		addr = TiberiusConfigParser.getParser().get(ULTRASONICS_SECTION, 'front_left')
 		return int(addr)
 
 	@staticmethod
@@ -72,80 +71,79 @@ class TiberiusConfigParser():
 		addr = TiberiusConfigParser.getParser().get(ULTRASONICS_SECTION, 'front_right')
 		return int(addr)
 
-	@classmethod
+	@staticmethod
 	def getUltrasonicRearCentreAddress():
-		addr = TiberiusConfigParser.getParser().get(self.ULTRASONICS_SECTION, 'rear_centre')
+		addr = TiberiusConfigParser.getParser().get(ULTRASONICS_SECTION, 'rear_centre')
 		return int(addr)
 
-	@classmethod
+	@staticmethod
 	def getUltrasonicRearLeftAddress():
-		addr = TiberiusConfigParser.getParser().get(self.ULTRASONICS_SECTION, 'rear_left')
+		addr = TiberiusConfigParser.getParser().get(ULTRASONICS_SECTION, 'rear_left')
 		return int(addr)
 
-	@classmethod
+	@staticmethod
 	def getUltrasonicRearRightAddress():
-		addr = TiberiusConfigParser.getParser().get(self.ULTRASONICS_SECTION, 'rear_right')
+		addr = TiberiusConfigParser.getParser().get(ULTRASONICS_SECTION, 'rear_right')
 		return int(addr)
 
 	'''******************************************
 		Compass
 	******************************************'''
 
-	@classmethod
+	@staticmethod
 	def isCompassEnabled():
-		return TiberiusConfigParser.getParser().getboolean(self.COMPASS_SECTION, 'installed')
+		return TiberiusConfigParser.getParser().getboolean(COMPASS_SECTION, 'installed')
 
-	@classmethod		
+	@staticmethod
 	def getCompassAddress():
-		addr = TiberiusConfigParser.getParser().get(self.COMPASS_SECTION, 'address')
+		addr = TiberiusConfigParser.getParser().get(COMPASS_SECTION, 'address')
 		return int(addr)
 
 	'''******************************************
 		Networking
 	******************************************'''
 
-	@classmethod
+	@staticmethod
 	def getIPAddress():
-		ipa = TiberiusConfigParser.getParser().get(self.NETWORKING_SECTION, 'ip_address')
+		ipa = TiberiusConfigParser.getParser().get(NETWORKING_SECTION, 'ip_address')
 		return ipa
 
 	'''
 	A setter method is required to deal with IP address changes if using DHCP.
 	'''
-	@classmethod
+	@staticmethod
 	def setIPAddress(self, ip_address):
-		result = TiberiusConfigParser.getParser().set(self.NETWORKING_SECTION, 'ip_address', ip_address)
+		result = TiberiusConfigParser.getParser().set(NETWORKING_SECTION, 'ip_address', ip_address)
 		return result
 
-	@classmethod
+	@staticmethod
 	def getName():
-		name = TiberiusConfigParser.getParser().get(self.NETWORKING_SECTION, 'name')
+		name = TiberiusConfigParser.getParser().get(NETWORKING_SECTION, 'name')
 		return name
 
 	'''******************************************
 		Steering
 	******************************************'''
 
-	@classmethod
+	@staticmethod
 	def getSteeringType():
-		type = TiberiusConfigParser.getParser().get(self.STEERING_SECTION, 'type')
+		type = TiberiusConfigParser.getParser().get(STEERING_SECTION, 'type')
 		return type
 
 	'''******************************************
 		Power
 	******************************************'''
 
-	@classmethod
+	@staticmethod
 	def getBatteryCapacity():
-		capacity = TiberiusConfigParser.getParser().get(self.POWER_SECTION, 'capacity')
+		capacity = TiberiusConfigParser.getParser().get(POWER_SECTION, 'capacity')
 		return capacity
 
-	@classmethod
+	@staticmethod
 	def getBatteryChemistry():
-		chemistry = TiberiusConfigParser.getParser().get(self.POWER_SECTION, 'chemistry')
+		chemistry = TiberiusConfigParser.getParser().get(POWER_SECTION, 'chemistry')
 		return chemistry
 
 if __name__ == "__main__":
-	c = TiberiusConfigParser()
-	ip_address = c.getIPAddress()
-	print ip_address
+
+	print TiberiusConfigParser.getIPAddress()
