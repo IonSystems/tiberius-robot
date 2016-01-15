@@ -112,7 +112,7 @@ class TiberiusConfigParser():
 	A setter method is required to deal with IP address changes if using DHCP.
 	'''
 	@staticmethod
-	def setIPAddress(self, ip_address):
+	def setIPAddress(ip_address):
 		result = TiberiusConfigParser.getParser().set(NETWORKING_SECTION, 'ip_address', ip_address)
 		return result
 
