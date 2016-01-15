@@ -1,14 +1,14 @@
 import sys
-from tiberius.control.control import Control
-
-from control import Control
+from tiberius.control.sensors import Ultrasonic
+from tiberius.control.sensors import Compass
 import time
 
 if __name__ == "__main__":
 	while(True):
-		c = Control()
-		vals = c.ultrasonics.senseUltrasonic()
-		heading = c.compass.headingNormalized()
+		u = Ultrasonic()
+		c = Compass()
+		vals = u.senseUltrasonic()
+		heading = c.headingNormalized()
 		print str(vals)
 		print str(heading)
 		time.sleep(1)

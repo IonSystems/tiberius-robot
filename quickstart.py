@@ -72,7 +72,7 @@ elif action == Action.I2C_CHECK:
     print result
 
 elif action == Action.ULTRASONICS_READ:
-    print "Starting the control API."
+    print "Polling ultrasonic sensor distance values."
     server = Popen("python tiberius/testing/scripts/manual_sensor_read.py", shell = True)
     while True:
         try:
