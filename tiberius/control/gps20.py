@@ -11,6 +11,12 @@ from pynmea import nmea
 
 
 '''
+class SentenceNotSupportedError(Exception):
+	def __init__(self, value):
+		self.value = value
+	def __str__(self):
+		return repr(self.value)
+
 class GlobalPositioningSystem:
 	port = '/dev/ttyACM0'
 	baud = 9600
@@ -26,23 +32,37 @@ class GlobalPositioningSystem:
 			#self.logger.info('GPS Serial port in open on ', port
 
 	def __fetch_raw_data(self):
-		self.ser.open()
+		try:
+			self.ser.open()
+		except:
+			self.logger.warning("Serial port already open continueing.")
 		data = self.ser.readline()
+		self.logger.debug("Read data: " + data)
 		self.ser.close()
 		return data
 
 	def __parse_data(self, data):
-		return self.gpgga.parse(data)
+		if "GPGGA" in data:
+			return self.gpgga.parse(data)
+		else:
+			raise SentenceNotSupportedError(str(data))
 
 	def update(self):
-		self.__parse_data(self.__fetch_raw_data())
+		try:
+			self.__parse_data(self.__fetch_raw_data())
+		except SentenceNotSupportedError:
+			self.logger.warning("Receieved a bad sentence")
 
 	def print_data(self):
-		print 'Latitude: ', self.gpgga.latitude
-		print 'Longitude: ', self.gpgga.longitude
+		try:
+			print 'Latitude: ', self.gpgga.latitude
+			print 'Longitude: ', self.gpgga.longitude
+		except AttributeError:
+			self.logger.warning("Failed to print data")	
 		#print 'Altitude: ', self.gpgga.altitude
 
-
+	def find_dev_path(self):
+		return		
 #For testing
 import time
 if __name__ == "__main__":
