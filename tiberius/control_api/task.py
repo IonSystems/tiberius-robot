@@ -1,5 +1,6 @@
 import abc
 from enum import Enum
+from tiberius.control.control import Control
 
 class Task:
     '''
@@ -11,7 +12,9 @@ class Task:
         self.task_id = task_id
         self.task_description = task_description
 
-        self.task_complete = TaskState.STOPPED
+        self.task_complete = self.TaskState.STOPPED
+
+	self.control = Control()
 
     @abc.abstractmethod
     def runTask(self):
@@ -26,7 +29,7 @@ class Task:
         raise NotImplementedError("Task " + self.task_name + "must implement " + __name__)
 
     def completeTask(self):
-        self.task_complete = TaskState.COMPLETE
+        self.task_complete = self.TaskState.COMPLETE
 
     class TaskState(Enum):
         STOPPED = 0
