@@ -39,3 +39,13 @@ def modify(request, id):
         form = RobotForm(initial = model_to_dict(robot))
 
     return render(request, 'modify.html', {'form': form, 'robot':robot})
+
+@login_required(login_url='/users/login/')
+def view(request, id):
+
+    template = loader.get_template('view.html')
+    robot = Robot.objects.get(id = id)
+    context = RequestContext(request, {
+        'robot': robot,
+    })
+    return HttpResponse(template.render(context))

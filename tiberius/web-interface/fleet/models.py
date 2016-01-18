@@ -27,4 +27,4 @@ class Robot(models.Model):
 	database_enabled = models.BooleanField()
 
 	#An image of the robot
-	image = models.ImageField()
+	image = models.ImageField(upload_to='robot_images')
