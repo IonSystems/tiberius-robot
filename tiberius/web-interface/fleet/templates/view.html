@@ -6,7 +6,7 @@
 <!--<![endif]-->
 <head>
 	{% include "head.html" %}
-	<title>Manage Fleet</title>
+	<title>Modify {{ robot.name}}</title>
 
 </head>
 <body>
@@ -39,32 +39,15 @@
 			</ol>
 			<!-- end breadcrumb -->
 			<!-- begin page-header -->
-			<h1 class="page-header">Manage Fleet <small>for the greater good</small></h1>
+			<h1 class="page-header">Viewing {{ robot.name}} <small>don't stare</small></h1>
 			<!-- end page-header -->
 
 			<!-- begin row -->
 			<div class="row">
 			    <!-- begin col-2 -->
-			    <div class="col-md-2">
-			        <h5>
-			            Key features include:
-			        </h5>
-                    <ul class="p-l-25 m-b-15">
-                        <li>Extend your responsive design to HTML tables</li>
-                        <li>Full control over column visibility at breakpoints, or automatic visibility</li>
-                        <li>Collapsed information from the table shown in a child row</li>
-                        <li>Seamlessly integrates with DataTables (v1.10.1 or newer required)</li>
-                        <li>Works with Bootstrap, Foundation and other responsive CSS frameworks</li>
-                    </ul>
-                    <p class="m-b-20">
-                        <a href="http://www.datatables.net/extensions/responsive/" target="_blank" class="btn btn-inverse btn-sm">View Official Website</a>
-			        </p>
-			    </div>
-			    <!-- end col-2 -->
-			    <!-- begin col-10 -->
 			    <div class="col-md-10">
-			        <!-- begin panel -->
-                    <div class="panel panel-inverse">
+
+									<div class="panel panel-inverse" data-sortable-id="table-basic-2">
                         <div class="panel-heading">
                             <div class="panel-heading-btn">
                                 <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
@@ -72,44 +55,57 @@
                                 <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
                                 <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-danger" data-click="panel-remove"><i class="fa fa-times"></i></a>
                             </div>
-                            <h4 class="panel-title">DataTable - Responsive</h4>
-                        </div>
-                        <div class="alert alert-warning fade in">
-                            <button type="button" class="close" data-dismiss="alert">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            In the modern world of responsive web design tables can often cause a particular problem for designers due to their row based layout. Responsive is an extension for DataTables that resolves that problem by optimising the table's layout for different screen sizes through the dynamic insertion and removal of columns from the table.
+                            <h4 class="panel-title">Information about {{ robot.name}}</h4>
                         </div>
                         <div class="panel-body">
-                            <table id="data-table" class="table table-striped table-bordered nowrap" width="100%">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>IP Address</th>
-                                        <th>Weight</th>
-                                        <th>Capacity</th>
-																				<th>Actions</th>
-                                    </tr>
-                                </thead>
+                            <table class="table table-hover">
+
                                 <tbody>
-																	 {% for robot in fleet %}
-	                                    <tr class="gradeU">
-	                                        <td>{{ robot.name }}</td>
-	                                        <td>{{ robot.ip_address }}</td>
-	                                        <td>{{ robot.weight }}</td>
-	                                        <td>{{ robot.capacity }}</td>
-																					<td><a class="btn btn-primary btn-sm m-l-5" id = "button_control" href = "/control/{{ robot.id}}">Control</a></td>
-	                                    </tr>
-																		{% endfor %}
+                                    <tr>
+                                        <td>Name</td>
+                                        <td>{{ robot.name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Description</td>
+                                        <td>{{ robot.description }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>IP Address</td>
+                                        <td>{{ robot.ip_address}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Owner</td>
+                                        <td>{{ robot.owner.first_name}} {{ robot.owner.last_name}} ({{robot.owner.username}})</td>
+                                    </tr>
+																		<tr>
+                                        <td>Permitted Users</td>
+                                        <td>
+																						{% for user in robot.permitted_users.all %}
+																							{{ user.first_name}} {{ user.last_name}} ({{user.username}})<br/>
+																						{% endfor %}
+																				</td>
+                                    </tr>
+																		<tr>
+                                        <td>IP Address</td>
+                                        <td>{{ robot.ip_address }}</td>
+                                    </tr>
+																		<tr>
+                                        <td>MAC Address</td>
+                                        <td>{{ robot.mac_address }}</td>
+                                    </tr>
+																		<tr>
+                                        <td>Image</td>
+                                        <td>{{ robot.image }}</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                    <!-- end panel -->
-                </div>
-                <!-- end col-10 -->
-            </div>
-            <!-- end row -->
+			    </div>
+			    <!-- end col-2 -->
+
+        </div>
+        <!-- end row -->
 		</div>
 		<!-- end #content -->
 

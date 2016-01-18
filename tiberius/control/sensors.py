@@ -11,19 +11,19 @@ class Ultrasonic:
 		Contains the ultrasonic sensors, and methods to receive data from them.
 		Data is returned from teh sensors in centimeters.
 	'''
-	__config = TiberiusConfigParser()
+
 	#Front Right
-	srffr = srf08.UltrasonicRangefinder(__config.getUltrasonicFrontRightAddress())
+	srffr = srf08.UltrasonicRangefinder(TiberiusConfigParser.getUltrasonicFrontRightAddress())
 	#Front Centre
-	srffc = srf08.UltrasonicRangefinder(__config.getUltrasonicFrontCentreAddress())
+	srffc = srf08.UltrasonicRangefinder(TiberiusConfigParser.getUltrasonicFrontCentreAddress())
 	#Front Left
-	srffl = srf08.UltrasonicRangefinder(__config.getUltrasonicFrontLeftAddress())
+	srffl = srf08.UltrasonicRangefinder(TiberiusConfigParser.getUltrasonicFrontLeftAddress())
 	#Rear Right
-	srfrr = srf08.UltrasonicRangefinder(__config.getUltrasonicRearRightAddress())
+	srfrr = srf08.UltrasonicRangefinder(TiberiusConfigParser.getUltrasonicRearRightAddress())
 	#Rear Centre
-	srfrc = srf08.UltrasonicRangefinder(__config.getUltrasonicRearCentreAddress())
+	srfrc = srf08.UltrasonicRangefinder(TiberiusConfigParser.getUltrasonicRearCentreAddress())
 	#Rear Left
-	srfrl = srf08.UltrasonicRangefinder(__config.getUltrasonicRearLeftAddress())
+	srfrl = srf08.UltrasonicRangefinder(TiberiusConfigParser.getUltrasonicRearLeftAddress())
 
 	def senseUltrasonic(self):
 		#Tell sensors to write data to it's memory
@@ -64,29 +64,42 @@ class Ultrasonic:
 #	def capture_image(self):
 #		self.camera.resolution = (640,480)
 #		self.camera.capture('./pi_camera_image.jpg')
-
-class Compass:
-	'''
-		Provides compass related methods, what more can I say?
-	'''
-	__config = TiberiusConfigParser()
-	compass = cmps11.TiltCompensatedCompass(__config.getCompassAddress())
-
-	def headingDegrees(self):
-		# Get the heading in degrees.
-		raw = int(self.compass.heading())
-		return raw / 10
-
-	def getMostRecentDegrees(self):
-		return self.compass.getMostRecentDegrees()
-
-	def headingNormalized(self):
-		angle = int(self.headingDegrees())
-		while(angle > 180):
-			angle -= 360
-		while(angle < -180):
-			angle += 360
-		return angle
+if TiberiusConfigParser.isCompassEnabled():
+	class Compass:
+		'''
+			Provides compass related methods, what more can I say?
+		'''
+	
+		compass = cmps11.TiltCompensatedCompass(TiberiusConfigParser.getCompassAddress())
+	
+		def headingDegrees(self):
+			# Get the heading in degrees.
+			raw = int(self.compass.heading())
+			return raw / 10
+	
+		def getMostRecentDegrees(self):
+			return self.compass.getMostRecentDegrees()
+	
+		def headingNormalized(self):
+			angle = int(self.headingDegrees())
+			while(angle > 180):
+				angle -= 360
+			while(angle < -180):
+				angle += 360
+			return angle
 
 #class GPS:
 	#gps =
+
+class I2CReadError(Exception):
+	def __init__(self, value):
+		self.value = value
+	def __str__(self):
+		return repr(self.value)
+
+class I2CWriteError(Exception):
+        def __init__(self, value):
+                self.value = value
+        def __str__(self):
+                return repr(self.value)
+

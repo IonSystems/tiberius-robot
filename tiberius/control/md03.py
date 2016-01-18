@@ -28,6 +28,10 @@ class MotorDriver:
 		self.accel_register = 0x03
 		self.temp_register = 0x04
 		self.current_register = 0x05
+		self.version_register = 0x07
+
+		self.version = self.version()
+
 
 	class Direction(Enum):
 		NONE = 0
@@ -44,16 +48,24 @@ class MotorDriver:
 		#TODO work out degrees
 		return temp
 
-	'''Gets the current speed of the motor -255 to 255'''
+	'''Gets the current speed of the motor (0 to 255)'''
 	def speed(self):
 		speed = self.bus.read_byte_data(self.address, self.speed_register)
 		return speed
+
+	'''Gets the current acceleration of the motor (0 to 255)'''
+	def acceleration(self):
+		accel = self.bus.read_byte_data(self.address, self.accel_register)
+		return accel
 
 	'''Returns a current value between 0(0A) and 186(20A)'''
 	def current(self):
 		current = self.bus.read_byte_data(self.address, self.current_register)
 		amps = round(((current / 186.0) * 20.0), 3)
 		return amps
+	def version(self):
+		version = self.bus.read_byte_data(self.address, self.version_register)
+		return version
 
 	'''	Returns the status register bits:
 		0: Acceleration in progress LSB
@@ -69,6 +81,14 @@ class MotorDriver:
 		#over-current = (status >> 1) & 1
 		#over-temp = (stats >> 2) & 1
 #return {'accel' : accel, 'over-current' : over-current, 'over-temp' : over-temp}
+
+	def register_dump(self):
+		dict = {'speed' : 0, 'acceleration' : 0, 'direction' : 0}
+		dict['speed'] = self.speed()
+		dict['acceleration'] = self.acceleration()
+		dict['direction'] = self.direction()
+		return dict
+
 	def check_range(self, min, max, val):
 		if val > max:
 			return 1

@@ -13,6 +13,12 @@ class TiltCompensatedCompass:
 		self.bus = smbus.SMBus(1)
 		self.address = address
 
+	class CompassReadError(Exception):
+                def __init__(self, value):
+                        self.value = value
+                def __str__(self):
+                        return repr(self.value)
+
 	#Used for future work on 'smart' readings
 	#TODO:Will return previous reading rather
 	#than reading a new reading that is probably the same.
@@ -193,15 +199,17 @@ class TiltCompensatedCompass:
 		'''
 			Get the heading value between 0 and 3599.
 		'''
-		while(True):
+		try:
+			heading = self.__read_compass_16()
+			return heading
+		except IOError:
+			raise I2CReadError("Error reading compass")
 
-			try:
-				heading = self.__read_compass_16()
-				return heading
-			except IOError:
-				print 'Error reading compass'
 	def magnetometer(self):
-		return [self.__read_magnetometer_x(), self.__read_magnetometer_y(), self.__read_magnetometer_z()]
+		try:
+			return [self.__read_magnetometer_x(), self.__read_magnetometer_y(), self.__read_magnetometer_z()]
+		except IOError:
+			raise self.CompassReadError("Error reading magnetometer.")
 	def accelerometer(self):
 		return [self.__read_accelerometer_x(), self.__read_accelerometer_y(), self.__read_accelerometer_z()]
 	def gyroscope(self):
@@ -212,9 +220,10 @@ class TiltCompensatedCompass:
 		return self.__read_filtered_pitch()
 	def roll(self):
 		return self.__read_filtered_roll()
+
 # Test function
 if __name__ == "__main__":
-	cmps11 = TiltCompensatedCompass()
+	cmps11 = TiltCompensatedCompass(66)
 	print cmps11.magnetometer()
 	print cmps11.accelerometer()
 	print cmps11.heading()
