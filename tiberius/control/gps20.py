@@ -1,5 +1,7 @@
 import serial
 import sys
+from enum import Enum
+
 from tiberius.logger import logger
 #import logger.logger as logger
 
@@ -17,6 +19,10 @@ class SentenceNotSupportedError(Exception):
 	def __str__(self):
 		return repr(self.value)
 
+
+# class NMEASentence(Enum):
+# 	GPGGA = "GPGGA"
+
 class GlobalPositioningSystem:
 	port = '/dev/ttyACM0'
 	baud = 9600
@@ -26,7 +32,17 @@ class GlobalPositioningSystem:
 		self.logger.info('Creating an instance of GlobalPositioningSystem')
 		self.ser = serial.Serial(self.port, self.baud, timeout = 1)
 		self.gpgga = nmea.GPGGA()
+		self.gprmc = nmea.GPRMC()
 		self.debug = debug
+
+		#Accessible fields that can be directly accessed.
+		self.latitude = None
+		self.northsouth = None
+		self.longitude = None
+		self.eastwest = None
+		self.attitude = None
+		self.timestamp = None
+		self.variation = None
 
 		#if(self.s.isOpen()):
 			#self.logger.info('GPS Serial port in open on ', port
@@ -43,7 +59,13 @@ class GlobalPositioningSystem:
 
 	def __parse_data(self, data):
 		if "GPGGA" in data:
-			return self.gpgga.parse(data)
+			data = self.gpgga.parse(data)
+			self.latitude = self.gpgga.latitude
+			self.longitude = self.gpgga.longitude
+		elif "GPRMC" in data:
+			data = self.gprmc.parse(data)
+			self.latitude = self.gprmc.lat
+			self.longitude = self.gprmc.lon
 		else:
 			raise SentenceNotSupportedError(str(data))
 
@@ -55,14 +77,12 @@ class GlobalPositioningSystem:
 
 	def print_data(self):
 		try:
-			print 'Latitude: ', self.gpgga.latitude
-			print 'Longitude: ', self.gpgga.longitude
+			print 'Latitude: ', self.latitude
+			print 'Longitude: ', self.longitude
 		except AttributeError:
-			self.logger.warning("Failed to print data")	
+			self.logger.warning("Failed to print data")
 		#print 'Altitude: ', self.gpgga.altitude
 
-	def find_dev_path(self):
-		return		
 #For testing
 import time
 if __name__ == "__main__":
