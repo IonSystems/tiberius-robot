@@ -2,12 +2,12 @@ import abc
 from enum import Enum
 from tiberius.control.control import Control
 
-class Task:
+class Task(object):
     '''
     An abstract Task that is implemented in order to build usable tasks for Tiberius to run during a mission.
     '''
     @abc.abstractmethod
-    def __init__(self, task_name, task_id, task_description = None):
+    def __init__(self, task_name = None, task_id = None, task_description = None):
         self.task_name = task_name
         self.task_id = task_id
         self.task_description = task_description

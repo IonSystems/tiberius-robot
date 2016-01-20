@@ -2,28 +2,30 @@ import falcon
 import sys
 from tiberius.logger import logger
 import logging
-import task
+from tiberius.control_api.task import *
+from tiberius.control_api.tasks.driving_tasks import *
 
 '''
     Controls motor speed, direction, steering angle.
-'''
+''' 
+
 class TaskControllerResource(object):
 
     def __init__(self):
             self.logger = logging.getLogger('tiberius.control_api.TaskControllerResource')
-            self.tasks = find_tasks()
+            self.tasks = self.find_tasks()
             self.current_task_id = None
 
     #@falcon.before(validate_params(req, resp, resource, params))
     def on_get(self, req, resp):
         resp.body = '{"status":{"motors": "forward"}}'
 
-    def find_tasks(self, task_id):
+    def find_tasks(self):
         tasks = set()
-        parent = Task()
-        for task in parent.__subclasses__():
-            if child not in tasks:
-                tasks.add(child)
+        for task in Task.__subclasses__():
+            if task not in tasks:
+                tasks.add(task)
+	    print task
         return tasks
 
     #def run_task(self, task_id)
