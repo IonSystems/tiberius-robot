@@ -28,7 +28,11 @@ class TaskControllerResource(object):
 	    print task
         return tasks
 
-    #def run_task(self, task_id)
+    def run_task(self, task_id):
+	for task in self.tasks:
+	    print task
+	    if(task.task_id == task_id):
+		task.runTask()
 
 def validate_params(req, resp, resource, params):
     if req.content_type not in ALLOWED_IMAGE_TYPES:
@@ -40,3 +44,4 @@ def validate_params(req, resp, resource, params):
 if __name__ == "__main__":
     r = TaskControllerResource()
     print r.find_tasks()
+    r.run_task(0)
