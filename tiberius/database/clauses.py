@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class SqlClauses(Enum):
     WHERE = "WHERE"
     SELECT = "SELECT"

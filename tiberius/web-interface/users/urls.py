@@ -9,7 +9,9 @@ urlpatterns = [
     url(r'^login', views.login, name='login'),
     url(r'^logout$', views.logout, name='logout'),
     url(r'^register$', views.register, name='register'),
-    url('^change_password/', auth_views.password_change, {'template_name': 'change_password.html'}),
-    url('^password_change_done/', auth_views.password_change_done, name='password_change_done'),
+    url('^change_password/', auth_views.password_change,
+        {'template_name': 'change_password.html'}),
+    url('^password_change_done/', auth_views.password_change_done,
+        name='password_change_done'),
 
 ]

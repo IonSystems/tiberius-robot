@@ -3,22 +3,26 @@ import sqlite3
 from database import Database
 from clauses import SqlClauses
 
+
 class SqliteDatabase(Database):
+
     def __init__(self, name):
-        #The database, defined by its location
+        # The database, defined by its location
         self.conn = sqlite3.connect(name)
-        #This is the cursor that is used to execute SQL commands.
+        # This is the cursor that is used to execute SQL commands.
         self.c = self.conn.cursor()
 
     '''*******************************************************************
         Accessible functions, according to Abstract Base Class (Database)
     *******************************************************************'''
+
     def set_db_name(self, name):
         self.conn = sqlite3.connect(name)
         self.c = self.conn.cursor()
 
-    def query(self, table_name, column_name, conditions = None):
-        query = self.__generate_query(SqlClauses.SELECT.value, table_name, column_name, conditions)
+    def query(self, table_name, column_name, conditions=None):
+        query = self.__generate_query(
+            SqlClauses.SELECT.value, table_name, column_name, conditions)
         print query
         self.c.execute(query)
         return self.c.fetchall()
@@ -34,7 +38,8 @@ class SqliteDatabase(Database):
             self.c.execute(self.__generate_drop(table_name))
             self.conn.commit()
         except sqlite3.OperationalError:
-            raise SqliteDatabase.OperationalError("Cannot drop table that doesn't exist")
+            raise SqliteDatabase.OperationalError(
+                "Cannot drop table that doesn't exist")
     '''
         Example operation:
         update("Customers",
@@ -58,6 +63,7 @@ class SqliteDatabase(Database):
         SET ContactName='Alfred Schmidt', City='Hamburg'
         WHERE CustomerName='Alfreds Futterkiste';
     '''
+
     def update(self, table_name, data, conditions):
         query = self.__generate_update(table_name, data, conditions)
         print query
@@ -65,7 +71,7 @@ class SqliteDatabase(Database):
         self.conn.commit()
         return
 
-    def delete(self, table_name, conditions = None):
+    def delete(self, table_name, conditions=None):
         self.c.execute(self.__generate_delete(table_name, conditions))
         self.conn.commit()
         return
@@ -74,13 +80,14 @@ class SqliteDatabase(Database):
         query = self.__generate_create(table_name, columns)
         self.c.execute(query)
         print query
-        #Set database properties
+        # Set database properties
         self.c.execute("PRAGMA foreign_keys = ON")
         self.conn.commit()
 
     '''*******************************************************************
         Hidden functions
     *******************************************************************'''
+
     def __generate_update(self, table_name, data, conditions):
         query = ""
         query += SqlClauses.UPDATE.value + " "
@@ -91,7 +98,7 @@ class SqliteDatabase(Database):
             query += '='
             query += self.__generate_representation(c_value)
             query += ", "
-        query = query[:-2] #Remove last comma
+        query = query[:-2]  # Remove last comma
         query += " "
         query += self.__generate_conditions(conditions)
         return query
@@ -148,7 +155,7 @@ class SqliteDatabase(Database):
             query += " " + self.__generate_conditions(conditions)
         return query
 
-    def __generate_conditions(self, conditions = None):
+    def __generate_conditions(self, conditions=None):
         cond_str = ""
         if conditions:
             cond_str = conditions['clause'] + " "
@@ -160,13 +167,15 @@ class SqliteDatabase(Database):
                 c_str = ""
                 c_str += condition['column'] + " "
                 c_str += condition['assertion'] + " "
-                c_str += self.__generate_representation(condition['value']) + " "
+                c_str += self.__generate_representation(
+                    condition['value']) + " "
                 c_str += logic + " "
                 cond_str += c_str
             cond_str = cond_str[:-(len(logic) + 2)]
             return cond_str
         else:
             return ""
+
     def __generate_representation(self, value):
         try:
             int(value)
@@ -183,8 +192,8 @@ class SqliteDatabase(Database):
 
     def __generate_columns(self, columns):
         query = "("
-        for c_name,c_type in columns.iteritems():
+        for c_name, c_type in columns.iteritems():
             query += c_name + " " + c_type + ", "
-        query = query[:-2] #Remove the last comma
+        query = query[:-2]  # Remove the last comma
         query += ")"
         return query

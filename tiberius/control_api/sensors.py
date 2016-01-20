@@ -3,6 +3,8 @@ import falcon
 '''
     Provides sensor data.
 '''
+
+
 class SensorResource(object):
 
     def on_get(self, req, resp):

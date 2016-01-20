@@ -2,23 +2,27 @@ import sys
 from tiberius.logger import logger
 import logging
 d_logger = logging.getLogger('tiberius.testing.api_control')
-import tty, termios, time
+import tty
+import termios
+import time
 import urllib2
 import argparse
 
+
 def getKey():
-        fd = sys.stdin.fileno()
-        old_settings = termios.tcgetattr(fd)
-        try:
-            tty.setraw(sys.stdin.fileno())
-            ch = sys.stdin.read(1)
-        finally:
-            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-        return ch
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(sys.stdin.fileno())
+        ch = sys.stdin.read(1)
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    return ch
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', "--ip-address", help="The IP address that the control API is running on.", required = True)
+    parser.add_argument(
+        '-i', "--ip-address", help="The IP address that the control API is running on.", required=True)
     args = parser.parse_args()
 
     ip_address = args.ip_address
@@ -48,7 +52,7 @@ if __name__ == "__main__":
         elif(key == 'D'):
             urllib2.urlopen(motors_url + "?right=100").read()
         elif(key == ' '):
-	    urllib2.urlopen(motors_url + "?stop=true").read()
+            urllib2.urlopen(motors_url + "?stop=true").read()
             time.sleep(0.1)
 
-        #c.motors.stop()
+        # c.motors.stop()

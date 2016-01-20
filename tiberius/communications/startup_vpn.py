@@ -7,7 +7,8 @@ if __name__ == "__main__":
     print 'Waiting 10 seconds ...'
     time.sleep(10)
     print 'Running route add -net 10.113.211.0 netmask 255.255.255.0 dev ppp0'
-    r2 = subprocess.check_output(["route add -net 10.113.211.0 netmask 255.255.255.0 dev ppp0"], shell = True)
+    r2 = subprocess.check_output(
+        ["route add -net 10.113.211.0 netmask 255.255.255.0 dev ppp0"], shell=True)
     print 'Results: '
     print r1
     print r2

@@ -7,6 +7,8 @@ import os
     that can be found here:
     https://github.com/adafruit/Adafruit_Python_GPIO/blob/master/Adafruit_GPIO/Platform.py
 '''
+
+
 def detect_pi():
     with open('/proc/cpuinfo', 'r') as infile:
         cpuinfo = infile.read()
@@ -25,6 +27,7 @@ def detect_pi():
     else:
         # Something else, not a pi.
         return None
+
 
 def detect_windows():
     return 'nt' in os.name

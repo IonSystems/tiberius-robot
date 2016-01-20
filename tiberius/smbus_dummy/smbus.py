@@ -29,6 +29,7 @@ import logging
 import smbus_database as db
 from util import validate
 
+
 class SMBus(object):
     """SMBus([bus]) -> SMBus
     Return a new SMBus object that is (optionally) connected to the
@@ -57,7 +58,7 @@ class SMBus(object):
         bus = int(bus)
         path = "/dev/i2c-%d" % (bus,)
         if len(path) >= MAXPATH:
-                raise OverflowError("Bus number is invalid.")
+            raise OverflowError("Bus number is invalid.")
         try:
             self.logger.info('Dummy smbus opened with path %s', path)
         except OSError as e:

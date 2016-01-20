@@ -17,7 +17,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='mission',
             name='scheduled_start',
-            field=models.DateTimeField(default=datetime.datetime(2015, 12, 21, 0, 54, 52, 157863, tzinfo=utc)),
+            field=models.DateTimeField(default=datetime.datetime(
+                2015, 12, 21, 0, 54, 52, 157863, tzinfo=utc)),
             preserve_default=False,
         ),
     ]

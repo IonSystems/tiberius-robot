@@ -12,9 +12,12 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+
+
 def index(request):
-    #TODO: There is probably a proper way of doing this
+    # TODO: There is probably a proper way of doing this
     return redirect('profile')
+
 
 def login(request):
     context = RequestContext(request)
@@ -31,9 +34,11 @@ def login(request):
                 auth.login(request, user)
                 return redirect('dashboard')
             else:
-                form._errors['__all__'] = form.error_class(["Incorrect Username or Password"])
+                form._errors['__all__'] = form.error_class(
+                    ["Incorrect Username or Password"])
 
     return render_to_response('login.html', {"form": form}, context)
+
 
 @login_required(login_url='/users/login/')
 def logout(request):
@@ -41,6 +46,7 @@ def logout(request):
     auth.logout(request)
     message = "You have succesfully logged out."
     return render_to_response('logout.html', {"message": message}, context)
+
 
 def register(request):
     if request.method == 'POST':
@@ -53,11 +59,13 @@ def register(request):
     return render(request, "register.html", {
         'form': form,
     })
+
+
 @login_required(login_url='/users/login/')
 def profile(request):
     user = request.user
     context = RequestContext(request)
-    return render_to_response('profile.html', {'user' : user}, context)
+    return render_to_response('profile.html', {'user': user}, context)
 # def change_password(request):
 #     form = ChangePasswordForm()
 #     u = User.objects.get(username='john')

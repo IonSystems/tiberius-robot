@@ -1,5 +1,6 @@
 import falcon
 
+
 class AuthMiddleware(object):
 
     def process_request(self, req, resp):

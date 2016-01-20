@@ -3,19 +3,22 @@ from tiberius.control.control import Control
 from tiberius.logger import logger
 import logging
 d_logger = logging.getLogger('tiberius.testing.keyboard_control')
-import tty, termios, time
+import tty
+import termios
+import time
 
 c = Control()
 
+
 def getKey():
-        fd = sys.stdin.fileno()
-        old_settings = termios.tcgetattr(fd)
-        try:
-            tty.setraw(sys.stdin.fileno())
-            ch = sys.stdin.read(1)
-        finally:
-            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-        return ch
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(sys.stdin.fileno())
+        ch = sys.stdin.read(1)
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    return ch
 
 if __name__ == "__main__":
     while(True):
@@ -50,6 +53,6 @@ if __name__ == "__main__":
             c.motors.setSpeedPercent(100)
             c.motors.turnRight()
         elif(key == ' '):
-	    c.motors.stop()
+            c.motors.stop()
             time.sleep(0.1)
-        #c.motors.stop()
+        # c.motors.stop()

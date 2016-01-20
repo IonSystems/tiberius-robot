@@ -8,6 +8,7 @@ from .models import Mission
 from .models import Task
 from .forms import MissionCreateForm
 
+
 @login_required(login_url='/users/login/')
 def manage(request):
 
@@ -17,6 +18,7 @@ def manage(request):
         'missions': missions,
     })
     return HttpResponse(template.render(context))
+
 
 @login_required(login_url='/users/login/')
 def manage_tasks(request):
@@ -28,9 +30,10 @@ def manage_tasks(request):
     })
     return HttpResponse(template.render(context))
 
+
 @login_required(login_url='/users/login/')
 def create(request):
-# if this is a POST request we need to process the form data
+    # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         form = MissionCreateForm(request.POST)

@@ -5,13 +5,17 @@ import logging
 '''
     Controls motor speed, direction, steering angle.
 '''
+
+
 class DebugResource(object):
+
     def __init__(self):
-            self.logger = logging.getLogger('tiberius.control_api.DebugResource')
+        self.logger = logging.getLogger('tiberius.control_api.DebugResource')
 
     #@falcon.before(validate_params(req, resp, resource, params))
     def on_get(self, req, resp):
         resp.body = '{"status":{"motors": "forward"}}'
+
 
 def validate_params(req, resp, resource, params):
     if req.content_type not in ALLOWED_IMAGE_TYPES:

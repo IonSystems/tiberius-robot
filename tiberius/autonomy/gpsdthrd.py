@@ -5,7 +5,9 @@ import threading
 
 gpsd = None
 
+
 class gpspol(threading.Thread):
+
     def __init__(self):
         threading.Thread.__init__(self)
         global gpsd
@@ -14,8 +16,8 @@ class gpspol(threading.Thread):
 
     def run(self):
         global gpsd
-        #gets latest frames of gps data
+        # gets latest frames of gps data
         while self.running:
-            #if there is data 
+            # if there is data
             if gpsd.waiting():
                 gpsd.next()

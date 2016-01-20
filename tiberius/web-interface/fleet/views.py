@@ -7,6 +7,7 @@ from django.forms.models import model_to_dict
 from .models import Robot
 from .forms import RobotForm
 
+
 @login_required(login_url='/users/login/')
 def list(request):
 
@@ -17,9 +18,10 @@ def list(request):
     })
     return HttpResponse(template.render(context))
 
+
 @login_required(login_url='/users/login/')
 def modify(request, id):
-    robot = Robot.objects.get(id = id)
+    robot = Robot.objects.get(id=id)
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         form = RobotForm(request.POST)
@@ -32,19 +34,20 @@ def modify(request, id):
             return render(request, 'index.html')
 
         else:
-            return render(request, 'modify.html', {'form': form, 'robot':robot})
+            return render(request, 'modify.html', {'form': form, 'robot': robot})
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        form = RobotForm(initial = model_to_dict(robot))
+        form = RobotForm(initial=model_to_dict(robot))
 
-    return render(request, 'modify.html', {'form': form, 'robot':robot})
+    return render(request, 'modify.html', {'form': form, 'robot': robot})
+
 
 @login_required(login_url='/users/login/')
 def view(request, id):
 
     template = loader.get_template('view.html')
-    robot = Robot.objects.get(id = id)
+    robot = Robot.objects.get(id=id)
     context = RequestContext(request, {
         'robot': robot,
     })
