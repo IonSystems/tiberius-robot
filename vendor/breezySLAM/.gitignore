@@ -1,7 +1,0 @@
-examples/__pycache__
-examples/*.pyc
-examples/*.pgm
-examples/*.png
-python/breezyslam/__pycache__
-python/build
-
