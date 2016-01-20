@@ -56,58 +56,67 @@ class Control:
 		self.motors.stop()
 
         def turnTo(self, desired_bearing):
+		count = 0
                 while(True):
-			time.sleep(0.1)
-                        actual_bearing = self.compass.headingNormalized()
-                        error = actual_bearing - desired_bearing
-                        self.logger.debug('Heading: ' + str(actual_bearing))
-                        self.logger.debug('Desired: ' + str(desired_bearing))
+			count+=1
+			print 'Iteration: ' + str(count)
+			if count < 50:
+				time.sleep(0.1)
+                        	actual_bearing = self.compass.headingNormalized()
+                        	error = actual_bearing - desired_bearing
+                        	self.logger.debug('Heading: ' + str(actual_bearing))
+	                        self.logger.debug('Desired: ' + str(desired_bearing))
 
-                        if(error < 5 and error > -5):
-                                self.logger.debug('At heading: ' + str(actual_bearing))
-                                self.motors.stop()
-                                break
-                        if(error > 180):
-                                print 'error > 180'
-                                error -= 360
-                        if(error < -180):
-                                print 'error < -180'
-                                error += 360
-                        if(error > 0):
-                                print 'error < 0 turning left'
-				self.motors.setSpeedPercent(100)
-                                self.motors.turnLeft()
+        	                if(error < 5 and error > -5):
+                	                self.logger.debug('At heading: ' + str(actual_bearing))
+                        	        self.motors.stop()
+                              		break
+                        	if(error > 180):
+                                	print 'error > 180'
+                                	error -= 360
+                        	if(error < -180):
+                                	print 'error < -180'
+                                	error += 360
+                        	if(error > 0):
+                                	print 'error < 0 turning left'
+					self.motors.setSpeedPercent(100)
+                                	self.motors.turnLeft()
 
-                                #Reduce speed on approach to desired bearing
-                                #Positive error is a left turn
-                                if(error < 60):
-                                        self.motors.setSpeedPercent(70)
-                                        self.motors.turnLeft()
-                                if(error < 30):
-                                        self.motors.setSpeedPercent(40)
-                                        self.motors.turnLeft()
-                                if(error < 5):
-                                        self.motors.setSpeedPercent(20)
-                                        self.motors.turnLeft()
-                        if(error < 0):
-                                print 'error > 0 turning right'
-                                self.motors.setSpeedPercent(100)
-				self.motors.turnRight()
+                                	#Reduce speed on approach to desired bearing
+                                	#Positive error is a left turn
+                                	if(error < 60):
+                                        	self.motors.setSpeedPercent(70)
+                                        	self.motors.turnLeft()
+                                	if(error < 30):
+                                        	self.motors.setSpeedPercent(40)
+                                        	self.motors.turnLeft()
+                                	if(error < 5):
+                                        	self.motors.setSpeedPercent(20)
+                                        	self.motors.turnLeft()
+                        	if(error < 0):
+                                	print 'error > 0 turning right'
+                                	self.motors.setSpeedPercent(100)
+					self.motors.turnRight()
 
-                                #Negative error is a right turn
-                                if(error > -60):
-                                        self.motors.setSpeedPercent(70)
-                                        self.motors.turnRight()
-                                if(error > -30):
-                                        self.motors.setSpeedPercent(40)
-                                        self.motors.turnRight()
-                                if(error > -5):
-                                        self.motors.setSpeedPercent(20)
-                                        self.motors.turnRight()
+                                	#Negative error is a right turn
+                                	if(error > -60):
+                                        	self.motors.setSpeedPercent(70)
+                                        	self.motors.turnRight()
+                                	if(error > -30):
+                                        	self.motors.setSpeedPercent(40)
+                                        	self.motors.turnRight()
+                                	if(error > -5):
+                                        	self.motors.setSpeedPercent(20)
+                                        	self.motors.turnRight()
 
 
 
-                        print str(error)
+                        	print str(error)
+			else:
+				print '50 Iterations Complete'
+				break
+
+
 
         def turnRight90Degrees(self):
                 old_bearing = self.compass.headingNormalized()
