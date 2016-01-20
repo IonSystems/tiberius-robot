@@ -1,5 +1,6 @@
 import platform
 import re
+import os
 
 '''
     This detction method is based on the Adafruit GPIO library,
@@ -25,5 +26,9 @@ def detect_pi():
         # Something else, not a pi.
         return None
 
+def detect_windows():
+    return 'nt' in os.name
+
 if __name__ == "__main__":
-    print detect_pi()
+    print 'Raspberry Pi detected?: ' + detect_pi()
+    print 'Windows detected?: ' + detect_windows()

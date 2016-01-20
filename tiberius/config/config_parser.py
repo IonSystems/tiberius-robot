@@ -1,5 +1,5 @@
 import ConfigParser
-
+from tiberius.utils import detection
 ULTRASONICS_SECTION = 'ultrasonics'
 INSTALLED = 'installed'
 LIDAR_SECTION = 'lidar'
@@ -16,7 +16,10 @@ class TiberiusConfigParser():
 	@staticmethod
 	def getParser():
 		parser =  ConfigParser.ConfigParser()
-		parser.read('/etc/tiberius/tiberius_conf.conf')
+		if detection.detect_windows():
+			parser.read('D:\\tiberius\tiberius_conf.conf')
+		else:
+			parser.read('/etc/tiberius/tiberius_conf.conf')
 		return parser
 	'''******************************************
 		Constant values
