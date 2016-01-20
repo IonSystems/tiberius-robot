@@ -5,8 +5,18 @@ from setuptools.command.install import install
 from subprocess import check_output, CalledProcessError
 import os
 
+def is_windows():
+	return 'nt' in os.name
+
 class PostInstallDependencies(install):
 	def run(self):
+		if not is_windows():
+			self.install_linux()
+
+		#Continue with the rest of the installation process.
+		install.do_egg_install(self)
+
+	def install_linux(self):
 		print "Checking for missing packages"
 		self.install_if_missing("build-essential")
 		self.install_if_missing("libi2c-dev")
@@ -37,10 +47,6 @@ class PostInstallDependencies(install):
 				check_output(enable_command, shell = True)
 		else:
 			print "Some features will be unavailable on this machine."
-
-		#Continue with the rest of the installation process.
-		install.do_egg_install(self)
-
 	def is_text_found(self, text, file):
 		try:
 			if(text in check_output("grep -r " + text + " " + file, shell = True)):
@@ -76,6 +82,16 @@ class PostInstallDependencies(install):
 	def is_pi(self):
 		return os.uname()[4][:3] == 'arm'
 
+if is_windows:
+	# Parameters for windows operating systems
+	data_directory = 'D:\\tiberius'
+	requirements = ['enum34', 'cython', 'falcon','gunicorn']
+
+else:
+	#Parameters for Linux-based operating systems
+	data_directory = '/etc/tiberius'
+	requirements = ['enum34', 'smbus-cffi', 'cython', 'falcon','gunicorn']
+
 setup(name='Tiberius',
       version='1.0',
       description='Tiberius Robot Software Suite',
@@ -84,11 +100,11 @@ setup(name='Tiberius',
       url='https://github.com/IonSystems/tiberius-robot/',
       packages=['tiberius', 'tiberius/control', 'tiberius/control_api', 'tiberius/control_api/tasks', 'tiberius/logger', 'tiberius/database', 'tiberius/utils', 'tiberius/config', 'tiberius/smbus_dummy'],
       data_files    =   [
-                            ('/etc/tiberius', ['tiberius/config/tiberius_conf.conf']),
-                            ('/etc/tiberius', ['tiberius/smbus_dummy/smbus_database.db']),
+                            (data_directory, ['tiberius/config/tiberius_conf.conf']),
+                            (data_directory, ['tiberius/smbus_dummy/smbus_database.db']),
                             #('/etc/tiberius', ['tiberius/database/polyhedra_databse.db'])
                         ],
       platforms=['Raspberry Pi 2', 'Raspberry Pi 1'],
-      install_requires=['enum34', 'smbus-cffi', 'cython', 'falcon','gunicorn'],
+      install_requires = requirements,
       cmdclass={'install':PostInstallDependencies},
      )
