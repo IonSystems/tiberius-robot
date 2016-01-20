@@ -95,12 +95,12 @@ class PostInstallDependencies(install):
 if is_windows:
     # Parameters for windows operating systems
     data_directory = 'D:\\tiberius'
-    requirements = ['enum34', 'cython', 'falcon', 'gunicorn']
+    requirements = ['enum34','autopep8', 'cython', 'falcon', 'gunicorn']
 
 else:
     # Parameters for Linux-based operating systems
     data_directory = '/etc/tiberius'
-    requirements = ['enum34', 'smbus-cffi', 'cython', 'falcon', 'gunicorn']
+    requirements = ['enum34', 'autopep8', 'pynmea', 'smbus-cffi', 'cython', 'falcon', 'gunicorn']
 
 setup(name='Tiberius',
       version='1.0',
