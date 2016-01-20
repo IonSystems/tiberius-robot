@@ -12,9 +12,8 @@ class PostInstallDependencies(install):
 		self.install_if_missing("libi2c-dev")
 		self.install_if_missing("i2c-tools")
 		self.install_if_missing("python-dev")
-
+		self.install_if_missing("libffi-dev")
 		if self.is_pi():
-			self.install_if_missing("libffi-dev")
 
 			print "Removing I2C from blacklist on Raspberry Pi"
 			blacklist_dir = "/etc/modprobe.d/raspi-blacklist.conf"
