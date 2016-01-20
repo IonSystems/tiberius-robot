@@ -4,8 +4,7 @@ import logging
 d_logger = logging.getLogger('tiberius.testing.api_control')
 import tty, termios, time
 import urllib2
-
-
+import argparse
 
 def getKey():
         fd = sys.stdin.fileno()
@@ -18,14 +17,19 @@ def getKey():
         return ch
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', "--ip-address", help="The IP address that the control API is running on.", required = True)
+    args = parser.parse_args()
 
-    motors_url = "http://10.113.211.251:8000/motors"
+    ip_address = args.ip_address
+
+    motors_url = "http://" + ip_address + ":8000/motors"
     while(True):
 
         key = getKey()
         d_logger.debug("Key %s pressed", key)
-        if(key == 'c'):
-            c.motors.stop()
+        if(key == 'c' or key == 'C'):
+            urllib2.urlopen(motors_url + "?stop=true").read()
             sys.exit(0)
         elif(key == 'w'):
             urllib2.urlopen(motors_url + "?forward=50").read()
