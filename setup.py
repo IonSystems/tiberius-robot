@@ -121,7 +121,6 @@ setup(name='Tiberius',
       data_files=[
           (data_directory, ['tiberius/config/tiberius_conf.conf']),
           (data_directory, ['tiberius/smbus_dummy/smbus_database.db']),
-          #('/etc/tiberius', ['tiberius/database/polyhedra_databse.db'])
       ],
       platforms=['Raspberry Pi 2', 'Raspberry Pi 1'],
       install_requires=requirements,

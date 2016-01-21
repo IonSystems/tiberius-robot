@@ -1,10 +1,14 @@
 import sys
 from tiberius.database.sqlite_database import SqliteDatabase
+from tiberius.utils import detection
 
 '''**********************************************************
     Added functions to provide 'mock' data to the bus
 **********************************************************'''
-db = SqliteDatabase('smbus_database.db')
+if detection.detect_windows():
+    db = SqliteDatabase('D:\\tiberius\smbus_database.db')
+else:
+    db = SqliteDatabase('/etc/tiberius/smbus_database.db')
 tn = "smbus_data"
 
 
