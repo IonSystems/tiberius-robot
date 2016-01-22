@@ -173,7 +173,7 @@ class Control:
             integral += error
             derivative = previous_error - error
             previous_error = error
-            '''if error_degrees < desired_heading:
+            if error_degrees < desired_heading:
                 r = right_speed - (abs(error) * gain) - \
                     (integral * i_factor) + (derivative * d_factor)
                 #((1 - abs(error)) + 1) / 2  * right_speed
@@ -195,7 +195,7 @@ class Control:
                 integral = 0  # Reset integral error when on track
                 if debug:
                     print 'Going STRAIGHT'
-            '''
+
             if(debug):
                 print 'Actual Heading (deg): ' + str(actual_heading)
                 print 'Error (deg): ' + str(error_degrees)
@@ -207,10 +207,10 @@ class Control:
                 print 'Proportional: ' + str(error * gain)
                 print 'Integral    : ' + str(integral * i_factor)
                 print 'Derivative  : ' + str(derivative * d_factor)
-            self.motors.moveForwardDualSpeed(l, r)
+            #self.motors.moveForwardDualSpeed(l, r)
             time.sleep(0.1)
             t += 0.1
-        self.motors.stop()
+        #self.motors.stop()
 
     def driveStraightStopStart(self, speed_percent, duration):
         desired_bearing = self.compass.headingNormalized()
