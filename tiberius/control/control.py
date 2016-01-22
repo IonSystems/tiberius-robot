@@ -164,15 +164,16 @@ class Control:
         while(t < duration):
             time.sleep(5)
             actual_heading = self.compass.headingNormalized()
+
             error_degrees = actual_heading - desired_heading
+
             # Make error between 1 and -1
             error = error_degrees / float(360.0)
-            if debug:
-                print 'Error (deg): ' + str(error)
+
             integral += error
             derivative = previous_error - error
             previous_error = error
-            if error_degrees < desired_heading:
+            '''if error_degrees < desired_heading:
                 r = right_speed - (abs(error) * gain) - \
                     (integral * i_factor) + (derivative * d_factor)
                 #((1 - abs(error)) + 1) / 2  * right_speed
@@ -194,7 +195,11 @@ class Control:
                 integral = 0  # Reset integral error when on track
                 if debug:
                     print 'Going STRAIGHT'
+            '''
             if(debug):
+                print 'Actual Heading (deg): ' + str(actual_heading)
+                print 'Error (deg): ' + str(error_degrees)
+                print 'Error: ' + str(error)
                 print 'Max speed   : ' + str(left_speed)
                 print 'Left speed  : ' + str(l)
                 print 'Right speed : ' + str(r)
