@@ -151,39 +151,40 @@ class Control:
 
     def driveStraight(self, speed_percent, duration):
         desired_heading = self.compass.headingNormalized()
-        t = 0
-        p_factor = 400  # Error multiplier
+        t = 0  # time
+        gain = 0.8  # proportional Error multiplier
         integral = 0  # Sum of all errors over time
-        i_factor = 100
-        derivative = 0  # last error - current error
-        d_factor = 100
+        i_factor = 0.2  # integral
+
+        d_factor = 0  # derivative
         previous_error = 0
         debug = True
-        left_speed = (speed_percent * 255) / 100
+        left_speed = (speed_percent * 255) / 100  # 0-100 -> 0-255
         right_speed = (speed_percent * 255) / 100
         while(t < duration):
+            time.sleep(5)
             actual_heading = self.compass.headingNormalized()
             error = actual_heading - desired_heading
+            # Make error between 1 and -1
+            error /= float(360.0)
             if debug:
                 print 'Error (deg): ' + str(error)
-            # Make error between 1 and -1
-            error = error / float(360.0)
             integral += error
             derivative = previous_error - error
             previous_error = error
             if error < 0:
-                r = right_speed - (abs(error) * p_factor) - \
+                r = right_speed - (abs(error) * gain) - \
                     (integral * i_factor) + (derivative * d_factor)
                 #((1 - abs(error)) + 1) / 2  * right_speed
-                # + (abs(error) * p_factor) + (integral * i_factor) + (derivative * d_factor)
+                # + (abs(error) * gain) + (integral * i_factor) + (derivative * d_factor)
                 l = left_speed
                 if debug:
                     print 'Turning RIGHT'
             elif error > 0:
-                l = left_speed - (abs(error) * p_factor) - \
+                l = left_speed - (abs(error) * gain) - \
                     (integral * i_factor) + (derivative * d_factor)
                 #((1 - abs(error)) + 1) / 2 * left_speed
-                # + (abs(error) * p_factor) + (integral * i_factor) + (derivative * d_factor)
+                # + (abs(error) * gain) + (integral * i_factor) + (derivative * d_factor)
                 r = right_speed
                 if debug:
                     print 'Turning LEFT'
@@ -198,7 +199,7 @@ class Control:
                 print 'Left speed  : ' + str(l)
                 print 'Right speed : ' + str(r)
 
-                print 'Proportional: ' + str(error * p_factor)
+                print 'Proportional: ' + str(error * gain)
                 print 'Integral    : ' + str(integral * i_factor)
                 print 'Derivative  : ' + str(derivative * d_factor)
             self.motors.moveForwardDualSpeed(l, r)

@@ -3,7 +3,7 @@ import sys
 from enum import Enum
 
 from tiberius.logger import logger
-#import logger.logger as logger
+# import logger.logger as logger
 
 import logging
 from pynmea import nmea
