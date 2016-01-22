@@ -26,9 +26,10 @@ class SentenceNotSupportedError(Exception):
 
 # class NMEASentence(Enum):
 # 	GPGGA = "GPGGA"
+#   GPVTG = "GPVTG"
 
 class GlobalPositioningSystem:
-    port = '/dev/ttyACM0'
+    port = 'COM5'
     baud = 9600
 
     def __init__(self, debug=False):
@@ -38,6 +39,7 @@ class GlobalPositioningSystem:
         self.ser = serial.Serial(self.port, self.baud, timeout=1)
         self.gpgga = nmea.GPGGA()
         self.gprmc = nmea.GPRMC()
+        self.gpvtg = nmea.GPVTG()
         self.debug = debug
 
         # Accessible fields that can be directly accessed.
@@ -48,6 +50,7 @@ class GlobalPositioningSystem:
         self.attitude = None
         self.timestamp = None
         self.variation = None
+        self.velocity = None
 
         # if(self.s.isOpen()):
         # self.logger.info('GPS Serial port in open on ', port
@@ -71,6 +74,9 @@ class GlobalPositioningSystem:
             data = self.gprmc.parse(data)
             self.latitude = self.gprmc.lat
             self.longitude = self.gprmc.lon
+        elif "GPVTG" in data:
+            data = self.gpvtg.parse(data)
+            self.velocity = self.gpvtg.spd_over_grnd_kmph
         else:
             raise SentenceNotSupportedError(str(data))
 
