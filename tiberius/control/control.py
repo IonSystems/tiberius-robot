@@ -164,8 +164,17 @@ class Control:
         while(t < duration):
             time.sleep(5)
             actual_heading = self.compass.headingNormalized()
+            if desired_heading > 0:
+                if actual_heading > 0:
+                    error_degrees = actual_heading - desired_heading
+                elif actual_heading < 0:
+                    error_degrees = -((actual_heading + 180) - desired_heading)
+            elif desired_heading < 0:
+                if actual_heading > 0:
+                    error_degrees = actual_heading + desired_heading
+                elif actual_heading < 0:
+                    error_degrees = actual_heading - desired_heading
 
-            error_degrees = actual_heading - desired_heading
 
             # Make error between 1 and -1
             error = error_degrees / float(360.0)
@@ -207,10 +216,10 @@ class Control:
                 print 'Proportional: ' + str(error * gain)
                 print 'Integral    : ' + str(integral * i_factor)
                 print 'Derivative  : ' + str(derivative * d_factor)
-            #self.motors.moveForwardDualSpeed(l, r)
+            self.motors.moveForwardDualSpeed(l, r)
             time.sleep(0.1)
             t += 0.1
-        #self.motors.stop()
+        self.motors.stop()
 
     def driveStraightStopStart(self, speed_percent, duration):
         desired_bearing = self.compass.headingNormalized()
