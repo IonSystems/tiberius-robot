@@ -162,7 +162,7 @@ class Control:
         left_speed = (speed_percent * 255) / 100  # 0-100 -> 0-255
         right_speed = (speed_percent * 255) / 100
         while(t < duration):
-            time.sleep(5)
+            time.sleep(0.5)
             actual_heading = self.compass.headingNormalized()
             if desired_heading > 0:
                 if actual_heading > 0:
