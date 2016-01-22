@@ -95,12 +95,12 @@ class PostInstallDependencies(install):
 if is_windows:
     # Parameters for windows operating systems
     data_directory = 'D:\\tiberius'
-    requirements = ['enum34', 'cython', 'falcon', 'gunicorn']
+    requirements = ['enum34','autopep8', 'pynmea', 'pyserial', 'cython', 'falcon', 'gunicorn']
 
 else:
     # Parameters for Linux-based operating systems
     data_directory = '/etc/tiberius'
-    requirements = ['enum34', 'smbus-cffi', 'cython', 'falcon', 'gunicorn']
+    requirements = ['enum34', 'autopep8', 'pynmea', 'pyserial', 'smbus-cffi', 'cython', 'falcon', 'gunicorn']
 
 setup(name='Tiberius',
       version='1.0',
@@ -121,7 +121,6 @@ setup(name='Tiberius',
       data_files=[
           (data_directory, ['tiberius/config/tiberius_conf.conf']),
           (data_directory, ['tiberius/smbus_dummy/smbus_database.db']),
-          #('/etc/tiberius', ['tiberius/database/polyhedra_databse.db'])
       ],
       platforms=['Raspberry Pi 2', 'Raspberry Pi 1'],
       install_requires=requirements,
