@@ -164,15 +164,15 @@ class Control:
         while(t < duration):
             time.sleep(5)
             actual_heading = self.compass.headingNormalized()
-            error = actual_heading - desired_heading
+            error_degrees = actual_heading - desired_heading
             # Make error between 1 and -1
-            error /= float(360.0)
+            error = error_degrees / float(360.0)
             if debug:
                 print 'Error (deg): ' + str(error)
             integral += error
             derivative = previous_error - error
             previous_error = error
-            if error < 0:
+            if error_degrees < desired_heading:
                 r = right_speed - (abs(error) * gain) - \
                     (integral * i_factor) + (derivative * d_factor)
                 #((1 - abs(error)) + 1) / 2  * right_speed
@@ -180,7 +180,7 @@ class Control:
                 l = left_speed
                 if debug:
                     print 'Turning RIGHT'
-            elif error > 0:
+            elif error_degrees > desired_heading:
                 l = left_speed - (abs(error) * gain) - \
                     (integral * i_factor) + (derivative * d_factor)
                 #((1 - abs(error)) + 1) / 2 * left_speed
