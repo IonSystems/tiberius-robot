@@ -152,9 +152,9 @@ class Control:
     def driveStraight(self, speed_percent, duration):
         desired_heading = self.compass.headingNormalized()
         t = 0  # time
-        gain = 8  # proportional Error multiplier
+        gain = 32  # proportional Error multiplier
         integral = 0  # Sum of all errors over time
-        i_factor = 2  # integral
+        i_factor = 8  # integral
 
         d_factor = 0  # derivative
         previous_error = 0
@@ -183,16 +183,16 @@ class Control:
             derivative = previous_error - error
             previous_error = error
             if error_degrees < 0:  # Turn Right
-                r = right_speed + (abs(error) * gain) - (integral * i_factor) + (derivative * d_factor)
+                r = right_speed - (abs(error) * gain) - (integral * i_factor) + (derivative * d_factor)
 
-                l = left_speed - (abs(error) * gain) - (integral * i_factor) + (derivative * d_factor)
+                l = left_speed + (abs(error) * gain) - (integral * i_factor) + (derivative * d_factor)
 
                 if debug:
                     print 'Turning RIGHT'
             elif error_degrees > 0:  # Turn Left         
-                r = right_speed - (abs(error) * gain) - (integral * i_factor) + (derivative * d_factor)
+                r = right_speed + (abs(error) * gain) - (integral * i_factor) + (derivative * d_factor)
 
-                l = left_speed + (abs(error) * gain) - (integral * i_factor) + (derivative * d_factor)
+                l = left_speed - (abs(error) * gain) - (integral * i_factor) + (derivative * d_factor)
 
                 if debug:
                     print 'Turning LEFT'
@@ -204,6 +204,7 @@ class Control:
                     print 'Going STRAIGHT'
 
             if(debug):
+		print 'Desired Heading (deg): ' + str(desired_heading)
                 print 'Actual Heading (deg): ' + str(actual_heading)
                 print 'Error (deg): ' + str(error_degrees)
                 print 'Error: ' + str(error)
