@@ -3,17 +3,13 @@ import sys
 from enum import Enum
 
 from tiberius.logger import logger
-# import logger.logger as logger
+from tiberius.utils import detection
 
 import logging
 from pynmea import nmea
 '''
-	Reads GPS data. GPS data comes in many formats, currently we are only interested
-	in the NMEA GPGGA sentences (Global Positioning System Fix Data).
-
-
+    Reads GPS data. GPS data comes in many formats, we make use of a fraction of them at the moment.
 '''
-
 
 class SentenceNotSupportedError(Exception):
 
@@ -25,11 +21,14 @@ class SentenceNotSupportedError(Exception):
 
 
 # class NMEASentence(Enum):
-# 	GPGGA = "GPGGA"
+#     GPGGA = "GPGGA"
 #   GPVTG = "GPVTG"
 
 class GlobalPositioningSystem:
-    port = 'COM5'
+    if detection.detect_windows():
+        port = 'COM5'
+    else:
+        port = '/dev/ttyACM0'
     baud = 9600
 
     def __init__(self, debug=False):
