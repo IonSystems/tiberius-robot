@@ -23,23 +23,23 @@ class SqliteDatabase(Database):
     def query(self, table_name, column_name, conditions=None):
         query = self.__generate_query(
             SqlClauses.SELECT.value, table_name, column_name, conditions)
-        print query
         self.c.execute(query)
         return self.c.fetchall()
 
     def insert(self, table_name, values):
         query = self.__generate_insert("insert", table_name, values)
-        print query
-        self.c.execute(query)
-        self.conn.commit()
+        try:
+            self.c.execute(query)
+            self.conn.commit()
+        except sqlite3.OperationalError as e:
+            raise SqliteDatabase.OperationalError(e[0])
 
     def drop(self, table_name):
         try:
             self.c.execute(self.__generate_drop(table_name))
             self.conn.commit()
-        except sqlite3.OperationalError:
-            raise SqliteDatabase.OperationalError(
-                "Cannot drop table that doesn't exist")
+        except sqlite3.OperationalError as e:
+            raise SqliteDatabase.OperationalError(e[0])
     '''
         Example operation:
         update("Customers",
@@ -66,23 +66,25 @@ class SqliteDatabase(Database):
 
     def update(self, table_name, data, conditions):
         query = self.__generate_update(table_name, data, conditions)
-        print query
         self.c.execute(query)
         self.conn.commit()
         return
 
     def delete(self, table_name, conditions=None):
-        self.c.execute(self.__generate_delete(table_name, conditions))
+        statement = self.__generate_delete(table_name, conditions)
+        self.c.execute(statement)
         self.conn.commit()
         return
 
     def create(self, table_name, columns):
         query = self.__generate_create(table_name, columns)
-        self.c.execute(query)
-        print query
-        # Set database properties
-        self.c.execute("PRAGMA foreign_keys = ON")
-        self.conn.commit()
+        try:
+            self.c.execute(query)
+            # Set database properties
+            self.c.execute("PRAGMA foreign_keys = ON")
+            self.conn.commit()
+        except sqlite3.OperationalError as e:
+            raise SqliteDatabase.OperationalError(e)
 
     '''*******************************************************************
         Hidden functions
@@ -144,7 +146,12 @@ class SqliteDatabase(Database):
             query += " " + self.__generate_conditions(conditions)
             return query
 
-    def __generate_query(self, query_type, table_name, column_name, conditions):
+    def __generate_query(
+            self,
+            query_type,
+            table_name,
+            column_name,
+            conditions):
         query = ""
         if query_type.upper() == SqlClauses.SELECT.value:
             query += SqlClauses.SELECT.value + " "
