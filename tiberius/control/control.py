@@ -152,7 +152,7 @@ class Control:
     def driveStraight(self, speed_percent, duration):
         desired_heading = self.compass.headingNormalized()
         t = 0  # time
-        gain = 8  # proportional Error multiplier
+        gain = 64  # proportional Error multiplier
         integral = 0  # Sum of all errors over time
         i_factor = 2  # integral
 
@@ -168,7 +168,7 @@ class Control:
                 if actual_heading > 0:
                     error_degrees = actual_heading - desired_heading
                 elif actual_heading < 0:
-                    error_degrees = -((actual_heading + 180) - desired_heading)
+                    error_degrees = actual_heading + desired_heading
             elif desired_heading < 0:
                 if actual_heading > 0:
                     error_degrees = actual_heading + desired_heading
