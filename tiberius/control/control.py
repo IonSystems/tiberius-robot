@@ -152,9 +152,9 @@ class Control:
     def driveStraight(self, speed_percent, duration):
         desired_heading = self.compass.headingNormalized()
         t = 0  # time
-        gain = 0.8  # proportional Error multiplier
+        gain = 8  # proportional Error multiplier
         integral = 0  # Sum of all errors over time
-        i_factor = 0.2  # integral
+        i_factor = 2  # integral
 
         d_factor = 0  # derivative
         previous_error = 0
