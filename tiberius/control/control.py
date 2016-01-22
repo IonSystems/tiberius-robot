@@ -182,7 +182,7 @@ class Control:
             integral += error
             derivative = previous_error - error
             previous_error = error
-            if error_degrees < desired_heading:
+            if error_degrees < 0:
                 r = right_speed - (abs(error) * gain) - \
                     (integral * i_factor) + (derivative * d_factor)
                 #((1 - abs(error)) + 1) / 2  * right_speed
@@ -190,7 +190,7 @@ class Control:
                 l = left_speed
                 if debug:
                     print 'Turning RIGHT'
-            elif error_degrees > desired_heading:
+            elif error_degrees > 0:
                 l = left_speed - (abs(error) * gain) - \
                     (integral * i_factor) + (derivative * d_factor)
                 #((1 - abs(error)) + 1) / 2 * left_speed
