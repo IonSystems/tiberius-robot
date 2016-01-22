@@ -95,7 +95,7 @@ class PostInstallDependencies(install):
 if is_windows:
     # Parameters for windows operating systems
     data_directory = 'D:\\tiberius'
-    requirements = ['enum34','autopep8', 'pynmea', 'pyserial', 'cython', 'falcon', 'gunicorn']
+    requirements = ['enum34','autopep8', 'pynmea', 'pyserial', 'falcon', 'gunicorn']
 
 else:
     # Parameters for Linux-based operating systems
