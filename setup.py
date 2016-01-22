@@ -100,7 +100,7 @@ if is_windows:
 else:
     # Parameters for Linux-based operating systems
     data_directory = '/etc/tiberius'
-    requirements = ['enum34', 'autopep8', 'pynmea', 'pyserial', 'smbus-cffi', 'cython', 'falcon', 'gunicorn']
+    requirements = ['enum34', 'autopep8', 'pynmea', 'pyserial', 'smbus-cffi', 'falcon', 'gunicorn']
 
 setup(name='Tiberius',
       version='1.0',
