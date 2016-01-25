@@ -1,17 +1,19 @@
 import math
-import null as null
 
 from tiberius.control.gps20 import GlobalPositioningSystem
 from tiberius.control.control import Control
 
+
 class Algorithms:
 	'''
-		Set of algorithms that control tiberius using the gps and compass
+		Set of algorithms that control tiberius using the gps and compass.
 
+		Point to point algorithm moves from one longitude and latitude position
+		to another. Created
 
+		Follow path algorithm moves to a location using multiple point to point calls
+		to create a path that can move around objects or along a given path. TODO
 	'''
-
-
 
 	def __init__(self):
 		self.gps = GlobalPositioningSystem()
@@ -27,6 +29,7 @@ class Algorithms:
 
 		return location
 
+	# get the heading that tiberius needs to turn to for a given destination
 	def getHeading(self, curlocation, destination):
 		curlongitude = curlocation[0]
 		curlatitude = curlocation[1]
@@ -40,6 +43,7 @@ class Algorithms:
 
 		return heading
 
+	# get the distance between two longitude and latitude points
 	def getDistance(self, curlocation, destination):
 		r = 6371000  # radius of the earth in meters
 		longdis = curlocation[0] - destination[0]
