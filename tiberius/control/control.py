@@ -153,12 +153,12 @@ class Control:
         desired_heading = self.compass.headingNormalized()
         t = 0  # time
 
-        gain = 64  # proportional Error multiplier
+        gain = 1440  # proportional Error multiplier
 
         integral = 0  # Sum of all errors over time
-        i_factor = 2  # integral
+        i_factor = 1  # integral
 
-        d_factor = 0  # derivative
+        d_factor = 1  # derivative
         previous_error = 0
         debug = True
         left_speed = (speed_percent * 255) / 100  # 0-100 -> 0-255
