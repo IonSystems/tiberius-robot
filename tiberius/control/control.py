@@ -225,4 +225,4 @@ class Control:
             self.motors.moveForwardDualSpeed(l, r)
             time.sleep(0.1)
             t += 0.1
-            self.motors.stop()
+        self.motors.stop()
