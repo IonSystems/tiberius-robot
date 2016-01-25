@@ -3,17 +3,13 @@ import sys
 from enum import Enum
 
 from tiberius.logger import logger
-# import logger.logger as logger
+from tiberius.utils import detection
 
 import logging
 from pynmea import nmea
 '''
-	Reads GPS data. GPS data comes in many formats, currently we are only interested
-	in the NMEA GPGGA sentences (Global Positioning System Fix Data).
-
-
+    Reads GPS data. GPS data comes in many formats, we make use of a fraction of them at the moment.
 '''
-
 
 class SentenceNotSupportedError(Exception):
 
@@ -25,10 +21,14 @@ class SentenceNotSupportedError(Exception):
 
 
 # class NMEASentence(Enum):
-# 	GPGGA = "GPGGA"
+#     GPGGA = "GPGGA"
+#   GPVTG = "GPVTG"
 
 class GlobalPositioningSystem:
-    port = '/dev/ttyACM0'
+    if detection.detect_windows():
+        port = 'COM5'
+    else:
+        port = '/dev/ttyACM0'
     baud = 9600
 
     def __init__(self, debug=False):
@@ -38,6 +38,7 @@ class GlobalPositioningSystem:
         self.ser = serial.Serial(self.port, self.baud, timeout=1)
         self.gpgga = nmea.GPGGA()
         self.gprmc = nmea.GPRMC()
+        self.gpvtg = nmea.GPVTG()
         self.debug = debug
 
         # Accessible fields that can be directly accessed.
@@ -48,6 +49,7 @@ class GlobalPositioningSystem:
         self.attitude = None
         self.timestamp = None
         self.variation = None
+        self.velocity = None
 
         # if(self.s.isOpen()):
         # self.logger.info('GPS Serial port in open on ', port
@@ -71,6 +73,9 @@ class GlobalPositioningSystem:
             data = self.gprmc.parse(data)
             self.latitude = self.gprmc.lat
             self.longitude = self.gprmc.lon
+        elif "GPVTG" in data:
+            data = self.gpvtg.parse(data)
+            self.velocity = self.gpvtg.spd_over_grnd_kmph
         else:
             raise SentenceNotSupportedError(str(data))
 

@@ -3,7 +3,7 @@ from subprocess import check_output, Popen
 import time
 import sys
 from enum import Enum
-
+from tiberius.control.control import Control
 
 class Action(Enum):
     KEYBOARD_CONTROL = 0
@@ -13,6 +13,7 @@ class Action(Enum):
     I2C_CHECK = 4
     ULTRASONICS_READ = 5
     STYLE_CHECKER = 6
+    EMERGENCY_STOP = 7
 
 parser = OptionParser()
 
@@ -50,6 +51,13 @@ parser.add_option(
     dest="action",
     help="Run the PEP8 style checker on all directories.")
 
+parser.add_option(
+    "-e",
+    "--emergency-stop",
+    action="store_const",
+    const=Action.EMERGENCY_STOP,
+    dest="action",
+    help="Send a stop command to all motors. Does not prevent further commands from other processes.")
 
 (options, args) = parser.parse_args()
 
@@ -115,3 +123,8 @@ elif action == Action.STYLE_CHECKER:
         except KeyboardInterrupt:
             Popen.kill(server)
             sys.exit()
+
+elif action == Action.EMERGENCY_STOP:
+    print "Sending STOP to all motors."
+    c = Control()
+    c.motors.stop()
