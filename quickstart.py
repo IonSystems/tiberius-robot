@@ -3,7 +3,7 @@ from subprocess import check_output, Popen
 import time
 import sys
 from enum import Enum
-from tiberius.control.control import control
+from tiberius.control.control import Control
 
 class Action(Enum):
     KEYBOARD_CONTROL = 0
