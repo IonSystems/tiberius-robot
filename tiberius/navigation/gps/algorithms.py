@@ -33,9 +33,7 @@ class Algorithms:
 		y = math.sin(deslongitude - curlongitude) * math.cos(deslatitude)
 		x = math.cos(curlatitude) * math.sin(deslatitude) - \
 			math.sin(curlatitude) * math.cos(deslatitude) * math.cos(deslongitude - curlongitude)
-		heading = math.degrees(math.atan2(y, x) + 360) % 360
-
-		return heading
+		return math.degrees(math.atan2(y, x) + 360) % 360
 
 	def getDistance(self, curlocation, destination):
 		r = 6371000  # radius of the earth in meters
