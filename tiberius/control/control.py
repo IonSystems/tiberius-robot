@@ -6,6 +6,7 @@ import sensors
 import actuators
 import time
 import logging
+from tiberius.utils import bearing_math
 
 c_logger = logging.getLogger('tiberius.control.Control')
 
@@ -149,7 +150,7 @@ class Control:
 
     # def driveForwardDistance(self, distance_metres):
 
-    def driveStraight(self, speed_percent, duration):
+    def driveStraight(self, speed_percent, duration, sensitivity = 1):
         desired_heading = self.compass.headingNormalized()
         t = 0  # time
 
@@ -163,10 +164,13 @@ class Control:
         debug = True
         left_speed = (speed_percent * 255) / 100  # 0-100 -> 0-255
         right_speed = (speed_percent * 255) / 100
-        while(t < duration):
-            time.sleep(0.5)
+        while t < duration:
             actual_heading = self.compass.headingNormalized()
-            if desired_heading > 0:
+
+            error_degrees = actual_heading - desired_heading
+            error_degrees = bearing_math.normalize_bearing(error_degrees)
+
+            '''if desired_heading > 0:
                 if actual_heading > 0:
                     error_degrees = actual_heading - desired_heading
                 elif actual_heading < 0:
@@ -176,11 +180,11 @@ class Control:
                     error_degrees = actual_heading + desired_heading
                 elif actual_heading < 0:
                     error_degrees = actual_heading - desired_heading
-
+            '''
 
             # Make error between 1 and -1
-            error = error_degrees / float(360.0)
-
+            error = error_degrees / float(180.0)
+            error *= sensitivity
             integral += error
             derivative = previous_error - error
             previous_error = error
@@ -205,8 +209,8 @@ class Control:
                 if debug:
                     print 'Going STRAIGHT'
 
-            if(debug):
-		print 'Desired Heading (deg): ' + str(desired_heading)
+            if debug:
+                print 'Desired Heading (deg): ' + str(desired_heading)
                 print 'Actual Heading (deg): ' + str(actual_heading)
                 print 'Error (deg): ' + str(error_degrees)
                 print 'Error: ' + str(error)
@@ -221,20 +225,3 @@ class Control:
             time.sleep(0.1)
             t += 0.1
         self.motors.stop()
-
-    def driveStraightStopStart(self, speed_percent, duration):
-        desired_bearing = self.compass.headingNormalized()
-        t = 0
-        self.motors.setSpeedPercent(speed_percent)
-        while(t < duration):
-            actual_bearing = self.compass.headingNormalized()
-            error = actual_bearing - desired_bearing
-
-            if error != 0:
-                self.turnTo(desired_bearing)
-                self.motors.moveForward()
-
-            else:
-                self.motors.moveForward()
-            time.sleep(0.1)
-            t += 0.1
