@@ -4,7 +4,7 @@ import os
 import sys
 import random
 import subprocess
-from tiberius.database.sqlite_database import PolyhedraDatabase
+from tiberius.database.polyhedra_database import PolyhedraDatabase
 
 def clean_up():
     p = subprocess.Popen(
@@ -23,11 +23,11 @@ class CreateTestDatabase(unittest.TestCase):
         try:
             self.assertRaises(PolyhedraDatabase.OperationalError,
                               pol.drop("test_table"))
-        except PolyhedraDatabaseDatabase.OperationalError as e:
+        except PolyhedraDatabase.OperationalError as e:
             print e.value
 
         # Create a table in our database called 'test_table', with two columns
-        pol.create("test_table", {'test_column': 'int', 'test_column2': 'int'})
+        pol.create("test_table", {'test_column': 'int primary key', 'test_column2': 'int'})
 
 class InsertDatabase(unittest.TestCase):
 
@@ -95,7 +95,7 @@ class DeleteAllFromTableDatabase(unittest.TestCase):
 
     def runTest(self):
         with self.assertRaises(PolyhedraDatabase.OperationalError):
-            pol.create("test_table", {'test_column': 'int', 'test_column2': 'int'})
+            pol.create("test_table", {'test_column': 'int primary key', 'test_column2': 'int'})
 
         pol.delete("test_table")
 

@@ -8,14 +8,31 @@ class PolyhedraDatabase(Database):
 
     def __init__(self, name):
         # Start the database API
-        subprocess.Popen("rtrdb -r data_service=8001 -r verbosity=4 db", shell = True)
-
+        popen = subprocess.Popen("rtrdb -r data_service=8001 -r verbosity=4 db", shell = True, stdout=subprocess.PIPE)
+        lines_iterator = iter(popen.stdout.readline, b"")
+        for line in lines_iterator:
+            if line == "Ready":
+                break
+            if "Failed" in line:
+                break
         # The database, defined by its location
         self.conn = pyodbc.connect('DSN=8001')
 
         # This is the cursor that is used to execute SQL commands.
         self.c = self.conn.cursor()
 
+    def test(self):
+        #self.c.execute("CREATE TABLE test_table2 (column1 int primary key, column2 text)")
+        #self.conn.commit()
+	result = 0
+        self.c.execute("SELECT id,column2 from test_table")
+	print self.c.fetchall()
+        self.c.execute("INSERT INTO test_table (id, column2) VALUES (0, 33)")
+	self.c.commit()
+        self.c.execute("SELECT id,column2 from test_table")
+        print self.c.fetchall()
+        #self.conn.commit()
+        
     '''*******************************************************************
         Accessible functions, according to Abstract Base Class (Database)
     *******************************************************************'''
@@ -78,6 +95,7 @@ class PolyhedraDatabase(Database):
 
     def create(self, table_name, columns):
         query = self.__generate_create(table_name, columns)
+        print query
         try:
             self.c.execute(query)
             # Set database properties
@@ -208,4 +226,5 @@ class PolyhedraDatabase(Database):
 #For testing
 if __name__ == "__main__":
     p = PolyhedraDatabase('tiberius-polyhedra')
-    p.create('test_table', {'column1' : 'int', 'column2': 'int'})
+    #p.create('test_table', {'column1' : 'int', 'column2': 'int'})
+    p.test()
