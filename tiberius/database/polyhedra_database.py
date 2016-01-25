@@ -31,14 +31,14 @@ class PolyhedraDatabase(Database):
         try:
             self.c.execute(query)
             self.conn.commit()
-        except sqlite3.OperationalError as e:
+        except pyodbc.OperationalError as e:
             raise PolyhedraDatabase.OperationalError(e[0])
 
     def drop(self, table_name):
         try:
             self.c.execute(self.__generate_drop(table_name))
             self.conn.commit()
-        except sqlite3.OperationalError as e:
+        except pyodbc.OperationalError as e:
             raise PolyhedraDatabase.OperationalError(e[0])
     '''
         Example operation:
@@ -83,7 +83,7 @@ class PolyhedraDatabase(Database):
             # Set database properties
             self.c.execute("PRAGMA foreign_keys = ON")
             self.conn.commit()
-        except sqlite3.OperationalError as e:
+        except pyodbc.OperationalError as e:
             raise PolyhedraDatabase.OperationalError(e)
 
     '''*******************************************************************
