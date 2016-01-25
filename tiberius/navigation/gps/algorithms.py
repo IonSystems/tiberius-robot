@@ -52,12 +52,30 @@ class Algorithms:
 		return distance
 
 	# move from current location to a given destination (a longitude and latitude)
-	def pointToPoint(self, destination):
+	def pointToPoint(self, destination, checkdistance=1, speedpercent=50):
+
+		speed = 100 / speedpercent
+		curlocation = self.getLocation()
+		heading = self.getHeading(curlocation, destination)
+		distance = self.getDistance(curlocation, destination)
+		time = checkdistance / (self.SPEED / speed)
+		self.control.turnTo(heading)
+		while distance > checkdistance:
+			self.control.driveStraight(speedpercent, time)
+			distance -= checkdistance
+			curlocation = self.getLocation()
+			newheading = self.getHeading(curlocation, destination)
+			if not(heading + 5 < newheading < 5 - heading):
+				heading = newheading
+				distance = self.getDistance(curlocation, destination)
+				self.control.turnTo(heading)
 
 		curlocation = self.getLocation()
 		heading = self.getHeading(curlocation, destination)
-		distence = self.getDistance(curlocation, destination)
-		time = distence / (self.SPEED / 2)
+		distance = self.getDistance(curlocation, destination)
+		time = distance / (self.SPEED / speed)
 		self.control.turnTo(heading)
-		self.control.driveStraight(50, time)
+		self.control.driveStraight(speedpercent, time)
 		print "The task is complete"
+		print "The current location of tiberius is : " + curlocation
+		print "with the desired location being : " + destination
