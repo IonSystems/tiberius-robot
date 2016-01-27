@@ -27,7 +27,7 @@ class PolyhedraDatabase(Database):
 	result = 0
         self.c.execute("SELECT id,column from test_table")
 	print self.c.fetchall()
-        self.c.execute("INSERT INTO test_table (id, column) VALUES (0, 33)")
+        self.c.execute("INSERT INTO test_table (id,column) VALUES (3,33)")
 	self.c.commit()
         self.c.execute("SELECT id,column from test_table")
         print self.c.fetchall()
@@ -47,16 +47,23 @@ class PolyhedraDatabase(Database):
         query = self.__generate_insert("insert", table_name, values)
         try:
             self.c.execute(query)
-            self.conn.commit()
-        except pyodbc.OperationalError as e:
-            raise PolyhedraDatabase.OperationalError(e[0])
+            #self.conn.commit()
+        except pyodbc.Error as e:
+            print e
+            if "Duplicate key error" in e[1]:
+                raise PolyhedraDatabase.DuplicateKeyError(e[1])
+            else:
+                raise PolyhedraDatabase.UnknownError(e)
 
     def drop(self, table_name):
         try:
             self.c.execute(self.__generate_drop(table_name))
-            self.conn.commit()
-        except pyodbc.OperationalError as e:
-            raise PolyhedraDatabase.OperationalError(e[0])
+            #self.conn.commit()
+        except pyodbc.Error as e:
+            if "Cannot drop" in e[1]:
+                raise PolyhedraDatabase.NoSuchTableError(e[1])
+            else:
+                raise PolyhedraDatabase.UnknownError(e)
     '''
         Example operation:
         update("Customers",
@@ -99,10 +106,12 @@ class PolyhedraDatabase(Database):
         try:
             self.c.execute(query)
             # Set database properties
-            self.c.execute("PRAGMA foreign_keys = ON")
-            self.conn.commit()
-        except pyodbc.OperationalError as e:
-            raise PolyhedraDatabase.OperationalError(e)
+            #self.conn.commit()
+        except pyodbc.Error as e:
+            if "already exists" in e[1]:
+                raise PolyhedraDatabase.TableAlreadyExistsError(e)
+            else:
+                raise PolyhedraDatabase.UnknownError(e)
 
     '''*******************************************************************
         Hidden functions
@@ -227,4 +236,26 @@ class PolyhedraDatabase(Database):
 if __name__ == "__main__":
     p = PolyhedraDatabase('tiberius-polyhedra')
     #p.create('test_table', {'column1' : 'int', 'column2': 'int'})
-    p.test()
+    #p.test()
+    #p.insert('test_table',{'id': '1','column': 828})
+    #p.drop('test_table')
+    try:
+        p.create('test_table', {'id' : 'int primary key', 'column': 'int'})
+    except PolyhedraDatabase.TableAlreadyExistsError as e:
+        print "Table already exists"
+    p.insert("test_table", {'id':'0', 'column':'0'})
+    p.insert("test_table", {'id':'1', 'column':'2'})
+    p.insert("test_table", {'id':'2', 'column':'4'})
+    p.insert("test_table", {'id':'3', 'column':'6'})
+    p.insert("test_table", {'id':'4', 'column':'8'})
+    print p.query('test_table', '*')
+    p.drop('test_table')
+
+
+    p.create('complex_table', {'id': 'int primary key', 'name':'varchar(50)', 'address': 'varchar(200)', 'robot_id': 'int'})
+    p.insert('complex_table', {'id': '0', 'name':'Cameron A. Craig', 'address': '1979 Hannover Street', 'robot_id': 0})
+    print p.query('complex_table', '*')
+    p.delete('complex_table')
+    print p.query('complex_table', '*')  
+    p.drop('complex_table')
+
