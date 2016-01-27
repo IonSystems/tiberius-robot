@@ -111,6 +111,7 @@ setup(name='Tiberius',
       packages=[
           'tiberius',
           'tiberius/control',
+          'tiberius/control/robotic_arm',
           'tiberius/control_api',
           'tiberius/control_api/tasks',
           'tiberius/navigation/gps',
