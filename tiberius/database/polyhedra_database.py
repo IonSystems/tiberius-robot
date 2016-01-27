@@ -16,7 +16,7 @@ class PolyhedraDatabase(Database):
             if "Failed" in line:
                 break
         # The database, defined by its location
-        self.conn = pyodbc.connect('DSN=8001')
+        self.conn = pyodbc.connect('DSN=8001', autocommit=True)
 
         # This is the cursor that is used to execute SQL commands.
         self.c = self.conn.cursor()
@@ -25,11 +25,11 @@ class PolyhedraDatabase(Database):
         #self.c.execute("CREATE TABLE test_table2 (column1 int primary key, column2 text)")
         #self.conn.commit()
 	result = 0
-        self.c.execute("SELECT id,column2 from test_table")
+        self.c.execute("SELECT id,column from test_table")
 	print self.c.fetchall()
-        self.c.execute("INSERT INTO test_table (id, column2) VALUES (0, 33)")
+        self.c.execute("INSERT INTO test_table (id, column) VALUES (0, 33)")
 	self.c.commit()
-        self.c.execute("SELECT id,column2 from test_table")
+        self.c.execute("SELECT id,column from test_table")
         print self.c.fetchall()
         #self.conn.commit()
         
