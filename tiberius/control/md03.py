@@ -141,6 +141,7 @@ class MotorDriver:
             self.logger.debug(
                 "Address: %s, Accel: %s", hex(
                     self.address), str(accel))
+            speed = int(speed)
             if speed == 0:
                 # Make sure to set speed and acceleration before issuing direction
                 # to ensure the motors don't start turning in the wrong
