@@ -35,6 +35,34 @@ class Database:
         def __str__(self):
             return repr(self.value)
 
+    class DuplicateKeyError(Exception):
+        def __init__(self, value):
+            self.value = value
+
+        def __str__(self):
+            return repr(self.value)
+
+    class NoSuchTableError(Exception):
+        def __init__(self, value):
+            self.value = value
+
+        def __str__(self):
+            return repr(self.value)
+
+    class UnknownError(Exception):
+        def __init__(self, value):
+            self.value = value
+
+        def __str__(self):
+            return repr(self.value)
+
+    class TableAlreadyExistsError(Exception):
+        def __init__(self, value):
+            self.value = value
+
+        def __str__(self):
+            return repr(self.value)
+
     class ThreadedQueryHandler(SocketServer.BaseRequestHandler):
 
         def handle(self):
