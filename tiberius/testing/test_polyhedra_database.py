@@ -6,14 +6,12 @@ import random
 import subprocess
 from tiberius.database.polyhedra_database import PolyhedraDatabase
 
+
 def clean_up():
     p = subprocess.Popen(
         'find . -type f -name "test_db_*" -exec rm -f {} \;', shell=True)
 
 pol = PolyhedraDatabase("test_db_" + str(random.randint(1, 1000000)) + '.db')
-'''
-	Ensures that the database implementations are error-free.
-'''
 
 
 class CreateTestDatabase(unittest.TestCase):
@@ -27,7 +25,10 @@ class CreateTestDatabase(unittest.TestCase):
             print e.value
 
         # Create a table in our database called 'test_table', with two columns
-        pol.create("test_table", {'test_column': 'int primary key', 'test_column2': 'int'})
+        pol.create("test_table",
+                   {'test_column': 'int primary key',
+                    'test_column2': 'int'})
+
 
 class InsertDatabase(unittest.TestCase):
 
@@ -35,18 +36,26 @@ class InsertDatabase(unittest.TestCase):
         pol.insert("test_table", {'test_column': '100',
                                   'test_column2': 'This is a test'})
 
+
 class GenerateQueryString(unittest.TestCase):
 
     def runTest(self):
         specimen = pol._PolyhedraDatabase__generate_insert(
-            "insert", "test_table", {'test_column': '100', 'test_column2': 'This is a test'})
-        control = "INSERT INTO test_table (test_column, test_column2) VALUES (100, 'This is a test')"
+            "insert", "test_table",
+            {'test_column': '100',
+             'test_column2': 'This is a test'})
+        control = """INSERT INTO test_table (test_column, test_column2)
+        VALUES (100, 'This is a test')"""
         self.assertEquals(specimen, control)
 
         specimen = pol._PolyhedraDatabase__generate_insert(
-            "insert or replace", "test_table", {'test_column': '100', 'test_column2': 200})
-        control = "INSERT OR REPLACE INTO test_table (test_column, test_column2) VALUES (100, 200)"
+            "insert or replace",
+            "test_table",
+            {'test_column': '100', 'test_column2': 200})
+        control = """INSERT OR REPLACE INTO test_table
+        (test_column, test_column2) VALUES (100, 200)"""
         self.assertEquals(specimen, control)
+
 
 class GenerateQueryConditions(unittest.TestCase):
 
@@ -91,17 +100,21 @@ class GenerateQueryConditions(unittest.TestCase):
         control = "WHERE test_column = 'hello' OR test_column2 > 54"
         self.assertEquals(specimen, control)
 
+
 class DeleteAllFromTableDatabase(unittest.TestCase):
 
     def runTest(self):
         with self.assertRaises(PolyhedraDatabase.OperationalError):
-            pol.create("test_table", {'test_column': 'int primary key', 'test_column2': 'int'})
+            pol.create("test_table", {
+                       'test_column': 'int primary key',
+                       'test_column2': 'int'})
 
         pol.delete("test_table")
 
         # Make sure there is nothing left in the table
         results = pol.query("test_table", "*")
         self.assertEquals(results, [])
+
 
 class GenerateSelectQuery(unittest.TestCase):
 
@@ -116,30 +129,66 @@ class GenerateSelectQuery(unittest.TestCase):
         control = "SELECT test_column FROM test_table"
         self.assertEquals(specimen, control)
 
-        specimen = pol._PolyhedraDatabase__generate_query("select", "test_table", 'test_column',
-                                                       {
-                                                           'clause': 'WHERE',
-                                                           'data': [
-                                                               {
-                                                                   'column': 'CustomerName',
-                                                                   'assertion': '=',
-                                                                   'value': 'Alfreds Futterkiste'
-                                                               }
-                                                           ]
-                                                       })
-        control = "SELECT test_column FROM test_table WHERE CustomerName = 'Alfreds Futterkiste'"
+        specimen = pol._PolyhedraDatabase__generate_query(
+         "select", "test_table", 'test_column',
+         {
+          'clause': 'WHERE',
+          'data': [
+           {
+            'column': 'CustomerName',
+            'assertion': '=',
+            'value': 'Alfreds Futterkiste'
+           }
+                  ]
+         })
+        control = """SELECT test_column FROM test_table
+        WHERE CustomerName = 'Alfreds Futterkiste'"""
         self.assertEquals(specimen, control)
 
+
 class DropTable(unittest.TestCase):
+
     def runTest(self):
         pol.create("drop_table", {
                    'test_column': 'int', 'test_column2': 'int'})
 
         pol.drop("drop_table")
 
-        # Ensure that an operational error is raised when we try to drop the table again.
+        # Ensure that an operational error is raised when we try to drop the
+        # table again.
         with self.assertRaises(PolyhedraDatabase.OperationalError):
             pol.drop("drop_table")
+
+
+class TestCreateInsertDeleteDrop(unittest.TestCase):
+
+    def runTest(self):
+        p = PolyhedraDatabase('tiberius-polyhedra')
+        try:
+            p.create('test_table', {'id': 'int primary key', 'column': 'int'})
+        except PolyhedraDatabase.TableAlreadyExistsError as e:
+            print "Table already exists"
+        p.insert("test_table", {'id': '0', 'column': '0'})
+        p.insert("test_table", {'id': '1', 'column': '2'})
+        p.insert("test_table", {'id': '2', 'column': '4'})
+        p.insert("test_table", {'id': '3', 'column': '6'})
+        p.insert("test_table", {'id': '4', 'column': '8'})
+        print p.query('test_table', '*')
+        p.drop('test_table')
+
+        p.create('complex_table', {'id': 'int primary key',
+                                   'name': 'varchar(50)',
+                                   'address': 'varchar(200)',
+                                   'robot_id': 'int'})
+        p.insert('complex_table', {'id': '0',
+                                   'name': 'Cameron A. Craig',
+                                   'address': '1979 Hannover Street',
+                                   'robot_id': 0})
+        print p.query('complex_table', '*')
+        p.delete('complex_table')
+        print p.query('complex_table', '*')
+        p.drop('complex_table')
+
 
 class QueryDatabase(unittest.TestCase):
 

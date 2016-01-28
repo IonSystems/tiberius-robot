@@ -4,11 +4,14 @@ from clauses import SqlClauses
 import subprocess
 import pyodbc
 
+
 class PolyhedraDatabase(Database):
 
     def __init__(self, name):
-        # Start the database API
-        popen = subprocess.Popen("rtrdb -r data_service=8001 -r verbosity=4 db", shell = True, stdout=subprocess.PIPE)
+        # Start the database API if it is not already running
+        popen = subprocess.Popen(
+            "rtrdb -r data_service=8001 -r verbosity=4 db",
+            shell=True, stdout=subprocess.PIPE)
         lines_iterator = iter(popen.stdout.readline, b"")
         for line in lines_iterator:
             if line == "Ready":
@@ -21,18 +24,6 @@ class PolyhedraDatabase(Database):
         # This is the cursor that is used to execute SQL commands.
         self.c = self.conn.cursor()
 
-    def test(self):
-        #self.c.execute("CREATE TABLE test_table2 (column1 int primary key, column2 text)")
-        #self.conn.commit()
-	result = 0
-        self.c.execute("SELECT id,column from test_table")
-	print self.c.fetchall()
-        self.c.execute("INSERT INTO test_table (id,column) VALUES (3,33)")
-	self.c.commit()
-        self.c.execute("SELECT id,column from test_table")
-        print self.c.fetchall()
-        #self.conn.commit()
-        
     '''*******************************************************************
         Accessible functions, according to Abstract Base Class (Database)
     *******************************************************************'''
@@ -47,7 +38,7 @@ class PolyhedraDatabase(Database):
         query = self.__generate_insert("insert", table_name, values)
         try:
             self.c.execute(query)
-            #self.conn.commit()
+            # self.conn.commit()
         except pyodbc.Error as e:
             print e
             if "Duplicate key error" in e[1]:
@@ -58,7 +49,7 @@ class PolyhedraDatabase(Database):
     def drop(self, table_name):
         try:
             self.c.execute(self.__generate_drop(table_name))
-            #self.conn.commit()
+            # self.conn.commit()
         except pyodbc.Error as e:
             if "Cannot drop" in e[1]:
                 raise PolyhedraDatabase.NoSuchTableError(e[1])
@@ -106,7 +97,7 @@ class PolyhedraDatabase(Database):
         try:
             self.c.execute(query)
             # Set database properties
-            #self.conn.commit()
+            # self.conn.commit()
         except pyodbc.Error as e:
             if "already exists" in e[1]:
                 raise PolyhedraDatabase.TableAlreadyExistsError(e)
@@ -231,31 +222,3 @@ class PolyhedraDatabase(Database):
         query = query[:-2]  # Remove the last comma
         query += ")"
         return query
-
-#For testing
-if __name__ == "__main__":
-    p = PolyhedraDatabase('tiberius-polyhedra')
-    #p.create('test_table', {'column1' : 'int', 'column2': 'int'})
-    #p.test()
-    #p.insert('test_table',{'id': '1','column': 828})
-    #p.drop('test_table')
-    try:
-        p.create('test_table', {'id' : 'int primary key', 'column': 'int'})
-    except PolyhedraDatabase.TableAlreadyExistsError as e:
-        print "Table already exists"
-    p.insert("test_table", {'id':'0', 'column':'0'})
-    p.insert("test_table", {'id':'1', 'column':'2'})
-    p.insert("test_table", {'id':'2', 'column':'4'})
-    p.insert("test_table", {'id':'3', 'column':'6'})
-    p.insert("test_table", {'id':'4', 'column':'8'})
-    print p.query('test_table', '*')
-    p.drop('test_table')
-
-
-    p.create('complex_table', {'id': 'int primary key', 'name':'varchar(50)', 'address': 'varchar(200)', 'robot_id': 'int'})
-    p.insert('complex_table', {'id': '0', 'name':'Cameron A. Craig', 'address': '1979 Hannover Street', 'robot_id': 0})
-    print p.query('complex_table', '*')
-    p.delete('complex_table')
-    print p.query('complex_table', '*')  
-    p.drop('complex_table')
-
