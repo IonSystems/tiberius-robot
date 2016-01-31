@@ -4,6 +4,11 @@ from setuptools import setup
 from setuptools.command.install import install
 from subprocess import check_output, CalledProcessError
 import os
+import sys
+
+'''*****************************************
+        Utility Functions
+*****************************************'''
 
 
 def is_windows():
@@ -15,7 +20,16 @@ def is_pi():
 
 
 def is_linux():
-    return "Linux" in os.system()
+    print os.name
+    return "linux" in sys.platform
+
+
+def is_apt_get():
+    result = check_output("type apt-get")
+    if "not found" in result:
+        return False
+    else:
+        return True
 
 
 def is_text_found(text, file):
@@ -45,7 +59,7 @@ def is_folder_found(dir):
 def is_file_found(file):
     found_result = "found!"
     try:
-        if(text in check_output(
+        if(found_result in check_output(
          "[ -f " + file + " ] && echo 'found!'", shell=True)):
             return True
         else:
@@ -54,112 +68,66 @@ def is_file_found(file):
         return False
 
 
-class PostInstallManager(install):
-    def run(self):
-        # Ensure Polyhedra is installed
-        polyhedra = PolyhedraInstallation()
-        polyhedra.run()
-
-        # Ensure non-python dependencies are installed
-        post_install = PostInstallDependencies()
-        post_install.run()
-
-        # Continue with the rest of the installation process.
-        install.do_egg_install(self)
-
-
-class PolyhedraInstallation(install):
+class PostInstallDependencies(install):
+    '''
+        Install all dependencies that cannot be easily satisfied by setuptools.
+        TODO: Encorporate more of this install process into setuptools.
+    '''
     def run(self):
         if is_windows():
-            self.install_windows()
+            self.install_deps_windows()
+            self.install_poly_windows()
         elif is_pi():
-            self.install_pi()
+            self.install_deps_pi()
+            self.install_poly_pi()
         elif is_linux():
-            self.install_linux()
+            self.install_deps_linux()
+            self.install_poly_linux()
+        else:
+            print 'No suitable operating system detected, terminating install'
+            sys.exit()
 
-    def install_windows(self):
-        self.install_odbc("windows")
-        self.install_pyodbc()
-        self.install_polyhedra_driver("", "")
-        self.install_polyhedra("", "")
+        install.do_egg_install(self)
 
-    def install_pi(self):
-        self.install_odbc("pi")
-        self.install_pyodbc()
-        self.install_polyhedra_driver("", "")
-        self.install_polyhedra("", "")
-
-    def install_linux(self):
-        self.install_odbc("linux")
-        self.install_pyodbc()
-        self.install_polyhedra_driver("", "")
-        self.install_polyhedra("", "")
-
-    def install_polyhedra_driver(self, src_dir, dst_dir):
-        # Linux
-        # Move the polyhedra driver to the user's directory
-        if not is_file_found()
-        result = check_output("cp " + src_dir + " " + dst_dir)
-        return
-
-    def install_polyhedra(self, src_dir, dst_dir):
-        # Linux
-        # Copy the polyhedra executables to the user's directory.
-        if not is_folder_found(dst_dir):
-            check_output("cp " + src_dir + " " + dst_dir)
-
-        # Ensure the polyhedra execuabels are on the command path
-        bashrc_dir = "/etc/bash.bashrc"
-        if not (is_text_found("poly9.0/linux/raspi/bin", bashrc_dir)):
-            command = "echo 'i2c-dev' | sudo tee -a " + bashrc_dir
-            check_output(command, shell=True)
-
-    def install_pyodbc(self):
-        return
-
-    def install_odbc(self, platform):
-        return
-
-
-class PostInstallDependencies(install):
-
-    def run(self):
-        if not is_windows():
-            self.install_linux()
-
-    def install_linux(self):
+    def install_deps_linux(self):
         print "Checking for missing packages"
         self.install_if_missing("build-essential")
-        self.install_if_missing("libi2c-dev")
-        self.install_if_missing("i2c-tools")
         self.install_if_missing("python-dev")
         self.install_if_missing("libffi-dev")
-        if self.is_pi():
 
-            print "Removing I2C from blacklist on Raspberry Pi"
-            blacklist_dir = "/etc/modprobe.d/raspi-blacklist.conf"
-            enable_command = """sed -i 's/blacklist i2c-bcm2708/#blacklist
-             i2c-bcm2708/g' """ + blacklist_dir
+        if self.is_pi():
+            self.install_if_missing("libi2c-dev")
+            self.install_if_missing("i2c-tools")
+            self.un_blacklist_i2c()
+            self.enable_modules_i2c()
+
+        else:
+            print "This is not a Raspberry Pi."
+            "Some features will be unavailable on this machine."
+
+    def un_blacklist_i2c(self):
+        print "Removing I2C from blacklist on Raspberry Pi"
+        blacklist_dir = "/etc/modprobe.d/raspi-blacklist.conf"
+        enable_command = """sed -i 's/blacklist i2c-bcm2708/#blacklist
+         i2c-bcm2708/g' """ + blacklist_dir
+        check_output(enable_command, shell=True)
+
+    def enable_modules_i2c(self):
+        print "Adding i2c-dev and i2c-bcm2708 to enabled modules"
+        modules_dir = "/etc/modules"
+        if(self.is_text_found("i2c-dev", modules_dir)):
+            print "i2c-dev already enabled"
+        else:
+            print "Enabling i2c-dev"
+            enable_command = "echo 'i2c-dev' | sudo tee -a " + modules_dir
             check_output(enable_command, shell=True)
 
-            print "Adding i2c-dev and i2c-bcm2708 to enabled modules"
-            modules_dir = "/etc/modules"
-            if(self.is_text_found("i2c-dev", modules_dir)):
-                print "i2c-dev already enabled"
-            else:
-                print "Enabling i2c-dev"
-                enable_command = "echo 'i2c-dev' | sudo tee -a " + modules_dir
-                check_output(enable_command, shell=True)
-
-            if(self.is_text_found("i2c-bcm2708", modules_dir)):
-                print "i2c-bcm2708 already enabled"
-            else:
-                print "Enabling i2c-bcm2708"
-                enable_command = "echo 'i2c-bcm2708' | sudo tee -a "
-                + modules_dir
-                check_output(enable_command, shell=True)
+        if(self.is_text_found("i2c-bcm2708", modules_dir)):
+            print "i2c-bcm2708 already enabled"
         else:
-            print "Some features will be unavailable on this machine."
+            enable_command = "echo 'i2c-bcm2708' | sudo tee -a "
+            + modules_dir
+            check_output(enable_command, shell=True)
 
     def is_package_installed(self, package_name):
         try:
@@ -167,21 +135,40 @@ class PostInstallDependencies(install):
                 "dpkg-query -W -f='${Status} ${Version}\n' " +
                 package_name,
                 shell=True)
-            if("not-installed" in result):
-                return False
-            else:
-                return True
         except CalledProcessError:
+            try:
+                result = check_output("dpkg -s " + package_name, shell=True)
+            except CalledProcessError:
+                result = "not-installed"
+        if("not-installed" in result):
             return False
+        else:
+            return True
 
     def install_package(self, package_name):
         try:
-            res = check_output(
-                "sudo apt-get -y install " +
-                package_name,
-                shell=True)
+            self.install_aptget(package_name)
         except CalledProcessError:
-            print package_name + " failed to install."
+            # Apt-get might not be available, so we should try dnf instead
+            try:
+                res = check_output(
+                    "sudo dnf -y install " +
+                    package_name,
+                    shell=True)
+            except CalledProcessError:
+                print package_name + " failed to install."
+
+    def install_aptget(self, package_name):
+        res = check_output(
+            "sudo apt-get -y install " +
+            package_name,
+            shell=True)
+
+    def install_yum(package_name):
+        res = check_output(
+            "sudo yum -y install " +
+            package_name,
+            shell=True)
 
     def install_if_missing(self, package_name):
         if not (self.is_package_installed(package_name)):
@@ -192,6 +179,60 @@ class PostInstallDependencies(install):
 
     def is_pi(self):
         return os.uname()[4][:3] == 'arm'
+
+    def install_poly_windows(self):
+        print "Polyhedra on windows is currently not supported."
+        # TODO: Install script for polyhedra on windows
+        # self.install_odbc("windows")
+        # self.install_pyodbc("windows")
+        # self.install_poly_driver("", "")
+        # self.install_poly("", "")
+
+    def install_poly_pi(self):
+        self.install_odbc("pi")
+        self.install_pyodbc("pi")
+        self.install_poly_driver("vendor/polyhedra-driver/linux/linux/i386/bin/libpolyod.so", "~/libpolyod.so")
+        self.install_poly("vendor/polyhedra-lite/linux/", "~/poly9.0/")
+
+    def install_poly_linux(self):
+        self.install_odbc("linux")
+        self.install_pyodbc("linux")
+        self.install_poly_driver("vendor/polyhedra-driver/linux/linux/i386/bin/libpolyod.so", "~/libpolyod.so")
+        self.install_poly("vendor/polyhedra-lite/linux/", "~/poly9.0/")
+
+    def install_poly_driver(self, src_dir, dst_dir):
+        # Linux
+        # Move the polyhedra driver to the user's directory
+        if not is_file_found(dst_dir):
+            result = check_output("cp " + src_dir + " " + dst_dir)
+        return
+
+    def install_poly(self, src_dir, dst_dir):
+        # Linux
+        # Copy the polyhedra executables to the user's directory.
+        if not is_folder_found(dst_dir):
+            check_output("sudo cp " + src_dir + " " + dst_dir)
+
+        # Ensure the polyhedra execuabels are on the command path
+        bashrc_dir = "/etc/bash.bashrc"
+        if not (is_text_found("poly9.0/linux/raspi/bin", bashrc_dir)):
+            command = "echo 'i2c-dev' | sudo tee -a " + bashrc_dir
+            check_output(command, shell=True)
+
+    def install_pyodbc(self, platform):
+        if "pi" in platform or "linux" in platform:
+            self.install_package("python-pyodbc")
+        elif "windows" in platform:
+            # TODO: pyodbc on windows
+            print "ODBC on windows currently not supported, skipping."
+
+    def install_odbc(self, platform):
+        if "pi" in platform or "linux" in platform:
+            self.install_package("unixodbc")
+            self.install_package("unixodbc-dev")
+        elif "windows" in platform:
+            # TODO: pyodbc on windows
+            print "ODBC on windows currently not supported, skipping."
 
 if is_windows:
     # Parameters for windows operating systems
@@ -239,5 +280,6 @@ setup(name='Tiberius',
       ],
       platforms=['Raspberry Pi 2', 'Raspberry Pi 1'],
       install_requires=requirements,
-      cmdclass={'install': PostInstallManager},
+      cmdclass={
+       'install': PostInstallDependencies},
       )
