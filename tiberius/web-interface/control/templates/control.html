@@ -1,164 +1,283 @@
 {% load staticfiles %}
 <!DOCTYPE html>
-<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 8]>
+<html lang="en" class="ie8"> <![endif]-->
 <!--[if !IE]><!-->
 <html lang="en">
 <!--<![endif]-->
 <head>
-	{% include "head.html" %}
-	<!-- ================== BEGIN PAGE LEVEL STYLE ================== -->
-	<link href="{% static 'color-admin/plugins/jquery-jvectormap/jquery-jvectormap-1.2.2.css' %}" rel="stylesheet" />
-	<link href="{% static 'color-admin/plugins/bootstrap-datepicker/css/datepicker.css' %}" rel="stylesheet" />
-	<link href="{% static 'color-admin/plugins/bootstrap-datepicker/css/datepicker3.css' %}" rel="stylesheet" />
-	<link href="{% static 'color-admin/plugins/gritter/css/jquery.gritter.css' %}" rel="stylesheet" />
-	<!-- ================== END PAGE LEVEL STYLE ================== -->
-	<title>{{Control}}</title>
+    {% include "head.html" %}
+    <!-- ================== BEGIN PAGE LEVEL STYLE ================== -->
+    <link href="{% static 'color-admin/plugins/jquery-jvectormap/jquery-jvectormap-1.2.2.css' %}" rel="stylesheet"/>
+    <link href="{% static 'color-admin/plugins/bootstrap-datepicker/css/datepicker.css' %}" rel="stylesheet"/>
+    <link href="{% static 'color-admin/plugins/bootstrap-datepicker/css/datepicker3.css' %}" rel="stylesheet"/>
+    <link href="{% static 'color-admin/plugins/gritter/css/jquery.gritter.css' %}" rel="stylesheet"/>
+    <link href="{% static 'color-admin/css/control.css' %}" rel="stylesheet"/>
+    <link href="{% static 'color-admin/plugins/switchery/switchery.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'color-admin/plugins/powerange/powerange.min.css' %}" rel="stylesheet"/>
+    <!-- ================== END PAGE LEVEL STYLE ================== -->
+    <title>{{Control}}</title>
 </head>
 <body>
-	<!-- begin #page-loader -->
-	<div id="page-loader" class="fade in"><span class="spinner"></span></div>
-	<!-- end #page-loader -->
+<!-- begin #page-loader -->
+<div id="page-loader" class="fade in"><span class="spinner"></span></div>
+<!-- end #page-loader -->
 
-	<!-- begin #page-container -->
-	<div id="page-container" class="fade page-sidebar-fixed page-header-fixed">
-		<!-- begin #header -->
-		<div id="header" class="header navbar navbar-default navbar-fixed-top">
-			  {% include "top_bar_populated.html" %}
-		</div>
-		<!-- end #header -->
+<!-- begin #page-container -->
+<div id="page-container" class="fade page-sidebar-fixed page-header-fixed">
+    <!-- begin #header -->
+    <div id="header" class="header navbar navbar-default navbar-fixed-top">
+        {% include "top_bar_populated.html" %}
+    </div>
+    <!-- end #header -->
 
-		<!-- begin #sidebar -->
-		<div id="sidebar" class="sidebar">
-				{% include "sidebar.html" %}
-		</div>
-		<div class="sidebar-bg"></div>
-		<!-- end #sidebar -->
+    <!-- begin #sidebar -->
+    <div id="sidebar" class="sidebar">
+        {% include "sidebar.html" %}
+    </div>
+    <div class="sidebar-bg"></div>
+    <!-- end #sidebar -->
 
-		<!-- begin #content -->
-		<div id="content" class="content">
-			<!-- begin breadcrumb -->
-			<ol class="breadcrumb pull-right">
-				<li><a href="javascript:;">Home</a></li>
-				<li class="active">Dashboard</li>
-			</ol>
-			<!-- end breadcrumb -->
-			<!-- begin page-header -->
-			<h1 class="page-header">Control <small>the future of robotics...</small></h1>
-			<!-- end page-header -->
+    <!-- begin #content -->
+    <div id="content" class="content">
+        <!-- begin breadcrumb -->
+        <ol class="breadcrumb pull-right">
+            <li><a href="javascript:;">Home</a></li>
+            <li class="active">Dashboard</li>
+        </ol>
+        <!-- end breadcrumb -->
+        <!-- begin page-header -->
+        <h1 class="page-header">Control
+            <small>the future of robotics...</small>
+        </h1>
+        <!-- end page-header -->
 
-			<!-- begin row -->
-			<div class="row">
-				<!-- begin col-8 -->
-				<div class="col-md-8">
-					<div class="panel panel-inverse" data-sortable-id="ui-buttons-3">
-	          <div class="panel-heading">
-	            <div class="panel-heading-btn">
-	                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
-	                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-reload"><i class="fa fa-repeat"></i></a>
-	                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
-	                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-danger" data-click="panel-remove"><i class="fa fa-times"></i></a>
-	            </div>
-	            <h4 class="panel-title">Control Area</h4>
-	          </div>
-              <div class="panel-body">
-                <p>
-									<a class="btn btn-primary btn-lg m-l-5" id = "button_stop">Stop</a>
-									<a class="btn btn-primary btn-lg m-l-5" id = "button_forward">Forward</a>
-									<a class="btn btn-primary btn-lg m-l-5" id = "button_backward">Backward</a>
-								</p>
-
-              </div>
-          </div>
-				</div>
-				<!-- end col-8 -->
-				<div class="col-md-4 ui-sortable">
-			        <div class="panel panel-inverse" data-sortable-id="ui-buttons-4">
-                <div class="panel-heading">
-                    <div class="panel-heading-btn">
-                        <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
-                        <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-reload"><i class="fa fa-repeat"></i></a>
-                        <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
-                        <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-danger" data-click="panel-remove"><i class="fa fa-times"></i></a>
-                    </div>
-                    <h4 class="panel-title">Information</h4>
-                </div>
-                        <div class="panel-body">
-													<div>You are currently controlling {{ ruc.name}}</div>
-													<div>You are communicating with IP Address {{ ruc.ip_address }}</div>
-													<div>Estimated battery life remaining is not available.</div>
+        <!-- begin row -->
+        <div class="row">
+            <!-- begin col-8 -->
+            <div class="col-md-8">
+                <div class="panel panel-inverse" data-sortable-id="ui-buttons-3">
+                    <div class="panel-heading">
+                        <div class="panel-heading-btn">
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default"
+                               data-click="panel-expand"><i class="fa fa-expand"></i></a>
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success"
+                               data-click="panel-reload"><i class="fa fa-repeat"></i></a>
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning"
+                               data-click="panel-collapse"><i class="fa fa-minus"></i></a>
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-danger"
+                               data-click="panel-remove"><i class="fa fa-times"></i></a>
                         </div>
-              </div>
-							<div class="panel panel-inverse" data-sortable-id="index-9">
-								<div class="panel-heading">
-									<div class="panel-heading-btn">
-										<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
-										<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-reload"><i class="fa fa-repeat"></i></a>
-										<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
-										<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-danger" data-click="panel-remove"><i class="fa fa-times"></i></a>
-									</div>
-									<h4 class="panel-title">Global Positioning System</h4>
-								</div>
-								<div class="panel-body p-0">
-									<div id="world-map" class="height-sm width-full"></div>
-								</div>
-							</div>
-							<div class="panel panel-inverse" data-sortable-id="index-9">
-								<div class="panel-heading">
-									<div class="panel-heading-btn">
-										<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
-										<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-reload"><i class="fa fa-repeat"></i></a>
-										<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
-										<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-danger" data-click="panel-remove"><i class="fa fa-times"></i></a>
-									</div>
-									<h4 class="panel-title">Live Camera View</h4>
-								</div>
-								<div class="panel-body p-0">
-									<!-- Camera View Here -->
-								</div>
-							</div>
+                        <h4 class="panel-title">Control Area</h4>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <!-- begin col-4 -->
+                            <div class="col-md-4">
+                                <h4>Movement Panel</h4>
+                                <p>
+                                    Use the buttons to move and the slider to control the power of each movement.
+                                </p>
+                                <div style="margin: 15px;" class="row">
+
+                                    <table id="com-chilipeppr-widget-xyz">
+                                        <tr valign="top">
+                                            <td class="col xcol-xs-2" style="border:0px yellow solid;">
+                                                <button class="btn btn-white  dbltall">
+                                                    <span class="fa fa-2x fa-arrow-left"></span>
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group-vertical" style="margin-right:-0px;">
+                                                    <button class="btn btn-white "> <span
+                                                            class="fa fa-2x fa-arrow-up"></span>
+                                                    </button>
+                                                    <button class="btn btn-white  "> <span
+                                                            class="fa fa-2x fa-arrow-down"></span>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-white  dbltall">
+                                                       <span
+                                                               class="fa fa-2x fa-arrow-right"></span>
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <button class="btn  dbltall btn-danger"
+                                                        style="padding: 0px 10px;">
+                                                    <span class="fa fa-2x fa-stop"/>
+                                                </button>
+                                            </td>
 
 
-			  </div>
-			</div>
-			<!-- end row -->
-		</div>
-		<!-- end #content -->
+                                        </tr>
 
-        <!-- begin theme-panel -->
-        <div class="theme-panel">
-						  {% include "theme_panel.html" %}
+                                    </table>
+                                </div>
+
+                                <!-- begin row -->
+
+                                <div class="row">
+                                    <!-- begin col-8 -->
+
+                                    <div class="col-md-8">
+                                        <div class="slider-wrapper">
+                                            <input type="text" data-render="powerange-slider" data-start="70"/>
+                                        </div>
+                                    </div>
+                                    <!-- end col-9 -->
+                                </div>
+                                <!-- end row -->
+                            </div>
+                            <!-- end col-4 -->
+                            <!-- begin col-4 -->
+                            <div class="col-md-4">
+                                <h4>Extras Panel</h4>
+                                <p>
+                                    This panel controls the extra functionality on Tiberius, options will be disabled
+                                    when they are not available on the selected Tiberius platform.
+                                </p>
+
+
+                                <!-- begin row -->
+
+                                <div class="row">
+                                    <!-- begin col-8 -->
+
+                                    <div class="col-md-8">
+                                        <div class="slider-wrapper">
+                                            <input type="text" data-render="powerange-slider" data-start="70"/>
+                                        </div>
+                                    </div>
+                                    <!-- end col-9 -->
+                                </div>
+                                <!-- end row -->
+                            </div>
+                            <!-- end col-4 -->
+                        </div>
+                        <!-- end row -->
+
+
+                    </div>
+                </div>
+            </div>
+            <!-- end col-8 -->
+            <div class="col-md-4 ui-sortable">
+                <div class="panel panel-inverse" data-sortable-id="ui-buttons-4">
+                    <div class="panel-heading">
+                        <div class="panel-heading-btn">
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default"
+                               data-click="panel-expand"><i class="fa fa-expand"></i></a>
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success"
+                               data-click="panel-reload"><i class="fa fa-repeat"></i></a>
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning"
+                               data-click="panel-collapse"><i class="fa fa-minus"></i></a>
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-danger"
+                               data-click="panel-remove"><i class="fa fa-times"></i></a>
+                        </div>
+                        <h4 class="panel-title">Information</h4>
+                    </div>
+                    <div class="panel-body">
+                        <div>You are currently controlling {{ ruc.name}}</div>
+                        <div>You are communicating with IP Address {{ ruc.ip_address }}</div>
+                        <div>Estimated battery life remaining is not available.</div>
+                    </div>
+                </div>
+                <div class="panel panel-inverse" data-sortable-id="index-9">
+                    <div class="panel-heading">
+                        <div class="panel-heading-btn">
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default"
+                               data-click="panel-expand"><i class="fa fa-expand"></i></a>
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success"
+                               data-click="panel-reload"><i class="fa fa-repeat"></i></a>
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning"
+                               data-click="panel-collapse"><i class="fa fa-minus"></i></a>
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-danger"
+                               data-click="panel-remove"><i class="fa fa-times"></i></a>
+                        </div>
+                        <h4 class="panel-title">Global Positioning System</h4>
+                    </div>
+                    <div class="panel-body p-0">
+                        <div id="world-map" class="height-sm width-full"></div>
+                    </div>
+                </div>
+                <div class="panel panel-inverse" data-sortable-id="index-9">
+                    <div class="panel-heading">
+                        <div class="panel-heading-btn">
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default"
+                               data-click="panel-expand"><i class="fa fa-expand"></i></a>
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success"
+                               data-click="panel-reload"><i class="fa fa-repeat"></i></a>
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning"
+                               data-click="panel-collapse"><i class="fa fa-minus"></i></a>
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-danger"
+                               data-click="panel-remove"><i class="fa fa-times"></i></a>
+                        </div>
+                        <h4 class="panel-title">Live Camera View</h4>
+                    </div>
+                    <div class="panel-body p-0">
+                        <!-- Camera View Here -->
+                    </div>
+                </div>
+
+
+            </div>
         </div>
-        <!-- end theme-panel -->
+        <!-- end row -->
+    </div>
+    <!-- end #content -->
 
-		<!-- begin scroll to top btn -->
-		<a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top fade" data-click="scroll-top"><i class="fa fa-angle-up"></i></a>
-		<!-- end scroll to top btn -->
-	</div>
-	<!-- end page container -->
+    <!-- begin theme-panel -->
+    <div class="theme-panel">
+        {% include "theme_panel.html" %}
+    </div>
+    <!-- end theme-panel -->
 
-	{% include "script.html" %}
-	<!-- ================== BEGIN PAGE LEVEL JS ================== -->
-	<script src="{% static 'color-admin/plugins/gritter/js/jquery.gritter.js' %}"></script>
-	<script src="{% static 'color-admin/plugins/flot/jquery.flot.min.js' %}"></script>
-	<script src="{% static 'color-admin/plugins/flot/jquery.flot.time.min.js' %}"></script>
-	<script src="{% static 'color-admin/plugins/flot/jquery.flot.resize.min.js' %}"></script>
-	<script src="{% static 'color-admin/plugins/flot/jquery.flot.pie.min.js' %}"></script>
-	<script src="{% static 'color-admin/plugins/sparkline/jquery.sparkline.js' %}"></script>
-	<script src="{% static 'color-admin/plugins/jquery-jvectormap/jquery-jvectormap-1.2.2.min.js' %}"></script>
-	<script src="{% static 'color-admin/plugins/jquery-jvectormap/jquery-jvectormap-world-mill-en.js' %}"></script>
-	<script src="{% static 'color-admin/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js' %}"></script>
-	<script src="{% static 'color-admin/js/dashboard.min.js' %}"></script>
-		<script src="{% static 'color-admin/js/control-requests.js' %}"></script>
-	<script src="{% static 'color-admin/js/apps.min.js' %}"></script>
-	<!-- ================== END PAGE LEVEL JS ================== -->
+    <!-- begin scroll to top btn -->
+    <a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top fade" data-click="scroll-top"><i
+            class="fa fa-angle-up"></i></a>
+    <!-- end scroll to top btn -->
+</div>
+<!-- end page container -->
 
-	<script>
+{% include "script.html" %}
+<!-- ================== BEGIN PAGE LEVEL JS ================== -->
+<script src="{% static 'color-admin/plugins/gritter/js/jquery.gritter.js' %}"></script>
+<script src="{% static 'color-admin/plugins/flot/jquery.flot.min.js' %}"></script>
+<script src="{% static 'color-admin/plugins/flot/jquery.flot.time.min.js' %}"></script>
+<script src="{% static 'color-admin/plugins/flot/jquery.flot.resize.min.js' %}"></script>
+<script src="{% static 'color-admin/plugins/flot/jquery.flot.pie.min.js' %}"></script>
+<script src="{% static 'color-admin/plugins/sparkline/jquery.sparkline.js' %}"></script>
+<script src="{% static 'color-admin/plugins/jquery-jvectormap/jquery-jvectormap-1.2.2.min.js' %}"></script>
+<script src="{% static 'color-admin/plugins/jquery-jvectormap/jquery-jvectormap-world-mill-en.js' %}"></script>
+<script src="{% static 'color-admin/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js' %}"></script>
+<script src="{% static 'color-admin/js/dashboard.min.js' %}"></script>
+<script src="{% static 'color-admin/js/control-requests.js' %}"></script>
+<script src="{% static 'color-admin/js/apps.min.js' %}"></script>
+<script src="{% static 'color-admin/plugins/switchery/switchery.min.js' %}"></script>
+<script src="{% static 'color-admin/plugins/powerange/powerange.min.js' %}"></script>
+<script src="{% static 'color-admin/js/form-slider-switcher.demo.min.js' %}"></script>
+
+<!-- ================== END PAGE LEVEL JS ================== -->
+
+<script>
 
 		$(document).ready(function() {
 			App.init();
 			Dashboard.init();
 			ControlRequests.init('{{ruc.ip_address}}')
+			FormSliderSwitcher.init();
 		});
-	</script>
+
+
+
+
+
+
+
+
+
+</script>
 </body>
 </html>
