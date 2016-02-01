@@ -26,7 +26,7 @@ class SentenceNotSupportedError(Exception):
 
 class GlobalPositioningSystem:
     if detection.detect_windows():
-        port = 'COM5'
+        port = 'COM3'
     else:
         port = '/dev/ttyACM0'
     baud = 9600
@@ -58,7 +58,7 @@ class GlobalPositioningSystem:
         try:
             self.ser.open()
         except:
-            self.logger.warning("Serial port already open continueing.")
+            self.logger.warning("Serial port already open continuing.")
         data = self.ser.readline()
         self.logger.debug("Read data: " + data)
         self.ser.close()
@@ -79,25 +79,45 @@ class GlobalPositioningSystem:
         else:
             raise SentenceNotSupportedError(str(data))
 
+        if self.latitude.startswith("00"):
+            self.latitude = self.latitude[2:]
+            self.latitude = "-" + self.latitude
+            print self.latitude
+
+        if self.longitude.startswith("00"):
+            self.longitude = self.longitude[2:]
+            self.longitude = "-" + self.longitude
+            print self.longitude
+
+        self.latitude = float(self.latitude)
+        self.latitude = self.latitude / 100
+        self.longitude = float(self.longitude)
+        self.longitude = self.longitude / 100
+
+        print 'Latitude ' + str(self.latitude)
+        print 'Longitude ' + str(self.longitude)
+
+
     def update(self):
         try:
             self.__parse_data(self.__fetch_raw_data())
         except SentenceNotSupportedError:
             self.logger.warning("Receieved a bad sentence")
 
-    def print_data(self):
+    '''def print_data(self):
         try:
-            print 'Latitude: ', self.latitude
-            print 'Longitude: ', self.longitude
+
+           # print 'Latitude: ', self.latitude
+          #  print 'Longitude: ', self.longitude
         except AttributeError:
             self.logger.warning("Failed to print data")
         # print 'Altitude: ', self.gpgga.altitude
-
+'''
 # For testing
 import time
 if __name__ == "__main__":
     gps = GlobalPositioningSystem()
     while(True):
         gps.update()
-        gps.print_data()
+        #gps.print_data()
         time.sleep(1)
