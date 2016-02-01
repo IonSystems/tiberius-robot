@@ -80,7 +80,7 @@ class Algorithms:
                 print '-----------------------------------'
                 print '\r\n'
                 distance = self.getDistance(curlocation, destination)
-                # self.control.turnTo(heading)
+                self.control.turnTo(heading)
         curlocation = self.getLocation()
         heading = self.getHeading(curlocation, destination)
         distance = self.getDistance(curlocation, destination)
@@ -96,4 +96,7 @@ class Algorithms:
             destination = points[i]
             self.pointToPoint(destination, checkdistance, speedpercent)
 
-        return
+        print "The task is complete"
+        print "The current location of tiberius is : " + self.getLocation()
+        print "with the desired location being : " + destination
+
