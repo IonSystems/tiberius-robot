@@ -46,7 +46,7 @@ def is_folder_found(dir):
     found_result = "found!"
     try:
         if(found_result in check_output(
-         "[ -d + " + dir + " ] && echo " + "'" + found_result + "'",
+         "[ -d " + dir + " ] && echo " + "'" + found_result + "'",
          shell=True)):
             return True
         else:
@@ -99,7 +99,7 @@ class PostInstallDependencies(install):
         self.install_if_missing("i2c-tools")
 	self.un_blacklist_i2c()
 	self.enable_modules_i2c()
-        
+
     def install_deps_linux(self):
         print "Checking for missing packages"
         self.install_if_missing("build-essential")
@@ -193,13 +193,13 @@ class PostInstallDependencies(install):
         self.install_odbc("pi")
         self.install_pyodbc("pi")
         self.install_poly_driver("vendor/polyhedra-driver/raspi/linux/raspi/bin/libpolyod32.so", "~/libpolyod32.so")
-        self.install_poly("vendor/polyhedra-lite/raspi/", "~/poly9.0/")
+        self.install_poly("vendor/polyhedra-lite/raspi/", "~/poly9.0/", "pi")
 
     def install_poly_linux(self):
         self.install_odbc("linux")
         self.install_pyodbc("linux")
         self.install_poly_driver("vendor/polyhedra-driver/linux/linux/i386/bin/libpolyod32.so", "~/libpolyod32.so")
-        self.install_poly("vendor/polyhedra-lite/linux/", "~/poly9.0/")
+        self.install_poly("vendor/polyhedra-lite/linux/", "~/poly9.0/", "linux")
 
     def install_poly_driver(self, src_dir, dst_dir):
         # Linux
@@ -208,16 +208,25 @@ class PostInstallDependencies(install):
             result = check_output("cp " + src_dir + " " + dst_dir, shell=True)
         return
 
-    def install_poly(self, src_dir, dst_dir):
+    def install_poly(self, src_dir, dst_dir, platform):
         # Linux
         # Copy the polyhedra executables to the user's directory.
         if not is_folder_found(dst_dir):
             check_output("sudo cp -r " + src_dir + " " + dst_dir, shell=True)
 
-        # Ensure the polyhedra execuabels are on the command path
+        # Ensure the polyhedra executables are on the command path
         bashrc_dir = "/etc/bash.bashrc"
-        if not (is_text_found("poly9.0/linux/raspi/bin", bashrc_dir)):
-            command = "echo 'i2c-dev' | sudo tee -a " + bashrc_dir
+        if "linux" in platform:
+            bash_command = "export PATH=~/poly9.0/linux/linux/i386/bin/:$PATH"
+        elif "pi" in platform:
+            bash_command = "export PATH=~/poly9.0/raspi/linux/raspi/bin/:$PATH"
+        elif "windows" in platform:
+            print "Cannot currently install Polyhedra on windows."
+            bash_command = None
+        already_done = is_text_found("poly9.0/linux/raspi/bin", bashrc_dir)
+        command_available = bash_command is not None
+        if not already_done and command_available:
+            command = "echo '" + bash_command + "' | sudo tee -a " + bashrc_dir
             check_output(command, shell=True)
 
     def install_pyodbc(self, platform):
@@ -278,6 +287,8 @@ setup(name='Tiberius',
       data_files=[
           (data_directory, ['tiberius/config/tiberius_conf.conf']),
           (data_directory, ['tiberius/smbus_dummy/smbus_database.db']),
+          ('/etc/', ['vendor/polyhedra-driver/odbc.ini']),
+          ('/etc/', ['vendor/polyhedra-driver/odbcinst.ini']),
       ],
       platforms=['Raspberry Pi 2', 'Raspberry Pi 1'],
       install_requires=requirements,
