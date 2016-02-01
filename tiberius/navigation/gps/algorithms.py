@@ -1,7 +1,7 @@
 import math
 
 from tiberius.control.gps20 import GlobalPositioningSystem
-#  from tiberius.control.control import Control
+from tiberius.control.control import Control
 
 
 class Algorithms:
@@ -18,7 +18,7 @@ class Algorithms:
 
     def __init__(self):
         self.gps = GlobalPositioningSystem()
-        #  self.control = Control()
+        self.control = Control()
         self.SPEED = 0.5  # meters/second
 
         # get the current location of tiberius
@@ -61,9 +61,9 @@ class Algorithms:
         heading = self.getHeading(curlocation, destination)
         distance = self.getDistance(curlocation, destination)
         time = checkdistance / (self.SPEED / speed)
-       # self.control.turnTo(heading)
+        self.control.turnTo(heading)
         while distance > checkdistance:
-          #  self.control.driveStraight(speedpercent, time)
+            self.control.driveStraight(speedpercent, time)
             distance -= checkdistance
             curlocation = self.getLocation()
             newheading = self.getHeading(curlocation, destination)
@@ -82,8 +82,8 @@ class Algorithms:
         heading = self.getHeading(curlocation, destination)
         distance = self.getDistance(curlocation, destination)
         time = distance / (self.SPEED / speed)
-        #self.control.turnTo(heading)
-        #self.control.driveStraight(speedpercent, time)
+        self.control.turnTo(heading)
+        self.control.driveStraight(speedpercent, time)
         print "The task is complete"
         print "The current location of tiberius is : " + curlocation
         print "with the desired location being : " + destination
