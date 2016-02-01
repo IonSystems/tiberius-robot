@@ -45,7 +45,7 @@ class GenerateQueryString(unittest.TestCase):
             {'test_column': '100',
              'test_column2': 'This is a test'})
         control = "INSERT INTO test_table (test_column, test_column2) " \
-        "VALUES (100, 'This is a test')"
+            "VALUES (100, 'This is a test')"
         self.assertEquals(specimen, control)
 
         specimen = pol._PolyhedraDatabase__generate_insert(
@@ -53,7 +53,7 @@ class GenerateQueryString(unittest.TestCase):
             "test_table",
             {'test_column': '100', 'test_column2': 200})
         control = "INSERT OR REPLACE INTO test_table " \
-        "(test_column, test_column2) VALUES (100, 200)"
+            "(test_column, test_column2) VALUES (100, 200)"
         self.assertEquals(specimen, control)
 
 
@@ -142,7 +142,7 @@ class GenerateSelectQuery(unittest.TestCase):
                   ]
          })
         control = "SELECT test_column FROM test_table " \
-        "WHERE CustomerName = 'Alfreds Futterkiste'"
+            "WHERE CustomerName = 'Alfreds Futterkiste'"
         self.assertEquals(specimen, control)
 
 
@@ -163,7 +163,7 @@ class DropTable(unittest.TestCase):
 class TestCreateInsertDeleteDrop(unittest.TestCase):
 
     def runTest(self):
-	table_name = "test_table2"
+        table_name = "test_table2"
         p = PolyhedraDatabase('tiberius-polyhedra')
         try:
             p.create(table_name, {'id': 'int primary key', 'column': 'int'})
@@ -175,7 +175,7 @@ class TestCreateInsertDeleteDrop(unittest.TestCase):
         p.insert(table_name, {'id': '3', 'column': '6'})
         p.insert(table_name, {'id': '4', 'column': '8'})
         # TODO: Validate output
-	p.query(table_name, '*')
+        p.query(table_name, '*')
         p.drop(table_name)
 
         p.create('complex_table', {'id': 'int primary key',
@@ -186,7 +186,7 @@ class TestCreateInsertDeleteDrop(unittest.TestCase):
                                    'name': 'Cameron A. Craig',
                                    'address': '1979 Hannover Street',
                                    'robot_id': 0})
-	#TODO: Validate output
+        # TODO: Validate output
         p.query('complex_table', '*')
         p.delete('complex_table')
         p.query('complex_table', '*')
@@ -196,7 +196,7 @@ class TestCreateInsertDeleteDrop(unittest.TestCase):
 class QueryDatabase(unittest.TestCase):
 
     def runTest(self):
-       	pol.create("query_table", {
+        pol.create("query_table", {
                    'test_column': 'int primary key', 'test_column2': 'int'})
 
         # Ensure pol.query() returns all columns
@@ -217,8 +217,8 @@ class QueryDatabase(unittest.TestCase):
         self.assertItemsEqual(results[1], (33, 66))
         self.assertItemsEqual(results[2], (434, 3423))
 
-	# Drop the table because we're done with it
-	pol.drop("query_table")
+        # Drop the table because we're done with it
+        pol.drop("query_table")
 
         # Last test cleans up
         clean_up()
