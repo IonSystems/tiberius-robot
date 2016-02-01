@@ -24,16 +24,17 @@ class Algorithms:
         # get the current location of tiberius
 
     def getLocation(self):
-        while self.gps.latitude == None:
+        while self.gps.latitude is None:
             self.gps.update()
         return [self.gps.longitude, self.gps.latitude]
 
     def getHeading(self, curlocation, destination):
         # print 'destination' + str(destination)
-        curlongitude = curlocation[0]
-        curlatitude = curlocation[1]
-        deslongitude = float(destination[0])
-        deslatitude = float(destination[1])
+        curlatitude = curlocation[0]
+        curlongitude = curlocation[1]
+
+        deslatitude = float(destination[0])
+        deslongitude = float(destination[1])
 
         y = math.sin(deslongitude - curlongitude) * math.cos(deslatitude)
         x = math.cos(curlatitude) * math.sin(deslatitude) - \
@@ -42,17 +43,19 @@ class Algorithms:
 
     def getDistance(self, curlocation, destination):
         r = 6371000  # radius of the earth in meters
-        longdis = curlocation[0] - float(destination[0])
-        latdis = curlocation[1] - float(destination[1])
+        latdis = curlocation[0] - float(destination[0])
+        longdis = curlocation[1] - float(destination[1])
         a = math.sin(latdis / 2) * math.sin(latdis / 2) + \
-            math.cos(curlocation[1]) * math.cos(float(destination[1])) * \
+            math.cos(curlocation[0]) * math.cos(float(destination[0])) * \
             math.sin(longdis / 2) * math.sin(longdis / 2)
         c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
         distance = r * c
         return distance
 
     # move from current location to a given destination (a longitude and latitude)
-    def pointToPoint(self, destination, checkdistance=1, speedpercent=50):
+    def pointToPoint(self, destination, checkdistance, speedpercent):
+        int(speedpercent)
+        int(checkdistance)
         speed = 100 / speedpercent
         curlocation = self.getLocation()
         if self.gps.latitude is None:
@@ -88,5 +91,9 @@ class Algorithms:
         print "The current location of tiberius is : " + curlocation
         print "with the desired location being : " + destination
 
-        def followPath(self, points, checkdistance=1, speedpercent=50):
-            return
+    def followPath(self, points, checkdistance, speedpercent):
+        for i in range(0, points.__len__(), 1):
+            destination = points[i]
+            self.pointToPoint(destination, checkdistance, speedpercent)
+
+        return
