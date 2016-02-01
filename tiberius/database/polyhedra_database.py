@@ -38,9 +38,8 @@ class PolyhedraDatabase(Database):
         query = self.__generate_insert("insert", table_name, values)
         try:
             self.c.execute(query)
-            # self.conn.commit()
+            # self.conn.commit(
         except pyodbc.Error as e:
-            print e
             if "Duplicate key error" in e[1]:
                 raise PolyhedraDatabase.DuplicateKeyError(e[1])
             else:
@@ -93,7 +92,6 @@ class PolyhedraDatabase(Database):
 
     def create(self, table_name, columns):
         query = self.__generate_create(table_name, columns)
-        print query
         try:
             self.c.execute(query)
             # Set database properties
