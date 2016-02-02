@@ -216,7 +216,7 @@ class PolyhedraDatabase(Database):
     def __generate_columns(self, columns):
         query = "("
         for c_name, c_type in columns.iteritems():
-            query += c_name + " " + c_type + ", "
+            query += str(c_name) + " " + str(c_type) + ", "
         query = query[:-2]  # Remove the last comma
         query += ")"
         return query
