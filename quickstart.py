@@ -24,18 +24,34 @@ parser.add_option(
     const=Action.KEYBOARD_CONTROL,
     dest="action",
     help="Start the keyboard control test script.")
-parser.add_option("-t", "--run-tests",
-                  action="store_const", const=Action.RUN_TESTS, dest="action",
-                  help="Run the unit test suite.")
-parser.add_option("-w", "--web-server",
-                  action="store_const", const=Action.WEB_SERVER, dest="action",
-                  help="Start the web interface on a web server.")
-parser.add_option("-a", "--api-server",
-                  action="store_const", const=Action.API_SERVER, dest="action",
-                  help="Start the control API.")
-parser.add_option("-i", "--i2c-check",
-                  action="store_const", const=Action.I2C_CHECK, dest="action",
-                  help="Check attached I2C devices.")
+parser.add_option(
+    "-t",
+    "--run-tests",
+    action="store_const",
+    const=Action.RUN_TESTS,
+    dest="action",
+    help="Run the unit test suite.")
+parser.add_option(
+    "-w",
+    "--web-server",
+    action="store_const",
+    const=Action.WEB_SERVER,
+    dest="action",
+    help="Start the web interface on a web server.")
+parser.add_option(
+    "-a",
+    "--api-server",
+    action="store_const",
+    const=Action.API_SERVER,
+    dest="action",
+    help="Start the control API.")
+parser.add_option(
+    "-i",
+    "--i2c-check",
+    action="store_const",
+    const=Action.I2C_CHECK,
+    dest="action",
+    help="Check attached I2C devices.")
 parser.add_option(
     "-u",
     "--ultrasonics",
