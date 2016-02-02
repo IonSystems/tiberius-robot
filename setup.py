@@ -75,8 +75,6 @@ class PostInstallDependencies(install):
     def run(self):
         if is_windows():
 	    print "Installing on Windows."
-            self.install_deps_windows()
-            self.install_poly_windows()
         elif is_pi():
 	    print "Installing on Raspberry Pi."
             self.install_deps_pi()
@@ -287,8 +285,8 @@ setup(name='Tiberius',
       data_files=[
           (data_directory, ['tiberius/config/tiberius_conf.conf']),
           (data_directory, ['tiberius/smbus_dummy/smbus_database.db']),
-          ('/etc/', ['vendor/polyhedra-driver/odbc.ini']),
-          ('/etc/', ['vendor/polyhedra-driver/odbcinst.ini']),
+          (data_directory, ['vendor/polyhedra-driver/odbc.ini']),
+          (data_directory, ['vendor/polyhedra-driver/odbcinst.ini']),
       ],
       platforms=['Raspberry Pi 2', 'Raspberry Pi 1'],
       install_requires=requirements,
