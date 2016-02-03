@@ -25,6 +25,7 @@ class Algorithms:
 
     def getLocation(self):
         while self.gps.latitude is None:
+            print 'Not valid gps fix, retying...'
             self.gps.update()
         return [self.gps.longitude, self.gps.latitude]
 
