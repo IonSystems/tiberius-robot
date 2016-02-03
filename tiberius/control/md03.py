@@ -130,17 +130,17 @@ class MotorDriver:
 
     def move(self, speed, accel):
         try:
-            if ((speed < -255) or (speed > 255)):
+            '''if ((speed < -255) or (speed > 255)):
                 raise OutOfRangeError('Speed parameter out of range.')
 
             if ((accel < 0) or (accel > 255)):
-                raise OutOfRangeError('Acceleration parameter out of range.')
+                raise OutOfRangeError('Acceleration parameter out of range.')'''
 
             # Set acceleration, must be done before direction register.
             self.bus.write_byte_data(self.address, self.accel_register, accel)
-            self.logger.debug(
+            '''self.logger.debug(
                 "Address: %s, Accel: %s", hex(
-                    self.address), str(accel))
+                    self.address), str(accel))'''
             speed = int(speed)
             if speed == 0:
                 # Make sure to set speed and acceleration before issuing direction
@@ -148,17 +148,17 @@ class MotorDriver:
                 # direction
                 self.bus.write_byte_data(
                     self.address, self.speed_register, speed)
-                self.logger.debug(
+                '''self.logger.debug(
                     "Address: %s, Speed: %s", hex(
-                        self.address), str(speed))
+                        self.address), str(speed))'''
                 self.bus.write_byte_data(
                     self.address,
                     self.direction_register,
                     self.Direction.NONE.value)
-                self.logger.debug(
+                ''' self.logger.debug(
                     "Address: %s, Direction: %s", hex(
                         self.address), str(
-                        self.Direction.NONE.value))
+                        self.Direction.NONE.value))'''
 
             # If we want to go forward, set direction reg to 1
             elif (speed > 0):
@@ -189,10 +189,10 @@ class MotorDriver:
                 'IO error on I2C bus, address %s (%s)', hex(
                     self.address), e)
 
-    class OutOfRangeError(Exception):
+    '''class OutOfRangeError(Exception):
 
         def __init__(self, value):
             self.value = values
 
         def __str__(self):
-            return repr(value)
+            return repr(value)'''

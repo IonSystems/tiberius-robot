@@ -1,7 +1,9 @@
 import math
 
 from tiberius.control.gps20 import GlobalPositioningSystem
-from tiberius.control.control import Control
+
+
+# from tiberius.control.control import Control
 
 
 class Algorithms:
@@ -18,7 +20,7 @@ class Algorithms:
 
     def __init__(self):
         self.gps = GlobalPositioningSystem()
-        self.control = Control()
+        # self.control = Control()
         self.SPEED = 0.5  # meters/second
 
         # get the current location of tiberius
@@ -27,47 +29,63 @@ class Algorithms:
         while self.gps.latitude is None:
             print 'Not valid gps fix, retying...'
             self.gps.update()
-        return [self.gps.longitude, self.gps.latitude]
+        self.gps.latitude = 55.912658
+        self.gps.longitude = -3.321353
+        return [self.gps.latitude, self.gps.longitude]
 
     def getHeading(self, curlocation, destination):
         # print 'destination' + str(destination)
-        curlatitude = curlocation[0]
-        curlongitude = curlocation[1]
 
-        deslatitude = float(destination[0])
-        deslongitude = float(destination[1])
+        theata1 = math.radians(curlocation[0])
+        theata2 = math.radians(destination[0])
 
-        y = math.sin(deslongitude - curlongitude) * math.cos(deslatitude)
-        x = math.cos(curlatitude) * math.sin(deslatitude) - \
-            math.sin(curlatitude) * math.cos(deslatitude) * math.cos(deslongitude - curlongitude)
-        return math.degrees(math.atan2(y, x) + 360) % 360
+        deltaThetha = math.radians(destination[0] - curlocation[0])
+        deltaLambda = math.radians(destination[1] - curlocation[1])
+
+        y = math.sin(deltaLambda) * math.cos(theata2)
+        x = math.cos(theata1) * math.sin(theata2) - \
+            math.sin(theata1) * math.cos(theata2) * math.cos(deltaLambda)
+        bearing = math.degrees(math.atan2(y, x))
+
+        return bearing
 
     def getDistance(self, curlocation, destination):
         r = 6371000  # radius of the earth in meters
-        latdis = curlocation[0] - float(destination[0])
-        longdis = curlocation[1] - float(destination[1])
-        a = math.sin(latdis / 2) * math.sin(latdis / 2) + \
-            math.cos(curlocation[0]) * math.cos(float(destination[0])) * \
-            math.sin(longdis / 2) * math.sin(longdis / 2)
-        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-        distance = r * c
-        return distance
+
+        theata1 = math.radians(curlocation[0])
+        theata2 = math.radians(destination[0])
+
+        deltaThetha = math.radians(destination[0] - curlocation[0])
+        deltaLambda = math.radians(destination[1] - curlocation[1])
+
+        a = math.pow(math.sin(deltaThetha / 2.0), 2) + \
+            math.cos(theata1) * math.cos(theata2) * \
+            math.pow(math.sin(deltaLambda / 2.0), 2)
+
+        c = 2.0 * math.atan2(math.sqrt(a), math.sqrt(1.0 - a))
+
+        d = r * c
+
+        return d
 
     # move from current location to a given destination (a longitude and latitude)
     def pointToPoint(self, destination, checkdistance, speedpercent):
+        destination[0] = float(destination[0])
+        destination[1] = float(destination[1])
         int(speedpercent)
         int(checkdistance)
         speed = 100 / speedpercent
         curlocation = self.getLocation()
+        print curlocation
         if self.gps.latitude is None:
             print 'NO FIX'
             return
         heading = self.getHeading(curlocation, destination)
         distance = self.getDistance(curlocation, destination)
         time = checkdistance / (self.SPEED / speed)
-        self.control.turnTo(heading)
+        # self.control.turnTo(heading)
         while distance > checkdistance:
-            self.control.driveStraight(speedpercent, time)
+            # self.control.driveStraight(speedpercent, time)
             distance -= checkdistance
             curlocation = self.getLocation()
             newheading = self.getHeading(curlocation, destination)
@@ -81,16 +99,16 @@ class Algorithms:
                 print '-----------------------------------'
                 print '\r\n'
                 distance = self.getDistance(curlocation, destination)
-                self.control.turnTo(heading)
+                # self.control.turnTo(heading)
         curlocation = self.getLocation()
         heading = self.getHeading(curlocation, destination)
         distance = self.getDistance(curlocation, destination)
         time = distance / (self.SPEED / speed)
-        self.control.turnTo(heading)
-        self.control.driveStraight(speedpercent, time)
+        # self.control.turnTo(heading)
+        # self.control.driveStraight(speedpercent, time)
         print "The task is complete"
-        print "The current location of tiberius is : " + curlocation
-        print "with the desired location being : " + destination
+        print "The current location of tiberius is : " + str(curlocation)
+        print "with the desired location being : " + str(destination)
 
     def followPath(self, points, checkdistance, speedpercent):
         for i in range(0, points.__len__(), 1):
@@ -100,4 +118,3 @@ class Algorithms:
         print "The task is complete"
         print "The current location of tiberius is : " + self.getLocation()
         print "with the desired location being : " + destination
-
