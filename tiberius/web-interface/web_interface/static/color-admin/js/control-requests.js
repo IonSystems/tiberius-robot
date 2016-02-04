@@ -11,9 +11,9 @@ var handleControlButtons = function(ip_address) {
   $('#button_stop').click(function() {
 		alert("Sending STOP to " + ip_address)
     $.ajax({
-        url: 'send_control_request',
+        url: '../send_control_request',
         type: 'POST',
-        data: {'stop':true, 'ip_address':ip_address}, // An object with the key 'submit' and value 'true;
+        data: {'stop':true, 'ip_address':ip_address},
         success: function (result) {
 					alert("Success")
           //alert("anything");
@@ -23,9 +23,9 @@ var handleControlButtons = function(ip_address) {
   });
   $('#button_forward').click(function() {
     $.ajax({
-        url: 'send_control_request',
+        url: '../send_control_request',
         type: 'POST',
-        data: {'forward':50, 'ip_address':ip_address}, // An object with the key 'submit' and value 'true;
+        data: {'forward':50, 'ip_address':ip_address},
         success: function (result) {
           //alert("anything");
         }
@@ -34,9 +34,9 @@ var handleControlButtons = function(ip_address) {
   });
   $('#button_backward').click(function() {
     $.ajax({
-        url: 'send_control_request',
+        url: '../send_control_request',
         type: 'POST',
-        data: {'backward':50, 'ip_address':ip_address}, // An object with the key 'submit' and value 'true;
+        data: {'backward':50, 'ip_address':ip_address},
         success: function (result) {
           //alert("anything");
         }
