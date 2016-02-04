@@ -35,26 +35,31 @@ def control(request, id):
 
 @require_http_methods(["POST"])
 def send_control_request(request):
+    headers = {'X-Auth-Token': "supersecretpassword"}
     response = ""
     ip_address = request.POST.get('ip_address')
     print "IP Address: " + str(ip_address)
     if request.POST.get('stop'):
         try:
-            r = requests.get('http://' + ip_address + ':8000/motors?stop=True')
+            r = requests.get('http://' + ip_address +
+                             ':8000/motors?stop=True',
+                             headers=headers)
             response = r.text
         except ConnectionError:
             response = "ConnectionError"
     elif request.POST.get('forward'):
         try:
             r = requests.get('http://' + ip_address +
-                             ':8000/motors?forward=50')
+                             ':8000/motors?forward=50',
+                             headers=headers)
             response = r.text
         except ConnectionError:
             response = "ConnectionError"
     elif request.POST.get('backward'):
         try:
             r = requests.get('http://' + ip_address +
-                             ':8000/motors?backward=50')
+                             ':8000/motors?backward=50',
+                             headers=headers)
             response = r.text
         except ConnectionError:
             response = "ConnectionError"
