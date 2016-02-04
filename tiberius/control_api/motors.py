@@ -64,7 +64,7 @@ class MotorResource(object):
 
         # Change the set speed of the motors.
         if('speed' in req.params):
-            self.proc_speed(int(req.params['speed']))
+            self.proc_speed()
 
         # Keep STOP at the bottom so nothing can overwrite it!
         if(MotorStates.STOP.value in req.params):
