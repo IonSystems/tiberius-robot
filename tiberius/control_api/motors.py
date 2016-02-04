@@ -14,7 +14,7 @@ class MotorResource(object):
         self.logger = logging.getLogger('tiberius.control_api.MotorResource')
 
     #@falcon.before(validate_params(req, resp, resource, params))
-    def on_get(self, req, resp):
+    def on_post(self, req, resp):
 
         # Basic commands used for manual control
         if('forward' in req.params):
