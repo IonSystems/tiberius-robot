@@ -224,7 +224,7 @@ class TiltCompensatedCompass:
             heading = self.__read_compass_16()
             return heading
         except IOError:
-            raise I2CReadError("Error reading compass")
+            raise self.CompassReadError("Error reading magnetometer.")
 
     def magnetometer(self):
         try:

@@ -1,6 +1,7 @@
 import math
 
 from tiberius.control.gps20 import GlobalPositioningSystem
+from tiberius.utils import bearing_math
 
 if not __debug__:
     from tiberius.control.control import Control
@@ -32,7 +33,9 @@ class Algorithms:
             print 'Not valid gps fix, retying...'
             self.gps.update()
         # TESTING REMOVE
-        if not __debug__:
+        for i in range(0, 10):
+            self.gps.update()
+        if __debug__:
             self.gps.latitude = 55.912658
             self.gps.longitude = -3.321353
         # -----------------------------
@@ -51,7 +54,8 @@ class Algorithms:
         y = math.sin(deltaLambda) * math.cos(theata2)
         x = math.cos(theata1) * math.sin(theata2) - \
             math.sin(theata1) * math.cos(theata2) * math.cos(deltaLambda)
-        bearing = math.degrees(math.atan2(y, x))
+        bearing = math.degrees(math.atan2(y, x)) + 180
+        bearing_math(bearing)
 
         return bearing
 

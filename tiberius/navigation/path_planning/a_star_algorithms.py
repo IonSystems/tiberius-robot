@@ -134,8 +134,8 @@ class Astar(object):
         curlocation = self.gps.getLocation()
         distance = self.gps.getDistance(curlocation, destination)
         bearing = self.gps.getHeading(curlocation, destination)
-        grid_height =
-        grid_width =
+        grid_height = 0 # not right
+        grid_width = 0  # not right
 
 
     def run_astar(self, destination):
