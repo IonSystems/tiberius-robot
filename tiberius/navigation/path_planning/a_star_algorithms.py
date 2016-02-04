@@ -10,11 +10,12 @@ create a gui for the website
 import heapq
 
 from tiberius.navigation.path_planning.cell import Cell
-
+from tiberius.navigation.gps.algorithms import Algorithms
 
 class Astar(object):
     def __init__(self):
         self.cell = Cell()
+        self.gps = Algorithms()
         self.opened = []
         heapq.heapfiy(self.opened)
         self.closed = set()
@@ -129,3 +130,16 @@ class Astar(object):
                         # add adj cell to open list
                         heapq.heappush(self.opened, (adj_cell.f, adj_cell))
 
+    def find_end(self, destination):
+        curlocation = self.gps.getLocation()
+        distance = self.gps.getDistance(curlocation, destination)
+        bearing = self.gps.getHeading(curlocation, destination)
+        grid_height =
+        grid_width =
+
+
+    def run_astar(self, destination):
+        grid_values = self.find_end(destination)
+
+
+        return

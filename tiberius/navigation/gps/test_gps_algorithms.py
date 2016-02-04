@@ -1,5 +1,6 @@
 from tiberius.navigation.gps.algorithms import Algorithms
 import sys
+import traceback
 
 g = Algorithms()
 
@@ -53,3 +54,5 @@ except Exception as e:
     print 'The check argument is the number of meters between each check on if tiberius is going to the right place'
     print 'And finally speedpercent is the speed percentage of tiberius, hint its a percentage so between 0 and 100 :)'
     print 'I hope you found this to be helpful but if not then there is no hope for you :('
+
+    traceback.print_exc()
