@@ -30,11 +30,12 @@ def generate_response():
 def validate_params():
     def hook(req, resp, resource, params):
         # Ensure speed value is between 0 and 100
-        if 0 > int(params['speed']):
-            params['speed'] = 0
+        if 'speed' in req.params:
+            if 0 > int(params['speed']):
+                params['speed'] = 0
 
-        if 100 < int(params['speed']):
-            params['speed'] = 100
+            if 100 < int(params['speed']):
+                params['speed'] = 100
     return hook
 
 
