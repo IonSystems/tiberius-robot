@@ -9,10 +9,10 @@ import logging
 
 
 class MotorStates(Enum):
-    FORWARD = "forward",
-    BACKWARD = "backward",
-    LEFT = "left",
-    RIGHT = "right",
+    FORWARD = "forward"
+    BACKWARD = "backward"
+    LEFT = "left"
+    RIGHT = "right"
     STOP = "stop"
 
 
@@ -49,7 +49,9 @@ class MotorResource(object):
 
     @falcon.before(validate_params())
     def on_post(self, req, resp):
-
+	print str(req.params)
+	print MotorStates.FORWARD.value
+	print MotorStates.STOP.value
         # Can't go fowards and backwards at the same time so we can use elif.
         if(MotorStates.FORWARD.value in req.params):
             self.proc_forward()
