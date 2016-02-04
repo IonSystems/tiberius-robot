@@ -8,18 +8,19 @@ if not __debug__:
 
 class Algorithms:
     """
-        Set of algorithms that control tiberius using the gps and compass.
+    Set of algorithms that control tiberius using the gps and compass.
 
+    Point to point algorithm moves from one longitude and latitude position
+    to another. Created
 
-        Point to point algorithm moves from one latitude and longitude position
-        to another. Created
-
-        Follow path algorithm moves to a location using multiple point to point calls
-        to create a path that can move around objects or along a given path. TODO
+    TODO: Follow path algorithm moves to a location using multiple point to
+        point calls to create a path that can move around objects or along a
+        given path.
     """
 
     def __init__(self):
         self.gps = GlobalPositioningSystem()
+
         if not __debug__:
             self.control = Control()
         self.SPEED = 0.5  # meters/second
