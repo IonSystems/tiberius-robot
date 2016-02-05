@@ -1,4 +1,5 @@
 import falcon
+import json
 import sys
 from enum import Enum
 from tiberius.logger import logger
@@ -19,10 +20,10 @@ class MotorStates(Enum):
 def generate_response(req, resp, resource):
     # If we make it this far then return status OK
     resp.status = falcon.HTTP_200
-    resp.body = {
+    resp.body = json.dumps({
                  'speed': resource.speed,
-                 'state': resource.state,
-    }
+                 'state': resource.state.value,
+    })
 
 
 def validate_params(req, resp, resource):
