@@ -99,7 +99,7 @@ class MotorResource(object):
         self.logger.debug("Stopped")
 
     def proc_speed(self, speed):
-	self.speed = speed
+	self.speed = int(speed)
         self.logger.debug("Setting speed to %s", self.speed)
         # Now that the speed has been updated,
         # reinitiate any active states.
