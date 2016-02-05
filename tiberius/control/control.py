@@ -6,6 +6,7 @@ import sensors
 import actuators
 import time
 import logging
+from tiberius.utils import bearing_math
 
 c_logger = logging.getLogger('tiberius.control.Control')
 
@@ -149,43 +150,56 @@ class Control:
 
     # def driveForwardDistance(self, distance_metres):
 
-    def driveStraight(self, speed_percent, duration):
+    def driveStraight(self, speed_percent, duration, sensitivity = 1):
         desired_heading = self.compass.headingNormalized()
         t = 0  # time
-        gain = 0.8  # proportional Error multiplier
-        integral = 0  # Sum of all errors over time
-        i_factor = 0.2  # integral
 
-        d_factor = 0  # derivative
+        gain = 1440  # proportional Error multiplier
+
+        integral = 0  # Sum of all errors over time
+        i_factor = 1  # integral
+
+        d_factor = 1  # derivative
         previous_error = 0
         debug = True
         left_speed = (speed_percent * 255) / 100  # 0-100 -> 0-255
         right_speed = (speed_percent * 255) / 100
-        while(t < duration):
-            time.sleep(5)
+        while t < duration:
             actual_heading = self.compass.headingNormalized()
-            error = actual_heading - desired_heading
+
+            error_degrees = actual_heading - desired_heading
+            error_degrees = bearing_math.normalize_bearing(error_degrees)
+
+            '''if desired_heading > 0:
+                if actual_heading > 0:
+                    error_degrees = actual_heading - desired_heading
+                elif actual_heading < 0:
+                    error_degrees = actual_heading + desired_heading
+            elif desired_heading < 0:
+                if actual_heading > 0:
+                    error_degrees = actual_heading + desired_heading
+                elif actual_heading < 0:
+                    error_degrees = actual_heading - desired_heading
+            '''
+
             # Make error between 1 and -1
-            error /= float(360.0)
-            if debug:
-                print 'Error (deg): ' + str(error)
+            error = error_degrees / float(180.0)
+            error *= sensitivity
             integral += error
             derivative = previous_error - error
             previous_error = error
-            if error < 0:
-                r = right_speed - (abs(error) * gain) - \
-                    (integral * i_factor) + (derivative * d_factor)
-                #((1 - abs(error)) + 1) / 2  * right_speed
-                # + (abs(error) * gain) + (integral * i_factor) + (derivative * d_factor)
-                l = left_speed
+            if error_degrees < 0:  # Turn Right
+                r = right_speed - (abs(error) * gain) - (integral * i_factor) + (derivative * d_factor)
+
+                l = left_speed + (abs(error) * gain) - (integral * i_factor) + (derivative * d_factor)
+
                 if debug:
                     print 'Turning RIGHT'
-            elif error > 0:
-                l = left_speed - (abs(error) * gain) - \
-                    (integral * i_factor) + (derivative * d_factor)
-                #((1 - abs(error)) + 1) / 2 * left_speed
-                # + (abs(error) * gain) + (integral * i_factor) + (derivative * d_factor)
-                r = right_speed
+            elif error_degrees > 0:  # Turn Left         
+                r = right_speed + (abs(error) * gain) - (integral * i_factor) + (derivative * d_factor)
+
+                l = left_speed - (abs(error) * gain) - (integral * i_factor) + (derivative * d_factor)
+
                 if debug:
                     print 'Turning LEFT'
             else:
@@ -194,7 +208,12 @@ class Control:
                 integral = 0  # Reset integral error when on track
                 if debug:
                     print 'Going STRAIGHT'
-            if(debug):
+
+            if debug:
+                print 'Desired Heading (deg): ' + str(desired_heading)
+                print 'Actual Heading (deg): ' + str(actual_heading)
+                print 'Error (deg): ' + str(error_degrees)
+                print 'Error: ' + str(error)
                 print 'Max speed   : ' + str(left_speed)
                 print 'Left speed  : ' + str(l)
                 print 'Right speed : ' + str(r)
@@ -206,20 +225,3 @@ class Control:
             time.sleep(0.1)
             t += 0.1
         self.motors.stop()
-
-    def driveStraightStopStart(self, speed_percent, duration):
-        desired_bearing = self.compass.headingNormalized()
-        t = 0
-        self.motors.setSpeedPercent(speed_percent)
-        while(t < duration):
-            actual_bearing = self.compass.headingNormalized()
-            error = actual_bearing - desired_bearing
-
-            if error != 0:
-                self.turnTo(desired_bearing)
-                self.motors.moveForward()
-
-            else:
-                self.motors.moveForward()
-            time.sleep(0.1)
-            t += 0.1
