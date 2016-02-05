@@ -55,7 +55,7 @@ class Algorithms:
         x = math.cos(theata1) * math.sin(theata2) - \
             math.sin(theata1) * math.cos(theata2) * math.cos(deltaLambda)
         bearing = math.degrees(math.atan2(y, x)) + 180
-        bearing_math(bearing)
+        bearing_math.normalize_bearing(bearing)
 
         return bearing
 

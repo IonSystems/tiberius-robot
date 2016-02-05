@@ -78,16 +78,16 @@ class GlobalPositioningSystem:
             self.velocity = self.gpvtg.spd_over_grnd_kmph
         else:
             raise SentenceNotSupportedError(str(data))
-
-        if self.latitude.startswith("00"):
-            self.latitude = self.latitude[2:]
-            self.latitude = "-" + self.latitude
-            print self.latitude
-
-        if self.longitude.startswith("00"):
-            self.longitude = self.longitude[2:]
-            self.longitude = "-" + self.longitude
-            print self.longitude
+        if self.latitude is str:
+            if self.latitude.startswith("00"):
+                self.latitude = self.latitude[2:]
+                self.latitude = "-" + self.latitude
+                print self.latitude
+        if self.longitude is str:
+            if self.longitude.startswith("00"):
+                self.longitude = self.longitude[2:]
+                self.longitude = "-" + self.longitude
+                print self.longitude
 
         self.latitude = float(self.latitude)
         self.latitude = self.latitude / 100
