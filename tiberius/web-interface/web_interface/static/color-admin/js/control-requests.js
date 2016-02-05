@@ -9,15 +9,16 @@ var handleControlButtons = function(ip_address) {
 
 	"use strict";
   $('#button_stop').click(function() {
-		alert("Sending STOP to " + ip_address)
     $.ajax({
         url: '../send_control_request',
         type: 'POST',
         data: {'stop':true, 'ip_address':ip_address},
         success: function (result) {
-					alert("Success")
           //alert("anything");
-        }
+        },
+				error: function(error_msg){
+					alert(error_msg);
+				}
     });
 
   });
@@ -28,7 +29,10 @@ var handleControlButtons = function(ip_address) {
         data: {'forward':50, 'ip_address':ip_address},
         success: function (result) {
           //alert("anything");
-        }
+        },
+				error: function(error_msg){
+					alert(error_msg);
+				}
     });
 
   });
@@ -39,7 +43,38 @@ var handleControlButtons = function(ip_address) {
         data: {'backward':50, 'ip_address':ip_address},
         success: function (result) {
           //alert("anything");
-        }
+        },
+				error: function(error_msg){
+					alert(error_msg);
+				}
+    });
+
+  });
+	$('#button_left').click(function() {
+    $.ajax({
+        url: '../send_control_request',
+        type: 'POST',
+        data: {'left':50, 'ip_address':ip_address},
+        success: function (result) {
+          //alert("anything");
+        },
+				error: function(error_msg){
+					alert(error_msg);
+				}
+    });
+
+  });
+	$('#button_right').click(function() {
+    $.ajax({
+        url: '../send_control_request',
+        type: 'POST',
+        data: {'right':50, 'ip_address':ip_address},
+        success: function (result) {
+          //alert("anything");
+        },
+				error: function(error_msg){
+					alert(error_msg);
+				}
     });
 
   });

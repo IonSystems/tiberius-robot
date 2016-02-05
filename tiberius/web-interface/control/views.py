@@ -36,34 +36,68 @@ def control(request, id):
 @require_http_methods(["POST"])
 def send_control_request(request):
     headers = {'X-Auth-Token': "supersecretpassword"}
-    response = ""
+
+    # Contruct url for motor resource on Control API
     ip_address = request.POST.get('ip_address')
-    print "IP Address: " + str(ip_address)
+    url_start = "http://"
+    url_end = ":8000/motors"
+    url = url_start + ip_address + url_end
+    response = ""
+
     if request.POST.get('stop'):
         try:
-            r = requests.get('http://' + ip_address +
-                             ':8000/motors?stop=True',
-                             headers=headers)
+            data = {'stop': True}
+            r = requests.post(url,
+                              data=data,
+                              headers=headers)
             response = r.text
-        except ConnectionError:
-            response = "ConnectionError"
+        except ConnectionError as e:
+            response = e
     elif request.POST.get('forward'):
+        data = {'forward': True}
         try:
-            r = requests.get('http://' + ip_address +
-                             ':8000/motors?forward=50',
-                             headers=headers)
+            r = requests.post(url,
+                              data=data,
+                              headers=headers)
             response = r.text
-        except ConnectionError:
-            response = "ConnectionError"
+        except ConnectionError as e:
+            response = e
     elif request.POST.get('backward'):
+        data = {'backward': True}
         try:
-            r = requests.get('http://' + ip_address +
-                             ':8000/motors?backward=50',
-                             headers=headers)
+            r = requests.post(url,
+                              data=data,
+                              headers=headers)
             response = r.text
-        except ConnectionError:
-            response = "ConnectionError"
-    else:
-        r = requests.get('http://' + ip_address + ':8000/motors?stop=True')
-        response = r.text
-    return HttpResponse("Done: " + response)
+        except ConnectionError as e:
+            response = e
+
+    if request.POST.get('left'):
+        data = {'left': True}
+        try:
+            r = requests.post(url,
+                              data=data,
+                              headers=headers)
+            response = r.text
+        except ConnectionError as e:
+            response = e
+    elif request.POST.get('right'):
+        data = {'right': True}
+        try:
+            r = requests.post(url,
+                              data=data,
+                              headers=headers)
+            response = r.text
+        except ConnectionError as e:
+            response = e
+
+    if request.POST.get('speed'):
+        try:
+            data = {'speed': request.POST.get('speed')}
+            r = requests.post(url,
+                              data=data,
+                              headers=headers)
+            response = r.text
+        except ConnectionError as e:
+            response = e
+    return HttpResponse(response)

@@ -15,6 +15,8 @@
     <link href="{% static 'color-admin/css/control.css' %}" rel="stylesheet"/>
     <link href="{% static 'color-admin/plugins/switchery/switchery.min.css' %}" rel="stylesheet"/>
     <link href="{% static 'color-admin/plugins/powerange/powerange.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'color-admin/plugins/ionRangeSlider/css/ion.rangeSlider.css' %}" rel="stylesheet"/>
+    <link href="{% static 'color-admin/plugins/ionRangeSlider/css/ion.rangeSlider.skinHTML5.css' %}" rel="stylesheet"/>
     <!-- ================== END PAGE LEVEL STYLE ================== -->
     <title>{{Control}}</title>
 </head>
@@ -83,7 +85,7 @@
                                     <table id="com-chilipeppr-widget-xyz">
                                         <tr valign="top">
                                             <td class="col xcol-xs-2" style="border:0px yellow solid;">
-                                                <button class="btn btn-white  dbltall">
+                                                <button id="button_left" class="btn btn-white  dbltall">
                                                     <span class="fa fa-2x fa-arrow-left"></span>
                                                 </button>
                                             </td>
@@ -98,7 +100,7 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <button class="btn btn-white  dbltall">
+                                                <button id = "button_right" class="btn btn-white  dbltall">
                                                        <span
                                                                class="fa fa-2x fa-arrow-right"></span>
                                                 </button>
@@ -123,7 +125,7 @@
 
                                     <div class="col-md-8">
                                         <div class="slider-wrapper">
-                                            <input type="text" data-render="powerange-slider" data-start="70"/>
+                                            <span id="speed_slider"</span>
                                         </div>
                                     </div>
                                     <!-- end col-9 -->
@@ -257,8 +259,8 @@
 <script src="{% static 'color-admin/js/apps.min.js' %}"></script>
 <script src="{% static 'color-admin/plugins/switchery/switchery.min.js' %}"></script>
 <script src="{% static 'color-admin/plugins/powerange/powerange.min.js' %}"></script>
-<script src="{% static 'color-admin/js/form-slider-switcher.demo.min.js' %}"></script>
-
+<script src="{% static 'color-admin/plugins/ionRangeSlider/js/ion-rangeSlider/ion.rangeSlider.min.js' %}"></script>
+<script src="{% static 'color-admin/js/control-slider.js' %}"></script>
 <!-- ================== END PAGE LEVEL JS ================== -->
 
 <script>
@@ -267,7 +269,7 @@
 			App.init();
 			Dashboard.init();
 			ControlRequests.init('{{ruc.ip_address}}')
-			FormSliderSwitcher.init();
+			ControlSliders.init('{{ruc.ip_address}}')
 		});
 
 
