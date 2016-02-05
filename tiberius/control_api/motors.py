@@ -16,27 +16,23 @@ class MotorStates(Enum):
     STOP = "stop"
 
 
-def generate_response():
-    def hook(req, resp, resource):
-        # If we make it this far then return status OK
-        resp.status = falcon.HTTP_200
-        resp.body = {
-                     'speed': resource.speed,
-                     'state': resource.state,
-        }
-    return hook
+def generate_response(req, resp, resource):
+    # If we make it this far then return status OK
+    resp.status = falcon.HTTP_200
+    resp.body = {
+                 'speed': resource.speed,
+                 'state': resource.state,
+    }
 
 
-def validate_params():
-    def hook(req, resp, resource, params):
-        # Ensure speed value is between 0 and 100
-        if 'speed' in req.params:
-            if 0 > int(params['speed']):
-                params['speed'] = 0
+def validate_params(req, resp, resource):
+    # Ensure speed value is between 0 and 100
+    if 'speed' in req.params:
+        if 0 > int(params['speed']):
+            params['speed'] = 0
 
-            if 100 < int(params['speed']):
-                params['speed'] = 100
-    return hook
+        if 100 < int(params['speed']):
+            params['speed'] = 100
 
 
 class MotorResource(object):
@@ -47,12 +43,10 @@ class MotorResource(object):
         self.speed = 50
         self.state = MotorStates.STOP
 
-    @falcon.before(validate_params())
+    @falcon.after(generate_response)
+    @falcon.before(validate_params)
     def on_post(self, req, resp):
-	print str(req.params)
-	print MotorStates.FORWARD.value
-	print MotorStates.STOP.value
-        # Can't go fowards and backwards at the same time so we can use elif.
+        # Can't go forwards and backwards at the same time so we can use elif.
         if(MotorStates.FORWARD.value in req.params):
             self.proc_forward()
         elif(MotorStates.BACKWARD.value in req.params):
@@ -72,37 +66,46 @@ class MotorResource(object):
         if(MotorStates.STOP.value in req.params):
             self.proc_stop()
 
-    @falcon.after(generate_response())
     def proc_forward(self):
         self.motor_control.setSpeedPercent(self.speed)
         self.motor_control.moveForward()
+        self.state = MotorStates.FORWARD
         self.logger.debug("Moving forward at speed %s", self.speed)
 
-    @falcon.after(generate_response())
     def proc_backward(self):
         # speed = int(req.params['backward'])
         self.motor_control.setSpeedPercent(self.speed)
         self.motor_control.moveBackward()
-        self.logger.debug("Moving backward at speed %s", self.speed)
+        self.state = MotorStates.BACKWARD
+	self.logger.debug("Moving backward at speed %s", self.speed)
 
-    @falcon.after(generate_response())
     def proc_left(self):
         self.motor_control.setSpeedPercent(self.speed)
         self.motor_control.turnLeft()
+        self.state = MotorStates.LEFT
         self.logger.debug("Turning left at speed %s", self.speed)
 
-    @falcon.after(generate_response())
     def proc_right(self):
         self.motor_control.setSpeedPercent(self.speed)
         self.motor_control.turnRight()
+        self.state = MotorStates.RIGHT
         self.logger.debug("Turning right at speed %s", self.speed)
 
-    @falcon.after(generate_response())
     def proc_stop(self):
         self.motor_control.stop()
+        self.state = MotorStates.STOP
         self.logger.debug("Stopped")
 
-    @falcon.after(generate_response())
     def proc_speed(self):
         speed = int(req.params['speed'])
         self.logger.debug("Setting speed to %s", self.speed)
+        # Now that the speed has been updated,
+        # reinitiate any active states.
+        if self.state == MotorStates.FORWARD:
+            self.proc_forward()
+        elif self.state == MotorStates.BACKWARD:
+            self.proc_backward()
+        elif self.state == MotorStates.LEFT:
+            self.proc_left()
+        elif self.state == MotorStates.RIGHT:
+            self.proc_right()
