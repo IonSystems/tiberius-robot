@@ -28,7 +28,8 @@ def generate_response(req, resp, resource):
 
 def validate_params(req, resp, resource):
     # Ensure speed value is between 0 and 100
-    if 'speed' in req.params:
+    params = req.params
+    if 'speed' in params:
         if 0 > int(params['speed']):
             params['speed'] = 0
 
@@ -61,7 +62,7 @@ class MotorResource(object):
 
         # Change the set speed of the motors.
         if('speed' in req.params):
-            self.proc_speed()
+            self.proc_speed(req.params['speed'])
 
         # Keep STOP at the bottom so nothing can overwrite it!
         if(MotorStates.STOP.value in req.params):
@@ -97,8 +98,8 @@ class MotorResource(object):
         self.state = MotorStates.STOP
         self.logger.debug("Stopped")
 
-    def proc_speed(self):
-        speed = int(req.params['speed'])
+    def proc_speed(self, speed):
+	self.speed = speed
         self.logger.debug("Setting speed to %s", self.speed)
         # Now that the speed has been updated,
         # reinitiate any active states.
