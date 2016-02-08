@@ -3,6 +3,7 @@ import cmps11
 import srf08
 import time
 from tiberius.config.config_parser import TiberiusConfigParser
+from tiberius.control.gps20 import GlobalPositioningSystem
 #import picamera
 #import gps
 
@@ -41,7 +42,7 @@ class Ultrasonic:
         self.srfrc.doranging()
         self.srfrl.doranging()
 
-        # We need to wait for the measurement to be made before reading thr
+        # We need to wait for the measurement to be made before reading the
         # result.
         time.sleep(0.065)
 
@@ -54,6 +55,8 @@ class Ultrasonic:
         rl = self.srfrl.getranging()
 
         return {'fl': fl, 'fc': fc, 'fr': fr, 'rl': rl, 'rc': rc, 'rr': rr}
+
+
 
 # class Lidar:
 #	lidar = RoboPeakLidar()
@@ -98,9 +101,28 @@ if TiberiusConfigParser.isCompassEnabled():
                 angle += 360
             return angle
 
-# class GPS:
-    # gps =
+    class GPS:
+        def read_gps(self):
+            GlobalPositioningSystem.update()
+            gps_latitude = GlobalPositioningSystem.latitude
+            gps_longitude = GlobalPositioningSystem.longitude
+            gps_northsouth = GlobalPositioningSystem.northsouth
+            gps_eastwest = GlobalPositioningSystem.eastwest
+            gps_altitude = GlobalPositioningSystem.altitude
+            gps_variation = GlobalPositioningSystem.variation
+            gps_velocity = GlobalPositioningSystem.velocity
 
+            return {'latitude': gps_latitude, 'longitude': gps_longitude, 'northsouth': gps_northsouth, 'eastwest' : gps_eastwest,
+                    'altitude' : gps_altitude, 'variation' : gps_variation, 'velocity' :gps_velocity }
+
+self.latitude = None
+        self.northsouth = None
+        self.longitude = None
+        self.eastwest = None
+        self.altitude = None
+        self.timestamp = None
+        self.variation = None
+        self.velocity
 
 class I2CReadError(Exception):
 
