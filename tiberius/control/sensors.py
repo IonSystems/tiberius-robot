@@ -113,16 +113,7 @@ if TiberiusConfigParser.isCompassEnabled():
             gps_velocity = GlobalPositioningSystem.velocity
 
             return {'latitude': gps_latitude, 'longitude': gps_longitude, 'northsouth': gps_northsouth, 'eastwest' : gps_eastwest,
-                    'altitude' : gps_altitude, 'variation' : gps_variation, 'velocity' :gps_velocity }
-
-self.latitude = None
-        self.northsouth = None
-        self.longitude = None
-        self.eastwest = None
-        self.altitude = None
-        self.timestamp = None
-        self.variation = None
-        self.velocity
+                    'altitude' : gps_altitude, 'variation' : gps_variation, 'velocity' :gps_velocity}
 
 class I2CReadError(Exception):
 

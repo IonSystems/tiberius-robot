@@ -3,10 +3,10 @@ import time
 from tiberius.database.polyhedra_database import PolyhedraDatabase
 from tiberius.control.sensors import Ultrasonic
 from tiberius.control.sensors import Compass
-from tiberius.control.sensors import GPS
+#from tiberius.control.sensors import GPS
 
 
-
+#hello
 
 
 '''
@@ -14,7 +14,7 @@ from tiberius.control.sensors import GPS
 '''
 
 
-class ControlThread:
+class ControlThread():
 
     def __init__(
             self,
@@ -38,67 +38,67 @@ class ControlThread:
         self.COMPASS_TABLE = 'compass_reading'
         self.GPS_TABLE = 'gps_reading'
         self.ARM_TABLE = 'arm_reading'
-
-        def create_motor_control_thread(self):
-            thread.start_new_thread(function, args[, kwargs])
+        self.ultrasonic = Ultrasonic()
 
 
 #*****************************Functions for creating the table*********************************
 #create polyhedra database to store data from ultrasonic sensors
-def polycreate_ultrasonic(self):
-    try:
+    def polycreate_ultrasonic(self):
+        try:
 
-        poly.create(self.ULTRASONICS_TABLE, {'id':'int primary key','fl': 'float',
-                                           'fc': 'float', 'fr': 'float',
-                                           'rl': 'float', 'rc': 'float',
-                                           'rr': 'float',
-                                           'timestamp':'float'})
-    except PolyhedraDatabase.OperationalError:
-        print "Ultrasonic table already exists - you messed up son "
+            self.poly.create(self.ULTRASONICS_TABLE, {'id':'int primary key','fl': 'float',
+                                               'fc': 'float', 'fr': 'float',
+                                               'rl': 'float', 'rc': 'float',
+                                               'rr': 'float',
+                                               'timestamp':'float'})
+        except PolyhedraDatabase.OperationalError:
+            print "something went wrong... "
+        except PolyhedraDatabase.TableAlreadyExistsError as e:
+            print "Table already exists."
 
-def polycreate_gps(self):
-    try:
-        poly.create(self.GPS_TABLE, {'id':'int primary key', 'latitude':'float', 'longitude':'float',
-                                     'north_south' : 'bool', 'east_west' : 'bool', 'altitude' : 'float',
-                                     'variation' : 'float', 'velocity' : 'float', 'timestamp':'float'})
-    except PolyhedraDatabase.OperationalError:
-        print "GPS table already exists"
+    def polycreate_gps(self):
+        try:
+            self.poly.create(self.GPS_TABLE, {'id':'int primary key', 'latitude':'float', 'longitude':'float',
+                                         'north_south' : 'bool', 'east_west' : 'bool', 'altitude' : 'float',
+                                         'variation' : 'float', 'velocity' : 'float', 'timestamp':'float'})
+        except PolyhedraDatabase.OperationalError:
+            print "GPS table already exists"
 
-def polycreate_compass(self):
-    try:
+    def polycreate_compass(self):
+        try:
 
-        poly.create(self.COMPASS_TABLE, {'id':'int primary key', 'heading':'float', 'timestamp' : 'float'})
-    except PolyhedraDatabase.OperationalError:
-        print "Compass table already exists"
+            self.poly.create(self.COMPASS_TABLE, {'id':'int primary key', 'heading':'float', 'timestamp' : 'float'})
+        except PolyhedraDatabase.OperationalError:
+            print "Compass table already exists"
 
 
-def polycreate_arm(self):
-    try:
-        poly.create(self.ARM_TABLE, {'id':'int primary key', 'X': 'float', 'Y': 'float', 'Z' : 'float',
-                                     'theta' : 'float', 'phi' : 'float', 'rho' : 'float',
-                                     'timestamp':'float' })
-    except PolyhedraDatabase.OperationalError:
-        print "Arm table already exists"
+    def polycreate_arm(self):
+        try:
+            self.poly.create(self.ARM_TABLE, {'id':'int primary key', 'X': 'float', 'Y': 'float', 'Z' : 'float',
+                                         'theta' : 'float', 'phi' : 'float', 'rho' : 'float',
+                                         'timestamp':'float' })
+        except PolyhedraDatabase.OperationalError:
+            print "Arm table already exists"
 
 
 
 #*****************************Functions for updating the table*********************************
-def ultrasonics_thread(self):
-    ultrasonic_read_id = 0
-    while(True):
-        #add in code to update table by overwriting 0th value and rolling back round
-        ultra_data = Ultrasonic.senseUltrasonic()
-        poly.insert(self.ULTRASONICS_TABLE, {'id' :ultrasonic_read_id,
-                                             'fl': ultra_data ['fl'], 'fc': ultra_data ['fc'],'fr': ultra_data ['fr'],
-                                             'rl': ultra_data ['rl'],'rc': ultra_data ['rc'], 'rr': ultra_data ['rr'],
-                                             'timestamp': time.time()} )
-        ultrasonic_read_id += 1
+    def ultrasonics_thread(self):
+        ultrasonic_read_id = 0
+        while(True):
+            #add in code to update table by overwriting 0th value and rolling back round
+            ultra_data = self.ultrasonic.senseUltrasonic()
+            self.poly.insert(self.ULTRASONICS_TABLE, {'id' :ultrasonic_read_id,
+                                                 'fl': ultra_data ['fl'], 'fc': ultra_data ['fc'],'fr': ultra_data ['fr'],
+                                                 'rl': ultra_data ['rl'],'rc': ultra_data ['rc'], 'rr': ultra_data ['rr'],
+                                                 'timestamp': time.time()} )
+            ultrasonic_read_id += 1
 
 def gps_thread(self):
     gps_read_id = 0
     while(True):
         gps_data = GPS.read_gps(self)
-        poly.insert(self.GPS_TABLE, {'id' : gps_read_id, 'latitude':  gps_data ['latitude'], 'longitude':
+        self.poly.insert(self.GPS_TABLE, {'id' : gps_read_id, 'latitude':  gps_data ['latitude'], 'longitude':
                                         gps_data ['longitude'], 'north_south' : gps_data['northsouth'],
                                         'east_west' : gps_data['eastwest'], 'altitude' : gps_data['altitude'],
                                         'variation' : gps_data['variation'], 'velocity' : gps_data['velocity'],
@@ -110,7 +110,7 @@ def compass_thread(self):
     compass_read_id = 0
     while(True):
         heading  = Compass.headingNormalized(self)
-        poly.insert(self.COMPASS_TABLE, {'id': compass_read_id , 'heading': 'heading','timestamp': time.time()})
+        self.poly.insert(self.COMPASS_TABLE, {'id': compass_read_id , 'heading': 'heading','timestamp': time.time()})
 
         compass_read_id += 1
 
