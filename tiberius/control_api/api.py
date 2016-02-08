@@ -16,7 +16,8 @@ from tiberius.control_api.middleware import AuthMiddleware
 c = Control()
 m = c.motors
 
-api = application = falcon.API(media_type='application/json; charset=utf-8')
+api = application = falcon.API(media_type='application/json; charset=utf-8',
+	middleware=[AuthMiddleware()])
 
 sensors = sensors.SensorResource()
 motors = motors.MotorResource(m)
