@@ -93,6 +93,7 @@ class ControlThread():
                                                  'rl': ultra_data ['rl'],'rc': ultra_data ['rc'], 'rr': ultra_data ['rr'],
                                                  'timestamp': time.time()} )
             ultrasonic_read_id += 1
+            time.sleep(0.2)
 
 def gps_thread(self):
     gps_read_id = 0
