@@ -46,7 +46,7 @@ class GlobalPositioningSystem:
         self.northsouth = None
         self.longitude = None
         self.eastwest = None
-        self.attitude = None
+        self.altitude = None
         self.timestamp = None
         self.variation = None
         self.velocity = None
