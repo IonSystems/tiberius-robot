@@ -43,10 +43,6 @@ class ControlThread:
             thread.start_new_thread(function, args[, kwargs])
 
 
-#get timing stamp
-def timing(self):
-   sensor_read_time = time.time();
-
 #*****************************Functions for creating the table*********************************
 #create polyhedra database to store data from ultrasonic sensors
 def polycreate_ultrasonic(self):
@@ -125,3 +121,10 @@ def compass_thread(self):
  #                                    'theta' : 'float', 'phi' : 'float', 'rho' : 'float',
  #                                    'timestamp':'float'})
 #    arm_read_id += 1;
+
+
+if __name__ == "__main__":
+    control_thread = ControlThread()
+    control_thread.polycreate_ultrasonic()
+    control_thread.ultrasonics_thread()
+
