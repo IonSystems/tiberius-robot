@@ -89,10 +89,17 @@ class GlobalPositioningSystem:
                 self.longitude = "-" + self.longitude
                 print self.longitude
 
-        self.latitude = float(self.latitude)
-        self.latitude = self.latitude / 100
-        self.longitude = float(self.longitude)
-        self.longitude = self.longitude / 100
+        print 'lat is \"' + str(self.latitude) + '\"'
+        if self.latitude is not "":
+            self.latitude = float(self.latitude)
+            self.latitude /= 100
+        else:
+            print 'No data in latitude'
+        if self.longitude is not "":
+            self.longitude = float(self.longitude)
+            self.longitude /= 100
+        else:
+            print 'No Data in longitude'
 
         print 'Latitude ' + str(self.latitude)
         print 'Longitude ' + str(self.longitude)
