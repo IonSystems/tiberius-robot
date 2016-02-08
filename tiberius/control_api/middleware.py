@@ -1,7 +1,9 @@
 import falcon
-
+from tiberius.config.config_parser import TiberiusConfigParser
 
 class AuthMiddleware(object):
+    # Get the super secret password from the config file
+    password = TiberiusConfigParser.getPassword()
 
     def process_request(self, req, resp):
         token = req.get_header('X-Auth-Token')
@@ -25,4 +27,7 @@ class AuthMiddleware(object):
                                           scheme='Token; UUID')
 
     def _token_is_valid(self, token, project):
-        return True  # Suuuuuure it's valid...
+        if token == self.password:
+            return True
+        else:
+            return False

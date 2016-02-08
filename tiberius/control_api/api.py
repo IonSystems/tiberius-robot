@@ -17,7 +17,7 @@ c = Control()
 m = c.motors
 
 api = application = falcon.API(media_type='application/json; charset=utf-8',
-	middleware=[AuthMiddleware()])
+                               middleware=[AuthMiddleware()])
 
 sensors = sensors.SensorResource()
 motors = motors.MotorResource(m)
