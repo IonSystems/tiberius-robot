@@ -15,9 +15,22 @@
 import sys
 import os
 import shlex
-
-sys.path.insert(0, '/home/cameron/git/tiberius-robot/tiberius/control')
-sys.path.insert(0, '/home/cameron/git/tiberius-robot/tiberius/control/robotic_arm')
+# TODO: Relative paths
+sys.path.insert(0, os.path.abspath('../../tiberius/control'))
+sys.path.insert(0, os.path.abspath('../../tiberius/control/robotic_arm'))
+sys.path.insert(0, os.path.abspath('../../tiberius/communications'))
+sys.path.insert(0, os.path.abspath('../../tiberius/config'))
+sys.path.insert(0, os.path.abspath('../../tiberius/control_api'))
+sys.path.insert(0, os.path.abspath('../../tiberius/database'))
+sys.path.insert(0, os.path.abspath('../../tiberius/diagnostics'))
+sys.path.insert(0, os.path.abspath('../../tiberius/logger'))
+sys.path.insert(0, os.path.abspath('../../tiberius/navigation'))
+sys.path.insert(0, os.path.abspath('../../tiberius/shutdown-daemon'))
+sys.path.insert(0, os.path.abspath('../../tiberius/smbus_dummy'))
+sys.path.insert(0, os.path.abspath('../../tiberius/testing'))
+sys.path.insert(0, os.path.abspath('../../tiberius/utils'))
+sys.path.insert(0, os.path.abspath('../../tiberius/web-interface'))
+sys.path.append(os.path.join(os.path.dirname(__name__), '..'))
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -25,7 +38,7 @@ sys.path.insert(0, '/home/cameron/git/tiberius-robot/tiberius/control/robotic_ar
 #sys.path.insert(0, os.path.abspath('.'))
 
 # -- General configuration ------------------------------------------------
-autosummary_generate = True
+# autosummary_generate = True
 
 # If your documentation needs a minimal Sphinx version, state it here.
 #needs_sphinx = '1.0'
