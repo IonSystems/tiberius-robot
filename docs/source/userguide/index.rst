@@ -7,3 +7,4 @@ User Guide
    intro
    quickstart
    databases
+   architecture
