@@ -157,7 +157,7 @@ class TiberiusConfigParser():
     @staticmethod
     def getPassword():
         password = TiberiusConfigParser.getParser().get(AUTHENTICATION_SECTION, 'password')
-        return capacity
+        return password
 
 
 if __name__ == "__main__":
