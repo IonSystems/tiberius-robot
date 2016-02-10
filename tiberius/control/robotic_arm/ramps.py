@@ -23,10 +23,13 @@ class RoboticArmDriver:
     # Time required to close and open the robotic gripper
     gripper_timeout = 5
 
-    def __init__(self, debug=False):
-        self.logger = logging.getLogger('tiberius.control.RAMPS')
-        self.logger.info('Creating an instance of RAMPS')
-        self.ser = serial.Serial(self.port, self.baud, timeout=1)
+    def __init__(self):
+        self.logger = logging.getLogger('tiberius.control.robotic_arm.RoboticArmDriver')
+        self.logger.info('Creating an instance of RoboticArmDriver')
+        try:
+            self.ser = serial.Serial(self.port, self.baud, timeout=1)
+        except serial.serialutil.SerialException as e:
+            self.logger.error(e)
 
         try:
             self.ser.open()

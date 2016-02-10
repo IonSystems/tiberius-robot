@@ -7,6 +7,7 @@ import actuators
 import time
 import logging
 from tiberius.utils import bearing_math
+from tiberius.config.config_parser import TiberiusConfigParser
 """
 .. module:: control
    :synopsis: Provides access to all actuators and sensors supported by Tiberius.
@@ -24,8 +25,10 @@ class Control:
     """
 
     ultrasonics = sensors.Ultrasonic()
-    compass = sensors.Compass()
+    if TiberiusConfigParser.isCompassEnabled():
+        compass = sensors.Compass()
     motors = actuators.Motor()
+    arm = actuators.Arm()
 
     def __init__(self):
         self.logger = logging.getLogger('tiberius.control.Control')

@@ -1,4 +1,5 @@
 import md03
+from robotic_arm.ramps import RoboticArmDriver
 from tiberius.config.config_parser import TiberiusConfigParser
 
 """
@@ -10,6 +11,11 @@ from tiberius.config.config_parser import TiberiusConfigParser
 
 
 """
+
+
+class Arm:
+    arm = RoboticArmDriver()
+
 
 class Motor:
     '''
