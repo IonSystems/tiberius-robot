@@ -12,6 +12,7 @@ class Waypoint(models.Model):
 
 
 class Task(models.Model):
+    task_id = models.IntegerField()
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=50, null=True)
     supported_platforms = models.ManyToManyField(
