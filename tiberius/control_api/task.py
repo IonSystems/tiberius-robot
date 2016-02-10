@@ -14,7 +14,7 @@ class Task(object):
         self.task_id = None
         self.task_description = None
 
-        self.task_complete = self.TaskState.STOPPED
+        self.task_state = self.TaskState.STOPPED
 
         self.control = Control()
 
@@ -43,7 +43,7 @@ class Task(object):
             "Task " + self.task_name + "must implement " + __name__)
 
     def completeTask(self):
-        self.task_complete = self.TaskState.COMPLETE
+        self.task_state = self.TaskState.COMPLETE
 
     class TaskState(Enum):
         STOPPED = 0

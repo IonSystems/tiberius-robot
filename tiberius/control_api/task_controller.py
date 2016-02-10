@@ -6,9 +6,23 @@ from tiberius.control_api.task import *
 from tiberius.control_api.tasks.driving_tasks import *
 import threading
 
-'''
-    Controls motor speed, direction, steering angle.
-'''
+class TaskThread (threading.Thread):
+    def __init__(self, threadID, task):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+        self.task = task
+
+    def run(self):
+        self.task.runTask()
+
+
+def generate_response(req, resp, resource):
+    # If we make it this far then return status OK
+    resp.status = falcon.HTTP_200
+    resp.body = json.dumps({
+                 'speed': resource.speed,
+                 'state': resource.state.value,
+    })
 
 
 class TaskControllerResource(object):
@@ -21,26 +35,28 @@ class TaskControllerResource(object):
         self.tasks = self.find_tasks()
         self.current_task_id = None
 
-    #@falcon.before(validate_params(req, resp, resource, params))
-    def on_get(self, req, resp):
-        resp.body = '{"status":{"motors": "forward"}}'
+    @falcon.after(generate_response)
+    def on_post(self, req, resp):
+        pass
 
     def find_tasks(self):
-        # tasks = set()
-        # cls() for cls in Task.__subclasses__():
-        #     if cls not in tasks:
-        #         tasks.add(cls)
-        # return tasks
-        tasks = [cls() for cls in Task.__subclasses__()]
-        return tasks
+        return [cls() for cls in Task.__subclasses__()]
 
     def run_task(self, task_id):
         for task in self.tasks:
             print str(task)
             if task.task_id == task_id:
+                self.current_task_id = task_id
                 self.logger.info("Running Task: %s", str(task))
-                #thread.start_new_thread( task.runTask() )
-                #task.runTask()
+
+                # Create a thread to run the task
+                task_thread = TaskThread(task_id, task)
+
+                #Start running the task thread
+                task_thread.start()
+
+                # Wait for the thread to COMPLETE
+                task_thread.join()
 
             # if(task.__class__.task_id == task_id):
             #    task.runTask()
@@ -55,5 +71,4 @@ def validate_params(req, resp, resource, params):
 # For debugging purposes
 if __name__ == "__main__":
     r = TaskControllerResource()
-    print r.find_tasks()
     r.run_task(0)
