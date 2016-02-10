@@ -14,7 +14,7 @@ from tiberius.control.sensors import Compass
 '''
 
 
-class ControlThread():
+class ControlThread:
 
     def __init__(
             self,
@@ -130,7 +130,13 @@ class ControlThread():
 #    arm_read_id += 1;
 
 
+#for testign purposes - we call the functions.
+#functions should be called as threads so they can run concurrently.
 if __name__ == "__main__":
-    control_thread = ControlThread()
-    control_thread.polycreate_ultrasonic()
-    control_thread.ultrasonics_thread()
+    control_thread = ControlThread        #create new instance of the class
+    control_thread.polycreate_ultrasonic()  #set up the ultrasonic table
+    control_thread.ultrasonics_thread()     #create thread to update ultrasonics
+
+    control_thread2 = ControlThread
+    control_thread2.polycreate_compass()
+    control_thread2.compass_thread()
