@@ -7,17 +7,21 @@ import actuators
 import time
 import logging
 from tiberius.utils import bearing_math
+"""
+.. module:: control
+   :synopsis: Provides access to all actuators and sensors supported by Tiberius.
+   Contains control loops, using sensor data to control tiberius's actuators.
 
+.. moduleauthor:: Cameron A. Craig <camieac@gmail.com>
+"""
 c_logger = logging.getLogger('tiberius.control.Control')
 
 
 class Control:
-    '''
-            Provides methods to control the motors,
-            via the I2C interface to the motor drivers.
+    """Provides methods to control the motors, via the I2C interface to the motor drivers.
 
-            Uses sensor feedback to accurately manoeuvre the vehicle.
-    '''
+    Uses sensor feedback to accurately manoeuvre the vehicle.
+    """
 
     ultrasonics = sensors.Ultrasonic()
     compass = sensors.Compass()
@@ -28,6 +32,12 @@ class Control:
         self.logger.info('Creating an instance of Control')
 
     def frontNotHit(self, distance):
+        """Determine whether an object has been detected at the front of the vehicle.
+
+        Args:
+           distance (str): The theshold distance for detection.
+            If the object is closer than distance, then it is classed as a hit.
+        """
         fl = self.ultrasonics.senseUltrasonic()['fl'] > distance
         fc = self.ultrasonics.senseUltrasonic()['fc'] > distance
         fr = self.ultrasonics.senseUltrasonic()['fr'] > distance
@@ -42,6 +52,12 @@ class Control:
         return fl and fc and fr
 
     def rearNotHit(self, distance):
+        """Determine whether an object has been detected at the rear of the vehicle.
+
+        Args:
+           distance (int): The theshold distance for detection.
+            If the object is closer than distance, then it is classed as a hit.
+        """
         rr = self.ultrasonics.senseUltrasonic()['rr'] > distance
         rc = self.ultrasonics.senseUltrasonic()['rc'] > distance
         rl = self.ultrasonics.senseUltrasonic()['rl'] > distance
@@ -56,13 +72,31 @@ class Control:
         return rr and rc and rl
 
     def driveForwardUntilWall(self, stop_distance, speed=50):
-        # Wait until Tiberius is 5cm away from the wall.
+        """Drive the robot forward until an obstacle is detected.
+
+        Args:
+           stop_distance (int): The theshold distance for detection.
+            If the object is closer than distance, then it is classed as a hit.
+        Kwargs:
+           speed (int): The speed percentage of the drive (0 to 100).
+
+        """
+        # Wait until Tiberius is stop_distance away from the wall.
         while(self.frontNotHit(stop_distance)):
             self.motors.setSpeedPercent(speed)
             self.motors.moveForward()
         self.motors.stop()
 
     def driveBackwardUntilWall(self, stop_distance, speed=50):
+        """Drive the robot backward until an obstacle is detected.
+
+        Args:
+           stop_distance (int): The theshold distance for detection.
+            If the object is closer than distance, then it is classed as a hit.
+        Kwargs:
+           speed (int): The speed percentage of the drive (0 to 100).
+
+        """
         # Wait until Tiberius is 5cm away from the wall.
         while(self.rearNotHit(stop_distance)):
             self.motors.setSpeedPercent(speed)
@@ -70,6 +104,12 @@ class Control:
         self.motors.stop()
 
     def turnTo(self, desired_bearing):
+        """Turn the robot until it is facing desired_bearing.
+
+        Args:
+           desired_bearing (float): The bearing that the robot should be facing
+            upon completion of the function.
+        """
         count = 0
         while(True):
             count += 1
@@ -150,7 +190,7 @@ class Control:
 
     # def driveForwardDistance(self, distance_metres):
 
-    def driveStraight(self, speed_percent, duration, sensitivity = 1):
+    def driveStraight(self, speed_percent, duration, sensitivity=1):
         desired_heading = self.compass.headingNormalized()
         t = 0  # time
 
@@ -189,16 +229,20 @@ class Control:
             derivative = previous_error - error
             previous_error = error
             if error_degrees < 0:  # Turn Right
-                r = right_speed - (abs(error) * gain) - (integral * i_factor) + (derivative * d_factor)
+                r = right_speed - (abs(error) * gain) - \
+                    (integral * i_factor) + (derivative * d_factor)
 
-                l = left_speed + (abs(error) * gain) - (integral * i_factor) + (derivative * d_factor)
+                l = left_speed + (abs(error) * gain) - \
+                    (integral * i_factor) + (derivative * d_factor)
 
                 if debug:
                     print 'Turning RIGHT'
-            elif error_degrees > 0:  # Turn Left         
-                r = right_speed + (abs(error) * gain) - (integral * i_factor) + (derivative * d_factor)
+            elif error_degrees > 0:  # Turn Left
+                r = right_speed + (abs(error) * gain) - \
+                    (integral * i_factor) + (derivative * d_factor)
 
-                l = left_speed - (abs(error) * gain) - (integral * i_factor) + (derivative * d_factor)
+                l = left_speed - (abs(error) * gain) - \
+                    (integral * i_factor) + (derivative * d_factor)
 
                 if debug:
                     print 'Turning LEFT'

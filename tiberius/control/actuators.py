@@ -1,6 +1,15 @@
 import md03
 from tiberius.config.config_parser import TiberiusConfigParser
 
+"""
+.. module:: actuators
+   :synopsis: Provides access to all actuators supported by Tiberius.
+   This most importantly includes the motors to drive Tiberius's wheels.
+
+.. moduleauthor:: Cameron A. Craig <camieac@gmail.com>
+
+
+"""
 
 class Motor:
     '''
