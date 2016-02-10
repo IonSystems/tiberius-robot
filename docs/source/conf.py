@@ -15,27 +15,15 @@
 import sys
 import os
 import shlex
-# TODO: Relative paths
-sys.path.insert(0, os.path.abspath('../../tiberius/control'))
-sys.path.insert(0, os.path.abspath('../../tiberius/control/robotic_arm'))
-sys.path.insert(0, os.path.abspath('../../tiberius/communications'))
-sys.path.insert(0, os.path.abspath('../../tiberius/config'))
-sys.path.insert(0, os.path.abspath('../../tiberius/control_api'))
-sys.path.insert(0, os.path.abspath('../../tiberius/database'))
-sys.path.insert(0, os.path.abspath('../../tiberius/diagnostics'))
-sys.path.insert(0, os.path.abspath('../../tiberius/logger'))
-sys.path.insert(0, os.path.abspath('../../tiberius/navigation'))
-sys.path.insert(0, os.path.abspath('../../tiberius/shutdown-daemon'))
-sys.path.insert(0, os.path.abspath('../../tiberius/smbus_dummy'))
-sys.path.insert(0, os.path.abspath('../../tiberius/testing'))
-sys.path.insert(0, os.path.abspath('../../tiberius/utils'))
-sys.path.insert(0, os.path.abspath('../../tiberius/web-interface'))
-sys.path.append(os.path.join(os.path.dirname(__name__), '..'))
+import sphinx_rtd_theme
+
+# on_rtd is whether we are on readthedocs.org
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#sys.path.insert(0, os.path.abspath('.'))
+sys.path.append(os.path.join(os.path.dirname(__name__), '..'))
 
 # -- General configuration ------------------------------------------------
 # autosummary_generate = True
@@ -134,8 +122,14 @@ todo_include_todos = True
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'sphinx_rtd_theme'
-
+if not on_rtd:
+    # Use the RTD theme explicitly if it is available
+    try:
+        import sphinx_rtd_theme
+        html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+        html_theme = "sphinx_rtd_theme"
+    except ImportError:
+        pass
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
