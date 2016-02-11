@@ -18,3 +18,5 @@ class Cell(object):
         self.g = 0  # cost of moving from the starting cell
         self.h = 0  # the heuristic value of the cell
         self.f = 0  # the final cost of the cell
+        self.lat = 0.0
+        self.long = 0.0

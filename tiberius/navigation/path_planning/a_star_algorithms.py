@@ -9,8 +9,11 @@ create a gui for the website
 
 import heapq
 
+import math
+
 from tiberius.navigation.path_planning.cell import Cell
 from tiberius.navigation.gps.algorithms import Algorithms
+
 
 class Astar(object):
     def __init__(self):
@@ -134,9 +137,17 @@ class Astar(object):
         curlocation = self.gps.getLocation()
         distance = self.gps.getDistance(curlocation, destination)
         bearing = self.gps.getHeading(curlocation, destination)
-        grid_height = 0 # not right
-        grid_width = 0  # not right
+        if 45 < bearing < 135:
+            grid_height = int(distance * math.sin(bearing))  # not right
+            grid_width = int(distance * math.cos(bearing))  # not right
+        elif -135 < bearing < -45:
+            a = 0
+        elif -45 < bearing < 45:
+            a = 1
+        else:
+            a = 2
 
+        return [curlocation, distance, bearing, grid_height, grid_width]
 
     def run_astar(self, destination):
         grid_values = self.find_end(destination)

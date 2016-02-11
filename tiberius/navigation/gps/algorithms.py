@@ -163,5 +163,5 @@ class Algorithms:
             self.pointToPoint(destination, speedpercent)
 
         print "The task is complete"
-        print "The current location of tiberius is : " + self.getLocation()
-        print "with the desired location being : " + destination
+        print "The current location of tiberius is : " + str(self.getLocation())
+        print "with the desired location being : " + str(destination)

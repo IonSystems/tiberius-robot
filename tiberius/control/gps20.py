@@ -126,5 +126,5 @@ if __name__ == "__main__":
     gps = GlobalPositioningSystem()
     while(True):
         gps.update()
-        #gps.print_data()
+        # gps.print_data()
         time.sleep(1)
