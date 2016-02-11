@@ -33,5 +33,5 @@ api.add_route('/debug', debug)
 api.add_route('/task', task_controller)
 
 if __name__ == '__main__':
-    httpd = simple_server.make_server('0.0.0.0', 8001, api)
+    httpd = simple_server.make_server('0.0.0.0', 8000, api)
     httpd.serve_forever()
