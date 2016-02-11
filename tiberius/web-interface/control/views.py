@@ -101,3 +101,30 @@ def send_control_request(request):
         except ConnectionError as e:
             response = e
     return HttpResponse(response)
+
+
+@require_http_methods(["POST"])
+def send_task_request(request):
+    headers = {'X-Auth-Token': "supersecretpassword"}
+
+    # Contruct url for motor resource on Control API
+    ip_address = request.POST.get('ip_address')
+    url_start = "http://"
+    url_end = ":8000/task"
+    url = url_start + ip_address + url_end
+    response = ""
+
+    if request.POST.get('command') and request.POST.get('task_id'):
+        task_id = request.POST.get('task_id')
+        if request.POST.get('command') == "run":
+            try:
+                data = {'task_id': task_id,
+                        'command': 'run'}
+                r = requests.post(url,
+                                  data=data,
+                                  headers=headers)
+                response = r.text
+            except ConnectionError as e:
+                response = e
+
+    return HttpResponse(response)

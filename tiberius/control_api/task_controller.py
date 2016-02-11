@@ -20,8 +20,8 @@ def generate_response(req, resp, resource):
     # If we make it this far then return status OK
     resp.status = falcon.HTTP_200
     resp.body = json.dumps({
-                 'speed': resource.speed,
-                 'state': resource.state.value,
+                 'time_taken': "No time at all",
+                 'task_status': "Complete",
     })
 
 
@@ -37,7 +37,17 @@ class TaskControllerResource(object):
 
     @falcon.after(generate_response)
     def on_post(self, req, resp):
-        pass
+        command = None
+        if("command" in req.params):
+            command = req.params['command']
+
+        task_id = None
+        if("task_id" in req.params):
+            task_id = req.params['task_id']
+
+        if (command is not None) and (task_id is not None):
+            if (command == "run") and (self.current_task_id is None):
+                self.run_task(task_id)
 
     def find_tasks(self):
         return [cls() for cls in Task.__subclasses__()]
@@ -52,7 +62,7 @@ class TaskControllerResource(object):
                 # Create a thread to run the task
                 task_thread = TaskThread(task_id, task)
 
-                #Start running the task thread
+                # Start running the task thread
                 task_thread.start()
 
                 # Wait for the thread to COMPLETE

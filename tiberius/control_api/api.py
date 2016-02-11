@@ -30,7 +30,7 @@ api.add_route('/sensors', sensors)
 api.add_route('/motors', motors)
 api.add_route('/arm', arm)
 api.add_route('/debug', debug)
-api.add_route('/task_controller', task_controller)
+api.add_route('/task', task_controller)
 
 if __name__ == '__main__':
     httpd = simple_server.make_server('0.0.0.0', 8001, api)
