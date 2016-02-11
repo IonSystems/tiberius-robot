@@ -1,12 +1,10 @@
-import thread
+import threading
 import time
 from tiberius.database.polyhedra_database import PolyhedraDatabase
 from tiberius.control.sensors import Ultrasonic
 from tiberius.control.sensors import Compass
-#from tiberius.control.sensors import GPS
+from tiberius.control.sensors import GPS
 
-
-#hello
 
 
 '''
@@ -14,36 +12,23 @@ from tiberius.control.sensors import Compass
 '''
 
 
-class ControlThread:
+class ControlThread(threading.Thread):
 
-    def __init__(
-            self,
-            motor_control=True,
-            lighting_control=True,
-            gps_control=True,
-            lidar_control=True,
-            keyboard_control=True,
-            compass_control=True,
-            ultrasonic_control=True):
+    def __init__(self):
         # Find out what threads need to be created.
-        self.motor_control = motor_control
-        self.lighting_control = lighting_control
-        self.gps_control = gps_control
-        self.lidar_control = lidar_control
-        self.keyboard_control = keyboard_control
-        self.compass_control = compass_control
-        self.ultrasonic_control = ultrasonic_control
         self.poly = PolyhedraDatabase("poly")
         self.ULTRASONICS_TABLE = 'ultrasonics_reading'
         self.COMPASS_TABLE = 'compass_reading'
         self.GPS_TABLE = 'gps_reading'
         self.ARM_TABLE = 'arm_reading'
         self.ultrasonic = Ultrasonic()
-
+        self.compass = Compass()
+#        self.gps = GPS()
 
 #*****************************Functions for creating the table*********************************
 #create polyhedra database to store data from ultrasonic sensors
     def polycreate_ultrasonic(self):
+        self.poly.drop(self.ULTRASONICS_TABLE)
         try:
 
             self.poly.create(self.ULTRASONICS_TABLE, {'id':'int primary key','fl': 'float',
@@ -57,6 +42,7 @@ class ControlThread:
             print "Table already exists."
 
     def polycreate_gps(self):
+        self.poly.drop(self.GPS_TABLE)
         try:
             self.poly.create(self.GPS_TABLE, {'id':'int primary key', 'latitude':'float', 'longitude':'float',
                                          'north_south' : 'bool', 'east_west' : 'bool', 'altitude' : 'float',
@@ -67,6 +53,7 @@ class ControlThread:
             print "GPS table already exists"
 
     def polycreate_compass(self):
+        self.poly.drop(self.COMPASS_TABLE)
         try:
 
             self.poly.create(self.COMPASS_TABLE, {'id':'int primary key', 'heading':'float', 'timestamp' : 'float'})
@@ -104,7 +91,7 @@ class ControlThread:
     def gps_thread(self):
         gps_read_id = 0
         while(True):
-            gps_data = GPS.read_gps(self)
+            gps_data = self.gps.read_gps()
             self.poly.insert(self.GPS_TABLE, {'id' : gps_read_id, 'latitude':  gps_data ['latitude'], 'longitude':
                                             gps_data ['longitude'], 'north_south' : gps_data['northsouth'],
                                             'east_west' : gps_data['eastwest'], 'altitude' : gps_data['altitude'],
@@ -116,11 +103,12 @@ class ControlThread:
     def compass_thread(self):
         compass_read_id = 0
         while(True):
-            heading  = Compass.headingNormalized(self)
-            self.poly.insert(self.COMPASS_TABLE, {'id': compass_read_id , 'heading': 'heading','timestamp': time.time()})
+            heading  = self.compass.headingNormalized()
+            self.poly.insert(self.COMPASS_TABLE, {'id': compass_read_id , 'heading': heading,'timestamp': time.time()})
 
             compass_read_id += 1
 
+#*************************************************Robotic arm - not currently implemented*************************************
 #def arm_thread(self):
   #  arm_read_id = 0
   #  while(True):
@@ -128,15 +116,18 @@ class ControlThread:
  #                                    'theta' : 'float', 'phi' : 'float', 'rho' : 'float',
  #                                    'timestamp':'float'})
 #    arm_read_id += 1;
-
+#******************************************************************************************************************************
 
 #for testign purposes - we call the functions.
 #functions should be called as threads so they can run concurrently.
-if __name__ == "__main__":
-    control_thread = ControlThread        #create new instance of the class
-    control_thread.polycreate_ultrasonic()  #set up the ultrasonic table
-    control_thread.ultrasonics_thread()     #create thread to update ultrasonics
 
-    control_thread2 = ControlThread
-    control_thread2.polycreate_compass()
-    control_thread2.compass_thread()
+if __name__ == "__main__":
+
+    control_thread = ControlThread()
+    control_thread.polycreate_ultrasonic()  #set up the ultrasonic table
+    control_thread.polycreate_compass()
+    control_thread.polycreate_gps()
+
+    threading.Thread(target = control_thread.ultrasonics_thread).start()    
+    threading.Thread(target = control_thread.compass_thread).start()
+ #   threading.Thread(target = control_thread.gps_thread).start()

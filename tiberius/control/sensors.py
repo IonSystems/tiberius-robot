@@ -87,7 +87,10 @@ if TiberiusConfigParser.isCompassEnabled():
 
         def headingDegrees(self):
             # Get the heading in degrees.
-            raw = int(self.compass.heading())
+            try:
+                raw = int(self.compass.heading())
+            except:
+                return 222.2 
             return raw / 10
 
         def getMostRecentDegrees(self):
@@ -101,18 +104,21 @@ if TiberiusConfigParser.isCompassEnabled():
                 angle += 360
             return angle
 
-    class GPS:
-        def read_gps(self):
-            GlobalPositioningSystem.update()
-            gps_latitude = GlobalPositioningSystem.latitude
-            gps_longitude = GlobalPositioningSystem.longitude
-            gps_northsouth = GlobalPositioningSystem.northsouth
-            gps_eastwest = GlobalPositioningSystem.eastwest
-            gps_altitude = GlobalPositioningSystem.altitude
-            gps_variation = GlobalPositioningSystem.variation
-            gps_velocity = GlobalPositioningSystem.velocity
+class GPS:
+    def __init__(self):
+        self.gps = GlobalPositioningSystem()
 
-            return {'latitude': gps_latitude, 'longitude': gps_longitude, 'northsouth': gps_northsouth, 'eastwest' : gps_eastwest,
+    def read_gps(self):
+        self.gps.update()
+        gps_latitude = self.gps.latitude
+        gps_longitude = self.gps.longitude
+        gps_northsouth = self.gps.northsouth
+        gps_eastwest = self.gps.eastwest
+        gps_altitude = self.gps.altitude
+        gps_variation = self.gps.variation
+        gps_velocity = self.gps.velocity
+
+        return {'latitude': gps_latitude, 'longitude': gps_longitude, 'northsouth': gps_northsouth, 'eastwest' : gps_eastwest,
                     'altitude' : gps_altitude, 'variation' : gps_variation, 'velocity' :gps_velocity}
 
 class I2CReadError(Exception):
