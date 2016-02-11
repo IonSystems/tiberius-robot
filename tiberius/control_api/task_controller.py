@@ -5,6 +5,7 @@ import logging
 from tiberius.control_api.task import *
 from tiberius.control_api.tasks.driving_tasks import *
 import threading
+import json
 
 class TaskThread (threading.Thread):
     def __init__(self, threadID, task):
@@ -18,7 +19,8 @@ class TaskThread (threading.Thread):
 
 def generate_response(req, resp, resource):
     # If we make it this far then return status OK
-    resp.status = falcon.HTTP_200
+    if not resp.status == falcon.HTTP_404:
+        resp.status = falcon.HTTP_200
     resp.body = json.dumps({
                  'time_taken': "No time at all",
                  'task_status': "Complete",
@@ -37,25 +39,28 @@ class TaskControllerResource(object):
 
     @falcon.after(generate_response)
     def on_post(self, req, resp):
+        print str(req.params)
         command = None
         if("command" in req.params):
             command = req.params['command']
 
         task_id = None
         if("task_id" in req.params):
-            task_id = req.params['task_id']
+            task_id = int(req.params['task_id'])
 
         if (command is not None) and (task_id is not None):
             if (command == "run") and (self.current_task_id is None):
-                self.run_task(task_id)
+                if not self.run_task(task_id):
+                    resp.status = falcon.HTTP_404
 
     def find_tasks(self):
         return [cls() for cls in Task.__subclasses__()]
 
     def run_task(self, task_id):
+        task_found = False
         for task in self.tasks:
-            print str(task)
             if task.task_id == task_id:
+		task_found = True
                 self.current_task_id = task_id
                 self.logger.info("Running Task: %s", str(task))
 
@@ -68,6 +73,12 @@ class TaskControllerResource(object):
                 # Wait for the thread to COMPLETE
                 task_thread.join()
 
+                # Set current task back to None
+                self.current_task_id = None
+            if not task_found:
+		return False
+            else:
+                return True
             # if(task.__class__.task_id == task_id):
             #    task.runTask()
 
