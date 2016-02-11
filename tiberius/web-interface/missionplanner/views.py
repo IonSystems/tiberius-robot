@@ -8,6 +8,8 @@ from .models import Mission
 from .models import Task
 from .forms import MissionCreateForm
 
+from django.contrib import messages
+
 
 @login_required(login_url='/users/login/')
 def manage(request):
@@ -43,9 +45,11 @@ def create(request):
             # ...
             # redirect to a new URL:
             form.save()
-            return render(request, 'create.html', {'form': form})
+            return render(request, 'plotting.html', {'form': form})
 
         else:
+            messages.add_message(request, messages.WARNING,
+                                 'Invalid form data, please check.')
             return render(request, 'create.html', {'form': form})
 
     # if a GET (or any other method) we'll create a blank form

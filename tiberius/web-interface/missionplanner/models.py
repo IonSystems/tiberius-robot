@@ -15,6 +15,7 @@ class Task(models.Model):
     task_id = models.IntegerField()
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=50, null=True)
+    estimated_duration = models.CharField(max_length=50, default="Unknown")
     supported_platforms = models.ManyToManyField(
         Robot, related_name="task_supported_platforms")
 

@@ -88,7 +88,7 @@
                                         <th>Description</th>
                                         <th>Supported Platforms</th>
                                         <th>Estimated Duration</th>
-                                        <th>Type</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -96,9 +96,13 @@
 	                                    <tr class="gradeU">
 	                                        <td>{{ task.name }}</td>
 	                                        <td>{{ task.description }}</td>
-	                                        <td>-</td>
-	                                        <td>-</td>
-	                                        <td>U</td>
+	                                        <td>
+																						{% for robot in task.supported_platforms.all %}
+																						<a href="javascript:;" class="btn btn-primary btn-sm m-r-5">{{ robot.name }}</a>
+																						{% endfor %}
+																					</td>
+	                                        <td>{{ task.estimated_duration }}</td>
+	                                        <td><a href="javascript:;" class="btn btn-primary btn-sm m-r-5">Run</a></td>
 	                                    </tr>
 																		{% endfor %}
                                 </tbody>
