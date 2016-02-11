@@ -235,7 +235,7 @@ class PostInstallDependencies(install):
             print "Installing poly_start crontab..."
             job = cron.new(command='rtrdb -r data_service=8001 db &', comment='poly_start')
             job.every_reboot()
-            cron.write()
+            cron.write_to_user(user='root')
             if job.is_valid():
                 print "poly_start crontab successfully installed."
             else:
