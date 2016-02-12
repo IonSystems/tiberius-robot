@@ -88,13 +88,17 @@ class ControlThread(threading.Thread):
     def gps_thread(self):
         gps_read_id = 0
         while True:
-            gps_data = self.gps.read_gps()
-            self.poly.insert(self.GPS_TABLE, {'id': gps_read_id, 'latitude': gps_data['latitude'], 'longitude':
-                gps_data['longitude'], 'north_south': gps_data['northsouth'],
-                                              'east_west': gps_data['eastwest'], 'altitude': gps_data['altitude'],
-                                              'variation': gps_data['variation'], 'velocity': gps_data['velocity'],
-                                              'timestamp': time.time()})
-            gps_read_id += 1
+            if self.gps.has_fix():
+                gps_data = self.gps.read_gps()
+                self.poly.insert(self.GPS_TABLE, {'id': gps_read_id, 'latitude': gps_data['latitude'], 'longitude':
+                    gps_data['longitude'], 'north_south': gps_data['northsouth'],
+                                                  'east_west': gps_data['eastwest'], 'altitude': gps_data['altitude'],
+                                                  'variation': gps_data['variation'], 'velocity': gps_data['velocity'],
+                                                  'timestamp': time.time()})
+                gps_read_id += 1
+            else:
+                # Wait till we have a gps fix before trying to insert data
+                time.sleep(0.1)
 
     def compass_thread(self):
         compass_read_id = 0

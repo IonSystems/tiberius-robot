@@ -7,22 +7,19 @@ from tiberius.utils import detection
 
 import logging
 from pynmea import nmea
+
 '''
     Reads GPS data. GPS data comes in many formats, we make use of a fraction of them at the moment.
 '''
 
-class SentenceNotSupportedError(Exception):
 
+class SentenceNotSupportedError(Exception):
     def __init__(self, value):
         self.value = value
 
     def __str__(self):
         return repr(self.value)
 
-
-# class NMEASentence(Enum):
-#     GPGGA = "GPGGA"
-#   GPVTG = "GPVTG"
 
 class GlobalPositioningSystem:
     if detection.detect_windows():
@@ -39,17 +36,21 @@ class GlobalPositioningSystem:
         self.gpgga = nmea.GPGGA()
         self.gprmc = nmea.GPRMC()
         self.gpvtg = nmea.GPVTG()
+        self.gpgsa = nmea.GPGSA()
+        self.gpgll = nmea.GPGLL()
+
         self.debug = debug
 
         # Accessible fields that can be directly accessed.
         self.latitude = None
-        self.northsouth = None
         self.longitude = None
-        self.eastwest = None
-        self.altitude = None
-        self.timestamp = None
-        self.variation = None
+
+        self.gps_qual = None
+        self.num_sats = None
+        self.dilution_of_precision = None
         self.velocity = None
+        self.fixmode = None
+
 
         # if(self.s.isOpen()):
         # self.logger.info('GPS Serial port in open on ', port
@@ -58,7 +59,7 @@ class GlobalPositioningSystem:
         try:
             self.ser.open()
         except:
-            self.logger.warning("Serial port already open continueing.")
+            self.logger.warning("Serial port already open continuing.")
         data = self.ser.readline()
         self.logger.debug("Read data: " + data)
         self.ser.close()
@@ -69,6 +70,10 @@ class GlobalPositioningSystem:
             data = self.gpgga.parse(data)
             self.latitude = self.gpgga.latitude
             self.longitude = self.gpgga.longitude
+            self.gls_qual = self.gpgga.gps_qual
+            self.num_sats = self.gpgga.num_sats
+            self.num_sats = self.gpgga.num_sats
+            self.dilution_of_precision = self.gpgga.horizontal_dil
         elif "GPRMC" in data:
             data = self.gprmc.parse(data)
             self.latitude = self.gprmc.lat
@@ -76,6 +81,13 @@ class GlobalPositioningSystem:
         elif "GPVTG" in data:
             data = self.gpvtg.parse(data)
             self.velocity = self.gpvtg.spd_over_grnd_kmph
+        elif "GPGSA" in data:
+            data = self.gpgsa.parse(data)
+            self.fixmode = self.gpgsa.mode_fix_type
+        elif "GPGLL" in data:
+            data = self.gpgll.parse(data)
+            self.latitude = self.gpgll.latitude
+            self.longitude = self.gpgll.longitude
         else:
             raise SentenceNotSupportedError(str(data))
 
@@ -85,22 +97,34 @@ class GlobalPositioningSystem:
         except SentenceNotSupportedError:
             self.logger.warning("Receieved a bad sentence")
 
-    def print_data(self):
-        try:
-            print 'Latitude: ', self.latitude
-            print 'Longitude: ', self.longitude
-        except AttributeError:
-            self.logger.warning("Failed to print data")
-        # print 'Altitude: ', self.gpgga.altitude
 
     def read_gps(self):
         # Reads the gps a set number of times to ensure latest data
+        for i in range(0, 5):
+            self.update()
+
+        return {'latitude': self.latitude, 'longitude': self.longitude, 'northsouth': self.northsouth,
+                'eastwest': self.eastwest, 'altitude': self.altitude, 'variation': self.variation,
+                'velocity': self.velocity}
+
+    def has_fix(self):
+        # Checks if there is a valid gps fix
+        self.update()
+        if self.fixmode > 0:  # we have a gps fix
+            if self.latitude is not None and self.longitude is not None:
+                return True
+            else:
+                return False
+
+
+    def 
 
 # For testing
 import time
+
 if __name__ == "__main__":
     gps = GlobalPositioningSystem()
-    while(True):
+    while True:
         gps.update()
         gps.print_data()
         time.sleep(1)
