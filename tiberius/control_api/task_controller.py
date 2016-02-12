@@ -14,6 +14,8 @@ class TaskThread (threading.Thread):
         self.task = task
 
     def run(self):
+        while not self.task.is_complete:
+            self.task.one_iteration()
         self.task.runTask()
 
 
@@ -47,6 +49,12 @@ class TaskControllerResource(object):
         task_id = None
         if("task_id" in req.params):
             task_id = int(req.params['task_id'])
+
+        task_id = None
+        if("available" in req.params):
+            resp.status = falcon.HTTP_200
+            resp.body = json.dumps(self.tasks)
+
 
         if (command is not None) and (task_id is not None):
             if (command == "run") and (self.current_task_id is None):
