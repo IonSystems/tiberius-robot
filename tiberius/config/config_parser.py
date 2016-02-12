@@ -23,7 +23,7 @@ class TiberiusConfigParser():
     def getParser():
         parser = ConfigParser.ConfigParser()
         if detection.detect_windows():
-            parser.read('D:\\tiberius\tiberius_conf.conf')
+            parser.read('D:\\tiberius\\tiberius_conf.conf')
         else:
             parser.read('/etc/tiberius/tiberius_conf.conf')
         return parser
