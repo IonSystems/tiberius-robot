@@ -20,7 +20,7 @@ class ControlThread(threading.Thread):
         self.ARM_TABLE = 'arm_reading'
         self.ultrasonic = Ultrasonic()
         self.compass = Compass()
-        # self.gps = GPS()
+        self.gps = GPS()
 
     # *****************************Functions for creating the table*********************************
     # create polyhedra database to store data from ultrasonic sensors
@@ -73,7 +73,7 @@ class ControlThread(threading.Thread):
 
     def ultrasonics_thread(self):
         ultrasonic_read_id = 0
-        while (True):
+        while True:
             # add in code to update table by overwriting 0th value and rolling back round
             ultra_data = self.ultrasonic.senseUltrasonic()
             self.poly.insert(self.ULTRASONICS_TABLE, {'id': ultrasonic_read_id,
@@ -87,7 +87,7 @@ class ControlThread(threading.Thread):
 
     def gps_thread(self):
         gps_read_id = 0
-        while (True):
+        while True:
             gps_data = self.gps.read_gps()
             self.poly.insert(self.GPS_TABLE, {'id': gps_read_id, 'latitude': gps_data['latitude'], 'longitude':
                 gps_data['longitude'], 'north_south': gps_data['northsouth'],
@@ -98,23 +98,21 @@ class ControlThread(threading.Thread):
 
     def compass_thread(self):
         compass_read_id = 0
-        while (True):
+        while True:
             heading = self.compass.headingNormalized()
             self.poly.insert(self.COMPASS_TABLE, {'id': compass_read_id, 'heading': heading, 'timestamp': time.time()})
 
             compass_read_id += 1
 
-        # **********************************Robotic arm - not currently implemented*********************
-        # def arm_thread(self):
-        #  arm_read_id = 0
-        #  while(True):
-        #        poly.insert(self.ARM_TABLE, {'id': arm_read_id, 'X': 'float', 'Y': 'float', 'Z' : 'float',
-        #                                    'theta' : 'float', 'phi' : 'float', 'rho' : 'float',
-        #                                    'timestamp':'float'})
-
-
-# arm_read_id += 1;
-# ******************************************************************************************************************************
+    # **********************************Robotic arm - not currently implemented*********************
+    # def arm_thread(self):
+    #  arm_read_id = 0
+    #  while(True):
+    #        poly.insert(self.ARM_TABLE, {'id': arm_read_id, 'X': 'float', 'Y': 'float', 'Z' : 'float',
+    #                                    'theta' : 'float', 'phi' : 'float', 'rho' : 'float',
+    #                                    'timestamp':'float'})
+    # arm_read_id += 1;
+    # ******************************************************************************************************************************
 
 # for testing purposes - we call the functions.
 # functions should be called as threads so they can run concurrently.

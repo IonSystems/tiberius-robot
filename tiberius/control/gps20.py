@@ -93,6 +93,9 @@ class GlobalPositioningSystem:
             self.logger.warning("Failed to print data")
         # print 'Altitude: ', self.gpgga.altitude
 
+    def read_gps(self):
+        # Reads the gps a set number of times to ensure latest data
+
 # For testing
 import time
 if __name__ == "__main__":
