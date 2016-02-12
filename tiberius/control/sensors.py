@@ -55,6 +55,30 @@ class Ultrasonic:
 
         return {'fl': fl, 'fc': fc, 'fr': fr, 'rl': rl, 'rc': rc, 'rr': rr}
 
+    def frontHit(self, d=30):
+        results = self.senseUltrasonic()
+
+        return ((results['fl'] < d) or
+                (results['fc'] < d) or
+                (results['fr'] < d))
+
+    def rearHit(self, d=30):
+        results = self.senseUltrasonic()
+
+        return ((results['rl'] < d) or
+                (results['rc'] < d) or
+                (results['rr'] < d))
+
+    def anythingHit(self, d=30):
+        results = self.senseUltrasonic()
+
+        return ((results['rl'] < d) or
+                (results['rc'] < d) or
+                (results['rr'] < d) or
+                (results['rl'] < d) or
+                (results['rc'] < d) or
+                (results['rr'] < d))
+
 # class Lidar:
 #	lidar = RoboPeakLidar()
 
