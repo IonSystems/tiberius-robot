@@ -41,9 +41,11 @@ for line in lines_iterator:
 # Create database tables for data
 print "Creating database tables for data"
 control_thread = ControlThread()
+control_thread.polycreate_sensor_validity()
 control_thread.polycreate_ultrasonic()
 control_thread.polycreate_compass()
 control_thread.polycreate_gps()
+
 
 # Start sensor data threads
 ultrasonics = Process(target=control_thread.ultrasonics_thread).start()

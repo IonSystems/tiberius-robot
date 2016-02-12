@@ -12,12 +12,13 @@ from tiberius.control.sensors import GPS
 
 class ControlThread(threading.Thread):
     def __init__(self):
-        # Find out what threads need to be created.
+
         self.poly = PolyhedraDatabase("poly")
         self.ULTRASONICS_TABLE = 'ultrasonics_reading'
         self.COMPASS_TABLE = 'compass_reading'
         self.GPS_TABLE = 'gps_reading'
         self.ARM_TABLE = 'arm_reading'
+        self.VALIDITY_TABLE = 'sensor_validity'
         self.ultrasonic = Ultrasonic()
         self.compass = Compass()
         self.gps = GPS()
@@ -35,16 +36,22 @@ class ControlThread(threading.Thread):
                                                       'timestamp': 'float'})
         except PolyhedraDatabase.OperationalError:
             print "something went wrong... "
-        except PolyhedraDatabase.TableAlreadyExistsError as e:
+        except PolyhedraDatabase.TableAlreadyExistsError:
             print "Table already exists."
 
     def polycreate_gps(self):
         self.poly.drop(self.GPS_TABLE)
         try:
-            self.poly.create(self.GPS_TABLE, {'id': 'int primary key', 'latitude': 'float', 'longitude': 'float',
-                                              'north_south': 'bool', 'east_west': 'bool', 'altitude': 'float',
-                                              'variation': 'float', 'velocity': 'float', 'timestamp': 'float'})
-        except PolyhedraDatabase.TableAlreadyExistsError as e:
+            self.poly.create(self.GPS_TABLE, {'id': 'int primary key',
+                                              'latitude': 'float',
+                                              'longitude': 'float',
+                                              'gls_qual': 'int',
+                                              'num_sats': 'int',
+                                              'dilution_of_precision': 'float',
+                                              'velocity': 'float',
+                                              'fixmode': 'int',
+                                              'timestamp': 'float'})
+        except PolyhedraDatabase.TableAlreadyExistsError:
             print "Table already exists."
         except PolyhedraDatabase.OperationalError:
             print "GPS table already exists"
@@ -54,7 +61,7 @@ class ControlThread(threading.Thread):
         try:
 
             self.poly.create(self.COMPASS_TABLE, {'id': 'int primary key', 'heading': 'float', 'timestamp': 'float'})
-        except PolyhedraDatabase.TableAlreadyExistsError as e:
+        except PolyhedraDatabase.TableAlreadyExistsError:
             print "Table already exists."
         except PolyhedraDatabase.OperationalError:
             print "Compass table already exists"
@@ -64,10 +71,30 @@ class ControlThread(threading.Thread):
             self.poly.create(self.ARM_TABLE, {'id': 'int primary key', 'X': 'float', 'Y': 'float', 'Z': 'float',
                                               'theta': 'float', 'phi': 'float', 'rho': 'float',
                                               'timestamp': 'float'})
-        except PolyhedraDatabase.TableAlreadyExistsError as e:
+        except PolyhedraDatabase.TableAlreadyExistsError:
             print "Table already exists."
         except PolyhedraDatabase.OperationalError:
             print "Arm table already exists"
+
+    def polycreate_sensor_validity(self):
+        self.poly.drop(self.VALIDITY_TABLE)
+        try:
+            self.poly.create(self.VALIDITY_TABLE, {'id': 'int primary key',
+                                                   'ultrasonics': 'int',
+                                                   'compass': 'int',
+                                                   'gps': 'int',
+                                                   'timestamp': 'float'})
+
+            self.poly.insert(self.VALIDITY_TABLE, {'id': 0,
+                                                   'ultrasonics': 0,
+                                                   'compass': 0,
+                                                   'gps': 0,
+                                                   'timestamp': time.time()})
+        except PolyhedraDatabase.TableAlreadyExistsError:
+            print "Table already exists."
+        except PolyhedraDatabase.OperationalError:
+            print "Sensor validity table already exists"
+
 
         # *****************************Functions for updating the table*********************************
 
@@ -87,18 +114,30 @@ class ControlThread(threading.Thread):
 
     def gps_thread(self):
         gps_read_id = 0
+        no_data_time = 0
         while True:
             if self.gps.has_fix():
                 gps_data = self.gps.read_gps()
-                self.poly.insert(self.GPS_TABLE, {'id': gps_read_id, 'latitude': gps_data['latitude'], 'longitude':
-                    gps_data['longitude'], 'north_south': gps_data['northsouth'],
-                                                  'east_west': gps_data['eastwest'], 'altitude': gps_data['altitude'],
-                                                  'variation': gps_data['variation'], 'velocity': gps_data['velocity'],
-                                                  'timestamp': time.time()})
-                gps_read_id += 1
+                if gps_data is not False:
+                    self.poly.insert(self.GPS_TABLE, {'id': gps_read_id,
+                                                      'latitude': gps_data['latitude'],
+                                                      'longitude': gps_data['longitude'],
+                                                      'gls_qual': gps_data['gls_qual'],
+                                                      'num_sats': gps_data['num_sats'],
+                                                      'dilution_of_precision': gps_data['dilution_of_precision'],
+                                                      'velocity': gps_data['velocity'],
+                                                      'fixmode': gps_data['fixmode'],
+                                                      'timestamp': time.time()})
+                    self.poly.update(self.VALIDITY_TABLE, {'gps': 1}, {'id': 0})
+                    gps_read_id += 1
+                    no_data_time = 0
             else:
                 # Wait till we have a gps fix before trying to insert data
                 time.sleep(0.1)
+                no_data_time += 0.1
+
+            if no_data_time > 10:
+                self.poly.update(self.VALIDITY_TABLE, {'gps': 0}, {'id': 0})
 
     def compass_thread(self):
         compass_read_id = 0
@@ -123,9 +162,11 @@ class ControlThread(threading.Thread):
 
 if __name__ == "__main__":
     control_thread = ControlThread()
+    control_thread.polycreate_sensor_validity()
     control_thread.polycreate_ultrasonic()  # set up the ultrasonic table
     control_thread.polycreate_compass()
     control_thread.polycreate_gps()
+
 
     threading.Thread(target=control_thread.ultrasonics_thread).start()
     threading.Thread(target=control_thread.compass_thread).start()
