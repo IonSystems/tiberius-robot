@@ -1,16 +1,15 @@
-#import rplidar
+#!/usr/bin/env python
 import cmps11
 import srf08
 import time
 from tiberius.config.config_parser import TiberiusConfigParser
-#import picamera
-#import gps
+from tiberius.control.gps20 import GlobalPositioningSystem
 
 
 class Ultrasonic:
     '''
-            Contains the ultrasonic sensors, and methods to receive data from them.
-            Data is returned from teh sensors in centimeters.
+        Contains the ultrasonic sensors, and methods to receive data from them.
+        Data is returned from teh sensors in centimeters.
     '''
 
     # Front Right
@@ -41,7 +40,7 @@ class Ultrasonic:
         self.srfrc.doranging()
         self.srfrl.doranging()
 
-        # We need to wait for the measurement to be made before reading thr
+        # We need to wait for the measurement to be made before reading the
         # result.
         time.sleep(0.065)
 
@@ -108,7 +107,10 @@ if TiberiusConfigParser.isCompassEnabled():
 
         def headingDegrees(self):
             # Get the heading in degrees.
-            raw = int(self.compass.heading())
+            try:
+                raw = int(self.compass.heading())
+            except:
+                return 222.2
             return raw / 10
 
         def getMostRecentDegrees(self):
@@ -122,8 +124,22 @@ if TiberiusConfigParser.isCompassEnabled():
                 angle += 360
             return angle
 
-# class GPS:
-    # gps =
+class GPS:
+    def __init__(self):
+        self.gps = GlobalPositioningSystem()
+
+    def read_gps(self):
+        self.gps.update()
+        gps_latitude = self.gps.latitude
+        gps_longitude = self.gps.longitude
+        gps_northsouth = self.gps.northsouth
+        gps_eastwest = self.gps.eastwest
+        gps_altitude = self.gps.altitude
+        gps_variation = self.gps.variation
+        gps_velocity = self.gps.velocity
+
+        return {'latitude': gps_latitude, 'longitude': gps_longitude, 'northsouth': gps_northsouth, 'eastwest' : gps_eastwest,
+                    'altitude' : gps_altitude, 'variation' : gps_variation, 'velocity' :gps_velocity}
 
 
 class I2CReadError(Exception):
