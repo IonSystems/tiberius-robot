@@ -192,6 +192,7 @@ class PostInstallDependencies(install):
         self.install_pyodbc("pi")
         self.install_poly_driver("vendor/polyhedra-driver/raspi/linux/raspi/bin/libpolyod32.so", "~/libpolyod32.so")
         self.install_poly("vendor/polyhedra-lite/raspi/", "~/poly9.0/", "pi")
+        self.install_poly_startup_task()
 
     def install_poly_linux(self):
         self.install_odbc("linux")
@@ -227,6 +228,22 @@ class PostInstallDependencies(install):
             command = "echo '" + bash_command + "' | sudo tee -a " + bashrc_dir
             check_output(command, shell=True)
 
+    def install_poly_startup_task(self):
+        from crontab import CronTab
+        cron = CronTab(user='root')
+        if not cron.find_comment('poly_start'):
+            print "Installing poly_start crontab..."
+            job = cron.new(command='rtrdb -r data_service=8001 db &', comment='poly_start')
+            job.every_reboot()
+            cron.write_to_user(user='root')
+            if job.is_valid():
+                print "poly_start crontab successfully installed."
+            else:
+                print "poly_start crontab failed to install"
+        else:
+            print "poly_start crontab already installed"
+
+
     def install_pyodbc(self, platform):
         if "pi" in platform or "linux" in platform:
             self.install_if_missing("python-pyodbc")
@@ -261,7 +278,8 @@ else:
                     'pyserial',
                     'smbus-cffi',
                     'falcon',
-                    'gunicorn']
+                    'gunicorn',
+                    'python-crontab']
 
 setup(name='Tiberius',
       version='1.0',
