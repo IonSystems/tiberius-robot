@@ -30,20 +30,23 @@ class Task(object):
     @abc.abstractmethod
     def runTask(self):
         raise NotImplementedError(
-            "Task " + self.task_name + "must implement " + __name__)
+            "Task must implement " + __name__)
 
     @abc.abstractmethod
     def pauseTask(self):
         raise NotImplementedError(
-            "Task " + self.task_name + "must implement " + __name__)
+            "Task must implement " + __name__)
 
     @abc.abstractmethod
     def resumeTask(self):
         raise NotImplementedError(
-            "Task " + self.task_name + "must implement " + __name__)
+            "Task must implement " + __name__)
 
     def completeTask(self):
         self.task_state = self.TaskState.COMPLETE
+
+    def taskComplete(self):
+        return self.task_state == self.TaskState.COMPLETE
 
     class TaskState(Enum):
         STOPPED = 0
