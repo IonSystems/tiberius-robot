@@ -230,10 +230,14 @@ class PostInstallDependencies(install):
 
     def install_poly_startup_task(self):
         from crontab import CronTab
+        print "poly_start configuration starting..."
+
+        command = "/home/pi/poly9.0/rtrdb -r data_service=8001 db"
+        comment = "poly_start"
         cron = CronTab(user='root')
         if not cron.find_comment('poly_start'):
             print "Installing poly_start crontab..."
-            job = cron.new(command='rtrdb -r data_service=8001 db &', comment='poly_start')
+            job = cron.new(command=command, comment=comment)
             job.every_reboot()
             cron.write_to_user(user='root')
             if job.is_valid():
@@ -242,6 +246,18 @@ class PostInstallDependencies(install):
                 print "poly_start crontab failed to install"
         else:
             print "poly_start crontab already installed"
+            print "checking if correct version"
+            oldjob = cron.find_comment('poly_start')
+            if oldjob.command is not command:
+                print "poly_start crontab incorrect/old version updating to latest"
+                oldjob.set_command(command)
+                cron.write_to_user(user='root')
+        print "Listing all crontab jobs:"
+        for cronjob in cron:
+            print cronjob
+
+        print "poly_start configuration finished"
+
 
 
     def install_pyodbc(self, platform):
