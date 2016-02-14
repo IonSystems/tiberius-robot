@@ -33,26 +33,47 @@ class Ultrasonic:
 
     def senseUltrasonic(self):
         # Tell sensors to write data to it's memory
-        self.srfrr.doranging()
-        self.srffc.doranging()
-        self.srffl.doranging()
-        self.srfrr.doranging()
-        self.srfrc.doranging()
-        self.srfrl.doranging()
+
+        # We need to check each sensor and make sure its giving us valid data.
+        # So if we fail to write to a sensor we need to mark it as invalid.
+
+        valid = []
+        valid[0] = self.srfrr.doranging()
+        valid[1] = self.srffc.doranging()
+        valid[2] = self.srffl.doranging()
+        valid[3] = self.srfrr.doranging()
+        valid[4] = self.srfrc.doranging()
+        valid[5] = self.srfrl.doranging()
 
         # We need to wait for the measurement to be made before reading the
         # result.
         time.sleep(0.065)
 
         # Read the data from sensor's memory
-        fr = self.srffr.getranging()
-        fc = self.srffc.getranging()
-        fl = self.srffl.getranging()
-        rr = self.srfrr.getranging()
-        rc = self.srfrc.getranging()
-        rl = self.srfrl.getranging()
 
-        return {'fl': fl, 'fc': fc, 'fr': fr, 'rl': rl, 'rc': rc, 'rr': rr}
+        data = []
+        data[0] = self.srffr.getranging()
+        data[1] = self.srffc.getranging()
+        data[2] = self.srffl.getranging()
+        data[3] = self.srfrr.getranging()
+        data[4] = self.srfrc.getranging()
+        data[5] = self.srfrl.getranging()
+
+        # Check if the data is valid
+        for i in range(0, 5):
+            if data[i] is False:
+                valid[i] = False
+                data[i] = 0  # Best to assume we might crash rather than
+                # risk it (0 means that any badly written scripts *should* stop)
+                # Also by putting a 0 in the data we can still add the row to the database.
+
+        return {'fr': data[0],
+                'fc': data[1],
+                'fl': data[2],
+                'rr': data[3],
+                'rc': data[4],
+                'rr': data[5],
+                'valid': valid}
 
     def frontHit(self, d=30):
         results = self.senseUltrasonic()
@@ -124,22 +145,13 @@ if TiberiusConfigParser.isCompassEnabled():
                 angle += 360
             return angle
 
+
 class GPS:
     def __init__(self):
         self.gps = GlobalPositioningSystem()
 
     def read_gps(self):
-        self.gps.update()
-        gps_latitude = self.gps.latitude
-        gps_longitude = self.gps.longitude
-        gps_northsouth = self.gps.northsouth
-        gps_eastwest = self.gps.eastwest
-        gps_altitude = self.gps.altitude
-        gps_variation = self.gps.variation
-        gps_velocity = self.gps.velocity
-
-        return {'latitude': gps_latitude, 'longitude': gps_longitude, 'northsouth': gps_northsouth, 'eastwest' : gps_eastwest,
-                    'altitude' : gps_altitude, 'variation' : gps_variation, 'velocity' :gps_velocity}
+        return self.gps.read_gps()
 
 
 class I2CReadError(Exception):

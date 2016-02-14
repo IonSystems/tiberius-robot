@@ -19,6 +19,7 @@ class ControlThread(threading.Thread):
         self.GPS_TABLE = 'gps_reading'
         self.ARM_TABLE = 'arm_reading'
         self.VALIDITY_TABLE = 'sensor_validity'
+        self.VALIDITY_ULTRASONICS_TABLE = 'ultrasonics_validity'
         self.ultrasonic = Ultrasonic()
         self.compass = Compass()
         self.gps = GPS()
@@ -29,9 +30,12 @@ class ControlThread(threading.Thread):
         self.poly.drop(self.ULTRASONICS_TABLE)
         try:
 
-            self.poly.create(self.ULTRASONICS_TABLE, {'id': 'int primary key', 'fl': 'float',
-                                                      'fc': 'float', 'fr': 'float',
-                                                      'rl': 'float', 'rc': 'float',
+            self.poly.create(self.ULTRASONICS_TABLE, {'id': 'int primary key',
+                                                      'fl': 'float',
+                                                      'fc': 'float',
+                                                      'fr': 'float',
+                                                      'rl': 'float',
+                                                      'rc': 'float',
                                                       'rr': 'float',
                                                       'timestamp': 'float'})
         except PolyhedraDatabase.OperationalError:
@@ -76,6 +80,7 @@ class ControlThread(threading.Thread):
         except PolyhedraDatabase.OperationalError:
             print "Arm table already exists"
 
+    # This table is for overall sensor validity, individual validity is in a specific table for each sensor type.
     def polycreate_sensor_validity(self):
         self.poly.drop(self.VALIDITY_TABLE)
         try:
@@ -95,21 +100,73 @@ class ControlThread(threading.Thread):
         except PolyhedraDatabase.OperationalError:
             print "Sensor validity table already exists"
 
+    def polycreate_sensor_validity(self):
+        self.poly.drop(self.VALIDITY_ULTRASONICS_TABLE)
+        try:
+            self.poly.create(self.VALIDITY_ULTRASONICS_TABLE, {'id': 'int primary key',
+                                                               'fr': 'int',
+                                                               'fc': 'int',
+                                                               'fl': 'int',
+                                                               'rr': 'int',
+                                                               'rc': 'int',
+                                                               'rl': 'int',
+                                                               'timestamp': 'float'})
+
+            self.poly.insert(self.VALIDITY_ULTRASONICS_TABLE, {'id': 0,
+                                                               'fr': '0',
+                                                               'fc': '0',
+                                                               'fl': '0',
+                                                               'rr': '0',
+                                                               'rc': '0',
+                                                               'rl': '0',
+                                                               'timestamp': time.time()})
+        except PolyhedraDatabase.TableAlreadyExistsError:
+            print "Table already exists."
+        except PolyhedraDatabase.OperationalError:
+            print "Ultrasonics validity table already exists"
+
 
         # *****************************Functions for updating the table*********************************
 
     def ultrasonics_thread(self):
         ultrasonic_read_id = 0
         while True:
-            # add in code to update table by overwriting 0th value and rolling back round
+            # TODO: add in code to update table by overwriting 0th value and rolling back round
+
             ultra_data = self.ultrasonic.senseUltrasonic()
+
+            any_valid_data = 0
+            validity = []
+            for i in range(0, 5):
+                if ultra_data['valid'][i] is False:
+                    validity[i] = 0
+                else:
+                    validity[i] = 1
+                    any_valid_data = 1
+
+            self.poly.update(self.VALIDITY_TABLE, {'ultrasonics': any_valid_data},
+                             {'id': 0})
+
+            self.poly.update(self.VALIDITY_ULTRASONICS_TABLE, {'fr': validity[0],
+                                                               'fc': validity[1],
+                                                               'fl': validity[2],
+                                                               'rr': validity[3],
+                                                               'rc': validity[4],
+                                                               'rl': validity[5]},
+                             {'id': 0})
+
+            # We need to put the data in, even if it is all 0's.
+            # This gives a fail safe if a script was only relying on sensor data
+            # and not using data validity
             self.poly.insert(self.ULTRASONICS_TABLE, {'id': ultrasonic_read_id,
-                                                      'fl': ultra_data['fl'], 'fc': ultra_data['fc'],
                                                       'fr': ultra_data['fr'],
-                                                      'rl': ultra_data['rl'], 'rc': ultra_data['rc'],
+                                                      'fc': ultra_data['fc'],
+                                                      'fl': ultra_data['fl'],
                                                       'rr': ultra_data['rr'],
+                                                      'rc': ultra_data['rc'],
+                                                      'rl': ultra_data['rl'],
                                                       'timestamp': time.time()})
-            ultrasonic_read_id += 1
+                ultrasonic_read_id += 1
             time.sleep(0.2)
 
     def gps_thread(self):

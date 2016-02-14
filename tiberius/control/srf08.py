@@ -48,8 +48,10 @@ class UltrasonicRangefinder:
         try:
             self.bus.write_byte_data(
                 self.address, self.commandreg, self.cm_mode)
+            return True
         except IOError:
             self.logger.error('I2C write error %s', hex(self.address))
+            return False
 
     def getranging(self):
         try:
@@ -57,13 +59,14 @@ class UltrasonicRangefinder:
                 self.address, self.first_echo_high)
             low_byte = self.bus.read_byte_data(
                 self.address, self.first_echo_low)
-            if (((high_byte << 8) + low_byte) == 0):
-                # assign a random value when srf08 failed to range
-                value = 222.2
+            if ((high_byte << 8) + low_byte) == 0:
+                # If we failed to range say the data is not valid.
+                return False
             else:
                 value = (high_byte << 8) + low_byte
             return value
 
         except IOError:
             self.logger.error('IO error getranging %s', hex(self.address))
-            return 222.2
+            # If we failed to range say the data is not valid.
+            return False
