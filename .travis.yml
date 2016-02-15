@@ -18,5 +18,8 @@ sudo: required
 # Config for codecov.io
 before_install:
   - pip install codecov
+# Ensure the following dependencies are installed.
+  - sudo apt-get install unixodbc-dev unixodbc-bin unixodbc
+  - sudo apt-get install python-pyodbc
 after_success:
   - codecov
