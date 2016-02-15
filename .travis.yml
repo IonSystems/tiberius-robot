@@ -11,3 +11,6 @@ install:
 
 # Command to start the tests.
 script: nosetests
+
+# We need sudo to put stuff in /etc/
+sudo: required
