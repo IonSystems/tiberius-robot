@@ -324,6 +324,6 @@ setup(name='Tiberius',
       ],
       platforms=['Raspberry Pi 2', 'Raspberry Pi 1'],
       install_requires=requirements,
-#      cmdclass={
-#       'install': PostInstallDependencies},
+      cmdclass={
+       'install': PostInstallDependencies},
       )
