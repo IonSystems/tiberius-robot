@@ -1,0 +1,13 @@
+# Programming language
+language: python
+
+# Language version(s) to test against.
+python:
+  - "2.7"
+
+# Command to install dependencies.
+install:
+  - python setup.py install
+
+# Command to start the tests.
+script: nosetests
