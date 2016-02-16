@@ -107,7 +107,7 @@ class GlobalPositioningSystem:
     def update(self):
         # Reads the gps a set number of times to ensure latest data
         for i in range(0, self.invalid_sentences_count):
-            if self.parse_data():
+            if self.parse_data(self.fetch_raw_data()):
                 break
                 return True
         return False
