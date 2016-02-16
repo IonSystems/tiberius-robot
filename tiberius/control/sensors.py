@@ -37,7 +37,7 @@ class Ultrasonic:
         # We need to check each sensor and make sure its giving us valid data.
         # So if we fail to write to a sensor we need to mark it as invalid.
 
-        valid = []
+        valid = [6]
         valid[0] = self.srfrr.doranging()
         valid[1] = self.srffc.doranging()
         valid[2] = self.srffl.doranging()
@@ -51,7 +51,7 @@ class Ultrasonic:
 
         # Read the data from sensor's memory
 
-        data = []
+        data = [6]
         data[0] = self.srffr.getranging()
         data[1] = self.srffc.getranging()
         data[2] = self.srffl.getranging()
