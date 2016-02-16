@@ -10,7 +10,7 @@ from tiberius.control.sensors import GPS
 '''
 
 
-class ControlThread(threading.Thread):
+class ControlThread:
     def __init__(self):
 
         self.poly = PolyhedraDatabase("poly")
@@ -232,14 +232,4 @@ class ControlThread(threading.Thread):
 # for testing purposes - we call the functions.
 # functions should be called as threads so they can run concurrently.
 
-if __name__ == "__main__":
-    control_thread = ControlThread()
-    control_thread.polycreate_sensor_validity()
-    control_thread.polycreate_ultrasonic()  # set up the ultrasonic table
-    control_thread.polycreate_compass()
-    control_thread.polycreate_gps()
 
-
-    threading.Thread(target=control_thread.ultrasonics_thread).start()
-    threading.Thread(target=control_thread.compass_thread).start()
-    #   threading.Thread(target = control_thread.gps_thread).start()
