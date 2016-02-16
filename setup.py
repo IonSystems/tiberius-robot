@@ -248,7 +248,8 @@ class PostInstallDependencies(install):
             print "poly_start crontab already installed"
             print "removing old job"
             oldjob = cron.find_comment('poly_start')
-            cron.remove(oldjob)
+            print ('OldJob', oldjob)
+            #cron.remove(oldjob)
             print "Installing poly_start crontab..."
             job = cron.new(command=command, comment=comment)
             job.every_reboot()
