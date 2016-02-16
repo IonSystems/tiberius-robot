@@ -37,13 +37,8 @@ class Ultrasonic:
         # We need to check each sensor and make sure its giving us valid data.
         # So if we fail to write to a sensor we need to mark it as invalid.
 
-        valid = [6]
-        valid[0] = self.srfrr.doranging()
-        valid[1] = self.srffc.doranging()
-        valid[2] = self.srffl.doranging()
-        valid[3] = self.srfrr.doranging()
-        valid[4] = self.srfrc.doranging()
-        valid[5] = self.srfrl.doranging()
+        valid = [self.srfrr.doranging(), self.srffc.doranging(), self.srffc.doranging(), self.srffl.doranging(),
+                 self.srfrr.doranging(), self.srfrc.doranging(), self.srfrl.doranging()]
 
         # We need to wait for the measurement to be made before reading the
         # result.
@@ -51,13 +46,9 @@ class Ultrasonic:
 
         # Read the data from sensor's memory
 
-        data = [6]
-        data[0] = self.srffr.getranging()
-        data[1] = self.srffc.getranging()
-        data[2] = self.srffl.getranging()
-        data[3] = self.srfrr.getranging()
-        data[4] = self.srfrc.getranging()
-        data[5] = self.srfrl.getranging()
+        data = [self.srfrr.getranging(), self.srffc.getranging(), self.srffc.getranging(), self.srffl.getranging(),
+                 self.srfrr.getranging(), self.srfrc.getranging(), self.srfrl.getranging()]
+
 
         # Check if the data is valid
         for i in range(0, 5):
@@ -99,14 +90,15 @@ class Ultrasonic:
                 (results['rc'] < d) or
                 (results['rr'] < d))
 
-# class Lidar:
-#	lidar = RoboPeakLidar()
+    # class Lidar:
+    #	lidar = RoboPeakLidar()
 
     # TODO: This will eventually include methods such as generateImage(),
     # fetchData() or similar
 
-# class TimeOfFlight:
+    # class TimeOfFlight:
     # If we ever get a TOF sensor.
+
 
 # class Camera:
 #	'''
@@ -139,9 +131,9 @@ if TiberiusConfigParser.isCompassEnabled():
 
         def headingNormalized(self):
             angle = int(self.headingDegrees())
-            while(angle > 180):
+            while (angle > 180):
                 angle -= 360
-            while(angle < -180):
+            while (angle < -180):
                 angle += 360
             return angle
 
@@ -158,7 +150,6 @@ class GPS:
 
 
 class I2CReadError(Exception):
-
     def __init__(self, value):
         self.value = value
 
@@ -167,7 +158,6 @@ class I2CReadError(Exception):
 
 
 class I2CWriteError(Exception):
-
     def __init__(self, value):
         self.value = value
 
