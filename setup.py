@@ -239,7 +239,7 @@ class PostInstallDependencies(install):
             print "Installing poly_start crontab..."
             job = cron.new(command=command, comment=comment)
             job.every_reboot()
-            cron.write_to_user(user=True)
+            cron.write()
             if job.is_valid():
                 print "poly_start crontab successfully installed."
             else:
@@ -253,7 +253,7 @@ class PostInstallDependencies(install):
             print "Installing poly_start crontab..."
             job = cron.new(command=command, comment=comment)
             job.every_reboot()
-            cron.write_to_user(user=True)
+            cron.write()
             if job.is_valid():
                 print "poly_start crontab successfully installed."
             else:
