@@ -146,78 +146,87 @@ class ControlThread:
     def ultrasonics_thread(self):
         ultrasonic_read_id = 0
         while True:
-            # TODO: add in code to update table by overwriting 0th value and rolling back round
+            try:
+                # TODO: add in code to update table by overwriting 0th value and rolling back round
 
-            ultra_data = self.ultrasonic.senseUltrasonic()
+                ultra_data = self.ultrasonic.senseUltrasonic()
 
-            any_valid_data = 0
-            validity = [0, 0, 0, 0, 0, 0]
-            for i in range(0, 5):
-                if ultra_data['valid'][i] is False:
-                    validity[i] = 0
-                else:
-                    validity[i] = 1
-                    any_valid_data = 1
+                any_valid_data = 0
+                validity = [0, 0, 0, 0, 0, 0]
+                for i in range(0, 5):
+                    if ultra_data['valid'][i] is False:
+                        validity[i] = 0
+                    else:
+                        validity[i] = 1
+                        any_valid_data = 1
 
-            self.poly.update(self.VALIDITY_TABLE, {'ultrasonics': any_valid_data},
-                             {'id': 0})
+                self.poly.update(self.VALIDITY_TABLE, {'ultrasonics': any_valid_data},
+                                 {'id': 0})
 
-            self.poly.update(self.VALIDITY_ULTRASONICS_TABLE, {'fr': validity[0],
-                                                               'fc': validity[1],
-                                                               'fl': validity[2],
-                                                               'rr': validity[3],
-                                                               'rc': validity[4],
-                                                               'rl': validity[5]},
-                             {'id': 0})
+                self.poly.update(self.VALIDITY_ULTRASONICS_TABLE, {'fr': validity[0],
+                                                                   'fc': validity[1],
+                                                                   'fl': validity[2],
+                                                                   'rr': validity[3],
+                                                                   'rc': validity[4],
+                                                                   'rl': validity[5]},
+                                 {'id': 0})
 
-            # We need to put the data in, even if it is all 0's.
-            # This gives a fail safe if a script was only relying on sensor data
-            # and not using data validity
-            self.poly.insert(self.ULTRASONICS_TABLE, {'id': ultrasonic_read_id,
-                                                      'fr': ultra_data['fr'],
-                                                      'fc': ultra_data['fc'],
-                                                      'fl': ultra_data['fl'],
-                                                      'rr': ultra_data['rr'],
-                                                      'rc': ultra_data['rc'],
-                                                      'rl': ultra_data['rl'],
-                                                      'timestamp': time.time()})
-            ultrasonic_read_id += 1
-            time.sleep(0.2)
+                # We need to put the data in, even if it is all 0's.
+                # This gives a fail safe if a script was only relying on sensor data
+                # and not using data validity
+                self.poly.insert(self.ULTRASONICS_TABLE, {'id': ultrasonic_read_id,
+                                                          'fr': ultra_data['fr'],
+                                                          'fc': ultra_data['fc'],
+                                                          'fl': ultra_data['fl'],
+                                                          'rr': ultra_data['rr'],
+                                                          'rc': ultra_data['rc'],
+                                                          'rl': ultra_data['rl'],
+                                                          'timestamp': time.time()})
+                ultrasonic_read_id += 1
+                time.sleep(0.2)
+            except Exception as e:
+                print e
 
     def gps_thread(self):
         gps_read_id = 0
         no_data_time = 0
         while True:
-            if self.gps.has_fix():
-                gps_data = self.gps.read_gps()
-                if gps_data is not False:
-                    self.poly.insert(self.GPS_TABLE, {'id': gps_read_id,
-                                                      'latitude': gps_data['latitude'],
-                                                      'longitude': gps_data['longitude'],
-                                                      'gls_qual': gps_data['gls_qual'],
-                                                      'num_sats': gps_data['num_sats'],
-                                                      'dilution_of_precision': gps_data['dilution_of_precision'],
-                                                      'velocity': gps_data['velocity'],
-                                                      'fixmode': gps_data['fixmode'],
-                                                      'timestamp': time.time()})
-                    self.poly.update(self.VALIDITY_TABLE, {'gps': 1}, {'id': 0})
-                    gps_read_id += 1
-                    no_data_time = 0
-            else:
-                # Wait till we have a gps fix before trying to insert data
-                time.sleep(0.1)
-                no_data_time += 0.1
+            try:
+                if self.gps.has_fix():
+                    gps_data = self.gps.read_gps()
+                    if gps_data is not False:
+                        self.poly.insert(self.GPS_TABLE, {'id': gps_read_id,
+                                                          'latitude': gps_data['latitude'],
+                                                          'longitude': gps_data['longitude'],
+                                                          'gls_qual': gps_data['gls_qual'],
+                                                          'num_sats': gps_data['num_sats'],
+                                                          'dilution_of_precision': gps_data['dilution_of_precision'],
+                                                          'velocity': gps_data['velocity'],
+                                                          'fixmode': gps_data['fixmode'],
+                                                          'timestamp': time.time()})
+                        self.poly.update(self.VALIDITY_TABLE, {'gps': 1}, {'id': 0})
+                        gps_read_id += 1
+                        no_data_time = 0
+                else:
+                    # Wait till we have a gps fix before trying to insert data
+                    time.sleep(0.1)
+                    no_data_time += 0.1
 
-            if no_data_time > 10:
-                self.poly.update(self.VALIDITY_TABLE, {'gps': 0}, {'id': 0})
+                if no_data_time > 10:
+                    self.poly.update(self.VALIDITY_TABLE, {'gps': 0}, {'id': 0})
+            except Exception as e:
+                print e
 
     def compass_thread(self):
         compass_read_id = 0
         while True:
-            heading = self.compass.headingNormalized()
-            self.poly.insert(self.COMPASS_TABLE, {'id': compass_read_id, 'heading': heading, 'timestamp': time.time()})
+            try:
+                heading = self.compass.headingNormalized()
+                self.poly.insert(self.COMPASS_TABLE, {'id': compass_read_id, 'heading': heading, 'timestamp': time.time()})
 
-            compass_read_id += 1
+                compass_read_id += 1
+            except Exception as e:
+                print e
 
     # **********************************Robotic arm - not currently implemented*********************
     # def arm_thread(self):
