@@ -151,7 +151,7 @@ class ControlThread:
             ultra_data = self.ultrasonic.senseUltrasonic()
 
             any_valid_data = 0
-            validity = [6]
+            validity = [0, 0, 0, 0, 0, 0]
             for i in range(0, 5):
                 if ultra_data['valid'][i] is False:
                     validity[i] = 0
