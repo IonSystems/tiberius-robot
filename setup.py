@@ -248,6 +248,8 @@ class PostInstallDependencies(install):
             print "poly_start crontab already installed"
             print "checking if correct version"
             oldjob = cron.find_comment('poly_start')
+            for job in oldjob:
+                print job
             if oldjob.command is not command:
                 print "poly_start crontab incorrect/old version updating to latest"
                 oldjob.set_command(command)
