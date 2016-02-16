@@ -100,7 +100,7 @@ class ControlThread(threading.Thread):
         except PolyhedraDatabase.OperationalError:
             print "Sensor validity table already exists"
 
-    def polycreate_sensor_validity(self):
+    def polycreate_ultrasonics_validity(self):
         self.poly.drop(self.VALIDITY_ULTRASONICS_TABLE)
         try:
             self.poly.create(self.VALIDITY_ULTRASONICS_TABLE, {'id': 'int primary key',
