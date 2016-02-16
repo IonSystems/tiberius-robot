@@ -232,7 +232,7 @@ class PostInstallDependencies(install):
         from crontab import CronTab
         print "poly_start configuration starting..."
 
-        command = "/home/pi/poly9.0/rtrdb -r data_service=8001 db"
+        command = "/home/pi/poly9.0/linux/raspi/bin/rtrdb -r data_service=8001 db"
         comment = "poly_start"
         cron = CronTab(user='root')
         if not cron.find_comment('poly_start'):
