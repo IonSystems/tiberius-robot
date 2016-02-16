@@ -84,24 +84,28 @@ class GlobalPositioningSystem:
 
         else:
             return False
+        if self.latitude is not None:
+            if self.latitude is str:
+                if self.latitude.startswith("00"):
+                    self.latitude = self.latitude[2:]
+                    self.latitude = "-" + self.latitude
+                    print self.latitude
+            if self.longitude is str:
+                if self.longitude.startswith("00"):
+                    self.longitude = self.longitude[2:]
+                    self.longitude = "-" + self.longitude
+                    print self.longitude
 
-        if self.latitude is str:
-            if self.latitude.startswith("00"):
-                self.latitude = self.latitude[2:]
-                self.latitude = "-" + self.latitude
-                print self.latitude
-        if self.longitude is str:
-            if self.longitude.startswith("00"):
-                self.longitude = self.longitude[2:]
-                self.longitude = "-" + self.longitude
-                print self.longitude
-
-        if self.latitude is not "":
-            self.latitude = float(self.latitude)
-            self.latitude /= 100
-        if self.longitude is not "":
-            self.longitude = float(self.longitude)
-            self.longitude /= 100
+            if self.latitude is not "":
+                self.latitude = float(self.latitude)
+                self.latitude /= 100
+            else:
+                print 'No data in latitude'
+            if self.longitude is not "":
+                self.longitude = float(self.longitude)
+                self.longitude /= 100
+            else:
+                print 'No Data in longitude'
         return True
 
     def update(self):
