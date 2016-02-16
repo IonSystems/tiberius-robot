@@ -27,7 +27,10 @@ class ControlThread(threading.Thread):
     # *****************************Functions for creating the table*********************************
     # create polyhedra database to store data from ultrasonic sensors
     def polycreate_ultrasonic(self):
-        self.poly.drop(self.ULTRASONICS_TABLE)
+        try:
+            self.poly.drop(self.ULTRASONICS_TABLE)
+        except:
+            print "Table doesn't exist"
         try:
 
             self.poly.create(self.ULTRASONICS_TABLE, {'id': 'int primary key',
@@ -44,7 +47,10 @@ class ControlThread(threading.Thread):
             print "Table already exists."
 
     def polycreate_gps(self):
-        self.poly.drop(self.GPS_TABLE)
+        try:
+            self.poly.drop(self.GPS_TABLE)
+        except:
+            print "Table doesn't exist"
         try:
             self.poly.create(self.GPS_TABLE, {'id': 'int primary key',
                                               'latitude': 'float',
@@ -61,7 +67,10 @@ class ControlThread(threading.Thread):
             print "GPS table already exists"
 
     def polycreate_compass(self):
-        self.poly.drop(self.COMPASS_TABLE)
+        try:
+            self.poly.drop(self.COMPASS_TABLE)
+        except:
+            print "Table doesn't exist"
         try:
 
             self.poly.create(self.COMPASS_TABLE, {'id': 'int primary key', 'heading': 'float', 'timestamp': 'float'})
@@ -82,7 +91,10 @@ class ControlThread(threading.Thread):
 
     # This table is for overall sensor validity, individual validity is in a specific table for each sensor type.
     def polycreate_sensor_validity(self):
-        self.poly.drop(self.VALIDITY_TABLE)
+        try:
+            self.poly.drop(self.VALIDITY_TABLE)
+        except:
+            print "Table doesn't exist"
         try:
             self.poly.create(self.VALIDITY_TABLE, {'id': 'int primary key',
                                                    'ultrasonics': 'int',
@@ -101,7 +113,10 @@ class ControlThread(threading.Thread):
             print "Sensor validity table already exists"
 
     def polycreate_ultrasonics_validity(self):
-        self.poly.drop(self.VALIDITY_ULTRASONICS_TABLE)
+        try:
+            self.poly.drop(self.VALIDITY_ULTRASONICS_TABLE)
+        except:
+            print "Table doesn't exist"
         try:
             self.poly.create(self.VALIDITY_ULTRASONICS_TABLE, {'id': 'int primary key',
                                                                'fr': 'int',
