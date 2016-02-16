@@ -47,6 +47,11 @@ control_thread.polycreate_ultrasonic()
 control_thread.polycreate_compass()
 control_thread.polycreate_gps()
 
+print 'Waiting for tables to finish being created...'
+
+time.sleep(5)
+
+print 'Starting sensor data threads...'
 
 # Start sensor data threads
 ultrasonics = Process(target=control_thread.ultrasonics_thread).start()
