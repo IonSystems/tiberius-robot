@@ -228,6 +228,9 @@ class ControlThread:
             except Exception as e:
                 print e
 
+    def diagnostics_thread(self):
+        while True:
+            status = self.poly.query(self.VALIDITY_TABLE, [])
     # **********************************Robotic arm - not currently implemented*********************
     # def arm_thread(self):
     #  arm_read_id = 0
