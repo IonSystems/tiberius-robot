@@ -21,7 +21,6 @@ class ControlThread:
         self.VALIDITY_TABLE = 'sensor_validity'
         self.VALIDITY_ULTRASONICS_TABLE = 'ultrasonics_validity'
 
-
     # *****************************Functions for creating the table*********************************
     # create polyhedra database to store data from ultrasonic sensors
     def polycreate_ultrasonic(self):
@@ -144,6 +143,7 @@ class ControlThread:
     def ultrasonics_thread(self):
         ultrasonic = Ultrasonic()
         ultrasonic_read_id = 0
+        valid = False
         while True:
             try:
                 # TODO: add in code to update table by overwriting 0th value and rolling back round
@@ -159,8 +159,17 @@ class ControlThread:
                         validity[i] = 1
                         any_valid_data = 1
 
-                self.poly.update(self.VALIDITY_TABLE, {'ultrasonics': any_valid_data},
-                                 {'id': 0})
+                if not valid:
+                    valid = True
+                    self.poly.update(self.VALIDITY_TABLE, {'ultrasonics': any_valid_data},
+                                     {'clause': 'WHERE',
+                                      'data': [
+                                          {
+                                              'column': 'id',
+                                              'assertion': '=',
+                                              'value': '0'
+                                          }
+                                      ]})
 
                 self.poly.update(self.VALIDITY_ULTRASONICS_TABLE, {'fr': validity[0],
                                                                    'fc': validity[1],
@@ -168,7 +177,14 @@ class ControlThread:
                                                                    'rr': validity[3],
                                                                    'rc': validity[4],
                                                                    'rl': validity[5]},
-                                 {'id': 0})
+                                 {'clause': 'WHERE',
+                                  'data': [
+                                      {
+                                          'column': 'id',
+                                          'assertion': '=',
+                                          'value': '0'
+                                      }
+                                  ]})
 
                 # We need to put the data in, even if it is all 0's.
                 # This gives a fail safe if a script was only relying on sensor data
@@ -184,12 +200,25 @@ class ControlThread:
                 ultrasonic_read_id += 1
                 time.sleep(0.2)
             except Exception as e:
+                if valid:
+                    valid = False
+                    self.poly.update(self.VALIDITY_TABLE, {'ultrasonics': any_valid_data},
+                                     {'clause': 'WHERE',
+                                      'data': [
+                                          {
+                                              'column': 'id',
+                                              'assertion': '=',
+                                              'value': '0'
+                                          }
+                                      ]})
+
                 print e
 
     def gps_thread(self):
         gps = GPS()
         gps_read_id = 0
         no_data_time = 0
+        valid = False
         while True:
             try:
                 if gps.has_fix():
@@ -204,7 +233,17 @@ class ControlThread:
                                                           'velocity': gps_data['velocity'],
                                                           'fixmode': gps_data['fixmode'],
                                                           'timestamp': time.time()})
-                        self.poly.update(self.VALIDITY_TABLE, {'gps': 1}, {'id': 0})
+                        if not valid:
+                            valid = True
+                            self.poly.update(self.VALIDITY_TABLE, {'gps': 1}, {'clause': 'WHERE',
+                                                                               'data': [
+                                                                                   {
+                                                                                       'column': 'id',
+                                                                                       'assertion': '=',
+                                                                                       'value': '0'
+                                                                                   }
+                                                                               ]})
+
                         gps_read_id += 1
                         no_data_time = 0
                 else:
@@ -213,13 +252,24 @@ class ControlThread:
                     no_data_time += 0.1
 
                 if no_data_time > 10:
-                    self.poly.update(self.VALIDITY_TABLE, {'gps': 0}, {'id': 0})
+                    if valid:
+                        valid = False
+                        self.poly.update(self.VALIDITY_TABLE, {'gps': 0}, {'clause': 'WHERE',
+                                                                           'data': [
+                                                                               {
+                                                                                   'column': 'id',
+                                                                                   'assertion': '=',
+                                                                                   'value': '0'
+                                                                               }
+                                                                           ]})
+
             except Exception as e:
                 print e
 
     def compass_thread(self):
         compass = Compass()
         compass_read_id = 0
+        valid = False
         while True:
             try:
                 heading = compass.headingNormalized()
@@ -227,8 +277,29 @@ class ControlThread:
                                  {'id': compass_read_id, 'heading': heading, 'timestamp': time.time()})
 
                 compass_read_id += 1
+                if not valid:
+                    valid = True
+                    self.poly.update(self.VALIDITY_TABLE, {'compass': 1}, {'clause': 'WHERE',
+                                                                           'data': [
+                                                                               {
+                                                                                   'column': 'id',
+                                                                                   'assertion': '=',
+                                                                                   'value': '0'
+                                                                               }
+                                                                           ]})
+
             except Exception as e:
                 print e
+                if valid:
+                    valid = False
+                    self.poly.update(self.VALIDITY_TABLE, {'compass': 0}, {'clause': 'WHERE',
+                                                                           'data': [
+                                                                               {
+                                                                                   'column': 'id',
+                                                                                   'assertion': '=',
+                                                                                   'value': '0'
+                                                                               }
+                                                                           ]})
 
     def diagnostics_thread(self):
         from tiberius.diagnostics.diagnostics_leds import diagnostics_leds
@@ -238,15 +309,17 @@ class ControlThread:
         ultrasonics_status, compass_status, gps_status = 0, 0, 0
 
         while True:
+            try:
+                rows = self.poly.query(self.VALIDITY_TABLE, ['ultrasonics', 'compass', 'gps'])
 
-            rows = self.poly.query(self.VALIDITY_TABLE, ['ultrasonics', 'compass', 'gps'])
+                for row in rows:
+                    ultrasonics_status = row.ultrasonics
+                    compass_status = row.compass
+                    gps_status = row.gps
 
-            for row in rows:
-                ultrasonics_status = row.ultrasonics
-                compass_status = row.compass
-                gps_status = row.gps
-
-            leds.setLEDs(ultrasonics_status, compass_status, gps_status)
+                leds.setLEDs(ultrasonics_status, compass_status, gps_status)
+            except Exception as e:
+                print e
 
 
             # **********************************Robotic arm - not currently implemented*********************
