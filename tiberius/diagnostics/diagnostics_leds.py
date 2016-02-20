@@ -19,7 +19,7 @@ class diagnostics_leds:
             print "Port already open or in use"
         time.sleep(3)
 
-    def setLEDs(self, led0, led1, led2, led3, led4, led5, led6, led7):
+    def setLEDs(self, led0=-1, led1=-1, led2=-1, led3=-1, led4=-1, led5=-1, led6=-1, led7=-1):
         if not self.ser.is_open:
             try:
                 self.ser.open()
@@ -28,7 +28,7 @@ class diagnostics_leds:
             time.sleep(3)
         if self.ser.is_open:
             data = "sd" + str(led0) + "d" + str(led1) + "d" + str(led2) + "d" + str(led3) + "d" + str(led4) + "d" + str(
-                    led5) + "d" + str(led6) + "d" + str(led7)
+                led5) + "d" + str(led6) + "d" + str(led7)
 
             self.ser.write(data)
 

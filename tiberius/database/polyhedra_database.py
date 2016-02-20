@@ -32,6 +32,7 @@ class PolyhedraDatabase(Database):
         query = self.__generate_query(
             SqlClauses.SELECT.value, table_name, column_name, conditions)
         self.c.execute(query)
+
         return self.c.fetchall()
 
     def insert(self, table_name, values):

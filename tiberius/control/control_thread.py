@@ -29,7 +29,7 @@ class ControlThread:
     def polycreate_ultrasonic(self):
         try:
             self.poly.drop(self.ULTRASONICS_TABLE)
-        except:
+        except PolyhedraDatabase.NoSuchTableError:
             print "Table doesn't exist"
         try:
 
@@ -49,7 +49,7 @@ class ControlThread:
     def polycreate_gps(self):
         try:
             self.poly.drop(self.GPS_TABLE)
-        except:
+        except PolyhedraDatabase.NoSuchTableError:
             print "Table doesn't exist"
         try:
             self.poly.create(self.GPS_TABLE, {'id': 'int primary key',
@@ -69,7 +69,7 @@ class ControlThread:
     def polycreate_compass(self):
         try:
             self.poly.drop(self.COMPASS_TABLE)
-        except:
+        except PolyhedraDatabase.NoSuchTableError:
             print "Table doesn't exist"
         try:
 
@@ -93,7 +93,7 @@ class ControlThread:
     def polycreate_sensor_validity(self):
         try:
             self.poly.drop(self.VALIDITY_TABLE)
-        except:
+        except PolyhedraDatabase.NoSuchTableError:
             print "Table doesn't exist"
         try:
             self.poly.create(self.VALIDITY_TABLE, {'id': 'int primary key',
@@ -115,7 +115,7 @@ class ControlThread:
     def polycreate_ultrasonics_validity(self):
         try:
             self.poly.drop(self.VALIDITY_ULTRASONICS_TABLE)
-        except:
+        except PolyhedraDatabase.NoSuchTableError:
             print "Table doesn't exist"
         try:
             self.poly.create(self.VALIDITY_ULTRASONICS_TABLE, {'id': 'int primary key',
@@ -141,7 +141,7 @@ class ControlThread:
             print "Ultrasonics validity table already exists"
 
 
-        # *****************************Functions for updating the table*********************************
+            # *****************************Functions for updating the table*********************************
 
     def ultrasonics_thread(self):
         ultrasonic_read_id = 0
@@ -222,26 +222,41 @@ class ControlThread:
         while True:
             try:
                 heading = self.compass.headingNormalized()
-                self.poly.insert(self.COMPASS_TABLE, {'id': compass_read_id, 'heading': heading, 'timestamp': time.time()})
+                self.poly.insert(self.COMPASS_TABLE,
+                                 {'id': compass_read_id, 'heading': heading, 'timestamp': time.time()})
 
                 compass_read_id += 1
             except Exception as e:
                 print e
 
     def diagnostics_thread(self):
+        from tiberius.diagnostics.diagnostics_leds import diagnostics_leds
+
+        leds = diagnostics_leds()
+
+        ultrasonics_status, compass_status, gps_status = 0, 0, 0
+
         while True:
-            status = self.poly.query(self.VALIDITY_TABLE, [])
-    # **********************************Robotic arm - not currently implemented*********************
-    # def arm_thread(self):
-    #  arm_read_id = 0
-    #  while(True):
-    #        poly.insert(self.ARM_TABLE, {'id': arm_read_id, 'X': 'float', 'Y': 'float', 'Z' : 'float',
-    #                                    'theta' : 'float', 'phi' : 'float', 'rho' : 'float',
-    #                                    'timestamp':'float'})
-    # arm_read_id += 1;
-    # ******************************************************************************************************************************
+
+            rows = self.poly.query(self.VALIDITY_TABLE, ['ultrasonics', 'compass', 'gps'])
+
+            for row in rows:
+                ultrasonics_status = row.ultrasonics
+                compass_status = row.compass
+                gps_status = row.gps
+
+            leds.setLEDs(ultrasonics_status, compass_status, gps_status)
+
+
+            # **********************************Robotic arm - not currently implemented*********************
+            # def arm_thread(self):
+            #  arm_read_id = 0
+            #  while(True):
+            #        poly.insert(self.ARM_TABLE, {'id': arm_read_id, 'X': 'float', 'Y': 'float', 'Z' : 'float',
+            #                                    'theta' : 'float', 'phi' : 'float', 'rho' : 'float',
+            #                                    'timestamp':'float'})
+            # arm_read_id += 1;
+            # ******************************************************************************************************************************
 
 # for testing purposes - we call the functions.
 # functions should be called as threads so they can run concurrently.
-
-
