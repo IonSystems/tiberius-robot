@@ -20,9 +20,7 @@ class ControlThread:
         self.ARM_TABLE = 'arm_reading'
         self.VALIDITY_TABLE = 'sensor_validity'
         self.VALIDITY_ULTRASONICS_TABLE = 'ultrasonics_validity'
-        self.ultrasonic = Ultrasonic()
-        self.compass = Compass()
-        self.gps = GPS()
+
 
     # *****************************Functions for creating the table*********************************
     # create polyhedra database to store data from ultrasonic sensors
@@ -144,12 +142,13 @@ class ControlThread:
             # *****************************Functions for updating the table*********************************
 
     def ultrasonics_thread(self):
+        ultrasonic = Ultrasonic()
         ultrasonic_read_id = 0
         while True:
             try:
                 # TODO: add in code to update table by overwriting 0th value and rolling back round
 
-                ultra_data = self.ultrasonic.senseUltrasonic()
+                ultra_data = ultrasonic.senseUltrasonic()
 
                 any_valid_data = 0
                 validity = [0, 0, 0, 0, 0, 0]
@@ -188,12 +187,13 @@ class ControlThread:
                 print e
 
     def gps_thread(self):
+        gps = GPS()
         gps_read_id = 0
         no_data_time = 0
         while True:
             try:
-                if self.gps.has_fix():
-                    gps_data = self.gps.read_gps()
+                if gps.has_fix():
+                    gps_data = gps.read_gps()
                     if gps_data is not False:
                         self.poly.insert(self.GPS_TABLE, {'id': gps_read_id,
                                                           'latitude': gps_data['latitude'],
@@ -218,10 +218,11 @@ class ControlThread:
                 print e
 
     def compass_thread(self):
+        compass = Compass()
         compass_read_id = 0
         while True:
             try:
-                heading = self.compass.headingNormalized()
+                heading = compass.headingNormalized()
                 self.poly.insert(self.COMPASS_TABLE,
                                  {'id': compass_read_id, 'heading': heading, 'timestamp': time.time()})
 
