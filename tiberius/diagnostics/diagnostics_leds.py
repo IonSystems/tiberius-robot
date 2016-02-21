@@ -7,7 +7,7 @@ class diagnostics_leds:
     if detection.detect_windows():
         port = 'COM8'
     else:
-        port = '/dev/ttyACM0'
+        port = '/dev/ttyACM1'
     baud = 9600
 
     def __init__(self, debug=False):
