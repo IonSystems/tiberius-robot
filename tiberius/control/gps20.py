@@ -58,7 +58,8 @@ class GlobalPositioningSystem:
         try:
             self.ser.open()
         except:
-            self.logger.warning("Serial port already open continuing.")
+            if self.debug:
+                self.logger.warning("Serial port already open continuing.")
         data = self.ser.readline()
         self.logger.debug("Read data: " + data)
         self.ser.close()
@@ -89,23 +90,27 @@ class GlobalPositioningSystem:
                 if self.latitude.startswith("00"):
                     self.latitude = self.latitude[2:]
                     self.latitude = "-" + self.latitude
-                    print self.latitude
+                    if self.debug:
+                        print self.latitude
             if self.longitude is str:
                 if self.longitude.startswith("00"):
                     self.longitude = self.longitude[2:]
                     self.longitude = "-" + self.longitude
-                    print self.longitude
+                    if self.debug:
+                        print self.longitude
 
             if self.latitude is not "":
                 self.latitude = float(self.latitude)
                 self.latitude /= 100
             else:
-                print 'No data in latitude'
+                if self.debug:
+                        print 'No data in latitude'
             if self.longitude is not "":
                 self.longitude = float(self.longitude)
                 self.longitude /= 100
             else:
-                print 'No Data in longitude'
+                if self.debug:
+                        print 'No Data in longitude'
         return True
 
     def update(self):
