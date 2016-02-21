@@ -42,7 +42,7 @@ if __name__ == "__main__":
     l1, l2, l3, l4, l5, l6, l7, l8 = 0, 0, 0, 0, 0, 0, 0, 0
 
     while (True):
-        leds.setLEDs(l1, l2, l3, l4, l5, l6, l7, l8)
+        leds.setLEDs(l1, l2)
         l1 = randint(0, 5)
         l2 = randint(0, 5)
         l3 = randint(0, 5)

@@ -311,13 +311,15 @@ class ControlThread:
         while True:
             try:
                 rows = self.poly.query(self.VALIDITY_TABLE, ['ultrasonics', 'compass', 'gps'])
-
+                print rows
                 for row in rows:
-                    ultrasonics_status = row.ultrasonics
-                    compass_status = row.compass
-                    gps_status = row.gps
+                    print row
+                    #ultrasonics_status = row.ultrasonics
+                    #compass_status = row.compass
+                    #gps_status = row.gps
 
                 leds.setLEDs(ultrasonics_status, compass_status, gps_status)
+                time.sleep(0.5)
             except Exception as e:
                 print e
 
