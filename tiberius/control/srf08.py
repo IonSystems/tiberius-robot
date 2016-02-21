@@ -26,8 +26,10 @@ class UltrasonicRangefinder:
     range_value = 140
     gain_value = 3
     value = 0.0
+    debug = False
 
-    def __init__(self, address):
+    def __init__(self, address, debug=False):
+        self.debug = debug
         self.logger = logging.getLogger(
             'tiberius.control.UltrasonicRangefinder')
         self.logger.info(
@@ -42,7 +44,8 @@ class UltrasonicRangefinder:
             self.bus.write_byte_data(
                 self.address, self.gainreg, self.gain_value)
         except IOError:
-            self.logger.error('I2C write error %s', hex(self.address))
+            if self.debug:
+                self.logger.error('I2C write error %s', hex(self.address))
 
     def doranging(self):
         try:
@@ -50,7 +53,8 @@ class UltrasonicRangefinder:
                 self.address, self.commandreg, self.cm_mode)
             return True
         except IOError:
-            self.logger.error('I2C write error %s', hex(self.address))
+            if self.debug:
+                self.logger.error('I2C write error %s', hex(self.address))
             return False
 
     def getranging(self):
@@ -67,6 +71,7 @@ class UltrasonicRangefinder:
             return value
 
         except IOError:
-            self.logger.error('IO error getranging %s', hex(self.address))
+            if self.debug:
+                self.logger.error('IO error getranging %s', hex(self.address))
             # If we failed to range say the data is not valid.
             return False
