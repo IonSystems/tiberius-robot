@@ -172,7 +172,10 @@ class PolyhedraDatabase(Database):
         query = ""
         if query_type.upper() == SqlClauses.SELECT.value:
             query += SqlClauses.SELECT.value + " "
-        query += column_name + " "
+        for coloum in column_name:
+            q = ""
+            q += coloum + ", "
+            query += q
         query += SqlClauses.FROM.value + " "
         query += table_name
         if conditions:
