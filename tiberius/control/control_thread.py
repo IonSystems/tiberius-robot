@@ -4,6 +4,7 @@ from tiberius.database.polyhedra_database import PolyhedraDatabase
 from tiberius.control.sensors import Ultrasonic
 from tiberius.control.sensors import Compass
 from tiberius.control.sensors import GPS
+import traceback
 
 '''
     Responsible for creating threads to communicate with the database, in order to control Tiberius.
@@ -300,6 +301,7 @@ class ControlThread:
                                                                                    'value': '0'
                                                                                }
                                                                            ]})
+            time.sleep(0.5)
 
     def diagnostics_thread(self):
         from tiberius.diagnostics.diagnostics_leds import diagnostics_leds
@@ -319,9 +321,11 @@ class ControlThread:
                     #gps_status = row.gps
 
                 leds.setLEDs(ultrasonics_status, compass_status, gps_status)
-                time.sleep(0.5)
+
             except Exception as e:
                 print e
+                traceback.print_exc()
+            time.sleep(0.5)
 
 
             # **********************************Robotic arm - not currently implemented*********************
