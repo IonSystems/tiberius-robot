@@ -212,7 +212,7 @@ class ControlThread:
                                               'value': '0'
                                           }
                                       ]})
-
+                traceback.print_exc()
                 print e
 
     def gps_thread(self):
@@ -265,6 +265,7 @@ class ControlThread:
                                                                            ]})
 
             except Exception as e:
+                traceback.print_exc()
                 print e
 
     def compass_thread(self):
