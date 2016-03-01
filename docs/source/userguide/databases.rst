@@ -39,7 +39,20 @@ The following example shows all currently supported database interactions::
     print results
 
     #Update the value we previously put in
-    db.update('example_table', {'id': 0, 'Example new updates value.'})
+    db.update('example_table',
+            {
+                'example_column': 'Example new updates value.',
+            },
+            {
+                'clause':'WHERE',
+                'data': [
+                    {
+                        'column' : 'id',
+                        'assertion' : '=',
+                        'value': '0'
+                    }
+                ]
+            })
 
     #Drop the table
     db.drop('example_table')

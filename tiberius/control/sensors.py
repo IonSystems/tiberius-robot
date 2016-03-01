@@ -1,16 +1,15 @@
-#import rplidar
+#!/usr/bin/env python
 import cmps11
 import srf08
 import time
 from tiberius.config.config_parser import TiberiusConfigParser
-#import picamera
-#import gps
+from tiberius.control.gps20 import GlobalPositioningSystem
 
 
 class Ultrasonic:
     '''
-            Contains the ultrasonic sensors, and methods to receive data from them.
-            Data is returned from teh sensors in centimeters.
+        Contains the ultrasonic sensors, and methods to receive data from them.
+        Data is returned from teh sensors in centimeters.
     '''
 
     # Front Right
@@ -34,26 +33,38 @@ class Ultrasonic:
 
     def senseUltrasonic(self):
         # Tell sensors to write data to it's memory
-        self.srfrr.doranging()
-        self.srffc.doranging()
-        self.srffl.doranging()
-        self.srfrr.doranging()
-        self.srfrc.doranging()
-        self.srfrl.doranging()
 
-        # We need to wait for the measurement to be made before reading thr
+        # We need to check each sensor and make sure its giving us valid data.
+        # So if we fail to write to a sensor we need to mark it as invalid.
+
+        valid = [self.srfrr.doranging(), self.srffc.doranging(), self.srffc.doranging(), self.srffl.doranging(),
+                 self.srfrr.doranging(), self.srfrc.doranging(), self.srfrl.doranging()]
+
+        # We need to wait for the measurement to be made before reading the
         # result.
         time.sleep(0.065)
 
         # Read the data from sensor's memory
-        fr = self.srffr.getranging()
-        fc = self.srffc.getranging()
-        fl = self.srffl.getranging()
-        rr = self.srfrr.getranging()
-        rc = self.srfrc.getranging()
-        rl = self.srfrl.getranging()
 
-        return {'fl': fl, 'fc': fc, 'fr': fr, 'rl': rl, 'rc': rc, 'rr': rr}
+        data = [self.srfrr.getranging(), self.srffc.getranging(), self.srffc.getranging(), self.srffl.getranging(),
+                 self.srfrr.getranging(), self.srfrc.getranging(), self.srfrl.getranging()]
+
+
+        # Check if the data is valid
+        for i in range(0, 5):
+            if data[i] is False:
+                valid[i] = False
+                data[i] = 0  # Best to assume we might crash rather than
+                # risk it (0 means that any badly written scripts *should* stop)
+                # Also by putting a 0 in the data we can still add the row to the database.
+
+        return {'fr': data[0],
+                'fc': data[1],
+                'fl': data[2],
+                'rr': data[3],
+                'rc': data[4],
+                'rr': data[5],
+                'valid': valid}
 
     def frontHit(self, d=30):
         results = self.senseUltrasonic()
@@ -79,14 +90,15 @@ class Ultrasonic:
                 (results['rc'] < d) or
                 (results['rr'] < d))
 
-# class Lidar:
-#	lidar = RoboPeakLidar()
+    # class Lidar:
+    #	lidar = RoboPeakLidar()
 
     # TODO: This will eventually include methods such as generateImage(),
     # fetchData() or similar
 
-# class TimeOfFlight:
+    # class TimeOfFlight:
     # If we ever get a TOF sensor.
+
 
 # class Camera:
 #	'''
@@ -108,7 +120,10 @@ if TiberiusConfigParser.isCompassEnabled():
 
         def headingDegrees(self):
             # Get the heading in degrees.
-            raw = int(self.compass.heading())
+            try:
+                raw = int(self.compass.heading())
+            except:
+                return 222.2
             return raw / 10
 
         def getMostRecentDegrees(self):
@@ -116,18 +131,25 @@ if TiberiusConfigParser.isCompassEnabled():
 
         def headingNormalized(self):
             angle = int(self.headingDegrees())
-            while(angle > 180):
+            while (angle > 180):
                 angle -= 360
-            while(angle < -180):
+            while (angle < -180):
                 angle += 360
             return angle
 
-# class GPS:
-    # gps =
+
+class GPS:
+    def __init__(self):
+        self.gps = GlobalPositioningSystem()
+
+    def read_gps(self):
+        return self.gps.read_gps()
+
+    def has_fix(self):
+        return self.gps.has_fix()
 
 
 class I2CReadError(Exception):
-
     def __init__(self, value):
         self.value = value
 
@@ -136,7 +158,6 @@ class I2CReadError(Exception):
 
 
 class I2CWriteError(Exception):
-
     def __init__(self, value):
         self.value = value
 

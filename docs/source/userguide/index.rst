@@ -1,5 +1,5 @@
 User Guide
-====================
+==========
 
 .. toctree::
    :maxdepth: 2
@@ -8,3 +8,4 @@ User Guide
    quickstart
    databases
    architecture
+   testing

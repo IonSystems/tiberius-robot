@@ -230,18 +230,40 @@ class PostInstallDependencies(install):
 
     def install_poly_startup_task(self):
         from crontab import CronTab
+        print "poly_start configuration starting..."
+
+        command = "/home/pi/poly9.0/linux/raspi/bin/rtrdb -r data_service=8001 db"
+        comment = "poly_start"
         cron = CronTab(user='root')
         if not cron.find_comment('poly_start'):
             print "Installing poly_start crontab..."
-            job = cron.new(command='rtrdb -r data_service=8001 db &', comment='poly_start')
+            job = cron.new(command=command, comment=comment)
             job.every_reboot()
-            cron.write_to_user(user='root')
+            cron.write()
             if job.is_valid():
                 print "poly_start crontab successfully installed."
             else:
                 print "poly_start crontab failed to install"
         else:
             print "poly_start crontab already installed"
+            print "removing old job"
+            oldjob = cron.find_comment('poly_start')
+            print ('OldJob', oldjob)
+            #cron.remove(oldjob)
+            print "Installing poly_start crontab..."
+            job = cron.new(command=command, comment=comment)
+            job.every_reboot()
+            cron.write()
+            if job.is_valid():
+                print "poly_start crontab successfully installed."
+            else:
+                print "poly_start crontab failed to install"
+        print "Listing all crontab jobs:"
+        for cronjob in cron:
+            print cronjob
+
+        print "poly_start configuration finished"
+
 
 
     def install_pyodbc(self, platform):
@@ -293,6 +315,7 @@ setup(name='Tiberius',
           'tiberius/control/robotic_arm',
           'tiberius/control_api',
           'tiberius/control_api/tasks',
+          'tiberius/diagnostics',
           'tiberius/navigation/gps',
           'tiberius/navigation',
           'tiberius/logger',

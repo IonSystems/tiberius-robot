@@ -10,7 +10,7 @@ class PolyhedraDatabase(Database):
     def __init__(self, name):
         # Start the database API if it is not already running
         popen = subprocess.Popen(
-            "rtrdb -r data_service=8001 -r verbosity=4 db",
+            "/home/pi/poly9.0/linux/raspi/bin/rtrdb -r data_service=8001 db",
             shell=True, stdout=subprocess.PIPE)
         lines_iterator = iter(popen.stdout.readline, b"")
         for line in lines_iterator:
@@ -32,6 +32,7 @@ class PolyhedraDatabase(Database):
         query = self.__generate_query(
             SqlClauses.SELECT.value, table_name, column_name, conditions)
         self.c.execute(query)
+
         return self.c.fetchall()
 
     def insert(self, table_name, values):
@@ -171,11 +172,16 @@ class PolyhedraDatabase(Database):
         query = ""
         if query_type.upper() == SqlClauses.SELECT.value:
             query += SqlClauses.SELECT.value + " "
-        query += column_name + " "
+
+        for column in column_name:
+            query += column + ", "
+        query = query[:-2]
+        query += " "
         query += SqlClauses.FROM.value + " "
         query += table_name
         if conditions:
             query += " " + self.__generate_conditions(conditions)
+        print query
         return query
 
     def __generate_conditions(self, conditions=None):
