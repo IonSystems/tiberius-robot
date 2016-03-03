@@ -103,6 +103,15 @@ class Astar(object):
         adj.parent = cell
         adj.f = adj.h + adj.g
 
+    def get_path(self):
+        cell = self.end
+        path = []
+        while cell.parent is not self.start:
+            path.append(cell)
+            cell = cell.parent
+            print 'path: cell: %d, %d' % (cell.x,cell.y)
+        return path
+
     def solve(self):
         """Solve maze, find path to ending cell.
         @returns path or None if not found.
@@ -132,7 +141,7 @@ class Astar(object):
                         # add adj cell to open list
                         heapq.heappush(self.opened, (adj_cell.f, adj_cell))
 
-    def find_end(self, destination):
+    def get_grid_data(self, destination):
         curlocation = self.gps.getLocation()
 
         distance = self.gps.getDistance(curlocation, destination)
@@ -165,7 +174,27 @@ class Astar(object):
         return [curlocation, distance, bearing, grid_width, grid_height, startlocation, endlocation]
 
     def run_astar(self, destination):
-    # 0 - curlocation, 1 - distance, 2 - bearing, 3 - grid_width, 4 - grid_height, 5 - startlocation, 6 - endlocation
-        grid_values = self.find_end(destination)
+        # 0 - curlocation, 1 - distance, 2 - bearing, 3 - grid_width, 4 - grid_height, 5 - startlocation, 6 - endlocation
+        grid_values = self.get_grid_data(destination)
 
+        curlocation = grid_values[0]
+        distance = grid_values[1]
+        bearing = grid_values[2]
+
+        self.grid_width = grid_values[3]
+        self.grid_height = grid_values[4]
+        startlocation = grid_values[5]
+        endlocation = grid_values[6]
+
+        # this is where data is read from the database to fill the grid with non reachable locations
+        self.create_walls()
+
+        # build the grid using including the walls created by the database data
+        self.init_grid(startlocation, endlocation)
+
+        # find a path through the current grid
+        self.solve()
+
+
+        # need loop to update and get to end
         return
