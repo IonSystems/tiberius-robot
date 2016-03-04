@@ -35,6 +35,15 @@ def detect_pi():
 def detect_windows():
     return 'nt' in os.name
 
+import smbus
+def i2c_available():
+    try:
+        i2c = smbus.SMBus(1)
+    except:
+        return False
+    return True
+
 if __name__ == "__main__":
-    print 'Raspberry Pi detected?: ' + detect_pi()
-    print 'Windows detected?: ' + detect_windows()
+    print 'Raspberry Pi detected?: ' + str(detect_pi())
+    print 'Windows detected?:      ' + str(detect_windows())
+    print 'I2C available?:         ' + str(i2c_available())
