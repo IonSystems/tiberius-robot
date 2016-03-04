@@ -35,7 +35,7 @@ class PolyhedraDatabase(Database):
 
         return self.c.fetchall()
 
-    def insert(self, table_name, values):
+    def insert(self, table_name, values):   #add new adta
         query = self.__generate_insert("insert", table_name, values)
         try:
             self.c.execute(query)
@@ -79,7 +79,7 @@ class PolyhedraDatabase(Database):
         WHERE CustomerName='Alfreds Futterkiste';
     '''
 
-    def update(self, table_name, data, conditions):
+    def update(self, table_name, data, conditions): #updating old data
         query = self.__generate_update(table_name, data, conditions)
         self.c.execute(query)
         self.conn.commit()

@@ -5,7 +5,7 @@ from tiberius.control.sensors import Ultrasonic
 from tiberius.control.sensors import Compass
 from tiberius.control.sensors import GPS
 import traceback
-
+import numpy as np
 '''
     Responsible for creating threads to communicate with the database, in order to control Tiberius.
 '''
@@ -65,6 +65,8 @@ class ControlThread:
             print "GPS table already exists"
 
     def polycreate_compass(self):
+
+
         try:
             self.poly.drop(self.COMPASS_TABLE)
         except PolyhedraDatabase.NoSuchTableError:
@@ -272,13 +274,26 @@ class ControlThread:
         compass = Compass()
         compass_read_id = 0
         valid = False
+        previous_values = []
         while True:
             try:
+                # validate compass data by differentiating (shouldn't change too quickly)
                 heading = compass.headingNormalized()
-                self.poly.insert(self.COMPASS_TABLE,
-                                 {'id': compass_read_id, 'heading': heading, 'timestamp': time.time()})
+                # check if the compass data makes sense - common sense check
 
-                compass_read_id += 1
+                previous_values.append(heading)
+                if len(previous_values) >= 10:
+                    previous_values.pop(0)
+
+                standard_deviation = np.std(np.diff(np.asarray(previous_values)))
+                if standard_deviation > 10:
+                    raise Exception('invalid data')
+                else:
+                    self.poly.insert(self.COMPASS_TABLE,
+                                     {'id': compass_read_id, 'heading': heading, 'timestamp': time.time()})
+
+                    compass_read_id += 1
+
                 if not valid:
                     valid = True
                     self.poly.update(self.VALIDITY_TABLE, {'compass': 1}, {'clause': 'WHERE',
@@ -294,6 +309,7 @@ class ControlThread:
                 print e
                 if valid:
                     valid = False
+
                     self.poly.update(self.VALIDITY_TABLE, {'compass': 0}, {'clause': 'WHERE',
                                                                            'data': [
                                                                                {
