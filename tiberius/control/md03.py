@@ -1,9 +1,9 @@
 #!/usr/bin/python
 import sys
 from tiberius.utils import detection
-# If not running on a raspberry pi, use the dummy smbus library to allow
+# If i2c not available, use the dummy smbus library to allow
 # simulation of I2C transactions.
-if not detection.detect_pi():
+if not detection.i2c_available():
     from tiberius.smbus_dummy import smbus
 else:
     import smbus
