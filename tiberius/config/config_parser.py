@@ -24,8 +24,11 @@ class TiberiusConfigParser():
         parser = ConfigParser.ConfigParser()
         if detection.detect_windows():
             parser.read('D:\\tiberius\\tiberius_conf.conf')
-        else:
+        elif detection.detect_file('/etc/tiberius/tiberius_conf.conf'):
             parser.read('/etc/tiberius/tiberius_conf.conf')
+        else:
+            # Fall back to generic config file.
+            parser.read('./tiberius_conf.conf')
         return parser
 
     '''******************************************

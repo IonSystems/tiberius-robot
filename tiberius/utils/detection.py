@@ -3,7 +3,7 @@ import re
 import os
 
 '''
-    This detction method is based on the Adafruit GPIO library,
+    This detection method is based on the Adafruit GPIO library,
     that can be found here:
     https://github.com/adafruit/Adafruit_Python_GPIO/blob/master/Adafruit_GPIO/Platform.py
 '''
@@ -34,6 +34,9 @@ def detect_pi():
 
 def detect_windows():
     return 'nt' in os.name
+
+def detect_file(filename):
+    return os.path.isfile(filename)
 
 if __name__ == "__main__":
     print 'Raspberry Pi detected?: ' + detect_pi()
