@@ -76,7 +76,10 @@
 	                                        <td>{{ robot.ip_address }}</td>
 	                                        <td>{{ robot.weight }}</td>
 	                                        <td>{{ robot.capacity }}</td>
-																					<td><a class="btn btn-primary btn-sm m-l-5" id = "button_control" href = "/control/{{ robot.id}}">Control</a></td>
+																					<td>
+																						<a class="btn btn-primary btn-sm m-l-5" id = "button_control" href = "/control/{{ robot.id}}">Control</a>
+																						<a class="btn btn-info btn-sm m-l-5" id = "button_modify" href = "/fleet/modify/{{ robot.id}}">Modify</a>
+																					</td>
 	                                    </tr>
 																		{% endfor %}
                                 </tbody>
