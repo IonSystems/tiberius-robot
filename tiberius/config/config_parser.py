@@ -120,15 +120,6 @@ class TiberiusConfigParser():
         ipa = TiberiusConfigParser.getParser().get(NETWORKING_SECTION, 'ip_address')
         return ipa
 
-    '''
-    A setter method is required to deal with IP address changes if using DHCP.
-    '''
-    @staticmethod
-    def setIPAddress(ip_address):
-        result = TiberiusConfigParser.getParser().set(
-            NETWORKING_SECTION, 'ip_address', ip_address)
-        return result
-
     @staticmethod
     def getName():
         name = TiberiusConfigParser.getParser().get(NETWORKING_SECTION, 'name')
