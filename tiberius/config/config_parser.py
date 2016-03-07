@@ -94,6 +94,10 @@ class TiberiusConfigParser():
         addr = TiberiusConfigParser.getParser().get(ULTRASONICS_SECTION, 'rear_right')
         return int(addr)
 
+    @staticmethod
+    def areUltrasonicsEnabled():
+        return TiberiusConfigParser.getParser().getboolean(ULTRASONICS_SECTION, 'installed')
+
     '''******************************************
         Compass
     ******************************************'''
