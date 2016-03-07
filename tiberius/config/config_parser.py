@@ -1,5 +1,9 @@
 import ConfigParser
 from tiberius.utils import detection
+
+'''******************************************
+    Constant values
+******************************************'''
 ULTRASONICS_SECTION = 'ultrasonics'
 INSTALLED = 'installed'
 LIDAR_SECTION = 'lidar'
@@ -10,6 +14,7 @@ POWER_SECTION = 'power'
 NETWORKING_SECTION = 'networking'
 KINECT_SECTION = 'kinect'
 ROBOT_ARM_SECTION = 'arm'
+AUTHENTICATION_SECTION = 'authentication'
 
 
 class TiberiusConfigParser():
@@ -18,24 +23,21 @@ class TiberiusConfigParser():
     def getParser():
         parser = ConfigParser.ConfigParser()
         if detection.detect_windows():
-            parser.read('D:\\tiberius\tiberius_conf.conf')
+            parser.read('D:\\tiberius\\tiberius_conf.conf')
         else:
             parser.read('/etc/tiberius/tiberius_conf.conf')
         return parser
-    '''******************************************
-		Constant values
-	******************************************'''
 
     '''******************************************
-		LIDAR
-	******************************************'''
+        LIDAR
+    ******************************************'''
     @staticmethod
     def isLidarEnabled():
         return TiberiusConfigParser.getParser().getboolean(LIDAR_SECTION, 'installed')
 
     '''******************************************
-		Motors
-	******************************************'''
+        Motors
+    ******************************************'''
     @staticmethod
     def getMotorFrontLeftAddress():
         addr = TiberiusConfigParser.getParser().get(MOTORS_SECTION, 'front_left')
@@ -57,8 +59,8 @@ class TiberiusConfigParser():
         return int(addr)
 
     '''******************************************
-		Ultrasonics
-	******************************************'''
+        Ultrasonics
+    ******************************************'''
     @staticmethod
     def getUltrasonicFrontCentreAddress():
         addr = TiberiusConfigParser.getParser().get(ULTRASONICS_SECTION, 'front_centre')
@@ -90,8 +92,8 @@ class TiberiusConfigParser():
         return int(addr)
 
     '''******************************************
-		Compass
-	******************************************'''
+        Compass
+    ******************************************'''
 
     @staticmethod
     def isCompassEnabled():
@@ -103,8 +105,8 @@ class TiberiusConfigParser():
         return int(addr)
 
     '''******************************************
-		Networking
-	******************************************'''
+        Networking
+    ******************************************'''
 
     @staticmethod
     def getIPAddress():
@@ -112,8 +114,8 @@ class TiberiusConfigParser():
         return ipa
 
     '''
-	A setter method is required to deal with IP address changes if using DHCP.
-	'''
+    A setter method is required to deal with IP address changes if using DHCP.
+    '''
     @staticmethod
     def setIPAddress(ip_address):
         result = TiberiusConfigParser.getParser().set(
@@ -126,8 +128,8 @@ class TiberiusConfigParser():
         return name
 
     '''******************************************
-		Steering
-	******************************************'''
+        Steering
+    ******************************************'''
 
     @staticmethod
     def getSteeringType():
@@ -135,8 +137,8 @@ class TiberiusConfigParser():
         return type
 
     '''******************************************
-		Power
-	******************************************'''
+        Power
+    ******************************************'''
 
     @staticmethod
     def getBatteryCapacity():
@@ -147,6 +149,16 @@ class TiberiusConfigParser():
     def getBatteryChemistry():
         chemistry = TiberiusConfigParser.getParser().get(POWER_SECTION, 'chemistry')
         return chemistry
+
+    '''******************************************
+        Authentication
+    ******************************************'''
+
+    @staticmethod
+    def getPassword():
+        password = TiberiusConfigParser.getParser().get(AUTHENTICATION_SECTION, 'password')
+        return password
+
 
 if __name__ == "__main__":
 

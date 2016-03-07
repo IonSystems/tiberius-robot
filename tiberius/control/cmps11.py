@@ -224,7 +224,7 @@ class TiltCompensatedCompass:
             heading = self.__read_compass_16()
             return heading
         except IOError:
-            raise self.CompassReadError("Error reading magnetometer.")
+            raise self.CompassReadError("Error reading compass")
 
     def magnetometer(self):
         try:
@@ -259,7 +259,6 @@ class TiltCompensatedCompass:
 # Test function
 if __name__ == "__main__":
     cmps11 = TiltCompensatedCompass(66)
-    print cmps11.magnetometer()
-    print cmps11.accelerometer()
-    print cmps11.heading()
-    print cmps11.gyroscope()
+
+
+
