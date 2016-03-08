@@ -177,6 +177,7 @@
                         <div>You are currently controlling {{ ruc.name}}</div>
                         <div>You are communicating with IP Address {{ ruc.ip_address }}</div>
                         <div>Estimated battery life remaining is not available.</div>
+                        <a href="#modal-dialog" class="btn btn-sm btn-success" data-toggle="modal">Switch Robot</a>
                     </div>
                 </div>
                 <div class="panel panel-inverse" data-sortable-id="index-9">
@@ -221,6 +222,30 @@
         </div>
         <!-- end row -->
     </div>
+    <div class="modal fade in" id="modal-dialog" style="display: none;">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<div class="modal-header">
+											<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+											<h4 class="modal-title">Select a Robot</h4>
+										</div>
+										<div class="modal-body">
+											Please select a robot from the drop-down list below:
+
+                      <form action="/control/{{ ruc.id }}/" method="post">
+                        {% csrf_token %}
+                        {{ form }}
+                        <input type="submit" value="Submit" />
+                    </form>
+
+										</div>
+										<div class="modal-footer">
+											<a href="javascript:;" class="btn btn-sm btn-white" data-dismiss="modal">Close</a>
+											<a href="javascript:;" class="btn btn-sm btn-success">Action</a>
+										</div>
+									</div>
+								</div>
+							</div>
     <!-- end #content -->
 
     <!-- begin theme-panel -->
@@ -238,7 +263,10 @@
 
 {% include "script.html" %}
 <!-- ================== BEGIN PAGE LEVEL JS ================== -->
+<!-- For modal -->
 <script src="{% static 'color-admin/plugins/gritter/js/jquery.gritter.js' %}"></script>
+<script src="{% static 'color-admin/js/ui-modal-notification.demo.js' %}"></script>
+<!-- end for modal -->
 <script src="{% static 'color-admin/plugins/flot/jquery.flot.min.js' %}"></script>
 <script src="{% static 'color-admin/plugins/flot/jquery.flot.time.min.js' %}"></script>
 <script src="{% static 'color-admin/plugins/flot/jquery.flot.resize.min.js' %}"></script>
@@ -254,15 +282,16 @@
 <script src="{% static 'color-admin/plugins/powerange/powerange.min.js' %}"></script>
 <script src="{% static 'color-admin/plugins/ionRangeSlider/js/ion-rangeSlider/ion.rangeSlider.min.js' %}"></script>
 <script src="{% static 'color-admin/js/control-slider.js' %}"></script>
+
 <!-- ================== END PAGE LEVEL JS ================== -->
 
 <script>
 
 		$(document).ready(function() {
 			App.init();
-			Dashboard.init();
-			ControlRequests.init('{{ruc.ip_address}}')
-			ControlSliders.init('{{ruc.ip_address}}')
+			ControlRequests.init('{{ruc.ip_address}}');
+			ControlSliders.init('{{ruc.ip_address}}');
+      Notification.init();
 		});
 
 
