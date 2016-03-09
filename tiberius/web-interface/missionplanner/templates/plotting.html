@@ -6,7 +6,7 @@
 <!--<![endif]-->
 <head>
 	<meta charset="utf-8" />
-	<title>Color Admin | Maps</title>
+	<title>Mission Plotting</title>
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
 	<meta content="" name="description" />
 	<meta content="" name="author" />
@@ -24,9 +24,9 @@
 
 	<!-- begin #page-container -->
 	<div id="page-container" class="fade page-sidebar-fixed page-header-fixed">
-		<!-- begin #header -->
-				{% include "top_bar_populated.html" %}
-		<!-- end #header -->
+		<div id="header" class="header navbar navbar-default navbar-fixed-top">
+			{% include "top_bar_populated.html" %}
+		</div>
 
 		<!-- begin #sidebar -->
 		<div id="sidebar" class="sidebar">
@@ -158,14 +158,14 @@
 
 	<!-- ================== BEGIN PAGE LEVEL JS ================== -->
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDkFor-_BtfyOvNRxfqbNJdacVzIpQTw0Y"></script>
-<script src="{% static 'color-admin/js/map-google.demo.js' %}"></script>
+<script src="{% static 'tiberius/js/plotting-map-google.js' %}"></script>
 <script src="{% static 'color-admin/js/apps.min.js' %}"></script>
 	<!-- ================== END PAGE LEVEL JS ================== -->
 
 	<script>
 		$(document).ready(function() {
 			App.init();
-			MapGoogle.init();
+			PlottingGoogleMap.init();
 		});
 	</script>
 </body>

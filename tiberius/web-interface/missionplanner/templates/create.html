@@ -9,6 +9,7 @@
 	<link href="{% static 'color-admin/plugins/bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet" />
 	<script src="{% static 'color-admin/plugins/pace/pace.min.js' %}"></script>
 	<link href="{% static 'color-admin/plugins/bootstrap-wizard/css/bwizard.min.css' %}" rel="stylesheet" />
+	<link href="{% static 'color-admin/plugins/gritter/css/jquery.gritter.css' %}" rel="stylesheet" />
 	<title>Create Mission</title>
 </head>
 <body>
@@ -189,7 +190,7 @@
 
 {% include "script.html" %}
 <!-- ================== BEGIN PAGE LEVEL JS ================== -->
-
+	<script src="{% static 'color-admin/plugins/gritter/js/jquery.gritter.js' %}"></script>
 	<script src="{% static 'color-admin/plugins/bootstrap-daterangepicker/moment.js' %}"></script>
 	<script src="{% static 'color-admin/plugins/select2/dist/js/select2.min.js' %}"></script>
 	<script src="{% static 'color-admin/plugins/bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
@@ -206,5 +207,27 @@ $(document).ready(function() {
 	FormPlugins.init();
 });
 </script>
+
+{% if messages %}
+<script>
+	$(document).ready(function() {
+		    {% for message in messages %}
+					image = '{% static 'tiberius/img/fa-warning_64_0_ff0000_none.png' %}';
+					{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+						level= "Error";
+					{% else %}
+						level = "Message";
+					{% endif %}
+					$.gritter.add({
+						title: level,
+						text: '{{ message}}',
+						image: image,
+						sticky: false,
+						time: ''
+					});
+	    {% endfor %}
+	});
+</script>
+{% endif %}
 </body>
 </html>
