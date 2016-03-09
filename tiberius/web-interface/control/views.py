@@ -14,12 +14,30 @@ import requests
 @login_required(login_url='/users/login/')
 @ensure_csrf_cookie
 def index(request):
-    tib = Robot.objects.order_by('-pub_date')[:5]
-    template = loader.get_template('index.html')
-    context = RequestContext(request, {
-        'tib': tib,
-    })
-    return HttpResponse(template.render(context))
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = ChangeRobotForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            # ...
+            # redirect to a new URL:
+            robot_id = form.data.get('name')
+            return HttpResponseRedirect('/control/' + robot_id)
+        else:
+            return HttpResponseRedirect('/invalid form/')
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        tib = Robot.objects.order_by('-pub_date')[:5]
+        form = ChangeRobotForm()
+        template = loader.get_template('index.html')
+        context = RequestContext(request, {
+            'tib': tib,
+            'form': form
+        })
+        return HttpResponse(template.render(context))
 
 
 @login_required(login_url='/users/login/')
