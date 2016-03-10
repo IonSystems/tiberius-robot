@@ -25,6 +25,13 @@ parser.add_option(
     dest="action",
     help="Start the keyboard control test script.")
 parser.add_option(
+    "-c",
+    "--keyboard-control-collision",
+    action="store_const",
+    const=Action.KEYBOARD_CONTROL_COLLISION,
+    dest="action",
+    help="Start the keyboard control test script with ultrasonic sensors.")
+parser.add_option(
     "-t",
     "--run-tests",
     action="store_const",
@@ -84,6 +91,10 @@ if action == Action.KEYBOARD_CONTROL:
     check_output(
         "python tiberius/testing/scripts/keyboard_control.py",
         shell=True)
+
+elif action == Action.KEYBOARD_CONTROL_COLLISION:
+    print "Starting unit test suite."
+    check_output("python tiberius/testing/scripts/ultras_control.py", shell=True)
 
 elif action == Action.RUN_TESTS:
     print "Starting unit test suite."
