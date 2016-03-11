@@ -10,6 +10,13 @@ class Waypoint(models.Model):
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
     altitude = models.DecimalField(max_digits=9, decimal_places=6)
 
+    def __unicode__(self):
+        return u'{0}'.format(
+            "lat:" + str(self.latitude) + ", "
+            "lng:" + str(self.longitude) + ", "
+            "alt:" + str(self.altitude)
+        )
+
 
 class Task(models.Model):
     task_id = models.IntegerField()
@@ -18,6 +25,11 @@ class Task(models.Model):
     estimated_duration = models.CharField(max_length=50, default="Unknown")
     supported_platforms = models.ManyToManyField(
         Robot, related_name="task_supported_platforms")
+
+    def __unicode__(self):
+        return u'{0}'.format(
+            str(self.name)
+        )
 
 '''
     A mission is a collection of MissionAssignments.
@@ -40,6 +52,10 @@ class Mission(models.Model):
 
     scheduled_start = models.DateTimeField(auto_now=False, auto_now_add=False)
 
+    def __unicode__(self):
+        return u'{0}'.format(
+            str(self.name)
+        )
 
 '''
     Assigns waypoints and tasks to missions.
@@ -58,3 +74,15 @@ class MissionObjective(models.Model):
     waypoint = models.ForeignKey(Waypoint, on_delete=models.CASCADE, null=True)
     task = models.ForeignKey(Task, on_delete=models.CASCADE, null=True)
     order = models.IntegerField()
+
+    def data_to_class(self, data, mission_id):
+        print "lat: " + str(data['latLng']['lat'])
+        print "lng: " + str(data['latLng']['lng'])
+
+        print "mission id: " + str(mission_id)
+
+    def __unicode__(self):
+        return u'{0}'.format(
+            "lat:" + str(self.waypoint.latitude) + ", "
+            "lng:" + str(self.waypoint.longitude)
+        )

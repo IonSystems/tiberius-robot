@@ -5,13 +5,52 @@ Author: Sean Ngu
 Website: http://www.seantheme.com/color-admin-v1.9/admin/
 */
 
-var handleGoogleMapSetting = function() {
+var handleGoogleMapSetting = function(mission_id) {
 	"use strict";
 	var map;
 	var poly;
+	var stuff = [];
 
+	function getWaypoints(){
+		return JSON.stringify(stuff);
+	}
 
+	// $('#btn-submit').click(function(){
+	//
+	// }
 
+	$('#btn-save-plot').click(function(){
+		var data = stuff;
+		var URL = "/missionplanner/plotting/" + mission_id + "/";
+		$.ajax({
+				url: URL,
+				type: 'POST',
+				data: {
+								'waypoints': JSON.stringify(data),
+								'mission_id': mission_id
+							},
+				success: function (result) {
+					alert(result);
+					document.open();
+					document.write(result);
+					document.close();
+				},
+				error: function(error_msg){
+					alert("ERROR");
+				}
+		});
+	});
+
+	function MarkerStorage(id, latLng, distance){
+		this.id = id;
+		this.latLng = latLng;
+		this.distance = distance;
+		this.tasks = [];
+	}
+
+	MarkerStorage.prototype.addTask = function(task) {
+  this.tasks.push(task)
+};
 
 	function initialize() {
 		var mapOptions = {
@@ -72,6 +111,12 @@ var handleGoogleMapSetting = function() {
        infowindow.open(map, marker);
      });
 
+		 //Add all info to stuff array
+		 var marker_store = new MarkerStorage(path.getLength(), event.latLng, distance);
+		 marker_store.addTask(0);
+ 		stuff.push(marker_store);
+		//document.forms[0].elements["waypoints"].value = stuff;
+		document.getElementById("input-waypoints").value = getWaypoints();
 	}
 	google.maps.event.addDomListener(window, 'load', initialize);
 
@@ -129,12 +174,12 @@ var handleGoogleMapSetting = function() {
 	});
 };
 
-var PlottingGoogleMap = function () {
+var PlottingGoogleMap = function (mission_id) {
 	"use strict";
     return {
         //main function
-        init: function () {
-            handleGoogleMapSetting();
+        init: function (mission_id) {
+            handleGoogleMapSetting(mission_id);
         }
     };
 }();

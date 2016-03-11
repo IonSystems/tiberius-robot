@@ -50,7 +50,7 @@
 
             <div class="map-content">
                 <div class="btn-group map-btn pull-right">
-                    <button type="button" class="btn btn-sm btn-inverse" id="map-theme-text">Default Theme</button>
+										<button type="button" class="btn btn-sm btn-inverse" id="map-theme-text">Default Theme</button>
                     <button type="button" class="btn btn-sm btn-inverse dropdown-toggle" data-toggle="dropdown">
                         <span class="caret"></span>
                     </button>
@@ -64,6 +64,16 @@
                         <li><a href="javascript:;" data-map-theme="dark-red">Dark Red</a></li>
                     </ul>
                 </div>
+
+								<div class="btn-group map-btn pull-right">
+                    <button type="button" class="btn btn-sm btn-inverse" id="btn-save-plot">Save Plot</button>
+										<form id ="form-submit" action = "/missionplanner/plotting/{{ mission_id }}/" method="POST">
+											{% csrf_token %}
+											<input id="input-waypoints" type="hidden" name="waypoints" value="" />
+												<input type="hidden" name="mission_id" value="{{mission_id}}" />
+												<input id="btn-submit" type="submit" value="Better Button">
+										</form>
+								</div>
             </div>
 			<div class="map">
                 <div id="google-map-default" class="height-full width-full"></div>
@@ -165,7 +175,7 @@
 	<script>
 		$(document).ready(function() {
 			App.init();
-			PlottingGoogleMap.init();
+			PlottingGoogleMap.init({{ mission_id }});
 		});
 	</script>
 </body>
