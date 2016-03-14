@@ -63,9 +63,11 @@ def control(request, id):
         form = ChangeRobotForm()
         template = loader.get_template('control.html')
         tib = Robot.objects.get(id=id)
+        robot_online = check_robot_status(tib.ip_address)
         context = RequestContext(request, {
             'ruc': tib,
-            'form': form
+            'form': form,
+            'robot_online': robot_online
         })
         return HttpResponse(template.render(context))
 
@@ -165,3 +167,18 @@ def send_task_request(request):
                 response = e
 
     return HttpResponse(response)
+
+def check_robot_status(ip_address):
+    url_start = "http://"
+    url_end = ":8000/status"
+    url = url_start + ip_address + url_end
+    headers = {'X-Auth-Token': "supersecretpassword"}
+    data = 'status'
+    try:
+        r = requests.post(url,
+                          data=data,
+                          headers=headers)
+        status = r.text
+    except ConnectionError as e:
+        status = "Offline"
+    return status
