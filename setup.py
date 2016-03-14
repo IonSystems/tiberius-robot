@@ -289,7 +289,8 @@ if is_windows:
                     'pynmea',
                     'pyserial',
                     'falcon',
-                    'gunicorn']
+                    'gunicorn',
+                    'requests']
 
 else:
     # Parameters for Linux-based operating systems
@@ -301,7 +302,8 @@ else:
                     'smbus-cffi',
                     'falcon',
                     'gunicorn',
-                    'python-crontab']
+                    'python-crontab',
+                    'requests']
 
 setup(name='Tiberius',
       version='1.0',
