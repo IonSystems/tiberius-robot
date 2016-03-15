@@ -36,7 +36,7 @@ def sqlitecreate():
         sql.create("Test1", {'id':'int primary key', 'testint':'int', 'testfloat':'float','testtext':'varchar(100)'})
         print "created sql table"
     except SqliteDatabase.OperationalError:
-        print "sql Table4 already exists"
+        print "sql Table already exists"
 
 def insert():
     a = time.time()
@@ -61,7 +61,7 @@ def query():
 
     print "Time for querying sqlite database: " + str(b - a)
     print "Time for querying polyhedra database: " + str(c - b)
-    print result, result2
+    #print result, result2
 
 if __name__ == '__main__':
     drop_tables()

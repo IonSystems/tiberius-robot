@@ -181,7 +181,7 @@ class PolyhedraDatabase(Database):
         query += table_name
         if conditions:
             query += " " + self.__generate_conditions(conditions)
-        print query
+        #print query
         return query
 
     def __generate_conditions(self, conditions=None):
