@@ -3,33 +3,40 @@ import sys
 from tiberius.database.polyhedra_database import PolyhedraDatabase
 from tiberius.database.sqlite_database import SqliteDatabase
 
+#creating instance of class
 poly = PolyhedraDatabase("poly_tibby")
 sql = SqliteDatabase("sqlite_tibby")
 
+#delete tables if they already exist
 def drop_tables():
     try:
         poly.drop("Test")
+        print "dropped poly table"
     except PolyhedraDatabase.OperationalError:
-        print "Table already exists"
+        print "poly Table does not exist"
     except PolyhedraDatabase.NoSuchTableError:
-        print "Table2 already exists"
-
+        print "poly Table does not exist"
     try:
         sql.drop("Test1")
+        print "dropped sql table"
     except SqliteDatabase.OperationalError:
-        print "Table3 already exists"
+        print "sql Table does not exists"
 
+#Create a new test table with polyhedra named 'Test'
 def polycreate():
     try:
         poly.create("Test", {'id':'int primary key', 'col_int':'int', 'col_float':'float','col_text':'varchar(100)'})
+        print "created poly table"
     except PolyhedraDatabase.OperationalError:
-        print "Table5 already exists"
+        print "poly Table 'Test' already exists"
 
+#Create a new test table with sqlite named Test1
 def sqlitecreate():
     try:
         sql.create("Test1", {'id':'int primary key', 'testint':'int', 'testfloat':'float','testtext':'varchar(100)'})
+        print "created sql table"
     except SqliteDatabase.OperationalError:
-        print "Table4 already exists"
+        print "sql Table4 already exists"
 
 def insert():
     a = time.time()
