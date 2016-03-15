@@ -329,7 +329,7 @@ class ControlThread:
                                                                                }
                                                                            ]})
             time.sleep(0.5)
-
+    
     def diagnostics_thread(self):
         from tiberius.diagnostics.diagnostics_leds import diagnostics_leds
 
@@ -363,7 +363,10 @@ class ControlThread:
             #                                    'theta' : 'float', 'phi' : 'float', 'rho' : 'float',
             #                                    'timestamp':'float'})
             # arm_read_id += 1;
-            # ******************************************************************************************************************************
-
+            # *********************************************************************************************************************
+if __name__== "__main__":
+    
+    compass_thread()        
+        
 # for testing purposes - we call the functions.
 # functions should be called as threads so they can run concurrently.
