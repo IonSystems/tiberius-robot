@@ -1,8 +1,26 @@
 {% load staticfiles %}
 {% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-    {% endfor %}
-</ul>
+<script src="{% static 'color-admin/plugins/gritter/js/jquery.gritter.js' %}"></script>
+<script>
+  $(document).ready(function() {
+        {% for message in messages %}
+          image = '{% static 'tiberius/img/fa-warning_64_0_ff0000_none.png' %}';
+          {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+            level= "Error";
+          {% elif message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+            level = "Info"
+            image = '{% static 'tiberius/img/fa-info-circle_64_0_adbf3f_none.png' %}';
+          {% else %}
+            level = "Message";
+          {% endif %}
+          $.gritter.add({
+            title: level,
+            text: '{{ message}}',
+            image: image,
+            sticky: false,
+            time: ''
+          });
+      {% endfor %}
+  });
+</script>
 {% endif %}

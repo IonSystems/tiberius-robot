@@ -5,41 +5,52 @@ Author: Sean Ngu
 Website: http://www.seantheme.com/color-admin-v1.9/admin/
 */
 
-var handleGoogleMapSetting = function(mission_id) {
+// An array of MarkerStorage objects, representing each marker
+// and it's related tasks
+var marker_storage = [];
+
+function getWaypoints(){
+	return JSON.stringify(marker_storage);
+}
+
+function onTaskFormSubmit(form){
+	// Extract useful data from the for DOM
+	var task_id = form.task.value;
+	var marker_index = form.marker_index.value;
+
+	// Add the task to correct marker
+	marker_storage[marker_index].addTask(task_id);
+
+	// Update our
+	document.getElementById("input-waypoints").value = getWaypoints();
+
+	// Always return false to prevent page reload after form submit
+	return false;
+}
+
+function undo(){
+	marker_storage.pop();
+	handleGoogleMapSetting.poly.pop();
+	return marker_storage;
+}
+
+var handleGoogleMapSetting = function(mission_id, json_tasks) {
 	"use strict";
 	var map;
 	var poly;
-	var stuff = [];
 
-	function getWaypoints(){
-		return JSON.stringify(stuff);
+
+
+
+	function getTasks(){
+		return json_tasks;
 	}
 
-	// $('#btn-submit').click(function(){
-	//
-	// }
 
-	$('#btn-save-plot').click(function(){
-		var data = stuff;
-		var URL = "/missionplanner/plotting/" + mission_id + "/";
-		$.ajax({
-				url: URL,
-				type: 'POST',
-				data: {
-								'waypoints': JSON.stringify(data),
-								'mission_id': mission_id
-							},
-				success: function (result) {
-					alert(result);
-					document.open();
-					document.write(result);
-					document.close();
-				},
-				error: function(error_msg){
-					alert("ERROR");
-				}
-		});
-	});
+
+	function onTaskAdd(task_id, marker_index){
+		marker_storage[marker_index].addTask(task_id);
+	}
 
 	function MarkerStorage(id, latLng, distance){
 		this.id = id;
@@ -69,6 +80,8 @@ var handleGoogleMapSetting = function(mission_id) {
 		map = new google.maps.Map(document.getElementById('google-map-default'), mapOptions);
 		poly.setMap(map);
 		map.addListener('click', addLatLng);
+
+
 	}
 
 	function addLatLng(event) {
@@ -78,12 +91,13 @@ var handleGoogleMapSetting = function(mission_id) {
 	  // and it will automatically appear.
 
 	  path.push(event.latLng);
-
+		var label = charify(path.getLength() - 1)
 	  // Add a new marker at the new plotted point on the polyline.
 	  var marker = new google.maps.Marker({
 	    position: event.latLng,
 	    title: '#' + path.getLength(),
 	    map: map,
+			label: label,
 			draggable: false
 	  });
 
@@ -95,29 +109,60 @@ var handleGoogleMapSetting = function(mission_id) {
 			var distance = 0;
 		}
 
+		// Create a list of selectable tasks for dropdown
+		var task_options = [];
+		var i;
+		for(i = 0; i < json_tasks.length; i++){
+			var task = json_tasks[i];
+			task_options.push('<option value="' + task.id + '">' + task.name + '</option>')
+		}
+		var button_id = "btn-add-task-" + path.getLength();
 		var contentwindow  = "Hello from " + path.getLength() + "<br>" +
 											   "Distance: " + distance + "<br>" +
 												 "Latitude: " + event.latLng.lat() + "<br>" +
 												 "Longitude: " + event.latLng.lng() + "<br>" +
-												 '<button type="button">Add Task</button>' +
-												 '<button id="rm-' + path.getLength() + '" type="button">Remove Waypoint</button>';
+												 '<form action="#" onsubmit="return onTaskFormSubmit(this);" id = "frm-add-task' + path.getLength() + '">' +
+												 '<input name="marker_index" type="hidden" value="' + (path.getLength() - 1) + '">' +
+												 '<select name="task" class="sel-add-task">' +
+												 task_options +
+												 '</select>' +
+												 '<button type="submit" id="' + button_id + '" class="btn-add-task" type="button">Add Task</button>'
+												 '</form>';
 
 		var infowindow = new google.maps.InfoWindow({
 		      content: contentwindow
 		  });
+
+			// google.maps.event.addListener(infowindow, 'click', function(){
+	    //    alert("infi ");
+	    //  });
+
+			// $('button#btn-add-task-' + path.getLength()).submit(function(e){
+			// 	alert("Clicked;");
+			// 	var task_id = $('.sel-add-task').value();
+			// 	var marker_index =
+			// 	onTaskAdd(task_id, marker_index);
+			// });
+
+		// document.getElementById(button_id).addEventListener("click", function(){
+		// 	alert("hahsh");
+		// });
 
 
 		google.maps.event.addListener(marker, 'click', function(){
        infowindow.open(map, marker);
      });
 
-		 //Add all info to stuff array
+		 //Add all info to marker_storage array
 		 var marker_store = new MarkerStorage(path.getLength(), event.latLng, distance);
-		 marker_store.addTask(0);
- 		stuff.push(marker_store);
-		//document.forms[0].elements["waypoints"].value = stuff;
+		 // marker_store.addTask(0);
+ 		marker_storage.push(marker_store);
+		//document.forms[0].elements["waypoints"].value = marker_storage;
 		document.getElementById("input-waypoints").value = getWaypoints();
 	}
+
+
+
 	google.maps.event.addDomListener(window, 'load', initialize);
 
 	$(window).resize(function() {
@@ -174,12 +219,12 @@ var handleGoogleMapSetting = function(mission_id) {
 	});
 };
 
-var PlottingGoogleMap = function (mission_id) {
+var PlottingGoogleMap = function (mission_id, json_tasks) {
 	"use strict";
     return {
         //main function
-        init: function (mission_id) {
-            handleGoogleMapSetting(mission_id);
+        init: function (mission_id, json_tasks) {
+            handleGoogleMapSetting(mission_id, json_tasks);
         }
     };
 }();

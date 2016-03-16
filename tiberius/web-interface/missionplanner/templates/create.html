@@ -207,27 +207,6 @@ $(document).ready(function() {
 	FormPlugins.init();
 });
 </script>
-
-{% if messages %}
-<script>
-	$(document).ready(function() {
-		    {% for message in messages %}
-					image = '{% static 'tiberius/img/fa-warning_64_0_ff0000_none.png' %}';
-					{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
-						level= "Error";
-					{% else %}
-						level = "Message";
-					{% endif %}
-					$.gritter.add({
-						title: level,
-						text: '{{ message}}',
-						image: image,
-						sticky: false,
-						time: ''
-					});
-	    {% endfor %}
-	});
-</script>
-{% endif %}
+	{% include "messages.html" %}
 </body>
 </html>

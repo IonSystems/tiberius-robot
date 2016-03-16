@@ -7,7 +7,7 @@
 <head>
 	{% include "head.html" %}
 	<title>Manage Missions</title>
-
+	<link href="{% static 'color-admin/plugins/gritter/css/jquery.gritter.css' %}" rel="stylesheet" />
 </head>
 <body>
 	<!-- begin #page-loader -->
@@ -82,7 +82,10 @@
 	                                        <td>{{ mission.description }}</td>
 	                                        <td>-</td>
 	                                        <td>-</td>
-	                                        <td><a href="/missionplanner/view_mission/{{ mission.id }}/" class="btn btn-primary btn-sm m-r-5">View</a></td>
+	                                        <td>
+																						<a href="/missionplanner/view_mission/{{ mission.id }}/" class="btn btn-primary btn-sm m-r-5">View</a>
+																						<a href="/missionplanner/delete_mission/{{ mission.id }}/" class="btn btn-primary btn-sm m-r-5">Delete</a>
+																					</td>
 	                                    </tr>
 																		{% endfor %}
                                 </tbody>
@@ -94,6 +97,7 @@
                 <!-- end col-10 -->
             </div>
             <!-- end row -->
+
 		</div>
 		<!-- end #content -->
 
@@ -122,5 +126,6 @@
 			TableManageResponsive.init();
 		});
 	</script>
+	{% include "messages.html" %}
 </body>
 </html>

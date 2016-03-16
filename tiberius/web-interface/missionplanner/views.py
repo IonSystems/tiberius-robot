@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
-
+from django.utils.safestring import mark_safe
 from django.template import RequestContext, loader
 from django.contrib.auth.decorators import login_required
 
@@ -11,14 +11,19 @@ from .models import MissionObjective
 from .models import Waypoint
 from .forms import MissionCreateForm
 
+from django.views.generic.edit import DeleteView
+from django.core.urlresolvers import reverse_lazy
 from django.contrib import messages
 import json
 
 @login_required(login_url='/users/login/')
-def manage(request):
+def manage_mission(request):
 
-    template = loader.get_template('manage.html')
+    template = loader.get_template('manage_missions.html')
     missions = Mission.objects.all()
+    if not missions:
+        messages.add_message(request, messages.INFO,
+                             'There are currently no missions to display, create a mission first.')
     context = RequestContext(request, {
         'missions': missions,
     })
@@ -41,7 +46,7 @@ def create(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
-        form = MissionCreateForm(request.POST)
+        form = MissionCreateForm(request.user, request.POST)
         # check whether it's valid:
         if form.is_valid():
             # process the data in form.cleaned_data as required
@@ -58,35 +63,49 @@ def create(request):
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        form = MissionCreateForm()
+        form = MissionCreateForm(request.user)
 
     return render(request, 'create.html', {'form': form})
 
 @login_required(login_url='/users/login/')
 def plotting(request, id):
+    # Set template and context for inital view.
+    template = loader.get_template('plotting.html')
+    json_tasks = json.dumps([task.dict() for task in Task.objects.all()])
+    context = RequestContext(request, {
+        'mission_id': id,
+        'json_tasks': mark_safe(json_tasks),
+    })
+    # Return the initial view for a GET request.
     if request.method == 'GET':
-        template = loader.get_template('plotting.html')
-        context = RequestContext(request, {
-            'mission_id': id,
-        })
         return HttpResponse(template.render(context))
 
+    # A POST request is likely to be the plotting button form
     if request.method == 'POST':
-        waypoints = json.loads(request.POST['waypoints'])
-        mission_id = json.loads(request.POST['mission_id'])
+        try:
+            waypoints = json.loads(request.POST['waypoints'])
+            mission_id = int(json.loads(request.POST['mission_id']))
+        except ValueError as e:
+            # Notify the user that points must be plotted,
+            # respond with plotting view.
+            messages.add_message(request, messages.WARNING,
+                                 'No plots provided!')
+            return HttpResponse(template.render(context))
 
         # A few checks to make sure the request is legit.
-        if(mission_id != id):
+        if(mission_id != int(id)):
             messages.add_message(request, messages.WARNING,
                                  'Continuity error in request, aborting.')
-            return render(request, 'plotting.html', {'form': "meh"})
+            return HttpResponse(template.render(context))
 
         mission = Mission.objects.get(pk=mission_id)
 
         print "Waypoints: " + str(waypoints)
+        order_counter = 1
         # Iterate through all waypoints
         for item in waypoints:
             print "Item: " + str(item)
+
             # Create a waypoint for each waypoint in data
             waypoint = Waypoint(
                 latitude=item['latLng']['lat'],
@@ -95,6 +114,7 @@ def plotting(request, id):
             waypoint.save()
             waypoint_id = waypoint.id
 
+            # Extract all the objectives and save them
             for task_id in item['tasks']:
                 # Get the matching task
                 task = Task.objects.get(task_id=task_id)
@@ -104,13 +124,23 @@ def plotting(request, id):
                     mission=mission,
                     waypoint=waypoint,
                     task=task,
-                    order=0)
+                    order=order_counter)
                 objective.save()
-                objective_id = objective.id
+
+            # The waypoint has no tasks, so don't set task the task.
+            else:
+                # Create a mission objective for each waypoint
+                objective = MissionObjective(
+                    mission=mission,
+                    waypoint=waypoint,
+                    order=order_counter)
+                objective.save()
+            order_counter += 1
 
             # objective.data_to_class(item, mission_id)
-
-        return redirect(request, 'view_mission/' + str(mission_id) + "/", {'request': request.POST})
+        messages.add_message(request, messages.SUCCESS,
+                             'The mission waypoints have been saved!')
+        return redirect(mission)
     else:
         messages.add_message(request, messages.WARNING,
                              'Invalid request, please check.')
@@ -121,9 +151,12 @@ def view_mission(request, id):
     template = loader.get_template('view_mission.html')
     mission = Mission.objects.get(pk=id)
     objectives = MissionObjective.objects.filter(mission=id)
+    json_waypoints = json.dumps([ob.waypoint.dict() for ob in objectives])
+    print json_waypoints
     context = RequestContext(request, {
         'mission': mission,
         'objectives': objectives,
+        'json_waypoints': mark_safe(json_waypoints),
     })
     return HttpResponse(template.render(context))
 
@@ -136,28 +169,14 @@ def view_task(request, id):
         'task': task,
     })
     return HttpResponse(template.render(context))
-        # create a form instance and populate it with data from the request:
-        # form = MissionCreateForm(request.POST)
-        # # check whether it's valid:
-        # if form.is_valid():
-        #     # process the data in form.cleaned_data as required
-        #     # ...
-        #     # redirect to a new URL:
-        #     form.save()
-        #     return render(request, 'plotting.html', {'form': form})
-        #
-        # else:
-        #     messages.add_message(request, messages.WARNING,
-        #                          'Invalid form data, please check.')
-        #     return render(request, 'create.html', {'form': form})
 
 
-# def create(request):
-#
-#     template = loader.get_template('create.html')
-#
-#
-#     context = RequestContext(request, {
-#         'missions': "",
-#     })
-#     return HttpResponse(template.render(context))
+class MissionDeleteView(DeleteView):
+    """
+    View to delete a mission, only allows the mission creator to delete mission.
+    """
+    success_message = "Mission deleted successfully."
+
+    def get_queryset(self):
+        qs = super(MissionDeleteView, self).get_queryset()
+        return qs.filter(creator=self.request.user)
