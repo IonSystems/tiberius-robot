@@ -25,16 +25,20 @@ def drop_tables():
 #Create a new test table with polyhedra named 'Test'
 def polycreate():
     try:
+        a = time.time()
         poly.create("Test", {'id':'int primary key', 'col_int':'int', 'col_float':'float','col_text':'varchar(100)'})
-        print "created poly table"
+        b = time.time()
+        print "Time to create poly database: " + str(b - a)
     except PolyhedraDatabase.OperationalError:
         print "poly Table 'Test' already exists"
 
 #Create a new test table with sqlite named Test1
 def sqlitecreate():
     try:
+        a = time.time()
         sql.create("Test1", {'id':'int primary key', 'testint':'int', 'testfloat':'float','testtext':'varchar(100)'})
-        print "created sql table"
+        b = time.time()
+        print "Time to create sql database: " + str(b - a)
     except SqliteDatabase.OperationalError:
         print "sql Table already exists"
 
@@ -49,6 +53,45 @@ def insert():
 
     print "Time to insert into sqlite database: " + str(b - a)
     print "Time to insert into polyhedra database: " + str(c - b)
+
+def update():
+    a = time.time()
+    for i in range (0, 100)
+    update("Test1",
+        {
+            'testint': i+5,
+            'testfloat': i*0.725,
+            'testtext' : "i is currently"  + str(i)
+        },
+        {
+            'clause':'WHERE',
+            'data': [
+                {
+                    'column' : 'id',
+                    'assertion' : '=',
+                    'value': i
+                }
+            ]
+        })
+    b = time.time()
+    for j in range (0, 100)
+    poly.update("Test",
+                {
+                'col_int': j+5,
+                'col_float': j*0.725,
+                'col_text' : "j is currently"  + str(i)
+                }
+                {'clause': 'WHERE',
+                 'data': [
+                     {
+                         'column': 'id',
+                         'assertion': '=',
+                         'value': i
+                     }
+                 ]})
+    c = time.time()
+    print "Time to update into poly database: " + str(b - a)
+    print "Time to update into sqlite database: " + str(c - b)
 
 def query():
     a = time.time()
