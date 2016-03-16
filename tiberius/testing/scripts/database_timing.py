@@ -42,63 +42,65 @@ def sqlitecreate():
     except SqliteDatabase.OperationalError:
         print "sql Table already exists"
 
+#insert 1000 test data
 def insert():
     a = time.time()
-    for i in range(0, 100):
-        sql.insert("Test1", {'id':i, 'testint':i+3, 'testfloat':i*0.245,'testtext':"i is " + str(i)})
+    for i in range(0, 1000):
+        poly.insert("Test", {'id':i, 'col_int':i+3, 'col_float':i*0.245,'col_text':"i is " + str(i)})
     b = time.time()
-    for j in range(0, 100):
-        poly.insert("Test", {'id':j, 'col_int':j+3, 'col_float':j*0.245,'col_text':"j is " + str(j)})
+    for j in range(0, 1000):
+        sql.insert("Test1", {'id':j, 'testint':j+3, 'testfloat':j*0.245,'testtext':"j is " + str(j)})
     c = time.time()
 
-    print "Time to insert into sqlite database: " + str(b - a)
-    print "Time to insert into polyhedra database: " + str(c - b)
+    print "Time to insert into polyhedra database: " + str( (b - a) /1000 ) #divide by 1000 to take average
+    print "Time to insert into sqlite database: " + str( (c - b) /1000 )
 
+#update all the data stored
 def update():
     a = time.time()
-    for i in range (0, 100)
-    update("Test1",
-        {
-            'testint': i+5,
-            'testfloat': i*0.725,
-            'testtext' : "i is currently"  + str(i)
-        },
-        {
-            'clause':'WHERE',
-            'data': [
-                {
-                    'column' : 'id',
-                    'assertion' : '=',
-                    'value': i
-                }
-            ]
-        })
+    for i in range (0, 1000)
+        poly.update("Test",
+                    {
+                    'col_int': i+5,
+                    'col_float': i*0.725,
+                    'col_text' : "i is currently"  + str(i)
+                    }
+                    {'clause': 'WHERE',
+                     'data': [
+                         {
+                             'column': 'id',
+                             'assertion': '=',
+                             'value': i
+                         }
+                     ]})
     b = time.time()
-    for j in range (0, 100)
-    poly.update("Test",
-                {
-                'col_int': j+5,
-                'col_float': j*0.725,
-                'col_text' : "j is currently"  + str(i)
-                }
-                {'clause': 'WHERE',
-                 'data': [
-                     {
-                         'column': 'id',
-                         'assertion': '=',
-                         'value': i
-                     }
-                 ]})
+    for j in range (0, 1000)
+        sql.update("Test1",
+            {
+                'testint': j+5,
+                'testfloat': j*0.725,
+                'testtext' : "j is currently"  + str(j)
+            },
+            {
+                'clause':'WHERE',
+                'data': [
+                    {
+                        'column' : 'id',
+                        'assertion' : '=',
+                        'value': j
+                    }
+                ]
+            })
     c = time.time()
-    print "Time to update into poly database: " + str(b - a)
-    print "Time to update into sqlite database: " + str(c - b)
+    print "Time to update into poly database: " + str((b - a) /1000)
+    print "Time to update into sqlite database: " + str((c - b) /1000)
 
 def query():
     a = time.time()
-    for i in range (0, 50):
+    for i in range (0, 1000):
         result = sql.query("Test1", "*")
     b = time.time()
-    for i in range (0, 50):
+    for i in range (0, 1000):
         result2 = poly.query("Test", "*")
     c = time.time()
 
