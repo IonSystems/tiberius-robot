@@ -192,7 +192,7 @@ class PostInstallDependencies(install):
         self.install_pyodbc("pi")
         self.install_poly_driver("vendor/polyhedra-driver/raspi/linux/raspi/bin/libpolyod32.so", "~/libpolyod32.so")
         self.install_poly("vendor/polyhedra-lite/raspi/", "~/poly9.0/", "pi")
-        self.install_poly_startup_task()
+        # self.install_poly_startup_task()
 
     def install_poly_linux(self):
         self.install_odbc("linux")

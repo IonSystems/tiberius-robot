@@ -58,13 +58,13 @@ def insert():
 #update all the data stored
 def update():
     a = time.time()
-    for i in range (0, 1000)
+    for i in range (0, 1000):
         poly.update("Test",
                     {
                     'col_int': i+5,
                     'col_float': i*0.725,
                     'col_text' : "i is currently"  + str(i)
-                    }
+                    },
                     {'clause': 'WHERE',
                      'data': [
                          {
@@ -74,7 +74,7 @@ def update():
                          }
                      ]})
     b = time.time()
-    for j in range (0, 1000)
+    for j in range (0, 1000):
         sql.update("Test1",
             {
                 'testint': j+5,
@@ -104,8 +104,8 @@ def query():
         result2 = poly.query("Test", "*")
     c = time.time()
 
-    print "Time for querying sqlite database: " + str(b - a)
-    print "Time for querying polyhedra database: " + str(c - b)
+    print "Time for querying sqlite database: " + str((b - a)/1000)
+    print "Time for querying polyhedra database: " + str((c - b)/1000)
     #print result, result2
 
 if __name__ == '__main__':
@@ -113,4 +113,5 @@ if __name__ == '__main__':
     polycreate()
     sqlitecreate()
     insert()
+    update()
     query()
