@@ -10,15 +10,19 @@ sql = SqliteDatabase("sqlite_tibby")
 #delete tables if they already exist
 def drop_tables():
     try:
+        a = time.time()
         poly.drop("Test")
-        print "dropped poly table"
+        b = time.time()
+        print "Time to drop poly database: " + str(b - a)
     except PolyhedraDatabase.OperationalError:
         print "poly Table does not exist"
     except PolyhedraDatabase.NoSuchTableError:
         print "poly Table does not exist"
     try:
+        a = time.time()
         sql.drop("Test1")
-        print "dropped sql table"
+        b = time.time()
+        print "Time to drop sql database: " + str(b - a)
     except SqliteDatabase.OperationalError:
         print "sql Table does not exists"
 
@@ -52,8 +56,8 @@ def insert():
         sql.insert("Test1", {'id':j, 'testint':j+3, 'testfloat':j*0.245,'testtext':"j is " + str(j)})
     c = time.time()
 
-    print "Time to insert into polyhedra database: " + str( (b - a) /1000 ) #divide by 1000 to take average
-    print "Time to insert into sqlite database: " + str( (c - b) /1000 )
+    print "Average time to insert into polyhedra database: " + str( (b - a) /1000 ) #divide by 1000 to take average
+    print "Average time to insert into sqlite database: " + str( (c - b) /1000 )
 
 #update all the data stored
 def update():
@@ -92,8 +96,8 @@ def update():
                 ]
             })
     c = time.time()
-    print "Time to update into poly database: " + str((b - a) /1000)
-    print "Time to update into sqlite database: " + str((c - b) /1000)
+    print "Average time to update into poly database: " + str((b - a) /1000)
+    print "Average time to update into sqlite database: " + str((c - b) /1000)
 
 def query():
     a = time.time()
@@ -104,14 +108,16 @@ def query():
         result2 = poly.query("Test", "*")
     c = time.time()
 
-    print "Time for querying sqlite database: " + str((b - a)/1000)
-    print "Time for querying polyhedra database: " + str((c - b)/1000)
+    print "Average time for querying sqlite database: " + str((b - a)/1000)
+    print "Average time for querying polyhedra database: " + str((c - b)/1000)
     #print result, result2
 
 if __name__ == '__main__':
     drop_tables()
+    print "start test"
     polycreate()
     sqlitecreate()
     insert()
     update()
     query()
+    drop_tables()
