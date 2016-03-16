@@ -194,7 +194,8 @@ class Astar(object):
 
         # find a path through the current grid
         self.solve()
+        path = self.get_path()
 
-
+        self.gps.pointToPoint()
         # need loop to update and get to end
         return
