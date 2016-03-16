@@ -5,7 +5,7 @@ from tiberius.control.sensors import Ultrasonic
 from tiberius.control.sensors import Compass
 from tiberius.control.sensors import GPS
 import traceback
-
+import numpy as np
 '''
     Responsible for creating threads to communicate with the database, in order to control Tiberius.
 '''
@@ -65,6 +65,8 @@ class ControlThread:
             print "GPS table already exists"
 
     def polycreate_compass(self):
+
+
         try:
             self.poly.drop(self.COMPASS_TABLE)
         except PolyhedraDatabase.NoSuchTableError:
@@ -145,20 +147,30 @@ class ControlThread:
         ultrasonic = Ultrasonic()
         ultrasonic_read_id = 0
         valid = False
+        previous_values = [[]]
         while True:
             try:
                 # TODO: add in code to update table by overwriting 0th value and rolling back round
 
                 ultra_data = ultrasonic.senseUltrasonic()
-
-                any_valid_data = 0
-                validity = [0, 0, 0, 0, 0, 0]
                 for i in range(0, 5):
-                    if ultra_data['valid'][i] is False:
-                        validity[i] = 0
+                    previous_values[i].append(ultra_data[i])
+                    if len(previous_values) >= 10:
+                        previous_values.pop(0)
+
+                    standard_deviation = np.std(np.diff(np.asarray(previous_values[i])))
+                    if standard_deviation > 10:
+                        raise Exception('invalid data')
                     else:
-                        validity[i] = 1
-                        any_valid_data = 1
+                        any_valid_data = 0
+                        validity = [0, 0, 0, 0, 0, 0]
+
+                        for i in range(0, 5):
+                            if ultra_data['valid'][i] is False:
+                                validity[i] = 0
+                            else:
+                                validity[i] = 1
+                                any_valid_data = 1
 
                 if not valid:
                     valid = True
@@ -200,7 +212,7 @@ class ControlThread:
                                                           'timestamp': time.time()})
                 ultrasonic_read_id += 1
                 time.sleep(0.2)
-            except Exception as e:
+            except Exception as e:              # set to invalid
                 if valid:
                     valid = False
                     self.poly.update(self.VALIDITY_TABLE, {'ultrasonics': any_valid_data},
@@ -272,13 +284,26 @@ class ControlThread:
         compass = Compass()
         compass_read_id = 0
         valid = False
+        previous_values = []
         while True:
             try:
+                # validate compass data by differentiating (shouldn't change too quickly)
                 heading = compass.headingNormalized()
-                self.poly.insert(self.COMPASS_TABLE,
-                                 {'id': compass_read_id, 'heading': heading, 'timestamp': time.time()})
+                # check if the compass data makes sense - common sense check
 
-                compass_read_id += 1
+                previous_values.append(heading)
+                if len(previous_values) >= 10:
+                    previous_values.pop(0)
+
+                standard_deviation = np.std(np.diff(np.asarray(previous_values)))
+                if standard_deviation > 10:
+                    raise Exception('invalid data')
+                else:
+                    self.poly.insert(self.COMPASS_TABLE,
+                                     {'id': compass_read_id, 'heading': heading, 'timestamp': time.time()})
+
+                    compass_read_id += 1
+
                 if not valid:
                     valid = True
                     self.poly.update(self.VALIDITY_TABLE, {'compass': 1}, {'clause': 'WHERE',
@@ -294,6 +319,7 @@ class ControlThread:
                 print e
                 if valid:
                     valid = False
+
                     self.poly.update(self.VALIDITY_TABLE, {'compass': 0}, {'clause': 'WHERE',
                                                                            'data': [
                                                                                {
@@ -303,7 +329,7 @@ class ControlThread:
                                                                                }
                                                                            ]})
             time.sleep(0.5)
-
+    
     def diagnostics_thread(self):
         from tiberius.diagnostics.diagnostics_leds import diagnostics_leds
 
@@ -337,7 +363,10 @@ class ControlThread:
             #                                    'theta' : 'float', 'phi' : 'float', 'rho' : 'float',
             #                                    'timestamp':'float'})
             # arm_read_id += 1;
-            # ******************************************************************************************************************************
-
+            # *********************************************************************************************************************
+if __name__== "__main__":
+    
+    compass_thread()        
+        
 # for testing purposes - we call the functions.
 # functions should be called as threads so they can run concurrently.

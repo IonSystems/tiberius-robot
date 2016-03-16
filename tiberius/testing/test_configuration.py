@@ -1,20 +1,7 @@
 import unittest
 import sys
 import socket
-import tiberius.config.config_parser
 from tiberius.config.config_parser import TiberiusConfigParser
-
-
-class ChangeIPAddress(unittest.TestCase):
-
-    def runTest(self):
-        original = TiberiusConfigParser.getIPAddress()
-        new = '10.8.8.21'
-        TiberiusConfigParser.setIPAddress(new)
-        check = TiberiusConfigParser.getIPAddress()
-        self.assertEquals(new, check)
-        return
-
 
 class ValidIPAddress(unittest.TestCase):
 

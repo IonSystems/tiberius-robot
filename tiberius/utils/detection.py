@@ -3,7 +3,7 @@ import re
 import os
 
 '''
-    This detction method is based on the Adafruit GPIO library,
+    This detection method is based on the Adafruit GPIO library,
     that can be found here:
     https://github.com/adafruit/Adafruit_Python_GPIO/blob/master/Adafruit_GPIO/Platform.py
 '''
@@ -42,6 +42,9 @@ def i2c_available():
     except:
         return False
     return True
+
+def detect_file(filename):
+    return os.path.isfile(filename)
 
 if __name__ == "__main__":
     print 'Raspberry Pi detected?: ' + str(detect_pi())
