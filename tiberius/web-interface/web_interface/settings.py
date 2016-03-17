@@ -25,7 +25,7 @@ SECRET_KEY = '3$62&)bqg!2^zp_0a(b58$!0mhs5-xhaxn(h-fhx&1dj8zjd74'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -60,7 +60,10 @@ ROOT_URLCONF = 'web_interface.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'web_interface/templates/color-admin')],
+        'DIRS': [
+                 os.path.join(BASE_DIR, 'web_interface/templates/color-admin'),
+                 os.path.join(BASE_DIR, 'web_interface/templates/color-admin/error-pages'),
+                ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
