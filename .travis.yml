@@ -7,7 +7,7 @@ python:
 
 # Command to install dependencies.
 install:
-  - python setup.py install
+  - sudo python setup.py install
 
 # Command to start the tests.
 script: coverage run tiberius/testing/run_tests.py
