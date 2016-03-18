@@ -42,6 +42,8 @@ def collision_detection():
 
 if __name__ == "__main__":
 
+    pygame.init()
+
     while(True):
 
         for event in pygame.event.get():
