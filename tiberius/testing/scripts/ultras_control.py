@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ #!/usr/bin/env python
 import sys
 from tiberius.control.control import Control
 from tiberius.control.actuators import MotorState
@@ -45,12 +45,12 @@ if __name__ == "__main__":
     while(True):
 
         for event in pygame.event.get():
-        c.motors.setSpeedPercent(50)
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
-                c.motors.turnLeft()
-            elif event.key == pygame.K_RIGHT:
-                c.motors.turnRight()
+            c.motors.setSpeedPercent(50)
+       	    if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    c.motors.turnLeft()
+           	elif event.key == pygame.K_RIGHT:
+               	    c.motors.turnRight()
         '''
 
         key = getKey()
