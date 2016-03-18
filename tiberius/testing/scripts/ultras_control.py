@@ -7,6 +7,7 @@ import tty
 import termios
 import time
 import logging
+import pygame
 d_logger = logging.getLogger('tiberius.testing.keyboard_control')
 
 
@@ -25,24 +26,31 @@ def getKey():
     return ch
 
 def collision_detection();
-        # Use ultrasonics to prevent collisions.
-        if ultras.frontHit() and c.motors.state == MotorState.FORWARD:
-            c.motors.stop()
+    # Use ultrasonics to prevent collisions.
+    if ultras.frontHit() and c.motors.state == MotorState.FORWARD:
+        c.motors.stop()
 
-        if ultras.rearHit() and c.motors.state == MotorState.BACKWARD:
-            c.motors.stop()
+    if ultras.rearHit() and c.motors.state == MotorState.BACKWARD:
+        c.motors.stop()
 
-        # If we are turning, any edge could be hit, so check all sensors
-        if (ultras.anythingHit() and
-            (c.motors.state == MotorState.RIGHT or
-            c.motors.state == MotorState.LEFT)):
-            c.motors.stop()
+    # If we are turning, any edge could be hit, so check all sensors
+    if (ultras.anythingHit() and
+        (c.motors.state == MotorState.RIGHT or
+        c.motors.state == MotorState.LEFT)):
+        c.motors.stop()
 
 if __name__ == "__main__":
 
     while(True):
 
-        collision_detection()
+
+        c.motors.setSpeedPercent(50)
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                c.motors.turnLeft()
+            elif event.key == pygame.K_RIGHT:
+                c.motors.turnRight()
+        '''
 
         key = getKey()
         d_logger.debug("Key %s pressed", key)
@@ -76,3 +84,17 @@ if __name__ == "__main__":
         elif(key == ' '):
             c.motors.stop()
             time.sleep(0.1)
+
+        # Use ultrasonics to prevent collisions.
+        if ultras.frontHit() and c.motors.state == MotorState.FORWARD:
+            c.motors.stop()
+
+        if ultras.rearHit() and c.motors.state == MotorState.BACKWARD:
+            c.motors.stop()
+
+        # If we are turning, any edge could be hit, so check all sensors
+        if (ultras.anythingHit() and
+            (c.motors.state == MotorState.RIGHT or
+            c.motors.state == MotorState.LEFT)):
+            c.motors.stop()
+        '''
