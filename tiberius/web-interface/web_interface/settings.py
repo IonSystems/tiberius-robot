@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'missionplanner',
     'users',
     'fleet',
+    'dashboard'
 )
 
 MIDDLEWARE_CLASSES = (

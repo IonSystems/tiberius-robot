@@ -26,8 +26,9 @@ import os
 import sys
 from tiberius.logger import logger
 import logging
-import smbus_database as db
+# import smbus_database as db
 from util import validate
+
 
 class SMBus(object):
     """SMBus([bus]) -> SMBus
@@ -57,7 +58,7 @@ class SMBus(object):
         bus = int(bus)
         path = "/dev/i2c-%d" % (bus,)
         if len(path) >= MAXPATH:
-                raise OverflowError("Bus number is invalid.")
+            raise OverflowError("Bus number is invalid.")
         try:
             self.logger.info('Dummy smbus opened with path %s', path)
         except OSError as e:
@@ -101,7 +102,8 @@ class SMBus(object):
 
         Perform SMBus Read Byte Data transaction.
         """
-        value = db.get_value(addr, cmd)
+        # value = db.get_value(addr, cmd)
+        value = 0
         self.logger.info('Read byte data (%s, %s)', addr, cmd)
         return value
 
@@ -111,7 +113,7 @@ class SMBus(object):
 
         Perform SMBus Write Byte Data transaction.
         """
-        db.set_value(addr, cmd, val)
+        # db.set_value(addr, cmd, val)
         self.logger.info('Write byte data (%s, %s, %s)', addr, cmd, val)
 
     @validate(addr=int, cmd=int)

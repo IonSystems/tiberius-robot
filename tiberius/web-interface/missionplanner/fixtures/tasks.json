@@ -1,0 +1,64 @@
+[{
+    "model": "missionplanner.task",
+    "pk": 1,
+    "fields": {
+        "task_id": 0,
+        "name": "Drive Forwards U.W",
+        "description": "Drive forwards until a front obstacle is detected.",
+        "supported_platforms": [1, 2, 3, 4]
+    }
+}, {
+    "model": "missionplanner.task",
+    "pk": 2,
+    "fields": {
+        "task_id": 1,
+        "name": "Drive Backwards U.W",
+        "description": "Drive forwards until a rear obstacle is detected.",
+        "supported_platforms": [1, 2, 3, 4]
+    }
+}, {
+    "model": "missionplanner.task",
+    "pk": 3,
+    "fields": {
+        "task_id": 2,
+        "name": "Manual Drive",
+        "description": "Enable manual driving mode until instructed by the remote operator to continue with the mission.",
+        "supported_platforms": [1, 2, 3, 4]
+    }
+}, {
+    "model": "missionplanner.task",
+    "pk": 4,
+    "fields": {
+        "task_id": 3,
+        "name": "30 Second Stationary Pause",
+        "description": "Remain stationary with all sub-systems operating in idle, until a 30 second time period has expired.",
+        "supported_platforms": [1, 2, 3, 4]
+    }
+}, {
+    "model": "missionplanner.task",
+    "pk": 5,
+    "fields": {
+        "task_id": 4,
+        "name": "360 Degree Spin",
+        "description": "Rotate on the spot for a full 360 degree turn.",
+        "supported_platforms": [1, 2, 3, 4]
+    }
+}, {
+    "model": "missionplanner.task",
+    "pk": 6,
+    "fields": {
+        "task_id": 5,
+        "name": "Wait for user input",
+        "description": "Remain stationary, with all subsystems idling until a user input is detected from any human interface.",
+        "supported_platforms": [1, 2, 3, 4]
+    }
+}, {
+    "model": "missionplanner.task",
+    "pk": 7,
+    "fields": {
+        "task_id": 6,
+        "name": "LIDAR Reading",
+        "description": "Take a 360 degree LIDAR reading and store to database.",
+        "supported_platforms": [1, 2, 3, 4]
+    }
+}]

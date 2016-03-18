@@ -20,35 +20,43 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Mission',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True,
+                                        primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=50)),
                 ('description', models.CharField(max_length=500, null=True)),
                 ('estimated_duration', models.DurationField()),
-                ('creator', models.ForeignKey(default=b'0', on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('robot', models.ForeignKey(default=b'0', on_delete=django.db.models.deletion.CASCADE, to='fleet.Robot')),
+                ('creator', models.ForeignKey(
+                    default=b'0', on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('robot', models.ForeignKey(default=b'0',
+                                            on_delete=django.db.models.deletion.CASCADE, to='fleet.Robot')),
             ],
         ),
         migrations.CreateModel(
             name='MissionObjective',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True,
+                                        primary_key=True, serialize=False, verbose_name='ID')),
                 ('order', models.IntegerField()),
-                ('mission', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='missionplanner.Mission')),
+                ('mission', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='missionplanner.Mission')),
             ],
         ),
         migrations.CreateModel(
             name='Task',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True,
+                                        primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=50)),
                 ('description', models.CharField(max_length=50, null=True)),
-                ('supported_platforms', models.ManyToManyField(related_name='task_supported_platforms', to='fleet.Robot')),
+                ('supported_platforms', models.ManyToManyField(
+                    related_name='task_supported_platforms', to='fleet.Robot')),
             ],
         ),
         migrations.CreateModel(
             name='Waypoint',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True,
+                                        primary_key=True, serialize=False, verbose_name='ID')),
                 ('latitude', models.DecimalField(decimal_places=6, max_digits=9)),
                 ('longitude', models.DecimalField(decimal_places=6, max_digits=9)),
                 ('altitude', models.DecimalField(decimal_places=6, max_digits=9)),
@@ -57,11 +65,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='missionobjective',
             name='task',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='missionplanner.Task'),
+            field=models.ForeignKey(
+                null=True, on_delete=django.db.models.deletion.CASCADE, to='missionplanner.Task'),
         ),
         migrations.AddField(
             model_name='missionobjective',
             name='waypoint',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='missionplanner.Waypoint'),
+            field=models.ForeignKey(
+                null=True, on_delete=django.db.models.deletion.CASCADE, to='missionplanner.Waypoint'),
         ),
     ]

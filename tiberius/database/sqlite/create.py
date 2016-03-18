@@ -1,6 +1,6 @@
 import sqlite3
-import datetime, time
-
+import datetime
+import time
 
 
 def adapt_datetime(ts):
@@ -8,7 +8,9 @@ def adapt_datetime(ts):
 
 sqlite3.register_adapter(datetime.datetime, adapt_datetime)
 
-conn = sqlite3.connect('tiberius.db', detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES)
+conn = sqlite3.connect(
+    'tiberius.db', detect_types=sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES)
+
 
 def create_tables():
     c = conn.cursor()
@@ -52,8 +54,6 @@ def create_tables():
                  beacon_green integer,
                  beacon_blue integer,
                  headlights integer)''')
-
-
 
     # Save (commit) the changes
     conn.commit()

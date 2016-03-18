@@ -16,6 +16,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='mission',
             name='supported_platforms',
-            field=models.ManyToManyField(related_name='mission_supported_platforms', to='fleet.Robot'),
+            field=models.ManyToManyField(
+                related_name='mission_supported_platforms', to='fleet.Robot'),
         ),
     ]

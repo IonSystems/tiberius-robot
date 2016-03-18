@@ -21,18 +21,20 @@ leftr = md03.md03(0x5A)
 rightf = md03.md03(0x5B)
 rightr = md03.md03(0x59)
 accel = 0
-a=0
+a = 0
 linespol = []
 lnstr = ''
 lstflt = []
 
-def poldist(th1,r1,th2,r2):
-    d = math.sqrt(r1*r1+r2*r2-2*r1*r2*math.cos(th2/180*math.pi-th1/180*math.pi))
+
+def poldist(th1, r1, th2, r2):
+    d = math.sqrt(r1 * r1 + r2 * r2 - 2 * r1 * r2 *
+                  math.cos(th2 / 180 * math.pi - th1 / 180 * math.pi))
     return d
 
 try:
     while 1:
-        leftf.move(255,accel)
+        leftf.move(255, accel)
         time.sleep(1)
     '''linespol = dtbcom.getdata("RANGEFINDERS.")
     print linespol
@@ -135,10 +137,10 @@ try:
     print linespol
     print cmps11.heading()'''
 
-    
+
 except KeyboardInterrupt:
     print 'keyboardint'
-    leftf.move(0,accel)
-    leftr.move(0,accel)
-    rightf.move(0,accel)
-    rightr.move(0,accel)
+    leftf.move(0, accel)
+    leftr.move(0, accel)
+    rightf.move(0, accel)
+    rightr.move(0, accel)

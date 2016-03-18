@@ -5,7 +5,7 @@
 #
 # Output image folder: home/pi/Desktop/tiberius/Object Detection/Testbench/Images/
 #
-# Date: 28/03/2015 
+# Date: 28/03/2015
 # Version: 1.0
 ##########################################################################
 
@@ -16,7 +16,7 @@ camera = picamera.PiCamera()
 
 # Display a preview to ensure that you capture the right test image.
 camera.start_preview()
-camera.resolution = (640,480)
+camera.resolution = (640, 480)
 
 # Wait until CTRL+C is pressed.
 try:
@@ -27,4 +27,3 @@ try:
 except KeyboardInterrupt:
     camera.stop_preview()
     camera.capture('Images/Test.jpg')
-

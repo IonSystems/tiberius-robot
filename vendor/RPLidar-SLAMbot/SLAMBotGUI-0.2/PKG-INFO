@@ -1,0 +1,11 @@
+Metadata-Version: 1.1
+Name: SLAMBotGUI
+Version: 0.2
+Summary: GUI supporting SLAM-enabled robot platform
+Home-page: http://aerospacerobotics.com
+Author: Michael Searing and William Warner
+Author-email: michael.searing@students.olin.edu
+License: LGPL
+Download-URL: https://github.com/AerospaceRobotics/RPLidar-SLAMbot
+Description: Classes for custom serial protocol and graphical representation of data
+Platform: Linux; Windows

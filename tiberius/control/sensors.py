@@ -1,61 +1,106 @@
-#import rplidar
+#!/usr/bin/env python
 import cmps11
 import srf08
 import time
 from tiberius.config.config_parser import TiberiusConfigParser
-#import picamera
-#import gps
+from tiberius.control.gps20 import GlobalPositioningSystem
+
 
 class Ultrasonic:
-	'''
-		Contains the ultrasonic sensors, and methods to receive data from them.
-		Data is returned from teh sensors in centimeters.
-	'''
-	__config = TiberiusConfigParser()
-	#Front Right
-	srffr = srf08.UltrasonicRangefinder(__config.getUltrasonicFrontRightAddress())
-	#Front Centre
-	srffc = srf08.UltrasonicRangefinder(__config.getUltrasonicFrontCentreAddress())
-	#Front Left
-	srffl = srf08.UltrasonicRangefinder(__config.getUltrasonicFrontLeftAddress())
-	#Rear Right
-	srfrr = srf08.UltrasonicRangefinder(__config.getUltrasonicRearRightAddress())
-	#Rear Centre
-	srfrc = srf08.UltrasonicRangefinder(__config.getUltrasonicRearCentreAddress())
-	#Rear Left
-	srfrl = srf08.UltrasonicRangefinder(__config.getUltrasonicRearLeftAddress())
+    '''
+        Contains the ultrasonic sensors, and methods to receive data from them.
+        Data is returned from teh sensors in centimeters.
+    '''
 
-	def senseUltrasonic(self):
-		#Tell sensors to write data to it's memory
-		self.srfrr.doranging()
-		self.srffc.doranging()
-		self.srffl.doranging()
-		self.srfrr.doranging()
-		self.srfrc.doranging()
-		self.srfrl.doranging()
+    # Front Right
+    srffr = srf08.UltrasonicRangefinder(
+        TiberiusConfigParser.getUltrasonicFrontRightAddress())
+    # Front Centre
+    srffc = srf08.UltrasonicRangefinder(
+        TiberiusConfigParser.getUltrasonicFrontCentreAddress())
+    # Front Left
+    srffl = srf08.UltrasonicRangefinder(
+        TiberiusConfigParser.getUltrasonicFrontLeftAddress())
+    # Rear Right
+    srfrr = srf08.UltrasonicRangefinder(
+        TiberiusConfigParser.getUltrasonicRearRightAddress())
+    # Rear Centre
+    srfrc = srf08.UltrasonicRangefinder(
+        TiberiusConfigParser.getUltrasonicRearCentreAddress())
+    # Rear Left
+    srfrl = srf08.UltrasonicRangefinder(
+        TiberiusConfigParser.getUltrasonicRearLeftAddress())
 
-		#We need to wait for the measurement to be made before reading thr result.
-		time.sleep(0.065)
+    def senseUltrasonic(self):
+        # Tell sensors to write data to it's memory
 
-		# Read the data from sensor's memory
-		fr = self.srffr.getranging()
-		fc = self.srffc.getranging()
-		fl = self.srffl.getranging()
-		rr = self.srfrr.getranging()
-		rc = self.srfrc.getranging()
-		rl = self.srfrl.getranging()
+        # We need to check each sensor and make sure its giving us valid data.
+        # So if we fail to write to a sensor we need to mark it as invalid.
 
-		return {'fl':fl, 'fc':fc , 'fr':fr, 'rl':rl, 'rc':rc , 'rr':rr}
+        valid = [self.srfrr.doranging(), self.srffc.doranging(), self.srffc.doranging(), self.srffl.doranging(),
+                 self.srfrr.doranging(), self.srfrc.doranging(), self.srfrl.doranging()]
 
-#class Lidar:
-#	lidar = RoboPeakLidar()
+        # We need to wait for the measurement to be made before reading the
+        # result.
+        time.sleep(0.065)
 
-	#TODO: This will eventually include methods such as generateImage(), fetchData() or similar
+        # Read the data from sensor's memory
 
-#class TimeOfFlight:
-	#If we ever get a TOF sensor.
+        data = [self.srfrr.getranging(), self.srffc.getranging(), self.srffc.getranging(), self.srffl.getranging(),
+                 self.srfrr.getranging(), self.srfrc.getranging(), self.srfrl.getranging()]
 
-#class Camera:
+
+        # Check if the data is valid
+        for i in range(0, 5):
+            if data[i] is False:
+                valid[i] = False
+                data[i] = 0  # Best to assume we might crash rather than
+                # risk it (0 means that any badly written scripts *should* stop)
+                # Also by putting a 0 in the data we can still add the row to the database.
+
+        return {'fr': data[0],
+                'fc': data[1],
+                'fl': data[2],
+                'rr': data[3],
+                'rc': data[4],
+                'rr': data[5],
+                'valid': valid}
+
+    def frontHit(self, d=30):
+        results = self.senseUltrasonic()
+
+        return ((results['fl'] < d) or
+                (results['fc'] < d) or
+                (results['fr'] < d))
+
+    def rearHit(self, d=30):
+        results = self.senseUltrasonic()
+
+        return ((results['rl'] < d) or
+                (results['rc'] < d) or
+                (results['rr'] < d))
+
+    def anythingHit(self, d=30):
+        results = self.senseUltrasonic()
+
+        return ((results['rl'] < d) or
+                (results['rc'] < d) or
+                (results['rr'] < d) or
+                (results['rl'] < d) or
+                (results['rc'] < d) or
+                (results['rr'] < d))
+
+    # class Lidar:
+    #	lidar = RoboPeakLidar()
+
+    # TODO: This will eventually include methods such as generateImage(),
+    # fetchData() or similar
+
+    # class TimeOfFlight:
+    # If we ever get a TOF sensor.
+
+
+# class Camera:
 #	'''
 #		Provides camera capture methods.
 #	'''
@@ -64,29 +109,57 @@ class Ultrasonic:
 #	def capture_image(self):
 #		self.camera.resolution = (640,480)
 #		self.camera.capture('./pi_camera_image.jpg')
+if TiberiusConfigParser.isCompassEnabled():
+    class Compass:
+        '''
+                Provides compass related methods, what more can I say?
+        '''
 
-class Compass:
-	'''
-		Provides compass related methods, what more can I say?
-	'''
-	__config = TiberiusConfigParser()
-	compass = cmps11.TiltCompensatedCompass(__config.getCompassAddress())
+        compass = cmps11.TiltCompensatedCompass(
+            TiberiusConfigParser.getCompassAddress())
 
-	def headingDegrees(self):
-		# Get the heading in degrees.
-		raw = int(self.compass.heading())
-		return raw / 10
+        def headingDegrees(self):
+            # Get the heading in degrees.
+            try:
+                raw = int(self.compass.heading())
+            except:
+                return 222.2
+            return raw / 10
 
-	def getMostRecentDegrees(self):
-		return self.compass.getMostRecentDegrees()
+        def getMostRecentDegrees(self):
+            return self.compass.getMostRecentDegrees()
 
-	def headingNormalized(self):
-		angle = int(self.headingDegrees())
-		while(angle > 180):
-			angle -= 360
-		while(angle < -180):
-			angle += 360
-		return angle
+        def headingNormalized(self):
+            angle = int(self.headingDegrees())
+            while (angle > 180):
+                angle -= 360
+            while (angle < -180):
+                angle += 360
+            return angle
 
-#class GPS:
-	#gps =
+
+class GPS:
+    def __init__(self):
+        self.gps = GlobalPositioningSystem()
+
+    def read_gps(self):
+        return self.gps.read_gps()
+
+    def has_fix(self):
+        return self.gps.has_fix()
+
+
+class I2CReadError(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)
+
+
+class I2CWriteError(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)

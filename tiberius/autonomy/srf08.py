@@ -3,6 +3,7 @@
 import smbus
 import time
 
+
 class srf08:
 
     # parameters
@@ -20,16 +21,18 @@ class srf08:
         self.bus = smbus.SMBus(1)
         self.address = address
         try:
-            self.bus.write_byte_data(self.address, self.rangereg, self.range_value)
-            self.bus.write_byte_data(self.address, self.gainreg, self.gain_value)
+            self.bus.write_byte_data(
+                self.address, self.rangereg, self.range_value)
+            self.bus.write_byte_data(
+                self.address, self.gainreg, self.gain_value)
         except IOError:
             print 'IO error init ', hex(self.address)
 
     def doranging(self):
         try:
-            #since it takes 65ms to get the ranging and us to send a message
-            #in order to save time all the srf08s receive command to start
-            #ranging, so only one 65ms delay needed
+            # since it takes 65ms to get the ranging and us to send a message
+            # in order to save time all the srf08s receive command to start
+            # ranging, so only one 65ms delay needed
             self.bus.write_byte_data(0x70, self.commandreg, self.cm_mode)
             self.bus.write_byte_data(0x71, self.commandreg, self.cm_mode)
             self.bus.write_byte_data(0x72, self.commandreg, self.cm_mode)
@@ -42,16 +45,17 @@ class srf08:
 
     def getranging(self):
         try:
-            high_byte = self.bus.read_byte_data(self.address, self.first_echo_high)
-	    low_byte = self.bus.read_byte_data(self.address, self.first_echo_low)	    
-            if (((high_byte << 8) + low_byte)==0):
-                #assign a random value when srf08 failed to range
+            high_byte = self.bus.read_byte_data(
+                self.address, self.first_echo_high)
+            low_byte = self.bus.read_byte_data(
+                self.address, self.first_echo_low)
+            if (((high_byte << 8) + low_byte) == 0):
+                # assign a random value when srf08 failed to range
                 value = 222.2
             else:
                 value = (high_byte << 8) + low_byte
-	    return value
-	
-	except IOError:
-            print 'IO error getranging ',hex(self.address)
-            return 222.2
+            return value
 
+        except IOError:
+            print 'IO error getranging ', hex(self.address)
+            return 222.2
