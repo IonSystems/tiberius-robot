@@ -25,7 +25,7 @@ def getKey():
         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
     return ch
 
-def collision_detection();
+def collision_detection():
     # Use ultrasonics to prevent collisions.
     if ultras.frontHit() and c.motors.state == MotorState.FORWARD:
         c.motors.stop()
