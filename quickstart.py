@@ -13,6 +13,7 @@ class Action(Enum):
     ULTRASONICS_READ = 5
     STYLE_CHECKER = 6
     EMERGENCY_STOP = 7
+    KEYBOARD_CONTROL_COLLISION = 8
 
 parser = OptionParser()
 
