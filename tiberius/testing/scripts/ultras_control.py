@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     while(True):
 
-
+        for event in pygame.event.get():
         c.motors.setSpeedPercent(50)
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
