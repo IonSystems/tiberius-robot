@@ -30,6 +30,7 @@ def collision_detection();
     if ultras.frontHit() and c.motors.state == MotorState.FORWARD:
         c.motors.stop()
 
+
     if ultras.rearHit() and c.motors.state == MotorState.BACKWARD:
         c.motors.stop()
 
