@@ -7,10 +7,10 @@ python:
 
 # Command to install dependencies.
 install:
-  - python setup.py install
+  - sudo python setup.py install
 
 # Command to start the tests.
-script: python tiberius/testing/run_tests.py
+script: coverage run tiberius/testing/run_tests.py
 
 # We need sudo to put stuff in /etc/
 sudo: required

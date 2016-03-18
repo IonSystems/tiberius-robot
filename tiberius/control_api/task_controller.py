@@ -6,6 +6,7 @@ from tiberius.control_api.task import *
 from tiberius.control_api.tasks.driving_tasks import *
 import threading
 import json
+from task_state import TaskState
 
 class TaskThread (threading.Thread):
     def __init__(self, threadID, task):
@@ -14,6 +15,8 @@ class TaskThread (threading.Thread):
         self.task = task
 
     def run(self):
+        while self.task.task_state == TaskState.RUNNING:
+            self.task.one_iteration()
         self.task.runTask()
 
 
@@ -33,7 +36,7 @@ class TaskControllerResource(object):
         self.logger = logging.getLogger(
             'tiberius.control_api.TaskControllerResource')
 
-        # Find all the tasks avaibale and make them accessible here.
+        # Find all the tasks available and make them accessible here.
         self.tasks = self.find_tasks()
         self.current_task_id = None
 
@@ -43,12 +46,18 @@ class TaskControllerResource(object):
         command = None
         if("command" in req.params):
             command = req.params['command']
+            print "command g2g"
+            task_id = None
+            if("task_id" in req.params):
+                task_id = int(req.params['task_id'])
+                print "Task g2g"
 
-        task_id = None
-        if("task_id" in req.params):
-            task_id = int(req.params['task_id'])
+        if("available" in req.params):
+            resp.status = falcon.HTTP_200
+            resp.body = json.dumps(self.tasks)
 
         if (command is not None) and (task_id is not None):
+            print "We have a task."
             if (command == "run") and (self.current_task_id is None):
                 if not self.run_task(task_id):
                     resp.status = falcon.HTTP_404
@@ -60,7 +69,7 @@ class TaskControllerResource(object):
         task_found = False
         for task in self.tasks:
             if task.task_id == task_id:
-		task_found = True
+                task_found = True
                 self.current_task_id = task_id
                 self.logger.info("Running Task: %s", str(task))
 
@@ -75,10 +84,12 @@ class TaskControllerResource(object):
 
                 # Set current task back to None
                 self.current_task_id = None
-            if not task_found:
-		return False
-            else:
-                return True
+
+                self.logger.info("Completed Task: %s", str(task))
+        if not task_found:
+            return False
+        else:
+            return True
             # if(task.__class__.task_id == task_id):
             #    task.runTask()
 
@@ -93,3 +104,4 @@ def validate_params(req, resp, resource, params):
 if __name__ == "__main__":
     r = TaskControllerResource()
     r.run_task(0)
+    r.run_task(1)

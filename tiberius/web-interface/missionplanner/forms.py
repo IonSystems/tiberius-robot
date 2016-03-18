@@ -7,6 +7,10 @@ class MissionCreateForm(forms.ModelForm):
         label='buy date', input_formats=['%m/%d/%Y %H:%M %p'])
     scheduled_start.widget = forms.TextInput(attrs={'class': 'form-control'})
 
+    def __init__(self, user, *args, **kwargs):
+        super(MissionCreateForm, self).__init__(*args, **kwargs)
+        self.creator = user
+
     class Meta:
         model = Mission
         fields = ['name', 'description',

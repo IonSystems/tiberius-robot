@@ -3,7 +3,6 @@ from subprocess import check_output, Popen
 import time
 import sys
 from enum import Enum
-from tiberius.control.control import Control
 
 class Action(Enum):
     KEYBOARD_CONTROL = 0
@@ -142,7 +141,7 @@ elif action == Action.ULTRASONICS_READ:
 elif action == Action.STYLE_CHECKER:
     print "Style Checking"
     server = Popen(
-        "python tiberius/testing/scripts/manual_sensor_read.py",
+        "pep8 ./tiberius/",
         shell=True)
     while True:
         try:
@@ -152,6 +151,7 @@ elif action == Action.STYLE_CHECKER:
             sys.exit()
 
 elif action == Action.EMERGENCY_STOP:
+    from tiberius.control.control import Control
     print "Sending STOP to all motors."
     c = Control()
     c.motors.stop()
