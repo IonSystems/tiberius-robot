@@ -24,9 +24,25 @@ def getKey():
         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
     return ch
 
+def collision_detection();
+        # Use ultrasonics to prevent collisions.
+        if ultras.frontHit() and c.motors.state == MotorState.FORWARD:
+            c.motors.stop()
+
+        if ultras.rearHit() and c.motors.state == MotorState.BACKWARD:
+            c.motors.stop()
+
+        # If we are turning, any edge could be hit, so check all sensors
+        if (ultras.anythingHit() and
+            (c.motors.state == MotorState.RIGHT or
+            c.motors.state == MotorState.LEFT)):
+            c.motors.stop()
 
 if __name__ == "__main__":
+
     while(True):
+
+        collision_detection()
 
         key = getKey()
         d_logger.debug("Key %s pressed", key)
@@ -40,7 +56,7 @@ if __name__ == "__main__":
             c.motors.setSpeedPercent(100)
             c.motors.moveForward()
         elif(key == 'a'):
-            c.motors.setSpeedPercent(40)
+            c.motors.setSpeedPercent(50)
             c.motors.turnLeft()
         elif(key == 'A'):
             c.motors.setSpeedPercent(100)
@@ -60,16 +76,3 @@ if __name__ == "__main__":
         elif(key == ' '):
             c.motors.stop()
             time.sleep(0.1)
-
-        # Use ultrasonics to prevent collisions.
-        if ultras.frontHit() and c.motors.state == MotorState.FORWARD:
-            c.motors.stop()
-
-        if ultras.rearHit() and c.motors.state == MotorState.BACKWARD:
-            c.motors.stop()
-
-        # If we are turning, any edge could be hit, so check all sensors
-        if (ultras.anythingHit() and
-            (c.motors.state == MotorState.RIGHT or
-            c.motors.state == MotorState.LEFT)):
-            c.motors.stop()
