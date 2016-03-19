@@ -103,9 +103,9 @@ class ControlThread:
                                                    'timestamp': 'float'})
 
             self.poly.insert(self.VALIDITY_TABLE, {'id': 0,
-                                                   'ultrasonics': 0,
-                                                   'compass': 0,
-                                                   'gps': 0,
+                                                   'ultrasonics': False,
+                                                   'compass': False,
+                                                   'gps': False,
                                                    'timestamp': time.time()})
         except PolyhedraDatabase.TableAlreadyExistsError:
             print "Table already exists."
@@ -128,12 +128,12 @@ class ControlThread:
                                                                'timestamp': 'float'})
 
             self.poly.insert(self.VALIDITY_ULTRASONICS_TABLE, {'id': 0,
-                                                               'fr': '0',
-                                                               'fc': '0',
-                                                               'fl': '0',
-                                                               'rr': '0',
-                                                               'rc': '0',
-                                                               'rl': '0',
+                                                               'fr': False,
+                                                               'fc': False,
+                                                               'fl': False,
+                                                               'rr': False,
+                                                               'rc': False,
+                                                               'rl': False,
                                                                'timestamp': time.time()})
         except PolyhedraDatabase.TableAlreadyExistsError:
             print "Table already exists."
