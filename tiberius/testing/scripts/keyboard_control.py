@@ -28,6 +28,9 @@ if __name__ == "__main__":
         if(key == 'c'):
             c.motors.stop()
             sys.exit(0)
+        elif(key == 'C'):
+            c.motors.stop()
+            sys.exit(0)
         elif(key == 'w'):
             c.motors.setSpeedPercent(50)
             c.motors.moveForward()
