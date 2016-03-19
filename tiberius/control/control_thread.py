@@ -202,7 +202,7 @@ class ControlThread:
             except Exception as e:              # set to invalid
                 if valid:
                     valid = False
-                    self.poly.update(self.VALIDITY_TABLE, {'ultrasonics': 0},
+                    self.poly.update(self.VALIDITY_TABLE, {'ultrasonics': False},
                                      {'clause': 'WHERE',
                                       'data': [
                                           {
