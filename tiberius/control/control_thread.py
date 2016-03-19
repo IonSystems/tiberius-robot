@@ -147,30 +147,16 @@ class ControlThread:
         ultrasonic = Ultrasonic()
         ultrasonic_read_id = 0
         valid = False
-        previous_values = [[]]
+
         while True:
             try:
-                # TODO: add in code to update table by overwriting 0th value and rolling back round
 
                 ultra_data = ultrasonic.senseUltrasonic()
-                for i in range(0, 5):
-                    previous_values[i].append(ultra_data[i])
-                    if len(previous_values) >= 10:
-                        previous_values.pop(0)
-
-                    standard_deviation = np.std(np.diff(np.asarray(previous_values[i])))
-                    if standard_deviation > 10:
-                        raise Exception('invalid data')
-                    else:
-                        any_valid_data = 0
-                        validity = [0, 0, 0, 0, 0, 0]
-
-                        for i in range(0, 5):
-                            if ultra_data['valid'][i] is False:
-                                validity[i] = 0
-                            else:
-                                validity[i] = 1
-                                any_valid_data = 1
+                validity = ultra_data['valid']
+                if any(validity):
+                    any_valid_data = 1
+                else:
+                    any_valid_data = 0
 
                 if not valid:
                     valid = True
@@ -215,7 +201,7 @@ class ControlThread:
             except Exception as e:              # set to invalid
                 if valid:
                     valid = False
-                    self.poly.update(self.VALIDITY_TABLE, {'ultrasonics': any_valid_data},
+                    self.poly.update(self.VALIDITY_TABLE, {'ultrasonics': 0},
                                      {'clause': 'WHERE',
                                       'data': [
                                           {
