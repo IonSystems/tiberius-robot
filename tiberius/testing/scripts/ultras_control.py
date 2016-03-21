@@ -13,7 +13,8 @@ d_logger = logging.getLogger('tiberius.testing.keyboard_control')
 
 c = Control()
 ultras = c.ultrasonics
-
+K_LEFT = a
+K_RIGHT = d
 
 def getKey():
     fd = sys.stdin.fileno()
