@@ -13,6 +13,7 @@ class Action(Enum):
     ULTRASONICS_READ = 5
     STYLE_CHECKER = 6
     EMERGENCY_STOP = 7
+    KEYBOARD_CONTROL_COLLISION = 8
 
 parser = OptionParser()
 
@@ -23,6 +24,13 @@ parser.add_option(
     const=Action.KEYBOARD_CONTROL,
     dest="action",
     help="Start the keyboard control test script.")
+parser.add_option(
+    "-c",
+    "--keyboard-control-collision",
+    action="store_const",
+    const=Action.KEYBOARD_CONTROL_COLLISION,
+    dest="action",
+    help="Start the keyboard control test script with ultrasonic sensors.")
 parser.add_option(
     "-t",
     "--run-tests",
@@ -83,6 +91,10 @@ if action == Action.KEYBOARD_CONTROL:
     check_output(
         "python tiberius/testing/scripts/keyboard_control.py",
         shell=True)
+
+elif action == Action.KEYBOARD_CONTROL_COLLISION:
+    print "Starting unit test suite."
+    check_output("python tiberius/testing/scripts/ultras_control.py", shell=True)
 
 elif action == Action.RUN_TESTS:
     print "Starting unit test suite."
