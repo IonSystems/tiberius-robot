@@ -3,18 +3,22 @@ from tiberius.utils import detection
 import time
 
 
-class diagnostics_leds:
+class ExternalHardwareController:
     if detection.detect_windows():
         port = 'COM8'
     else:
         port = '/dev/ttyACM0'
     baud = 9600
 
+    diagnostic_led_data = {0, 0, 0, 0, 0, 0, 0, 0}
+    ring_led_data = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+    relay_data = {0, 0, 0, 0}
+    servo_data = {0}
+
     def __init__(self, debug=False):
         self.ser = serial.Serial(self.port, self.baud, timeout=1)
 
-
-    def setLEDs(self, led0=-1, led1=-1, led2=-1, led3=-1, led4=-1, led5=-1, led6=-1, led7=-1):
+    def set_hardware(self, diagnostics_leds=None, ring_leds=None, relays=None, servos=None):
         if not self.ser.isOpen():
             try:
                 self.ser.open()
@@ -22,22 +26,41 @@ class diagnostics_leds:
                 print "Port already open"
             time.sleep(10)
         if self.ser.isOpen():
-            data = "sd" + str(led0) + "d" + str(led1) + "d" + str(led2) + "d" + str(led3) + "d" + str(led4) + "d" + str(
-                led5) + "d" + str(led6) + "d" + str(led7)
+            if diagnostics_leds is not None:
+                self.diagnostic_led_data = diagnostics_leds
+            if ring_leds is not None:
+                self.ring_led_data = ring_leds
+            if relays is not None:
+                self.relay_data = relays
+            if servos is not None:
+                self.servo_data = servos
 
-            self.ser.write(data)
+            data_message = "s"
+            for data in self.diagnostic_led_data:
+                data_message += "d" + str(data)
+
+            for data in self.ring_led_data:
+                data_message += "d" + str(data)
+
+            for data in self.relay_data:
+                data_message += "d" + str(data)
+
+            for data in self.servo_data:
+                data_message += "d" + str(data)
+
+            self.ser.write(data_message)
 
 
 if __name__ == "__main__":
     # from tiberius.diagnostics.diagnostics_leds import diagnostics_leds
     from random import randint
 
-    leds = diagnostics_leds()
+    externalHardwareController = ExternalHardwareController()
 
     l1, l2, l3, l4, l5, l6, l7, l8 = 0, 0, 0, 0, 0, 0, 0, 0
 
     while (True):
-        leds.setLEDs(l1, l2, l3, l4, l5, l6, l7, l8)
+        externalHardwareController.setLEDs(l1, l2, l3, l4, l5, l6, l7, l8)
         l1 = randint(0, 5)
         l2 = randint(0, 5)
         l3 = randint(0, 5)
