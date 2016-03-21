@@ -97,15 +97,15 @@ class ControlThread:
             print "Table doesn't exist"
         try:
             self.poly.create(self.VALIDITY_TABLE, {'id': 'int primary key',
-                                                   'ultrasonics': 'int',
-                                                   'compass': 'int',
-                                                   'gps': 'int',
+                                                   'ultrasonics': 'bool',
+                                                   'compass': 'bool',
+                                                   'gps': 'bool',
                                                    'timestamp': 'float'})
 
             self.poly.insert(self.VALIDITY_TABLE, {'id': 0,
-                                                   'ultrasonics': 0,
-                                                   'compass': 0,
-                                                   'gps': 0,
+                                                   'ultrasonics': False,
+                                                   'compass': False,
+                                                   'gps': False,
                                                    'timestamp': time.time()})
         except PolyhedraDatabase.TableAlreadyExistsError:
             print "Table already exists."
@@ -119,21 +119,21 @@ class ControlThread:
             print "Table doesn't exist"
         try:
             self.poly.create(self.VALIDITY_ULTRASONICS_TABLE, {'id': 'int primary key',
-                                                               'fr': 'int',
-                                                               'fc': 'int',
-                                                               'fl': 'int',
-                                                               'rr': 'int',
-                                                               'rc': 'int',
-                                                               'rl': 'int',
+                                                               'fr': 'bool',
+                                                               'fc': 'bool',
+                                                               'fl': 'bool',
+                                                               'rr': 'bool',
+                                                               'rc': 'bool',
+                                                               'rl': 'bool',
                                                                'timestamp': 'float'})
 
             self.poly.insert(self.VALIDITY_ULTRASONICS_TABLE, {'id': 0,
-                                                               'fr': '0',
-                                                               'fc': '0',
-                                                               'fl': '0',
-                                                               'rr': '0',
-                                                               'rc': '0',
-                                                               'rl': '0',
+                                                               'fr': False,
+                                                               'fc': False,
+                                                               'fl': False,
+                                                               'rr': False,
+                                                               'rc': False,
+                                                               'rl': False,
                                                                'timestamp': time.time()})
         except PolyhedraDatabase.TableAlreadyExistsError:
             print "Table already exists."
@@ -147,30 +147,17 @@ class ControlThread:
         ultrasonic = Ultrasonic()
         ultrasonic_read_id = 0
         valid = False
-        previous_values = [[]]
+
         while True:
             try:
-                # TODO: add in code to update table by overwriting 0th value and rolling back round
 
                 ultra_data = ultrasonic.senseUltrasonic()
-                for i in range(0, 5):
-                    previous_values[i].append(ultra_data[i])
-                    if len(previous_values) >= 10:
-                        previous_values.pop(0)
+                validity = ultra_data['valid']
 
-                    standard_deviation = np.std(np.diff(np.asarray(previous_values[i])))
-                    if standard_deviation > 10:
-                        raise Exception('invalid data')
-                    else:
-                        any_valid_data = 0
-                        validity = [0, 0, 0, 0, 0, 0]
-
-                        for i in range(0, 5):
-                            if ultra_data['valid'][i] is False:
-                                validity[i] = 0
-                            else:
-                                validity[i] = 1
-                                any_valid_data = 1
+                if any(validity):
+                    any_valid_data = True
+                else:
+                    any_valid_data = False
 
                 if not valid:
                     valid = True
@@ -215,7 +202,7 @@ class ControlThread:
             except Exception as e:              # set to invalid
                 if valid:
                     valid = False
-                    self.poly.update(self.VALIDITY_TABLE, {'ultrasonics': any_valid_data},
+                    self.poly.update(self.VALIDITY_TABLE, {'ultrasonics': False},
                                      {'clause': 'WHERE',
                                       'data': [
                                           {
@@ -248,7 +235,7 @@ class ControlThread:
                                                           'timestamp': time.time()})
                         if not valid:
                             valid = True
-                            self.poly.update(self.VALIDITY_TABLE, {'gps': 1}, {'clause': 'WHERE',
+                            self.poly.update(self.VALIDITY_TABLE, {'gps': True}, {'clause': 'WHERE',
                                                                                'data': [
                                                                                    {
                                                                                        'column': 'id',
@@ -267,7 +254,7 @@ class ControlThread:
                 if no_data_time > 10:
                     if valid:
                         valid = False
-                        self.poly.update(self.VALIDITY_TABLE, {'gps': 0}, {'clause': 'WHERE',
+                        self.poly.update(self.VALIDITY_TABLE, {'gps': False}, {'clause': 'WHERE',
                                                                            'data': [
                                                                                {
                                                                                    'column': 'id',
@@ -306,7 +293,7 @@ class ControlThread:
 
                 if not valid:
                     valid = True
-                    self.poly.update(self.VALIDITY_TABLE, {'compass': 1}, {'clause': 'WHERE',
+                    self.poly.update(self.VALIDITY_TABLE, {'compass': True}, {'clause': 'WHERE',
                                                                            'data': [
                                                                                {
                                                                                    'column': 'id',
@@ -320,7 +307,7 @@ class ControlThread:
                 if valid:
                     valid = False
 
-                    self.poly.update(self.VALIDITY_TABLE, {'compass': 0}, {'clause': 'WHERE',
+                    self.poly.update(self.VALIDITY_TABLE, {'compass': False}, {'clause': 'WHERE',
                                                                            'data': [
                                                                                {
                                                                                    'column': 'id',
@@ -335,7 +322,7 @@ class ControlThread:
 
         leds = diagnostics_leds()
 
-        ultrasonics_status, compass_status, gps_status = 0, 0, 0
+        ultrasonics_status, compass_status, gps_status = False, False, False
 
         while True:
             try:
