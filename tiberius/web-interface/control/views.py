@@ -1,12 +1,12 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import ensure_csrf_cookie
 from requests.exceptions import ConnectionError
 from fleet.models import Robot
-
+from .forms import ChangeRobotForm
 import requests
 # Create your views here.
 
@@ -14,23 +14,62 @@ import requests
 @login_required(login_url='/users/login/')
 @ensure_csrf_cookie
 def index(request):
-    tib = Robot.objects.order_by('-pub_date')[:5]
-    template = loader.get_template('index.html')
-    context = RequestContext(request, {
-        'tib': tib,
-    })
-    return HttpResponse(template.render(context))
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = ChangeRobotForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            # ...
+            # redirect to a new URL:
+            robot_id = form.data.get('name')
+            return HttpResponseRedirect('/control/' + robot_id)
+        else:
+            return HttpResponseRedirect('/invalid form/')
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        tib = Robot.objects.order_by('-pub_date')[:5]
+        form = ChangeRobotForm()
+        template = loader.get_template('index.html')
+        context = RequestContext(request, {
+            'tib': tib,
+            'form': form
+        })
+        return HttpResponse(template.render(context))
 
 
 @login_required(login_url='/users/login/')
 @ensure_csrf_cookie
 def control(request, id):
-    tib = Robot.objects.get(id=id)
-    template = loader.get_template('control.html')
-    context = RequestContext(request, {
-        'ruc': tib,
-    })
-    return HttpResponse(template.render(context))
+
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = ChangeRobotForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            # ...
+            # redirect to a new URL:
+            robot_id = form.data.get('name')
+            return HttpResponseRedirect('/control/' + robot_id)
+        else:
+            return HttpResponseRedirect('/invalid form/')
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = ChangeRobotForm()
+        template = loader.get_template('control.html')
+        tib = Robot.objects.get(id=id)
+        robot_online = check_robot_status(tib.ip_address)
+        context = RequestContext(request, {
+            'ruc': tib,
+            'form': form,
+            'robot_online': robot_online
+        })
+        return HttpResponse(template.render(context))
 
 
 @require_http_methods(["POST"])
@@ -128,3 +167,18 @@ def send_task_request(request):
                 response = e
 
     return HttpResponse(response)
+
+def check_robot_status(ip_address):
+    url_start = "http://"
+    url_end = ":8000/status"
+    url = url_start + ip_address + url_end
+    headers = {'X-Auth-Token': "supersecretpassword"}
+    data = 'status'
+    try:
+        r = requests.post(url,
+                          data=data,
+                          headers=headers)
+        status = r.text
+    except ConnectionError as e:
+        status = "Offline"
+    return status

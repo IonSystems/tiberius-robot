@@ -2,6 +2,7 @@ import unittest
 import time
 import os
 import sys
+from tiberius.config.config_parser import TiberiusConfigParser
 from tiberius.control.control import Control
 c = Control()
 stop_distance = 20
@@ -16,6 +17,8 @@ stop_distance = 20
 class DriveForwardUntilWall(unittest.TestCase):
     '''Drive forward in a straight line until an obsacle is detected from the front ultrasonic sensor.'''
     @unittest.skipUnless(os.uname()[4].startswith("arm"), "requires Raspberry Pi")
+    @unittest.skipIf(TiberiusConfigParser.areUltrasonicsEnabled(), "requires \
+ultrasonics")
     def runTest(self):
         count = 0
         # Wait until Tiberius is 5cm away from the wall.
@@ -34,6 +37,8 @@ class DriveForwardUntilWall(unittest.TestCase):
 class DriveBackwardUntilWall(unittest.TestCase):
     '''Drive backward in a straight line until an obsacle is detected from the front ultrasonic sensor.'''
     @unittest.skipUnless(os.uname()[4].startswith("arm"), "requires Raspberry Pi")
+    @unittest.skipIf(TiberiusConfigParser.areUltrasonicsEnabled(), "requires \
+ultrasonics")
     def runTest(self):
         count = 0
         # Wait until Tiberius is 5cm away from the wall.
@@ -43,42 +48,17 @@ class DriveBackwardUntilWall(unittest.TestCase):
             count += 0.1
         c.motors.stop()
         # Cannot take any less than 3 seconds
-        #self.assertGreater(count, 30)
+        # self.assertGreater(count, 30)
 
         # Cannot take any more than 30 seconds
-        #self.assertLess(count, 300)
-
-
-def turnTo(desired_bearing):
-    while(True):
-
-        actual_bearing = c.compass.headingNormalized()
-        error = actual_bearing - desired_bearing
-        print 'Heading: ' + str(actual_bearing)
-        print 'Desired: ' + str(desired_bearing)
-
-        if(error == 0):
-            print 'At heading: ' + str(actual_bearing)
-            c.motors.stop()
-            break
-        if(error > 180):
-            print 'error > 180'
-            error -= 360
-        if(error < -180):
-            print 'error < -180'
-            error += 360
-        if(error < 0):
-            print 'error < 0 turning left'
-            c.motors.turnLeft(50)
-        else:
-            print 'error > 0 turning right'
-            c.motors.turnRight(50)
-        print str(error)
+        # self.assertLess(count, 300)
 
 
 class TurnRight90Degrees(unittest.TestCase):
     '''Turn on the spot, clockwise until Tiberius has rotated 90 degrees.'''
     @unittest.skipUnless(os.uname()[4].startswith("arm"), "requires Raspberry Pi")
+    @unittest.skipIf(TiberiusConfigParser.areUltrasonicsEnabled(), "requires \
+ultrasonics")
     def runTest(self):
         old_bearing = c.compass.headingNormalized()
 
@@ -104,6 +84,8 @@ class TurnRight90Degrees(unittest.TestCase):
 class TurnLeft90Degrees(unittest.TestCase):
     '''Turn on the spot, anti-clockwise until Tiberius has rotated 90 degrees.'''
     @unittest.skipUnless(os.uname()[4].startswith("arm"), "requires Raspberry Pi")
+    @unittest.skipIf(TiberiusConfigParser.areUltrasonicsEnabled(), "requires \
+ultrasonics")
     def runTest(self):
         old_bearing = c.compass.headingNormalized()
 

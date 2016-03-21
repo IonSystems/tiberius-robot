@@ -259,6 +259,3 @@ class TiltCompensatedCompass:
 # Test function
 if __name__ == "__main__":
     cmps11 = TiltCompensatedCompass(66)
-
-
-

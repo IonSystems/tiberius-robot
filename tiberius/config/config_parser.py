@@ -24,8 +24,11 @@ class TiberiusConfigParser():
         parser = ConfigParser.ConfigParser()
         if detection.detect_windows():
             parser.read('D:\\tiberius\\tiberius_conf.conf')
-        else:
+        elif detection.detect_file('/etc/tiberius/tiberius_conf.conf'):
             parser.read('/etc/tiberius/tiberius_conf.conf')
+        else:
+            # Fall back to generic config file.
+            parser.read('./tiberius_conf.conf')
         return parser
 
     '''******************************************
@@ -91,6 +94,10 @@ class TiberiusConfigParser():
         addr = TiberiusConfigParser.getParser().get(ULTRASONICS_SECTION, 'rear_right')
         return int(addr)
 
+    @staticmethod
+    def areUltrasonicsEnabled():
+        return TiberiusConfigParser.getParser().getboolean(ULTRASONICS_SECTION, 'installed')
+
     '''******************************************
         Compass
     ******************************************'''
@@ -112,15 +119,6 @@ class TiberiusConfigParser():
     def getIPAddress():
         ipa = TiberiusConfigParser.getParser().get(NETWORKING_SECTION, 'ip_address')
         return ipa
-
-    '''
-    A setter method is required to deal with IP address changes if using DHCP.
-    '''
-    @staticmethod
-    def setIPAddress(ip_address):
-        result = TiberiusConfigParser.getParser().set(
-            NETWORKING_SECTION, 'ip_address', ip_address)
-        return result
 
     @staticmethod
     def getName():
