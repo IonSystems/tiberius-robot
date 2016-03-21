@@ -35,7 +35,7 @@ if __name__ == "__main__":
             sys.exit(0)
         elif(key == 'w'):
             c.motors.setSpeedPercent(50)
-            c.motors.moveForward()
+            c.motors.driveForwardUntilWall()
         elif(key == 'W'):
             c.motors.setSpeedPercent(100)
             c.motors.moveForward()
@@ -47,7 +47,7 @@ if __name__ == "__main__":
             c.motors.turnLeft()
         elif(key == 's'):
             c.motors.setSpeedPercent(50)
-            c.motors.moveBackward()
+            c.motors.driveBackwardUntilWall()
         elif(key == 'S'):
             c.motors.setSpeedPercent(100)
             c.motors.moveBackward()
