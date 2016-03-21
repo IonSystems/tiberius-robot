@@ -17,6 +17,10 @@ class MotorStates(Enum):
     STOP = "stop"
 
 
+class Commands(Enum):
+    GET_SPEED = "get_speed"
+
+
 def generate_response(req, resp, resource):
     # If we make it this far then return status OK
     resp.status = falcon.HTTP_200
@@ -68,6 +72,9 @@ class MotorResource(object):
         if(MotorStates.STOP.value in req.params):
             self.proc_stop()
 
+        # if(Commands.GET_SPEED.value in req.params):
+        #     self.ret_speed()
+
     def proc_forward(self):
         self.motor_control.setSpeedPercent(self.speed)
         self.motor_control.moveForward()
@@ -79,7 +86,7 @@ class MotorResource(object):
         self.motor_control.setSpeedPercent(self.speed)
         self.motor_control.moveBackward()
         self.state = MotorStates.BACKWARD
-	self.logger.debug("Moving backward at speed %s", self.speed)
+        self.logger.debug("Moving backward at speed %s", self.speed)
 
     def proc_left(self):
         self.motor_control.setSpeedPercent(self.speed)
@@ -99,7 +106,7 @@ class MotorResource(object):
         self.logger.debug("Stopped")
 
     def proc_speed(self, speed):
-	self.speed = int(speed)
+        self.speed = int(speed)
         self.logger.debug("Setting speed to %s", self.speed)
         # Now that the speed has been updated,
         # reinitiate any active states.
@@ -111,3 +118,6 @@ class MotorResource(object):
             self.proc_left()
         elif self.state == MotorStates.RIGHT:
             self.proc_right()
+
+    def ret_speed(self):
+        return self.speed

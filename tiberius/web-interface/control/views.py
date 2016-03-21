@@ -8,6 +8,8 @@ from requests.exceptions import ConnectionError
 from fleet.models import Robot
 from .forms import ChangeRobotForm
 import requests
+from django.utils.safestring import mark_safe
+import json
 # Create your views here.
 
 
@@ -64,10 +66,12 @@ def control(request, id):
         template = loader.get_template('control.html')
         tib = Robot.objects.get(id=id)
         robot_online = check_robot_status(tib.ip_address)
+        initial_speed = json.loads(send_command('get_speed', "http://" + tib.ip_address + ":8000/motors"))['speed']
         context = RequestContext(request, {
             'ruc': tib,
             'form': form,
-            'robot_online': robot_online
+            'robot_online': robot_online,
+            'initial_speed': mark_safe(initial_speed)
         })
         return HttpResponse(template.render(context))
 
@@ -139,7 +143,23 @@ def send_control_request(request):
             response = r.text
         except ConnectionError as e:
             response = e
+    elif request.POST.get('command'):
+        command = request.POST.get('command')
+        if command == "get_speed":
+            send_command("get_speed", url)
     return HttpResponse(response)
+
+
+def send_command(command_name, url, headers={'X-Auth-Token': "supersecretpassword"}):
+    try:
+        data = {'command': command_name}
+        r = requests.post(url,
+                          data=data,
+                          headers=headers)
+        response = r.text
+    except ConnectionError as e:
+        response = e
+    return response
 
 
 @require_http_methods(["POST"])

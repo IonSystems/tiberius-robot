@@ -276,12 +276,12 @@
 <script src="{% static 'color-admin/plugins/jquery-jvectormap/jquery-jvectormap-world-mill-en.js' %}"></script>
 <script src="{% static 'color-admin/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js' %}"></script>
 <script src="{% static 'color-admin/js/dashboard.min.js' %}"></script>
-<script src="{% static 'color-admin/js/control-requests.js' %}"></script>
+<script src="{% static 'tiberius/js/control-requests.js' %}"></script>
 <script src="{% static 'color-admin/js/apps.min.js' %}"></script>
 <script src="{% static 'color-admin/plugins/switchery/switchery.min.js' %}"></script>
 <script src="{% static 'color-admin/plugins/powerange/powerange.min.js' %}"></script>
 <script src="{% static 'color-admin/plugins/ionRangeSlider/js/ion-rangeSlider/ion.rangeSlider.min.js' %}"></script>
-<script src="{% static 'color-admin/js/control-slider.js' %}"></script>
+<script src="{% static 'tiberius/js/control-slider.js' %}"></script>
 
 <!-- ================== END PAGE LEVEL JS ================== -->
 
@@ -290,7 +290,7 @@
 		$(document).ready(function() {
 			App.init();
 			ControlRequests.init('{{ruc.ip_address}}');
-			ControlSliders.init('{{ruc.ip_address}}');
+			ControlSliders.init('{{ruc.ip_address}}', {{ initial_speed }});
       Notification.init();
 		});
 

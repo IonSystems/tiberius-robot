@@ -1,12 +1,13 @@
 
-var handleControlSliders = function(ip_address) {
+var handleControlSliders = function(ip_address, initial_speed) {
 
 	"use strict";
+
   $("#speed_slider").ionRangeSlider({
       type: "single",
       min: 0,
       max: 100,
-      from: 50,
+      from: initial_speed,
       onStart: function (data) {
           console.log("onStart");
       },
@@ -27,13 +28,18 @@ var handleControlSliders = function(ip_address) {
           console.log("onUpdate");
       }
   });
+
+	function getTiberiusSpeed(speed){
+		alert(slider);
+		slider.from = speed;
+	}
 }
 var ControlSliders = function (ip_address) {
 	"use strict";
     return {
         //main function
-        init: function (ip_address) {
-            handleControlSliders(ip_address);
+        init: function (ip_address, initial_speed) {
+            handleControlSliders(ip_address, initial_speed);
         }
     };
 }();
