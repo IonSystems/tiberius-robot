@@ -86,6 +86,8 @@ states 					state;
 
 logic [31:0] 			sum, vsum;
 logic [31:0] 			mean, variance, sd;
+logic [31:0]			sum_count;
+logic [15:0]			x;
 
 
 always@(posedge clk)
@@ -99,6 +101,7 @@ always@(posedge clk)
 				mean 				<= 'd0;
 				variance 		<= 'd0;
 				sd 				<= 'd0;
+				sum_count		<= 'd0;
 			end
 		else
 			begin
@@ -109,7 +112,19 @@ always@(posedge clk)
 						end
 					sum_data:
 						begin
-						
+						if(sum_count == 'd3392)
+							begin
+							sum_count <= 'd0;
+							state <= calc;
+							end
+						else
+							begin
+							x <= pixel_pack[sum_count];
+							sum += x;
+							vsum += (x * x);
+							sum_count++;
+							state <= sum_data;
+							end
 						end
 					calc:
 						begin
