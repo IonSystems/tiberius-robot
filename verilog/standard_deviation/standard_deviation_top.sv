@@ -88,8 +88,16 @@ logic [31:0] 			sum, vsum;
 logic [31:0] 			mean, variance, sd;
 logic [31:0]			sum_count;
 logic [15:0]			x;
+logic [31:0]			sqrt_out;
+logic [31:0]			sqrt_count;
 
-
+sqrt	sqrt_inst (
+	.clock ( clk ),
+	.data ( variance ),
+	.result ( sqrt_out )
+	);
+	
+	
 always@(posedge clk)
 	begin
 		if(rstn == 'b0)
@@ -128,11 +136,24 @@ always@(posedge clk)
 						end
 					calc:
 						begin
-						
+						mean <= sum / 'd3392;
+						variance <= vsum / 'd3392;
+						state <= calc_sd;
 						end
 					calc_sd:
 						begin
-						
+						if(sqrt_count >= 'd28) //wait for the sqrt module to compute the value of sd
+							begin
+							sqrt_count <= 'd0;
+							sd <= sqrt_out;
+							//send a start signal to ethernet send module
+							state <= data_wait;
+							end
+						else
+							begin
+							sqrt_count++;
+							state <= calc_sd;
+							end
 						end
 					default: state <= data_wait;
 				endcase

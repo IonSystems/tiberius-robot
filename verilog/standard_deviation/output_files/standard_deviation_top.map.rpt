@@ -1,5 +1,5 @@
 Analysis & Synthesis report for standard_deviation_top
-Wed Mar 16 19:13:17 2016
+Tue Mar 22 14:19:36 2016
 Quartus Prime Version 15.1.0 Build 185 10/21/2015 SJ Lite Edition
 
 
@@ -17,6 +17,7 @@ Quartus Prime Version 15.1.0 Build 185 10/21/2015 SJ Lite Edition
   9. Post-Synthesis Netlist Statistics for Top Partition
  10. Elapsed Time Per Partition
  11. Analysis & Synthesis Messages
+ 12. Analysis & Synthesis Suppressed Messages
 
 
 
@@ -43,7 +44,7 @@ agreement for further details.
 +-------------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                                  ;
 +---------------------------------+---------------------------------------------+
-; Analysis & Synthesis Status     ; Successful - Wed Mar 16 19:13:17 2016       ;
+; Analysis & Synthesis Status     ; Successful - Tue Mar 22 14:19:36 2016       ;
 ; Quartus Prime Version           ; 15.1.0 Build 185 10/21/2015 SJ Lite Edition ;
 ; Revision Name                   ; standard_deviation_top                      ;
 ; Top-level Entity Name           ; standard_deviation_top                      ;
@@ -162,13 +163,13 @@ Parallel compilation was disabled, but you have multiple processors available. E
 +----------------------------+--------+
 
 
-+-------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Analysis & Synthesis Source Files Read                                                                                                                ;
-+----------------------------------+-----------------+------------------------------+---------------------------------------------------------+---------+
-; File Name with User-Entered Path ; Used in Netlist ; File Type                    ; File Name with Absolute Path                            ; Library ;
-+----------------------------------+-----------------+------------------------------+---------------------------------------------------------+---------+
-; standard_deviation_top.sv        ; yes             ; User SystemVerilog HDL File  ; D:/Quartus/standard_deviation/standard_deviation_top.sv ;         ;
-+----------------------------------+-----------------+------------------------------+---------------------------------------------------------+---------+
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Source Files Read                                                                                                                               ;
++----------------------------------+-----------------+------------------------------+------------------------------------------------------------------------+---------+
+; File Name with User-Entered Path ; Used in Netlist ; File Type                    ; File Name with Absolute Path                                           ; Library ;
++----------------------------------+-----------------+------------------------------+------------------------------------------------------------------------+---------+
+; standard_deviation_top.sv        ; yes             ; User SystemVerilog HDL File  ; D:/tiberius-robot/verilog/standard_deviation/standard_deviation_top.sv ;         ;
++----------------------------------+-----------------+------------------------------+------------------------------------------------------------------------+---------+
 
 
 +-----------------------------------------------------+
@@ -253,45 +254,56 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 Info: *******************************************************************
 Info: Running Quartus Prime Analysis & Synthesis
     Info: Version 15.1.0 Build 185 10/21/2015 SJ Lite Edition
-    Info: Processing started: Wed Mar 16 19:13:05 2016
+    Info: Processing started: Tue Mar 22 14:19:20 2016
 Info: Command: quartus_map --read_settings_files=on --write_settings_files=off standard_deviation -c standard_deviation_top
 Warning (20028): Parallel compilation is not licensed and has been disabled
 Info (12021): Found 4 design units, including 4 entities, in source file standard_deviation_top.sv
-    Info (12023): Found entity 1: standard_deviation_top File: D:/Quartus/standard_deviation/standard_deviation_top.sv Line: 1
-    Info (12023): Found entity 2: data_collector File: D:/Quartus/standard_deviation/standard_deviation_top.sv Line: 18
-    Info (12023): Found entity 3: standard_deviation File: D:/Quartus/standard_deviation/standard_deviation_top.sv Line: 60
-    Info (12023): Found entity 4: output_data File: D:/Quartus/standard_deviation/standard_deviation_top.sv Line: 104
+    Info (12023): Found entity 1: standard_deviation_top File: D:/tiberius-robot/verilog/standard_deviation/standard_deviation_top.sv Line: 1
+    Info (12023): Found entity 2: data_collector File: D:/tiberius-robot/verilog/standard_deviation/standard_deviation_top.sv Line: 18
+    Info (12023): Found entity 3: standard_deviation File: D:/tiberius-robot/verilog/standard_deviation/standard_deviation_top.sv Line: 72
+    Info (12023): Found entity 4: output_data File: D:/tiberius-robot/verilog/standard_deviation/standard_deviation_top.sv Line: 165
 Info (12021): Found 1 design units, including 1 entities, in source file fifo.v
-    Info (12023): Found entity 1: fifo File: D:/Quartus/standard_deviation/fifo.v Line: 37
+    Info (12023): Found entity 1: fifo File: D:/tiberius-robot/verilog/standard_deviation/fifo.v Line: 37
 Info (12021): Found 1 design units, including 1 entities, in source file tenbasetrxd.v
-    Info (12023): Found entity 1: tenbasetrxd File: D:/Quartus/standard_deviation/tenbasetrxd.v Line: 3
+    Info (12023): Found entity 1: tenbasetrxd File: D:/tiberius-robot/verilog/standard_deviation/tenbasetrxd.v Line: 3
 Info (12021): Found 4 design units, including 4 entities, in source file async.v
-    Info (12023): Found entity 1: async_transmitter File: D:/Quartus/standard_deviation/async.v Line: 13
-    Info (12023): Found entity 2: async_receiver File: D:/Quartus/standard_deviation/async.v Line: 74
-    Info (12023): Found entity 3: ASSERTION_ERROR File: D:/Quartus/standard_deviation/async.v Line: 174
-    Info (12023): Found entity 4: BaudTickGen File: D:/Quartus/standard_deviation/async.v Line: 179
+    Info (12023): Found entity 1: async_transmitter File: D:/tiberius-robot/verilog/standard_deviation/async.v Line: 13
+    Info (12023): Found entity 2: async_receiver File: D:/tiberius-robot/verilog/standard_deviation/async.v Line: 74
+    Info (12023): Found entity 3: ASSERTION_ERROR File: D:/tiberius-robot/verilog/standard_deviation/async.v Line: 174
+    Info (12023): Found entity 4: BaudTickGen File: D:/tiberius-robot/verilog/standard_deviation/async.v Line: 179
 Info (12021): Found 1 design units, including 1 entities, in source file tenbasetxd.v
-    Info (12023): Found entity 1: TENBASET_TxD File: D:/Quartus/standard_deviation/tenbasetxd.v Line: 3
-Warning (10236): Verilog HDL Implicit Net warning at tenbasetrxd.v(62): created implicit net for "rdreq" File: D:/Quartus/standard_deviation/tenbasetrxd.v Line: 62
-Warning (10236): Verilog HDL Implicit Net warning at tenbasetrxd.v(62): created implicit net for "rdempty" File: D:/Quartus/standard_deviation/tenbasetrxd.v Line: 62
+    Info (12023): Found entity 1: TENBASET_TxD File: D:/tiberius-robot/verilog/standard_deviation/tenbasetxd.v Line: 3
+Info (12021): Found 3 design units, including 3 entities, in source file sqrt.v
+    Info (12023): Found entity 1: sqrt_alt_sqrt_block_rcb File: D:/tiberius-robot/verilog/standard_deviation/sqrt.v Line: 51
+    Info (12023): Found entity 2: sqrt_altfp_sqrt_4jc File: D:/tiberius-robot/verilog/standard_deviation/sqrt.v Line: 1266
+    Info (12023): Found entity 3: sqrt File: D:/tiberius-robot/verilog/standard_deviation/sqrt.v Line: 2469
+Warning (10236): Verilog HDL Implicit Net warning at tenbasetrxd.v(62): created implicit net for "rdreq" File: D:/tiberius-robot/verilog/standard_deviation/tenbasetrxd.v Line: 62
+Warning (10236): Verilog HDL Implicit Net warning at tenbasetrxd.v(62): created implicit net for "rdempty" File: D:/tiberius-robot/verilog/standard_deviation/tenbasetrxd.v Line: 62
 Info (12127): Elaborating entity "standard_deviation_top" for the top level hierarchy
-Warning (10034): Output port "data_out" at standard_deviation_top.sv(9) has no driver File: D:/Quartus/standard_deviation/standard_deviation_top.sv Line: 9
+Warning (10034): Output port "data_out" at standard_deviation_top.sv(9) has no driver File: D:/tiberius-robot/verilog/standard_deviation/standard_deviation_top.sv Line: 9
 Warning (12158): Entity "standard_deviation_top" contains only dangling pins
 Warning (13024): Output pins are stuck at VCC or GND
-    Warning (13410): Pin "data_out" is stuck at GND File: D:/Quartus/standard_deviation/standard_deviation_top.sv Line: 9
+    Warning (13410): Pin "data_out" is stuck at GND File: D:/tiberius-robot/verilog/standard_deviation/standard_deviation_top.sv Line: 9
+Info (144001): Generated suppressed messages file D:/tiberius-robot/verilog/standard_deviation/output_files/standard_deviation_top.map.smsg
 Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
     Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
 Warning (21074): Design contains 3 input pin(s) that do not drive logic
-    Warning (15610): No output dependent on input pin "clk" File: D:/Quartus/standard_deviation/standard_deviation_top.sv Line: 3
-    Warning (15610): No output dependent on input pin "rstn" File: D:/Quartus/standard_deviation/standard_deviation_top.sv Line: 4
-    Warning (15610): No output dependent on input pin "data_in" File: D:/Quartus/standard_deviation/standard_deviation_top.sv Line: 5
+    Warning (15610): No output dependent on input pin "clk" File: D:/tiberius-robot/verilog/standard_deviation/standard_deviation_top.sv Line: 3
+    Warning (15610): No output dependent on input pin "rstn" File: D:/tiberius-robot/verilog/standard_deviation/standard_deviation_top.sv Line: 4
+    Warning (15610): No output dependent on input pin "data_in" File: D:/tiberius-robot/verilog/standard_deviation/standard_deviation_top.sv Line: 5
 Info (21057): Implemented 4 device resources after synthesis - the final resource count might be different
     Info (21058): Implemented 3 input pins
     Info (21059): Implemented 1 output pins
 Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 11 warnings
-    Info: Peak virtual memory: 853 megabytes
-    Info: Processing ended: Wed Mar 16 19:13:17 2016
-    Info: Elapsed time: 00:00:12
-    Info: Total CPU time (on all processors): 00:00:28
+    Info: Peak virtual memory: 870 megabytes
+    Info: Processing ended: Tue Mar 22 14:19:36 2016
+    Info: Elapsed time: 00:00:16
+    Info: Total CPU time (on all processors): 00:00:36
+
+
++------------------------------------------+
+; Analysis & Synthesis Suppressed Messages ;
++------------------------------------------+
+The suppressed messages can be found in D:/tiberius-robot/verilog/standard_deviation/output_files/standard_deviation_top.map.smsg.
 
 

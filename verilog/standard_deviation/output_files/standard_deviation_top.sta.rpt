@@ -1,5 +1,5 @@
 TimeQuest Timing Analyzer report for standard_deviation_top
-Wed Mar 16 19:14:17 2016
+Tue Mar 22 14:20:49 2016
 Quartus Prime Version 15.1.0 Build 185 10/21/2015 SJ Lite Edition
 
 
@@ -369,7 +369,7 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 Info: *******************************************************************
 Info: Running Quartus Prime TimeQuest Timing Analyzer
     Info: Version 15.1.0 Build 185 10/21/2015 SJ Lite Edition
-    Info: Processing started: Wed Mar 16 19:14:11 2016
+    Info: Processing started: Tue Mar 22 14:20:42 2016
 Info: Command: quartus_sta standard_deviation -c standard_deviation_top
 Info: qsta_default_script.tcl version: #1
 Warning (20028): Parallel compilation is not licensed and has been disabled
@@ -428,9 +428,9 @@ Info (332140): No Minimum Pulse Width paths to report
 Info (332101): Design is fully constrained for setup requirements
 Info (332101): Design is fully constrained for hold requirements
 Info: Quartus Prime TimeQuest Timing Analyzer was successful. 0 errors, 6 warnings
-    Info: Peak virtual memory: 1083 megabytes
-    Info: Processing ended: Wed Mar 16 19:14:17 2016
-    Info: Elapsed time: 00:00:06
-    Info: Total CPU time (on all processors): 00:00:05
+    Info: Peak virtual memory: 1084 megabytes
+    Info: Processing ended: Tue Mar 22 14:20:49 2016
+    Info: Elapsed time: 00:00:07
+    Info: Total CPU time (on all processors): 00:00:06
 
 
