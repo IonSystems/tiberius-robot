@@ -1,0 +1,177 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<head>
+	{% include "head.html" %}
+	<title>View Task</title>
+
+</head>
+<body>
+	<!-- begin #page-loader -->
+	<div id="page-loader" class="fade"><span class="spinner"></span></div>
+	<!-- end #page-loader -->
+
+	<!-- begin #page-container -->
+	<div id="page-container" class="fade in page-sidebar-fixed page-header-fixed">
+		<!-- begin #header -->
+		<div id="header" class="header navbar navbar-default navbar-fixed-top">
+			{% include "top_bar_populated.html" %}
+		</div>
+		<!-- end #header -->
+
+		<!-- begin #sidebar -->
+		<div id="sidebar" class="sidebar">
+			{% include "sidebar.html" %}
+		</div>
+		<div class="sidebar-bg"></div>
+		<!-- end #sidebar -->
+
+		<!-- begin #content -->
+		<div id="content" class="content">
+			<!-- begin breadcrumb -->
+			<ol class="breadcrumb pull-right">
+				<li><a href="/">Home</a></li>
+				<li><a href="/missionplanner/">Mission Planner</a></li>
+				<li class="active">View Task</li>
+			</ol>
+			<!-- end breadcrumb -->
+			<!-- begin page-header -->
+			<h1 class="page-header">View Task <small>let's hope it's a good'un!.</small></h1>
+			<!-- end page-header -->
+			<!-- begin profile-container -->
+            <div class="profile-container">
+                <!-- begin profile-section -->
+                <div class="profile-section">
+                    <!-- begin profile-left -->
+                    <div class="profile-left">
+                        <!-- begin profile-image -->
+                        <div class="profile-image">
+                            <img src="assets/img/profile-cover.jpg" />
+                            <i class="fa fa-user hide"></i>
+                        </div>
+                        <!-- end profile-image -->
+                        <div class="m-b-10">
+                            <a href="#" class="btn btn-warning btn-block btn-sm">Change Picture</a>
+                        </div>
+                        <!-- begin profile-highlight -->
+                        <div class="profile-highlight">
+                            <h4><i class="fa fa-cog"></i> Only My Contacts</h4>
+                            <div class="checkbox m-b-5 m-t-0">
+                                <label><input type="checkbox" /> Show my timezone</label>
+                            </div>
+                            <div class="checkbox m-b-0">
+                                <label><input type="checkbox" /> Show i have 14 contacts</label>
+                            </div>
+                        </div>
+                        <!-- end profile-highlight -->
+                    </div>
+                    <!-- end profile-left -->
+                    <!-- begin profile-right -->
+                    <div class="profile-right">
+                        <!-- begin profile-info -->
+                        <div class="profile-info">
+                            <!-- begin table -->
+                            <div class="table-responsive">
+                                <table class="table table-profile">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>
+                                                <h4>Task: {{ task.name}}
+																									{% if task.description != "" %}
+																									<small>Description: {{ task.description}}</small>
+																									{% endif %}
+																								</h4>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="highlight">
+                                            <td class="field">Creator: </td>
+                                            <td><a href="#">Add Mood Message</a></td>
+                                        </tr>
+                                        <tr class="divider">
+                                            <td colspan="2"></td>
+                                        </tr>
+
+
+                                        <tr class="highlight">
+                                            <td class="field">Tasks</td>
+																						<td>
+																						<ul>
+																						{% for ob in objectives %}
+																							<li>
+																								<a href="/missionplanner/view_task/{{ ob.task.id }}">
+																									{{ ob.task.name}}
+																								</a>
+																							</li>
+																						{% endfor %}
+																					</ul>
+																				</td>
+                                        </tr>
+
+                                        <tr class="divider">
+                                            <td colspan="2"></td>
+                                        </tr>
+
+																				<tr class="highlight">
+                                            <td class="field">Supported Platforms</td>
+																						<td>
+																						<ul>
+																						{% for sp in mission.supported_platforms.all %}
+																							<li>
+																								<a href="/fleet/view_robot/{{ sp.id }}">
+																									{{ sp }}
+																								</a>
+																							</li>
+																						{% endfor %}
+																					</ul>
+																				</td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- end table -->
+                        </div>
+                        <!-- end profile-info -->
+                    </div>
+                    <!-- end profile-right -->
+                </div>
+                <!-- end profile-section -->
+
+            </div>
+			<!-- end profile-container -->
+		</div>
+		<!-- end #content -->
+
+        <!-- begin theme-panel -->
+        <div class="theme-panel">
+            {% include "theme_panel.html" %}
+        </div>
+        <!-- end theme-panel -->
+
+		<!-- begin scroll to top btn -->
+		<a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top fade" data-click="scroll-top"><i class="fa fa-angle-up"></i></a>
+		<!-- end scroll to top btn -->
+	</div>
+	<!-- end page container -->
+
+	{% include "script.html" %}
+	<script src="{% static 'color-admin/plugins/DataTables/media/js/jquery.dataTables.js' %}"></script>
+	<script src="{% static 'color-admin/plugins/DataTables/media/js/dataTables.bootstrap.min.js' %}"></script>
+	<script src="{% static 'color-admin/plugins/DataTables/extensions/Responsive/js/dataTables.responsive.min.js' %}"></script>
+	<script src="{% static 'color-admin/js/table-manage-responsive.demo.min.js' %}"></script>
+	<script src="{% static 'color-admin/js/apps.min.js' %}"></script>
+
+	<script>
+		$(document).ready(function() {
+			App.init();
+			TableManageResponsive.init();
+		});
+	</script>
+</body>
+</html>

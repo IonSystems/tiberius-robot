@@ -63,7 +63,7 @@ class Ultrasonic:
                 'fl': data[2],
                 'rr': data[3],
                 'rc': data[4],
-                'rr': data[5],
+                'rl': data[5],
                 'valid': valid}
 
     def frontHit(self, d=30):

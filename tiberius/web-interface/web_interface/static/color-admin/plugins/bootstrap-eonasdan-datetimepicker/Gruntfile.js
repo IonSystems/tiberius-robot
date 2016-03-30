@@ -86,13 +86,17 @@ module.exports = function (grunt) {
             production: {
                 options: {
                     cleancss: true,
-                    compress: true
+                    compress: true,
+                    paths: 'node_modules'
                 },
                 files: {
                     'build/css/bootstrap-datetimepicker.min.css': 'src/less/bootstrap-datetimepicker-build.less'
                 }
             },
             development: {
+                options: {
+                    paths: 'node_modules'
+                },
                 files: {
                     'build/css/bootstrap-datetimepicker.css': 'src/less/bootstrap-datetimepicker-build.less'
                 }
@@ -165,4 +169,23 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('test', ['jshint', 'jscs', 'uglify', 'less', 'jasmine']);
+
+    grunt.registerTask('docs', 'Generate docs', function () {
+        grunt.util.spawn({
+            cmd: 'mkdocs',
+            args: ['build', '--clean']
+        });
+    });
+
+    grunt.registerTask('release', function (version) {
+        if (!version || version.split('.').length !== 3) {
+            grunt.fail.fatal('malformed version. Use grunt release:1.2.3');
+        }
+
+        grunt.task.run([
+            'bump_version:' + version,
+            'build:travis',
+            'docs'
+        ]);
+    });
 };

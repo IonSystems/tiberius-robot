@@ -4,7 +4,7 @@
 
 	Default: false
 
-See [momentjs' docs](http://momentjs.com/docs/#/displaying/format/) for valid formats. Format also dictates what components are show, e.g. `MM/dd/YYYY` will not diplay the time picker.
+See [momentjs' docs](http://momentjs.com/docs/#/displaying/format/) for valid formats. Format also dictates what components are shown, e.g. `MM/dd/YYYY` will not display the time picker.
 
 ----------------------
 
@@ -43,7 +43,9 @@ Number of minutes the up/down arrow's will move the minutes value in the time pi
 	Default: false
     Accepts: date, moment, string
 
-Prevents date/time selections before this date
+Prevents date/time selections before this date.
+
+#### `minDate` will override `defaultDate` and `useCurrent` if either of these settings are the same day since both options are invalid according to the rules you've selected.
 
 ----------------------
 
@@ -53,7 +55,9 @@ Prevents date/time selections before this date
 	Default: false
     Accepts: date, moment, string
 
-Prevents date/time selections after this date
+Prevents date/time selections after this date.
+
+#### `maxDate` will override `defaultDate` and `useCurrent` if either of these settings are the same day since both options are invalid according to the rules you've selected.
 
 ----------------------
 
@@ -121,14 +125,15 @@ Disables selection of dates **NOT** in the array, e.g. holidays
 ### icons
 
 	Default: {
-                time: 'glyphicon glyphicon-time'
-                date: 'glyphicon glyphicon-calendar'
-                up: 'glyphicon glyphicon-chevron-up'
-                down: 'glyphicon glyphicon-chevron-down'
-                previous: 'glyphicon glyphicon-chevron-left'
-                next: 'glyphicon glyphicon-chevron-right'
-                today: 'glyphicon glyphicon-screenshot'
-                clear: 'glyphicon glyphicon-trash'
+                time: 'glyphicon glyphicon-time',
+                date: 'glyphicon glyphicon-calendar',
+                up: 'glyphicon glyphicon-chevron-up',
+                down: 'glyphicon glyphicon-chevron-down',
+                previous: 'glyphicon glyphicon-chevron-left',
+                next: 'glyphicon glyphicon-chevron-right',
+                today: 'glyphicon glyphicon-screenshot',
+                clear: 'glyphicon glyphicon-trash',
+                close: 'glyphicon glyphicon-remove'
             }
     Accepts: object with all or some of the parameters above
 
@@ -178,7 +183,7 @@ Shows the week of the year to the left of first day of the week.
 ### viewMode
 
 	Default: 'days'
-    Accepts: 'years','months','days'
+    Accepts: 'decades','years','months','days'
 
 The default view to display when the picker is shown.
 
@@ -349,7 +354,7 @@ Will cause the date picker to **not** revert or overwrite invalid dates.
                 this.clear();
             }
 
-Will cause the date picker to stay open after selecting a date if no time components are being used.
+Allows for custom events to fire on keyboard press.
 
 ----------------------
 
@@ -365,9 +370,20 @@ Will cause the date picker to stay open after a `blur` event.
 ----------------------
 
 
+### ignoreReadonly
+
+<small>4.7.14</small>
+
+	Default: false
+
+Allow date picker show event to fire even when the associated input element has the `readonly="readonly"`property.
+
+----------------------
+
+
 ### disabledTimeIntervals 
 
-<small>4.14.40</small>
+<small>4.14.30</small>
 
 	Default: false
 
@@ -378,7 +394,7 @@ Disables time selection between the given `moments`
 
 ### allowInputToggle 
 
-<small>4.14.40</small>
+<small>4.14.30</small>
 
 	Default: false
 
@@ -389,7 +405,7 @@ If `true`, the picker will show on textbox focus and icon click when used in a b
 
 ### focusOnShow 
 
-<small>4.14.40</small>
+<small>4.14.30</small>
 
 	Default: true
 
@@ -400,7 +416,7 @@ If `false`, the textbox will not be given focus when the picker is shown
 
 ### enabledHours 
 
-<small>4.14.40</small>
+<small>4.14.30</small>
 
 	Default: false
 
@@ -411,7 +427,7 @@ Will allow or disallow hour selections (much like `disabledTimeIntervals`) but w
 
 ### disabledHours 
 
-<small>4.14.40</small>
+<small>4.14.30</small>
 
 	Default: false
 
@@ -422,8 +438,36 @@ Will allow or disallow hour selections (much like `disabledTimeIntervals`) but w
 
 ### viewDate 
 
-<small>4.14.40</small>
+<small>4.14.30</small>
 
 	Default: false
 
 This will change the `viewDate` without changing or setting the selected date.
+
+----------------------
+
+
+### tooltips 
+
+<small>4.15.35</small>
+
+```
+tooltips: {
+    today: 'Go to today',
+    clear: 'Clear selection',
+    close: 'Close the picker',
+    selectMonth: 'Select Month',
+    prevMonth: 'Previous Month',
+    nextMonth: 'Next Month',
+    selectYear: 'Select Year',
+    prevYear: 'Previous Year',
+    nextYear: 'Next Year',
+    selectDecade: 'Select Decade',
+    prevDecade: 'Previous Decade',
+    nextDecade: 'Next Decade',
+    prevCentury: 'Previous Century',
+    nextCentury: 'Next Century'
+}
+```
+
+This will change the `tooltips` over each icon to a custom string

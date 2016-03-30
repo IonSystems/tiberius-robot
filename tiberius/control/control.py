@@ -8,6 +8,8 @@ import time
 import logging
 from tiberius.utils import bearing_math
 from tiberius.config.config_parser import TiberiusConfigParser
+from tiberius.control.exceptions import SensorNotEnabledError
+
 """
 .. module:: control
    :synopsis: Provides access to all actuators and sensors supported by Tiberius.
@@ -113,6 +115,12 @@ class Control:
            desired_bearing (float): The bearing that the robot should be facing
             upon completion of the function.
         """
+
+        # Ensure we have sufficient priviledges to access compass.
+        if not TiberiusConfigParser.isCompassEnabled():
+            raise SensorNotEnabledError("Compass is disabled, dependant \
+function cannot be executed.")
+
         count = 0
         while(True):
             count += 1
@@ -172,6 +180,11 @@ class Control:
                 break
 
     def turnRight90Degrees(self):
+        # Ensure we have sufficient priviledges to access compass.
+        if not TiberiusConfigParser.isCompassEnabled():
+            raise SensorNotEnabledError("Compass is disabled, dependant \
+function cannot be executed.")
+
         old_bearing = self.compass.headingNormalized()
 
         desired_bearing = (old_bearing + 90)
@@ -182,6 +195,11 @@ class Control:
         self.turnTo(desired_bearing)
 
     def turnLeft90Degrees(self):
+        # Ensure we have sufficient priviledges to access compass.
+        if not TiberiusConfigParser.isCompassEnabled():
+            raise SensorNotEnabledError("Compass is disabled, dependant \
+function cannot be executed.")
+
         old_bearing = self.compass.headingNormalized()
 
         desired_bearing = (old_bearing - 90)
@@ -194,6 +212,11 @@ class Control:
     # def driveForwardDistance(self, distance_metres):
 
     def driveStraight(self, speed_percent, duration, sensitivity=1):
+        # Ensure we have sufficient priviledges to access compass.
+        if not TiberiusConfigParser.isCompassEnabled():
+            raise SensorNotEnabledError("Compass is disabled, dependant \
+function cannot be executed.")
+
         desired_heading = self.compass.headingNormalized()
         t = 0  # time
 
