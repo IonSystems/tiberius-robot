@@ -16,7 +16,7 @@ def is_windows():
 
 
 def is_pi():
-    return 'posix' in os.name and "arm" in os.uname()[4]
+    return 'arm' in os.uname()[4]
 
 
 def is_linux():
@@ -46,7 +46,7 @@ def is_folder_found(dir):
     found_result = "found!"
     try:
         if(found_result in check_output(
-         "[ -d + " + dir + " ] && echo " + "'" + found_result + "'",
+         "[ -d " + dir + " ] && echo " + "'" + found_result + "'",
          shell=True)):
             return True
         else:
@@ -75,8 +75,6 @@ class PostInstallDependencies(install):
     def run(self):
         if is_windows():
 	    print "Installing on Windows."
-            self.install_deps_windows()
-            self.install_poly_windows()
         elif is_pi():
 	    print "Installing on Raspberry Pi."
             self.install_deps_pi()
@@ -92,14 +90,14 @@ class PostInstallDependencies(install):
         install.do_egg_install(self)
 
     def install_deps_pi(self):
-	self.install_if_missing("build-essential")
-	self.install_if_missing("python-dev")
-	self.install_if_missing("libffi-dev")
-	self.install_if_missing("libi2c-dev")
-	self.install_if_missing("i2c-tools")
-        self.un_blacklist_i2c()
-        self.enable_modules_i2c()
-	
+        self.install_if_missing("build-essential")
+        self.install_if_missing("python-dev")
+        self.install_if_missing("libffi-dev")
+        self.install_if_missing("libi2c-dev")
+        self.install_if_missing("i2c-tools")
+	self.un_blacklist_i2c()
+	self.enable_modules_i2c()
+
     def install_deps_linux(self):
         print "Checking for missing packages"
         self.install_if_missing("build-essential")
@@ -109,8 +107,8 @@ class PostInstallDependencies(install):
     def un_blacklist_i2c(self):
         print "Removing I2C from blacklist on Raspberry Pi"
         blacklist_dir = "/etc/modprobe.d/raspi-blacklist.conf"
-        enable_command = "sed -i 's/blacklist i2c-bcm2708/#blacklist " \
-        "i2c-bcm2708/g' " + blacklist_dir
+        enable_command = "sed -i 's/blacklist i2c-bcm2708/#blacklist" \
+         " i2c-bcm2708/g' " + blacklist_dir
         check_output(enable_command, shell=True)
 
     def enable_modules_i2c(self):
@@ -147,7 +145,6 @@ class PostInstallDependencies(install):
             return True
 
     def install_package(self, package_name):
-	print "Installing " + package_name + "." 
         try:
             self.install_aptget(package_name)
         except CalledProcessError:
@@ -191,44 +188,83 @@ class PostInstallDependencies(install):
         # self.install_poly("", "")
 
     def install_poly_pi(self):
-	print "Installing Polyhedra Database and it's dependencies. " \
-	" Sit back, relax and enjoy the ride."
         self.install_odbc("pi")
         self.install_pyodbc("pi")
-        self.install_poly_driver("./vendor/polyhedra-driver/raspi/linux/raspi/bin/libpolyod32.so", "~/libpolyod32.so")
-        self.install_poly("./vendor/polyhedra-lite/linux/", "~/poly9.0/")
+        self.install_poly_driver("vendor/polyhedra-driver/raspi/linux/raspi/bin/libpolyod32.so", "~/libpolyod32.so")
+        self.install_poly("vendor/polyhedra-lite/raspi/", "~/poly9.0/", "pi")
+        # self.install_poly_startup_task()
 
     def install_poly_linux(self):
-	print "Ahem! Do you really want polyhedra on linux?" \
-	"Well it's too late anyway..."
         self.install_odbc("linux")
         self.install_pyodbc("linux")
-        self.install_poly_driver("./vendor/polyhedra-driver/linux/linux/i386/bin/libpolyod32.so", "~/libpolyod32.so")
-        self.install_poly("./vendor/polyhedra-lite/linux/", "~/poly9.0/")
+        self.install_poly_driver("vendor/polyhedra-driver/linux/linux/i386/bin/libpolyod32.so", "~/libpolyod32.so")
+        self.install_poly("vendor/polyhedra-lite/linux/", "~/poly9.0/", "linux")
 
     def install_poly_driver(self, src_dir, dst_dir):
         # Linux
         # Move the polyhedra driver to the user's directory
-	print "Installing Polyhedra driver file in your home directory."
         if not is_file_found(dst_dir):
-            command = "sudo cp " + src_dir + " " + dst_dir
-	    print command
-            result = check_output(command, shell=True)
+            result = check_output("cp " + src_dir + " " + dst_dir, shell=True)
+        return
 
-    def install_poly(self, src_dir, dst_dir):
+    def install_poly(self, src_dir, dst_dir, platform):
         # Linux
         # Copy the polyhedra executables to the user's directory.
-	print "Installing Polyhedra commands."
         if not is_folder_found(dst_dir):
             check_output("sudo cp -r " + src_dir + " " + dst_dir, shell=True)
 
         # Ensure the polyhedra executables are on the command path
-	print "Adding Polyhedra executables to path variable."
         bashrc_dir = "/etc/bash.bashrc"
-        if not (is_text_found("poly9.0/linux/raspi/bin", bashrc_dir)):
-	    add_cmd = "export PATH=~/poly9.0/linux/raspi/bin/:$PATH"
-            command = "echo " + add_cmd + " | sudo tee -a " + bashrc_dir
+        if "linux" in platform:
+            bash_command = "export PATH=~/poly9.0/linux/linux/i386/bin/:$PATH"
+        elif "pi" in platform:
+            bash_command = "export PATH=~/poly9.0/raspi/linux/raspi/bin/:$PATH"
+        elif "windows" in platform:
+            print "Cannot currently install Polyhedra on windows."
+            bash_command = None
+        already_done = is_text_found("poly9.0/linux/raspi/bin", bashrc_dir)
+        command_available = bash_command is not None
+        if not already_done and command_available:
+            command = "echo '" + bash_command + "' | sudo tee -a " + bashrc_dir
             check_output(command, shell=True)
+
+    def install_poly_startup_task(self):
+        from crontab import CronTab
+        print "poly_start configuration starting..."
+
+        command = "/home/pi/poly9.0/linux/raspi/bin/rtrdb -r data_service=8001 db"
+        comment = "poly_start"
+        cron = CronTab(user='root')
+        if not cron.find_comment('poly_start'):
+            print "Installing poly_start crontab..."
+            job = cron.new(command=command, comment=comment)
+            job.every_reboot()
+            cron.write()
+            if job.is_valid():
+                print "poly_start crontab successfully installed."
+            else:
+                print "poly_start crontab failed to install"
+        else:
+            print "poly_start crontab already installed"
+            print "removing old job"
+            oldjob = cron.find_comment('poly_start')
+            print ('OldJob', oldjob)
+            #cron.remove(oldjob)
+            print "Installing poly_start crontab..."
+            job = cron.new(command=command, comment=comment)
+            job.every_reboot()
+            cron.write()
+            if job.is_valid():
+                print "poly_start crontab successfully installed."
+            else:
+                print "poly_start crontab failed to install"
+        print "Listing all crontab jobs:"
+        for cronjob in cron:
+            print cronjob
+
+        print "poly_start configuration finished"
+
+
 
     def install_pyodbc(self, platform):
         if "pi" in platform or "linux" in platform:
@@ -264,7 +300,8 @@ else:
                     'pyserial',
                     'smbus-cffi',
                     'falcon',
-                    'gunicorn']
+                    'gunicorn',
+                    'python-crontab']
 
 setup(name='Tiberius',
       version='1.0',
@@ -278,6 +315,7 @@ setup(name='Tiberius',
           'tiberius/control/robotic_arm',
           'tiberius/control_api',
           'tiberius/control_api/tasks',
+          'tiberius/diagnostics',
           'tiberius/navigation/gps',
           'tiberius/navigation',
           'tiberius/logger',
@@ -288,6 +326,8 @@ setup(name='Tiberius',
       data_files=[
           (data_directory, ['tiberius/config/tiberius_conf.conf']),
           (data_directory, ['tiberius/smbus_dummy/smbus_database.db']),
+          (data_directory, ['vendor/polyhedra-driver/odbc.ini']),
+          (data_directory, ['vendor/polyhedra-driver/odbcinst.ini']),
       ],
       platforms=['Raspberry Pi 2', 'Raspberry Pi 1'],
       install_requires=requirements,

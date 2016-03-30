@@ -10,7 +10,7 @@ class PolyhedraDatabase(Database):
     def __init__(self, name):
         # Start the database API if it is not already running
         popen = subprocess.Popen(
-            "rtrdb -r data_service=8001 -r verbosity=4 db",
+            "/home/pi/poly9.0/linux/raspi/bin/rtrdb -r data_service=8001 db",
             shell=True, stdout=subprocess.PIPE)
         lines_iterator = iter(popen.stdout.readline, b"")
         for line in lines_iterator:
@@ -32,15 +32,15 @@ class PolyhedraDatabase(Database):
         query = self.__generate_query(
             SqlClauses.SELECT.value, table_name, column_name, conditions)
         self.c.execute(query)
+
         return self.c.fetchall()
 
-    def insert(self, table_name, values):
+    def insert(self, table_name, values):   #add new adta
         query = self.__generate_insert("insert", table_name, values)
         try:
             self.c.execute(query)
-            # self.conn.commit()
+            # self.conn.commit(
         except pyodbc.Error as e:
-            print e
             if "Duplicate key error" in e[1]:
                 raise PolyhedraDatabase.DuplicateKeyError(e[1])
             else:
@@ -79,7 +79,7 @@ class PolyhedraDatabase(Database):
         WHERE CustomerName='Alfreds Futterkiste';
     '''
 
-    def update(self, table_name, data, conditions):
+    def update(self, table_name, data, conditions): #updating old data
         query = self.__generate_update(table_name, data, conditions)
         self.c.execute(query)
         self.conn.commit()
@@ -93,7 +93,6 @@ class PolyhedraDatabase(Database):
 
     def create(self, table_name, columns):
         query = self.__generate_create(table_name, columns)
-        print query
         try:
             self.c.execute(query)
             # Set database properties
@@ -173,11 +172,16 @@ class PolyhedraDatabase(Database):
         query = ""
         if query_type.upper() == SqlClauses.SELECT.value:
             query += SqlClauses.SELECT.value + " "
-        query += column_name + " "
+
+        for column in column_name:
+            query += column + ", "
+        query = query[:-2]
+        query += " "
         query += SqlClauses.FROM.value + " "
         query += table_name
         if conditions:
             query += " " + self.__generate_conditions(conditions)
+        #print query
         return query
 
     def __generate_conditions(self, conditions=None):
@@ -218,7 +222,7 @@ class PolyhedraDatabase(Database):
     def __generate_columns(self, columns):
         query = "("
         for c_name, c_type in columns.iteritems():
-            query += c_name + " " + c_type + ", "
+            query += str(c_name) + " " + str(c_type) + ", "
         query = query[:-2]  # Remove the last comma
         query += ")"
         return query

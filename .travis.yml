@@ -1,0 +1,25 @@
+# Programming language
+language: python
+
+# Language version(s) to test against.
+python:
+  - "2.7"
+
+# Command to install dependencies.
+install:
+  - python setup.py install
+
+# Command to start the tests.
+script: nosetests
+
+# We need sudo to put stuff in /etc/
+sudo: required
+
+# Config for codecov.io
+before_install:
+  - pip install codecov
+# Ensure the following dependencies are installed.
+  - sudo apt-get install unixodbc-dev unixodbc-bin unixodbc
+  - sudo apt-get install python-pyodbc
+after_success:
+  - codecov

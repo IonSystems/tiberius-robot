@@ -1,0 +1,19 @@
+[{
+    "model": "missionplanner.task",
+    "pk": 1,
+    "fields": {
+        "task_id": -1,
+        "name": "Drive Forwards U.W",
+        "description": "Drive forwards until a front obstaaclt is detected",
+        "supported_platforms": [1, 2, 3, 4]
+    }
+}, {
+    "model": "missionplanner.task",
+    "pk": 2,
+    "fields": {
+        "task_id": -1,
+        "name": "Drive Backwards U.W",
+        "description": "Drive b/w untill wall",
+        "supported_platforms": [1, 2, 3, 4]
+    }
+}]

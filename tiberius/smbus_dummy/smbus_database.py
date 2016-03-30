@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import sys
 from tiberius.database.sqlite_database import SqliteDatabase
 from tiberius.utils import detection
@@ -24,22 +25,25 @@ def initialise_database():
 
 
 def get_value(device_address, register_address):
-    return db.query(tn, "value", {
-        'clause': 'WHERE',
-        'logic': 'AND',
-        'data': [
-            {
-                'column': 'address',
-                'assertion': '=',
-                'value': device_address
-            },
-            {
-                'column': 'register',
-                'assertion': '=',
-                'value': register_address
-            }
-        ]
-    })[0][0]
+    try:
+        return db.query(tn, "value", {
+            'clause': 'WHERE',
+            'logic': 'AND',
+            'data': [
+                {
+                    'column': 'address',
+                    'assertion': '=',
+                    'value': device_address
+                },
+                {
+                    'column': 'register',
+                    'assertion': '=',
+                    'value': register_address
+                }
+            ]
+        })[0][0]
+    except IndexError as e:
+        return 0
 
 
 def set_value(device_address, register_address, value):
