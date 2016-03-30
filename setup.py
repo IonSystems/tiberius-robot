@@ -304,7 +304,8 @@ if is_windows():
                     'pyserial',
                     'falcon',
                     'gunicorn',
-                    'requests']
+                    'requests',
+                    'pyttsx']
 
 else:
     # Parameters for Linux-based operating systems
@@ -318,7 +319,8 @@ else:
                     'falcon',
                     'gunicorn',
                     'python-crontab',
-                    'requests']
+                    'requests',
+                    'pyttsx']
 
 setup(name='Tiberius',
       version='1.0',
