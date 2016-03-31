@@ -8,7 +8,7 @@ class DatabaseResource(object):
         Allows access to the in-memory database on Tiberius.
     '''
     def __init__(self):
-        self.database = PolyhedaraDatabase('api_connection')
+        self.database = PolyhedraDatabase('api_connection')
 
     def on_post(self, req, resp):
         resp.body = '{"data": "Hello world!"}'

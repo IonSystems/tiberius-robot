@@ -34,7 +34,7 @@ def generate_response(req, resp, resource):
                  'x': resource.x,
                  'y': resource.y,
                  'z': resource.z,
-                 'state': resource.state.value,
+                 'state': resource.state,
                  'speed': resource.speed,
     })
 

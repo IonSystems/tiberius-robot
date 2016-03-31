@@ -2,7 +2,7 @@ import falcon
 import sys
 from tiberius.logger import logger
 import logging
-
+import json
 
 def generate_response(req, resp, resource):
     # If we make it this far then return status OK
