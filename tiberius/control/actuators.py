@@ -15,7 +15,54 @@ import enum
 
 
 class Arm:
+    __config = TiberiusConfigParser()
     arm = RoboticArmDriver()
+    positions = {
+        'park': __config.getArmParkParams(),
+        'centre': __config.getArmCentreParams(),
+        'basket': __config.getArmBasketParams(),
+    }
+
+    '''
+        Move the arm to the parked position, for safe storage whilst not in use.
+    '''
+    def park(self):
+        # Move arm out of harms way
+        self.arm.move_shoulder(180)
+        self.arm.move_elbow(180)
+
+        # Move arm to parking position
+        p = self.positions['park']
+        self.arm.move_arm_to(p['x'], p['y'], p['z'])
+
+        # Close gripper
+        self.arm.move_gripper(True)
+
+    '''
+        Bring the arm round to the centre position, ready to use.
+    '''
+    def centre(self):
+        # Move arm out of harms way
+        self.arm.move_shoulder(180)
+        self.arm.move_elbow(180)
+
+        # Move arm to centre position
+        p = self.positions['centre']
+        self.move_arm_to(p['x'], p['y'], p['z'])
+
+    '''
+        Swing the arm round around over the basket and ungrasp,
+        then return to the old position.
+    '''
+    def basket(self):
+        # Move arm out of harms way
+        self.arm.move_shoulder(180)
+        self.arm.move_elbow(180)
+
+        # Move arm to centre position
+        p = self.positions['park']
+        self.move_arm_to(p['x'], p['y'], p['z'])
+
 
 
 class MotorState(enum.Enum):

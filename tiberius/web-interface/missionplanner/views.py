@@ -146,9 +146,25 @@ def plotting(request, id):
                              'Invalid request, please check.')
         return HttpResponseBadRequest()
 
+
 @login_required(login_url='/users/login/')
 def view_mission(request, id):
     template = loader.get_template('view_mission.html')
+    mission = Mission.objects.get(pk=id)
+    objectives = MissionObjective.objects.filter(mission=id)
+    json_waypoints = json.dumps([ob.waypoint.dict() for ob in objectives])
+    print json_waypoints
+    context = RequestContext(request, {
+        'mission': mission,
+        'objectives': objectives,
+        'json_waypoints': mark_safe(json_waypoints),
+    })
+    return HttpResponse(template.render(context))
+
+
+@login_required(login_url='/users/login/')
+def control_panel(request, id):
+    template = loader.get_template('control_panel.html')
     mission = Mission.objects.get(pk=id)
     objectives = MissionObjective.objects.filter(mission=id)
     json_waypoints = json.dumps([ob.waypoint.dict() for ob in objectives])

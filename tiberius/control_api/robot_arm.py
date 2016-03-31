@@ -9,9 +9,22 @@ import logging
 '''
 
 
-class RobotArmStates(Enum):
+class ArmStates:
     ENABLED = "enabled"
-    DISABLED = "disbled"
+    DISABLED = "disabled"
+
+
+class ArmCommands:
+    BASKET = "basket"
+    CENTRE = "centre"
+    PARK = "park"
+    SET_X = "set_x"
+    SET_Y = "set_y"
+    SET_Z = "set_z"
+    GRASP = "grasp"
+    UNGRASP = "ungrasp"
+    SET_SPEED = "set_speed"
+    GET_SPEED = "get_speed"
 
 
 def generate_response(req, resp, resource):
@@ -22,6 +35,7 @@ def generate_response(req, resp, resource):
                  'y': resource.y,
                  'z': resource.z,
                  'state': resource.state.value,
+                 'speed': resource.speed,
     })
 
 
@@ -52,14 +66,43 @@ class RobotArmResource(object):
     def __init__(self, arm_control):
         self.arm_control = arm_control
         self.logger = logging.getLogger('tiberius.control_api.RobotArmResource')
-        self.state = RobotArmStates.ENABLED
+        self.state = ArmStates.ENABLED
 
         self.x = None
         self.y = None
         self.z = None
 
+        self.speed = 0
+
     @falcon.after(generate_response)
     @falcon.before(validate_params)
     def on_post(self, req, resp):
-        # Can't go forwards and backwards at the same time so we can use elif.
+        # Get arm speed
+        if(ArmCommands.GET_SPEED in req.params):
+            pass
+        if(ArmCommands.SET_SPEED in req.params):
+            self.speed = req.params[ArmCommands.SET_SPEED]
+
+        # Arm positional commands
+        if(ArmCommands.SET_X in req.params):
+            self.x = req.params[ArmCommands.SET_X]
+        if(ArmCommands.SET_Y in req.params):
+            self.y = req.params[ArmCommands.SET_Y]
+        if(ArmCommands.SET_Z in req.params):
+            self.y = req.params[ArmCommands.SET_Z]
+
+        # Arm gripper commands
+        if(ArmCommands.GRASP in req.params):
+            self.arm_control.grasp()
+        elif(ArmCommands.UNGRASP in req.params):
+            self.arm_control.ungrasp()
+
+        # Arm complex commands
+        if(ArmCommands.BASKET in req.params):
+            self.arm_control.basket()
+        elif(ArmCommands.CENTRE in req.params):
+            self.arm_control.centre()
+        elif(ArmCommands.PARK in req.params):
+            self.arm_control.park()
+
         print req.params

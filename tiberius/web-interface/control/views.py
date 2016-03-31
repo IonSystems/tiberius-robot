@@ -10,6 +10,7 @@ from .forms import ChangeRobotForm
 import requests
 from django.utils.safestring import mark_safe
 import json
+import web_interface.settings as settings
 # Create your views here.
 
 
@@ -66,19 +67,43 @@ def control(request, id):
         template = loader.get_template('control.html')
         tib = Robot.objects.get(id=id)
         robot_online = check_robot_status(tib.ip_address)
-        initial_speed = json.loads(send_command('get_speed', "http://" + tib.ip_address + ":8000/motors"))['speed']
+        initial_speed = get_api_param(
+            tib.ip_address,
+            'motors',
+            'get_speed',
+            'speed'
+        )
+        initial_arm_speed = get_api_param(
+            tib.ip_address,
+            'arm',
+            'get_speed',
+            'speed'
+        )
         context = RequestContext(request, {
             'ruc': tib,
             'form': form,
             'robot_online': robot_online,
-            'initial_speed': mark_safe(initial_speed)
+            'initial_speed': mark_safe(initial_speed),
+            'initial_arm_speed': mark_safe(initial_arm_speed)
         })
         return HttpResponse(template.render(context))
 
 
+def get_api_param(ip_address, resource, command, param):
+    try:
+        r = send_command(
+                command,
+                "http://" + ip_address + ":8000/" + resource)
+        if r:
+            r = json.loads(r)[param]
+    except KeyError, e:
+        return None
+    return r
+
+
 @require_http_methods(["POST"])
 def send_control_request(request):
-    headers = {'X-Auth-Token': "supersecretpassword"}
+    headers = {'X-Auth-Token': settings.SUPER_SECRET_PASSWORD}
 
     # Contruct url for motor resource on Control API
     ip_address = request.POST.get('ip_address')
@@ -150,7 +175,7 @@ def send_control_request(request):
     return HttpResponse(response)
 
 
-def send_command(command_name, url, headers={'X-Auth-Token': "supersecretpassword"}):
+def send_command(command_name, url, headers={'X-Auth-Token': settings.SUPER_SECRET_PASSWORD}):
     try:
         data = {'command': command_name}
         r = requests.post(url,
@@ -164,7 +189,7 @@ def send_command(command_name, url, headers={'X-Auth-Token': "supersecretpasswor
 
 @require_http_methods(["POST"])
 def send_task_request(request):
-    headers = {'X-Auth-Token': "supersecretpassword"}
+    headers = {'X-Auth-Token': settings.SUPER_SECRET_PASSWORD}
 
     # Contruct url for motor resource on Control API
     ip_address = request.POST.get('ip_address')
@@ -188,11 +213,12 @@ def send_task_request(request):
 
     return HttpResponse(response)
 
+
 def check_robot_status(ip_address):
     url_start = "http://"
     url_end = ":8000/status"
     url = url_start + ip_address + url_end
-    headers = {'X-Auth-Token': "supersecretpassword"}
+    headers = {'X-Auth-Token': settings.SUPER_SECRET_PASSWORD}
     data = 'status'
     try:
         r = requests.post(url,

@@ -15,7 +15,9 @@ NETWORKING_SECTION = 'networking'
 KINECT_SECTION = 'kinect'
 ROBOT_ARM_SECTION = 'arm'
 AUTHENTICATION_SECTION = 'authentication'
-
+ARM_BASKET_SECTION = 'arm_basket_positions'
+ARM_CENTRE_SECTION = 'arm_centre_positions'
+ARM_PARK_SECTION = 'arm_park_positions'
 
 class TiberiusConfigParser():
 
@@ -157,7 +159,35 @@ class TiberiusConfigParser():
         password = TiberiusConfigParser.getParser().get(AUTHENTICATION_SECTION, 'password')
         return password
 
+    '''******************************************
+        Arm Positions
+    ******************************************'''
+
+    @staticmethod
+    def getArmParkParams():
+        x = TiberiusConfigParser.getParser().getint(ARM_PARK_SECTION, 'x')
+        y = TiberiusConfigParser.getParser().getint(ARM_PARK_SECTION, 'y')
+        z = TiberiusConfigParser.getParser().getint(ARM_PARK_SECTION, 'z')
+        return {'x': x, 'y': y, 'z': z}
+
+    @staticmethod
+    def getArmCentreParams():
+        x = TiberiusConfigParser.getParser().getint(ARM_CENTRE_SECTION, 'x')
+        y = TiberiusConfigParser.getParser().getint(ARM_CENTRE_SECTION, 'y')
+        z = TiberiusConfigParser.getParser().getint(ARM_CENTRE_SECTION, 'z')
+        return {'x': x, 'y': y, 'z': z}
+
+    @staticmethod
+    def getArmBasketParams():
+        x = TiberiusConfigParser.getParser().getint(ARM_BASKET_SECTION, 'x')
+        y = TiberiusConfigParser.getParser().getint(ARM_BASKET_SECTION, 'y')
+        z = TiberiusConfigParser.getParser().getint(ARM_BASKET_SECTION, 'z')
+        return {'x': x, 'y': y, 'z': z}
+
 
 if __name__ == "__main__":
 
     print TiberiusConfigParser.getIPAddress()
+    print TiberiusConfigParser.getArmParkParams()
+    print TiberiusConfigParser.getArmCentreParams()
+    print TiberiusConfigParser.getArmBasketParams()

@@ -7,6 +7,7 @@ import motors
 import robot_arm
 import debug
 import task_controller
+import status
 
 # #Import control module
 from tiberius.control.control import Control
@@ -25,12 +26,16 @@ motors = motors.MotorResource(m)
 arm = robot_arm.RobotArmResource(a)
 debug = debug.DebugResource()
 task_controller = task_controller.TaskControllerResource()
+database = database.DatabaseResource()
+status = status.StatusResource(motors, database, sensors)
 
 api.add_route('/sensors', sensors)
 api.add_route('/motors', motors)
 api.add_route('/arm', arm)
 api.add_route('/debug', debug)
 api.add_route('/task', task_controller)
+api.add_route('/database', database)
+api.add_route('/status', status)
 
 if __name__ == '__main__':
     httpd = simple_server.make_server('0.0.0.0', 8000, api)

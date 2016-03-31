@@ -41,15 +41,15 @@ class RoboticArmDriver:
         self.ser.write("G0 X" + str(arm_coords[0]) + "Y" + str(arm_coords[1]) + "Z" + str(arm_coords[2]) + "\n")
         # Tell the RAMPS console to move the given GCODE
 
-    def move_gripper(self, close):
-        if close:
-            self.ser.write("M280 P0 S0\n")
-            time.sleep(self.gripper_timeout)
-            self.ser.write("M280 P0 S75\n")
-        else:
-            self.ser.write("M280 P0 S90\n")
-            time.sleep(self.gripper_timeout)
-            self.ser.write("M280 P0 S75\n")
+    def grasp(self):
+        self.ser.write("M280 P0 S0\n")
+        time.sleep(self.gripper_timeout)
+        self.ser.write("M280 P0 S75\n")
+
+    def ungrasp(self):
+        self.ser.write("M280 P0 S90\n")
+        time.sleep(self.gripper_timeout)
+        self.ser.write("M280 P0 S75\n")
 
     def rotate_arm(self, angle):
         self.ser.write("G0 Y" + str(angle) + "\n")
