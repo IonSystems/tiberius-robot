@@ -224,7 +224,7 @@ def check_robot_status(ip_address):
         r = requests.post(url,
                           data=data,
                           headers=headers)
-        status = r.text
+        status = json.loads(r.text)['connection']
     except ConnectionError as e:
         status = "Offline"
     return status
