@@ -263,7 +263,7 @@
                                   <table id="com-chilipeppr-widget-xyz">
                                       <tr valign="top">
                                           <td class="col xcol-xs-2" style="border:0px yellow solid;">
-                                              <button id="arm_grab_plus"
+                                              <button id="arm_button_grab_plus"
                                                       class="btn btn-white  dbltall"
                                                       title="Grasp">
                                                       <span class="fa fa-2x fa-plus"></span>
@@ -495,9 +495,9 @@
 		$(document).ready(function() {
 			App.init();
       ControlRequests.init('{{ruc.ip_address}}');
-			ArmRequests.init('{{ruc.ip_address}}');
+			ArmRequests.init('{{ruc.ip_address}}', "{{ initial_arm_values }}");
       ControlSliders.init('{{ruc.ip_address}}', {{ initial_speed }});
-			ArmControlSliders.init('{{ruc.ip_address}}', {{ initial_arm_speed }});
+			ArmControlSliders.init('{{ruc.ip_address}}', "{{ initial_arm_values }}");
       Notification.init();
 		});
 

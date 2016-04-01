@@ -5,25 +5,11 @@ Author: Sean Ngu
 Website: http://www.seantheme.com/color-admin-v1.9/admin/
 */
 
-//Keyboard Listener
-window.onkeydown = function (e) {
-	var code = e.keyCode ? e.keyCode : e.which;
-	if (code === 87) { //up key
-			alert('up');
-	} else if (code === 83) { //down key
-			alert('down');
-	} else if (code === 65) { //left key
-			alert('left');
-	} else if (code === 68) { //right key
-			alert('right');
-	}
-};
-
-function send_stop(ip_address){
+function send_command(ip_address, command_name, command_value){
 	$.ajax({
-			url: '../send_control_request',
+			url: '../send_arm_request',
 			type: 'POST',
-			data: {'stop':true, 'ip_address':ip_address},
+			data: {command_name:command_value, 'ip_address':ip_address},
 			success: function (result) {
 				//alert("anything");
 			},
@@ -33,77 +19,77 @@ function send_stop(ip_address){
 	});
 }
 
-var handleArmButtons = function(ip_address) {
+function arm_unavailable(){
+	// Disable arm positioning buttons
+	document.getElementById("arm_button_x_minus").disabled = true;
+	document.getElementById("arm_button_y_plus").disabled = true;
+	document.getElementById("arm_button_y_minus").disabled = true;
+	document.getElementById("arm_button_x_plus").disabled = true;
+	document.getElementById("arm_button_stop").disabled = true;
+	document.getElementById("arm_button_z_plus").disabled = true;
+	document.getElementById("arm_button_z_minus").disabled = true;
 
+	// Disable claw grasping buttons
+	document.getElementById("arm_button_grab_minus").disabled = true;
+	document.getElementById("arm_button_grab_plus").disabled = true;
+
+	// Disable complex command buttons
+	document.getElementById("arm_button_centre").disabled = true;
+	document.getElementById("arm_button_basket").disabled = true;
+	document.getElementById("arm_button_park").disabled = true;
+
+}
+
+var handleArmButtons = function(ip_address, initial_values) {
 	"use strict";
-  $('#button_stop').click(function() {
-    send_stop(ip_address);
 
+	// Convert initial values into JSON
+	initial_values = JSON.parse(initial_values);
+
+	var x_pos = initial_values['x'];
+	var y_pos = initial_values['y'];
+	var z_pos = initial_values['z'];
+
+	// If we don't get valid initial positions, disable arm buttons.
+	if(!x_pos){
+		arm_unavailable();
+	}
+
+  $('#arm_button_x_minus').click(function() {
+		x_pos = x_pos - 20;
+		send_command(ip_address, 'arm_button_x', x_pos);
   });
-  $('#button_forward').click(function() {
-    $.ajax({
-        url: '../send_control_request',
-        type: 'POST',
-        data: {'forward':50, 'ip_address':ip_address},
-        success: function (result) {
-          //alert("anything");
-        },
-				error: function(error_msg){
-					alert(error_msg);
-				}
-    });
-
+	$('#arm_button_y_plus').click(function() {
+		y_pos = y_pos + 20;
+		send_command(ip_address, 'arm_button_y', y_pos);
   });
-  $('#button_backward').click(function() {
-    $.ajax({
-        url: '../send_control_request',
-        type: 'POST',
-        data: {'backward':50, 'ip_address':ip_address},
-        success: function (result) {
-          //alert("anything");
-        },
-				error: function(error_msg){
-					alert(error_msg);
-				}
-    });
-
+	$('#arm_button_y_minus').click(function() {
+		y_pos = y_pos - 20;
+		send_command(ip_address, 'arm_button_y', y_pos);
   });
-	$('#button_left').click(function() {
-    $.ajax({
-        url: '../send_control_request',
-        type: 'POST',
-        data: {'left':50, 'ip_address':ip_address},
-        success: function (result) {
-          //alert("anything");
-        },
-				error: function(error_msg){
-					alert(error_msg);
-				}
-    });
-
+	$('#arm_button_x_plus').click(function() {
+		x_pos = x_pos + 20;
+		send_command(ip_address, 'arm_button_x', x_pos);
   });
-	$('#button_right').click(function() {
-    $.ajax({
-        url: '../send_control_request',
-        type: 'POST',
-        data: {'right':50, 'ip_address':ip_address},
-        success: function (result) {
-          //alert("anything");
-        },
-				error: function(error_msg){
-					alert(error_msg);
-				}
-    });
-
+	$('#arm_button_stop').click(function() {
+		send_command(ip_address, 'stop', 'True');
+  });
+	$('#arm_button_z_plus').click(function() {
+		z_pos = z_pos + 20;
+		send_command(ip_address, 'arm_button_z', z_pos);
+  });
+	$('#arm_button_z_minus').click(function() {
+		z_pos = z_pos + 20;
+		send_command(ip_address, 'arm_button_z', z_pos);
   });
 };
 
-var ArmRequests = function (ip_address) {
+var ArmRequests = function (ip_address, initial_values) {
 	"use strict";
     return {
         //main function
-        init: function (ip_address) {
-            handleArmButtons(ip_address);
+        init: function (ip_address, initial_values) {
+            handleArmButtons(ip_address, initial_values);
         }
     };
 }();

@@ -68,9 +68,9 @@ class RobotArmResource(object):
         self.logger = logging.getLogger('tiberius.control_api.RobotArmResource')
         self.state = ArmStates.ENABLED
 
-        self.x = None
-        self.y = None
-        self.z = None
+        self.x = -1
+        self.y = -1
+        self.z = -1
 
         self.speed = 0
 

@@ -73,31 +73,34 @@ def control(request, id):
             'get_speed',
             'speed'
         )
-        initial_arm_speed = get_api_param(
+        initial_arm_values = get_api_param(
             tib.ip_address,
             'arm',
-            'get_speed',
-            'speed'
+            'get_speed'
         )
         context = RequestContext(request, {
             'ruc': tib,
             'form': form,
             'robot_online': robot_online,
             'initial_speed': mark_safe(initial_speed),
-            'initial_arm_speed': mark_safe(initial_arm_speed)
+            'initial_arm_values': mark_safe(initial_arm_values)
         })
         return HttpResponse(template.render(context))
 
 
-def get_api_param(ip_address, resource, command, param):
+def get_api_param(ip_address, resource, command, param=None):
     try:
         r = send_command(
                 command,
                 "http://" + ip_address + ":8000/" + resource)
-        if r:
+        if r and param:
             r = json.loads(r)[param]
+        elif r:
+            r = json.loads(r)
     except KeyError, e:
-        return None
+        return -1
+    except TypeError, e:
+        return -1
     return r
 
 
@@ -172,6 +175,87 @@ def send_control_request(request):
         command = request.POST.get('command')
         if command == "get_speed":
             send_command("get_speed", url)
+    return HttpResponse(response)
+
+
+@require_http_methods(["POST"])
+def send_arm_request(request):
+    headers = {'X-Auth-Token': settings.SUPER_SECRET_PASSWORD}
+
+    # Contruct url for motor resource on Control API
+    ip_address = request.POST.get('ip_address')
+    url_start = "http://"
+    url_end = ":8000/arm"
+    url = url_start + ip_address + url_end
+    response = ""
+
+    try:
+        r = requests.post(url,
+                          data=request,
+                          headers=headers)
+        response = r.text
+    except ConnectionError as e:
+        response = e
+    # if request.POST.get('stop'):
+    #     try:
+    #         data = {'stop': True}
+    #         r = requests.post(url,
+    #                           data=data,
+    #                           headers=headers)
+    #         response = r.text
+    #     except ConnectionError as e:
+    #         response = e
+    # elif request.POST.get('forward'):
+    #     data = {'forward': True}
+    #     try:
+    #         r = requests.post(url,
+    #                           data=data,
+    #                           headers=headers)
+    #         response = r.text
+    #     except ConnectionError as e:
+    #         response = e
+    # elif request.POST.get('backward'):
+    #     data = {'backward': True}
+    #     try:
+    #         r = requests.post(url,
+    #                           data=data,
+    #                           headers=headers)
+    #         response = r.text
+    #     except ConnectionError as e:
+    #         response = e
+    #
+    # if request.POST.get('left'):
+    #     data = {'left': True}
+    #     try:
+    #         r = requests.post(url,
+    #                           data=data,
+    #                           headers=headers)
+    #         response = r.text
+    #     except ConnectionError as e:
+    #         response = e
+    # elif request.POST.get('right'):
+    #     data = {'right': True}
+    #     try:
+    #         r = requests.post(url,
+    #                           data=data,
+    #                           headers=headers)
+    #         response = r.text
+    #     except ConnectionError as e:
+    #         response = e
+    #
+    # if request.POST.get('speed'):
+    #     try:
+    #         data = {'speed': request.POST.get('speed')}
+    #         r = requests.post(url,
+    #                           data=data,
+    #                           headers=headers)
+    #         response = r.text
+    #     except ConnectionError as e:
+    #         response = e
+    # elif request.POST.get('command'):
+    #     command = request.POST.get('command')
+    #     if command == "get_speed":
+    #         send_command("get_speed", url)
     return HttpResponse(response)
 
 
