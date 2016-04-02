@@ -121,69 +121,14 @@ def send_control_request(request):
     url_end = ":8000/motors"
     url = url_start + ip_address + url_end
     response = ""
-    print request.POST
-    if request.POST.get('stop'):
-        try:
-            data = {'stop': True}
-            r = requests.post(url,
-                              data=data,
-                              headers=headers)
-            response = r.text
-        except ConnectionError as e:
-            response = e
-    elif request.POST.get('forward'):
-        print "Sending forwards"
-        data = {'forward': True}
-        try:
-            r = requests.post(url,
-                              data=data,
-                              headers=headers)
-            response = r.text
-            print r.request
-        except ConnectionError as e:
-            response = e
-    elif request.POST.get('backward'):
-        data = {'backward': True}
-        try:
-            r = requests.post(url,
-                              data=data,
-                              headers=headers)
-            response = r.text
-        except ConnectionError as e:
-            response = e
 
-    if request.POST.get('left'):
-        data = {'left': True}
-        try:
-            r = requests.post(url,
-                              data=data,
-                              headers=headers)
-            response = r.text
-        except ConnectionError as e:
-            response = e
-    elif request.POST.get('right'):
-        data = {'right': True}
-        try:
-            r = requests.post(url,
-                              data=data,
-                              headers=headers)
-            response = r.text
-        except ConnectionError as e:
-            response = e
-
-    if request.POST.get('speed'):
-        try:
-            data = {'speed': request.POST.get('speed')}
-            r = requests.post(url,
-                              data=data,
-                              headers=headers)
-            response = r.text
-        except ConnectionError as e:
-            response = e
-    elif request.POST.get('command'):
-        command = request.POST.get('command')
-        if command == "get_speed":
-            send_command("get_speed", url)
+    try:
+        r = requests.post(url,
+                          data=request.POST.lists(),
+                          headers=headers)
+        response = r.text
+    except ConnectionError as e:
+        response = e
     return HttpResponse(response)
 
 
@@ -200,71 +145,11 @@ def send_arm_request(request):
 
     try:
         r = requests.post(url,
-                          data=request,
+                          data=request.POST.lists(),
                           headers=headers)
         response = r.text
     except ConnectionError as e:
         response = e
-    # if request.POST.get('stop'):
-    #     try:
-    #         data = {'stop': True}
-    #         r = requests.post(url,
-    #                           data=data,
-    #                           headers=headers)
-    #         response = r.text
-    #     except ConnectionError as e:
-    #         response = e
-    # elif request.POST.get('forward'):
-    #     data = {'forward': True}
-    #     try:
-    #         r = requests.post(url,
-    #                           data=data,
-    #                           headers=headers)
-    #         response = r.text
-    #     except ConnectionError as e:
-    #         response = e
-    # elif request.POST.get('backward'):
-    #     data = {'backward': True}
-    #     try:
-    #         r = requests.post(url,
-    #                           data=data,
-    #                           headers=headers)
-    #         response = r.text
-    #     except ConnectionError as e:
-    #         response = e
-    #
-    # if request.POST.get('left'):
-    #     data = {'left': True}
-    #     try:
-    #         r = requests.post(url,
-    #                           data=data,
-    #                           headers=headers)
-    #         response = r.text
-    #     except ConnectionError as e:
-    #         response = e
-    # elif request.POST.get('right'):
-    #     data = {'right': True}
-    #     try:
-    #         r = requests.post(url,
-    #                           data=data,
-    #                           headers=headers)
-    #         response = r.text
-    #     except ConnectionError as e:
-    #         response = e
-    #
-    # if request.POST.get('speed'):
-    #     try:
-    #         data = {'speed': request.POST.get('speed')}
-    #         r = requests.post(url,
-    #                           data=data,
-    #                           headers=headers)
-    #         response = r.text
-    #     except ConnectionError as e:
-    #         response = e
-    # elif request.POST.get('command'):
-    #     command = request.POST.get('command')
-    #     if command == "get_speed":
-    #         send_command("get_speed", url)
     return HttpResponse(response)
 
 
