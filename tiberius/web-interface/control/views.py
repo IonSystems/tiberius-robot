@@ -83,7 +83,8 @@ def control(request, id):
             'form': form,
             'robot_online': robot_online,
             'initial_speed': mark_safe(initial_speed),
-            'initial_arm_values': mark_safe(initial_arm_values)
+            'initial_arm_values': mark_safe(initial_arm_values),
+            'initial_arm_speed': mark_safe(initial_arm_values['speed'])
         })
         return HttpResponse(template.render(context))
 
@@ -101,20 +102,25 @@ def get_api_param(ip_address, resource, command, param=None):
         return -1
     except TypeError, e:
         return -1
+    except ValueError, e:
+        return -1
     return r
 
 
 @require_http_methods(["POST"])
 def send_control_request(request):
+    '''
+        Forward the HTTP request from the browser through to the Tiberius API.
+    '''
     headers = {'X-Auth-Token': settings.SUPER_SECRET_PASSWORD}
 
-    # Contruct url for motor resource on Control API
+    # Construct url for motor resource on Control API
     ip_address = request.POST.get('ip_address')
     url_start = "http://"
     url_end = ":8000/motors"
     url = url_start + ip_address + url_end
     response = ""
-
+    print request.POST
     if request.POST.get('stop'):
         try:
             data = {'stop': True}
@@ -125,12 +131,14 @@ def send_control_request(request):
         except ConnectionError as e:
             response = e
     elif request.POST.get('forward'):
+        print "Sending forwards"
         data = {'forward': True}
         try:
             r = requests.post(url,
                               data=data,
                               headers=headers)
             response = r.text
+            print r.request
         except ConnectionError as e:
             response = e
     elif request.POST.get('backward'):

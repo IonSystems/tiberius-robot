@@ -43,7 +43,10 @@ function arm_unavailable(){
 var handleArmButtons = function(ip_address, initial_values) {
 	"use strict";
 
-	// Convert initial values into JSON
+	// Remove the unicode specifiers
+	initial_values = initial_values.split('u').join('');
+	// Replace the asterisks
+	initial_values = initial_values.split("'").join('"');
 	initial_values = JSON.parse(initial_values);
 
 	var x_pos = initial_values['x'];

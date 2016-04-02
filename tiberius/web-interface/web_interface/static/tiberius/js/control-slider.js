@@ -21,6 +21,7 @@ var handleControlSliders = function(ip_address, initial_speed) {
               type: 'POST',
               data: {'speed':value, 'ip_address':ip_address},
               success: function (result) {
+								check_response(result);
               }
           });
       },

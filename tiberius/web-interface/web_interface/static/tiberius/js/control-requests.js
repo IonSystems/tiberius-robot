@@ -16,8 +16,12 @@ window.onkeydown = function (e) {
 			alert('left');
 	} else if (code === 68) { //right key
 			alert('right');
+	} else if (code === 32) { //space bar
+			send_stop();
 	}
 };
+
+
 
 function send_stop(ip_address){
 	$.ajax({
@@ -25,7 +29,7 @@ function send_stop(ip_address){
 			type: 'POST',
 			data: {'stop':true, 'ip_address':ip_address},
 			success: function (result) {
-				//alert("anything");
+				check_response(result);
 			},
 			error: function(error_msg){
 				alert(error_msg);
@@ -46,7 +50,7 @@ var handleControlButtons = function(ip_address) {
         type: 'POST',
         data: {'forward':50, 'ip_address':ip_address},
         success: function (result) {
-          //alert("anything");
+          check_response(result);
         },
 				error: function(error_msg){
 					alert(error_msg);
@@ -60,7 +64,7 @@ var handleControlButtons = function(ip_address) {
         type: 'POST',
         data: {'backward':50, 'ip_address':ip_address},
         success: function (result) {
-          //alert("anything");
+					check_response(result);
         },
 				error: function(error_msg){
 					alert(error_msg);
@@ -74,7 +78,7 @@ var handleControlButtons = function(ip_address) {
         type: 'POST',
         data: {'left':50, 'ip_address':ip_address},
         success: function (result) {
-          //alert("anything");
+					check_response(result);
         },
 				error: function(error_msg){
 					alert(error_msg);
@@ -88,7 +92,7 @@ var handleControlButtons = function(ip_address) {
         type: 'POST',
         data: {'right':50, 'ip_address':ip_address},
         success: function (result) {
-          //alert("anything");
+					check_response(result);
         },
 				error: function(error_msg){
 					alert(error_msg);

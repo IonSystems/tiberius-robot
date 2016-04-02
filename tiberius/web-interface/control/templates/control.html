@@ -479,6 +479,7 @@
 <script src="{% static 'color-admin/plugins/jquery-jvectormap/jquery-jvectormap-world-mill-en.js' %}"></script>
 <script src="{% static 'color-admin/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js' %}"></script>
 <script src="{% static 'color-admin/js/dashboard.min.js' %}"></script>
+<script src="{% static 'tiberius/js/tiblib.js' %}"></script>
 <script src="{% static 'tiberius/js/control-requests.js' %}"></script>
 <script src="{% static 'tiberius/js/arm-requests.js' %}"></script>
 <script src="{% static 'color-admin/js/apps.min.js' %}"></script>
@@ -495,9 +496,9 @@
 		$(document).ready(function() {
 			App.init();
       ControlRequests.init('{{ruc.ip_address}}');
-			ArmRequests.init('{{ruc.ip_address}}', "{{ initial_arm_values }}");
+			ArmRequests.init('{{ruc.ip_address}}', "{{ initial_arm_values | safe }}");
       ControlSliders.init('{{ruc.ip_address}}', {{ initial_speed }});
-			ArmControlSliders.init('{{ruc.ip_address}}', "{{ initial_arm_values }}");
+			ArmControlSliders.init('{{ruc.ip_address}}', {{ initial_arm_speed }});
       Notification.init();
 		});
 
