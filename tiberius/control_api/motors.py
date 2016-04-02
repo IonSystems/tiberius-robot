@@ -9,7 +9,7 @@ import logging
 '''
 
 
-class MotorStates(Enum):
+class MotorStates:
     FORWARD = "forward"
     BACKWARD = "backward"
     LEFT = "left"
@@ -17,7 +17,7 @@ class MotorStates(Enum):
     STOP = "stop"
 
 
-class Commands(Enum):
+class Commands:
     GET_SPEED = "get_speed"
 
 
@@ -26,7 +26,7 @@ def generate_response(req, resp, resource):
     resp.status = falcon.HTTP_200
     resp.body = json.dumps({
                  'speed': resource.speed,
-                 'state': resource.state.value,
+                 'state': resource.state
     })
 
 
@@ -52,16 +52,19 @@ class MotorResource(object):
     @falcon.after(generate_response)
     @falcon.before(validate_params)
     def on_post(self, req, resp):
+	# Debug
+	self.logger.debug("Request Params: " + str(req.params))
+
         # Can't go forwards and backwards at the same time so we can use elif.
-        if(MotorStates.FORWARD.value in req.params):
+        if(MotorStates.FORWARD in req.params):
             self.proc_forward()
-        elif(MotorStates.BACKWARD.value in req.params):
+        elif(MotorStates.BACKWARD in req.params):
             self.proc_backward()
 
         # Can't go left and right at the same time so elif.
-        if(MotorStates.LEFT.value in req.params):
+        if(MotorStates.LEFT in req.params):
             self.proc_left()
-        elif(MotorStates.RIGHT.value in req.params):
+        elif(MotorStates.RIGHT in req.params):
             self.proc_right()
 
         # Change the set speed of the motors.
@@ -69,10 +72,10 @@ class MotorResource(object):
             self.proc_speed(req.params['speed'])
 
         # Keep STOP at the bottom so nothing can overwrite it!
-        if(MotorStates.STOP.value in req.params):
+        if(MotorStates.STOP in req.params):
             self.proc_stop()
 
-        # if(Commands.GET_SPEED.value in req.params):
+        # if(Commands.GET_SPEED in req.params):
         #     self.ret_speed()
 
     def proc_forward(self):
