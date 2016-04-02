@@ -111,6 +111,7 @@ def get_api_param(ip_address, resource, command, param=None):
 def send_control_request(request):
     '''
         Forward the HTTP request from the browser through to the Tiberius API.
+        Handles requests for manual motor control.
     '''
     headers = {'X-Auth-Token': settings.SUPER_SECRET_PASSWORD}
 

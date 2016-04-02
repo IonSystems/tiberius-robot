@@ -5,77 +5,39 @@ Author: Sean Ngu
 Website: http://www.seantheme.com/color-admin-v1.9/admin/
 */
 
-
-
-
 function send_stop(ip_address){
-	$.ajax({
-			url: '../send_control_request',
-			type: 'POST',
-			data: {'stop':true, 'ip_address':ip_address},
-			success: function (result) {
-				check_response(result);
-			},
-			error: function(error_msg){
-				alert(error_msg);
-			}
-	});
+	send_ajax_post(
+		'../send_control_request',
+		{'stop':true, 'ip_address':ip_address}
+	);
 }
 
 function send_forward(ip_address){
-	$.ajax({
-			url: '../send_control_request',
-			type: 'POST',
-			data: {'forward':50, 'ip_address':ip_address},
-			success: function (result) {
-				check_response(result);
-			},
-			error: function(error_msg){
-				alert(error_msg);
-			}
-	});
+	send_ajax_post(
+		'../send_control_request',
+		{'forward':true, 'ip_address':ip_address}
+	);
 }
 
 function send_backward(ip_address){
-	$.ajax({
-			url: '../send_control_request',
-			type: 'POST',
-			data: {'backward':50, 'ip_address':ip_address},
-			success: function (result) {
-				check_response(result);
-			},
-			error: function(error_msg){
-				alert(error_msg);
-			}
-		});
+	send_ajax_post(
+		'../send_control_request',
+		{'backward':true, 'ip_address':ip_address}
+	);
 }
 
 function send_left(ip_address){
-	$.ajax({
-			url: '../send_control_request',
-			type: 'POST',
-			data: {'left':50, 'ip_address':ip_address},
-			success: function (result) {
-				check_response(result);
-			},
-			error: function(error_msg){
-				alert(error_msg);
-			}
-	});
+	send_ajax_post(
+		'../send_control_request',
+		{'left':true, 'ip_address':ip_address}
+	);
 }
 
 function send_right(ip_address){
-	$.ajax({
-			url: '../send_control_request',
-			type: 'POST',
-			data: {'right':50, 'ip_address':ip_address},
-			success: function (result) {
-				check_response(result);
-			},
-			error: function(error_msg){
-				alert(error_msg);
-			}
-	});
+	send_ajax_post(
+		'../send_control_request',
+		{'right':true, 'ip_address':ip_address}
+	);
 }
 
 var handleControlButtons = function(ip_address) {

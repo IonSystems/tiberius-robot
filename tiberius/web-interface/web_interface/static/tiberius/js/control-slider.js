@@ -16,14 +16,10 @@ var handleControlSliders = function(ip_address, initial_speed) {
       },
       onFinish: function (data) {
         var value = data.fromNumber;
-          $.ajax({
-              url: '../send_control_request',
-              type: 'POST',
-              data: {'speed':value, 'ip_address':ip_address},
-              success: function (result) {
-								check_response(result);
-              }
-          });
+				send_ajax_post(
+					'../send_control_request',
+					{'speed':value, 'ip_address':ip_address}
+				);
       },
       onUpdate: function (data) {
           console.log("onUpdate");
