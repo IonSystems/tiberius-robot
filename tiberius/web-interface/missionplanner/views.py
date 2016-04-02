@@ -15,6 +15,8 @@ from django.views.generic.edit import DeleteView
 from django.core.urlresolvers import reverse_lazy
 from django.contrib import messages
 import json
+from django.core import serializers
+
 
 @login_required(login_url='/users/login/')
 def manage_mission(request):
@@ -152,12 +154,11 @@ def view_mission(request, id):
     template = loader.get_template('view_mission.html')
     mission = Mission.objects.get(pk=id)
     objectives = MissionObjective.objects.filter(mission=id)
-    json_waypoints = json.dumps([ob.waypoint.dict() for ob in objectives])
-    print json_waypoints
+    json_objectives = serializers.serialize("json", objectives, use_natural_foreign_keys=True)
     context = RequestContext(request, {
         'mission': mission,
         'objectives': objectives,
-        'json_waypoints': mark_safe(json_waypoints),
+        'json_objectives': mark_safe(json_objectives),
     })
     return HttpResponse(template.render(context))
 
@@ -167,12 +168,11 @@ def control_panel(request, id):
     template = loader.get_template('control_panel.html')
     mission = Mission.objects.get(pk=id)
     objectives = MissionObjective.objects.filter(mission=id)
-    json_waypoints = json.dumps([ob.waypoint.dict() for ob in objectives])
-    print json_waypoints
+    json_objectives = serializers.serialize("json", objectives, use_natural_foreign_keys=True)
     context = RequestContext(request, {
         'mission': mission,
         'objectives': objectives,
-        'json_waypoints': mark_safe(json_waypoints),
+        'json_objectives': mark_safe(json_objectives),
     })
     return HttpResponse(template.render(context))
 
