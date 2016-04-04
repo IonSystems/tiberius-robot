@@ -34,9 +34,15 @@ def manage_mission(request):
 
 @login_required(login_url='/users/login/')
 def manage_tasks(request):
+    # Optionally filter the results if a platform parameter is provided
+    platform = request.GET.get('platform', -1)
+    if platform >= 0:
+        tasks = Task.objects.filter(supported_platforms=platform)
+    else:
+        tasks = Task.objects.all()
 
     template = loader.get_template('manage_tasks.html')
-    tasks = Task.objects.all()
+
     context = RequestContext(request, {
         'tasks': tasks,
     })
