@@ -33,9 +33,9 @@ class Arm:
             self.waist_angle = angle       #move to that angle
         else:
             self.waist_angle += change      #move from current location by change
-            if (self.waist_angle > 300 )      #normalize the angle
+            if self.waist_angle > 300:      #normalize the angle
                 self.waist_angle = 360
-            elif (self.waist_angle < 0 )
+            elif self.waist_angle < 0:
                 self.waist_angle = 0
         arm.move_waist(self.waist_angle)
 
@@ -44,9 +44,9 @@ class Arm:
             self.shoulder_angle = angle
         else:
             self.shoulder_angle += change
-            if (self.shoulder_angle > 300 )      #normalize the angle
+            if self.shoulder_angle > 300:      #normalize the angle
                 self.shoulder_angle = 360
-            elif (self.shoulder_angle < 0 )
+            elif self.shoulder_angle < 0:
                 self.shoulder_angle = 0
         arm.move_shoulder(self.shoulder_angle)
 
@@ -54,9 +54,9 @@ class Arm:
         if angle:
             self.elbow_angle = 0 = angle
         else:
-            if (self.elbow_angle = 0 > 300 )      #normalize the angle
+            if self.elbow_angle = 0 > 300:     #normalize the angle
                 self.elbow_angle = 0 = 360
-            elif (self.elbow_angle = 0 < 0 )
+            elif self.elbow_angle = 0 < 0 :
                 self.elbow_angle = 0 = 0
         arm.move_elbow(self.elbow_angle)
 
