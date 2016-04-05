@@ -39,6 +39,15 @@ class RoboticArmDriver:
         except:
             self.logger.warning("Serial port already open continuing.")
 
+    def move_waist(self, angle):
+        self.ser.write("G0 Y" + str(angle) + "\n")
+
+    def move_waist(self, angle):
+        self.ser.write("G0 X" + str(angle) + "\n")
+
+    def move_waist(self, angle):
+        self.ser.write("G0 Z" + str(angle) + "\n")
+
     def move_arm_to(self, x, y, z):
         arm_coords = to_arm_coords(x, y, z, self.m, self.n)
         self.ser.write("G0 X" + str(arm_coords[0]) + "Y" + str(arm_coords[1]) + "Z" + str(arm_coords[2]) + "\n")
@@ -53,39 +62,3 @@ class RoboticArmDriver:
             self.ser.write("M280 P0 S90\n")
             time.sleep(self.gripper_timeout)
             self.ser.write("M280 P0 S75\n")
-
-    def rotate_arm(self, change, angle=None):
-        if angle:                               ##if angle provided
-            self.current_arm_angle = angle       #move to that angle
-        else:
-            self.current_arm_angle += change      #move from current location by change
-            if (self.current_arm_angle > 360 )      #normalize the angle
-                self.current_arm_angle -= 360
-            elif (self.current_arm_angle > 360 )
-                self.current_arm_angle += 360
-        self.ser.write("G0 Y" + str(current_arm_angle) + "\n")
-
-    def move_shoulder(self, change, angle=None):
-        if angle:
-            self.current_shoulder_angle = angle
-        else:
-            self.current_shoulder_angle += change
-            if (self.current_shoulder_angle > 360 )      #normalize the angle
-                self.current_shoulder_angle -= 360
-            elif (self.current_shoulder_angle > 360 )
-                self.current_shoulder_angle += 360
-        self.ser.write("G0 Z" + str(current_shoulder_angle) + "\n")
-
-    def move_elbow(self, change, angle=None):
-        if angle:
-            self.current_elbow_angle = angle
-        else:
-            self.current_elbow_angle += change
-            if (self.current_elbow_angle > 360 )      #normalize the angle
-                self.current_elbow_angle -= 360
-            elif (self.current_elbow_angle > 360 )
-                self.current_elbow_angle += 360
-        self.ser.write("G0 X" + str(current_elbow_angle) + "\n")
-
-    def increase_arm_rotation();
-        Y = Y + 10
