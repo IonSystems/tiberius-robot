@@ -86,10 +86,15 @@
 																					</td>
 	                                        <td>{{ task.estimated_duration }}</td>
 	                                        <td>
-																						<a href="javascript:run_task('10.113.211.236', {{ task.task_id }});" class="btn btn-primary btn-sm m-r-5">Run</a>
+																						<a href="#modal-dialog" class="btn btn-primary btn-sm m-r-5" data-toggle="modal">Run</a>
 																						<a href="/missionplanner/view_task/{{ task.id }}/" class="btn btn-primary btn-sm m-r-5">View</a>
 																					</td>
 	                                    </tr>
+
+																			<script type="test/javascript">
+																				$("#button_task_{{ task.id }}").data("task_id", {{ task.id }});
+																				$("#button_task_{{ task.id }}").data("platform_id", 1);
+																			</script>
 																		{% endfor %}
                                 </tbody>
                             </table>
@@ -101,6 +106,30 @@
             </div>
             <!-- end row -->
 		</div>
+		<div class="modal fade in" id="modal-dialog" style="display: none;">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<div class="modal-header">
+											<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+											<h4 class="modal-title">Select a Task and Robot</h4>
+										</div>
+										<div class="modal-body">
+											Please select a task and robot from the drop-down list below:
+                      <form onsubmit="process_task_request(this);" method="post">
+                        {% csrf_token %}
+                        {{ form }}
+												<!-- <input type="hidden" name="task_id" value="" /> -->
+                        <input type="submit" value="Submit" />
+                    </form>
+
+										</div>
+										<div class="modal-footer">
+											<a href="javascript:;" class="btn btn-sm btn-white" data-dismiss="modal">Close</a>
+											<a href="javascript:;" class="btn btn-sm btn-success">Action</a>
+										</div>
+									</div>
+								</div>
+							</div>
 		<!-- end #content -->
 
         <!-- begin theme-panel -->
@@ -116,6 +145,8 @@
 	<!-- end page container -->
 
 	{% include "script.html" %}
+	<script src="{% static 'tiberius/js/tiblib.js' %}"></script>
+	<script src="{% static 'tiberius/js/task-requests.js' %}"></script>
 	<script src="{% static 'color-admin/plugins/DataTables/media/js/jquery.dataTables.js' %}"></script>
 	<script src="{% static 'color-admin/plugins/DataTables/media/js/dataTables.bootstrap.min.js' %}"></script>
 	<script src="{% static 'color-admin/plugins/DataTables/extensions/Responsive/js/dataTables.responsive.min.js' %}"></script>
@@ -126,6 +157,7 @@
 		$(document).ready(function() {
 			App.init();
 			TableManageResponsive.init();
+			TaskRequests.init();
 		});
 	</script>
 </body>

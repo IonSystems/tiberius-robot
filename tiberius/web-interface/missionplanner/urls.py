@@ -18,4 +18,6 @@ urlpatterns = [
                    template_name='mission_check_delete.html',
                    success_message='Your mission has been deleted successfully.'
                    ), name='delete_mission'),
+    url(r'^send_task_request', views.send_task_request,
+        name='send_task_request'),
 ]
