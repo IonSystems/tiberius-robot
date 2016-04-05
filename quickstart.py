@@ -14,6 +14,7 @@ class Action(Enum):
     STYLE_CHECKER = 6
     EMERGENCY_STOP = 7
     KEYBOARD_CONTROL_COLLISION = 8
+    FULL_CONTROL = 9
 
 parser = OptionParser()
 
@@ -24,6 +25,13 @@ parser.add_option(
     const=Action.KEYBOARD_CONTROL,
     dest="action",
     help="Start the keyboard control test script.")
+parser.add_option(
+    "-f",
+    "--full-control",
+    action="store_const",
+    const=Action.FULL_CONTROL,
+    dest="action",
+    help="Start the keyboard control test script and arm control.")
 parser.add_option(
     "-c",
     "--keyboard-control-collision",
