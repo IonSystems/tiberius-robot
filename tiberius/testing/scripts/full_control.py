@@ -59,17 +59,17 @@ if __name__ == "__main__":
             c.motors.turnRight()
         #for the arm
         elif(key == 'u'): #x increase
-            c.arm.rotate_waist(10)
+            c.arm.rotate_waist(2)
         elif(key == 'j'): #x decrease
-            c.arm.rotate_waist(-10)
+            c.arm.rotate_waist(-2)
         elif(key == 'i'):  #y increase
-            c.arm.move_shoulder(10)
+            c.arm.move_shoulder(2)
         elif(key == 'k'): #y decrease
-            c.arm.move_shoulder(-10)
+            c.arm.move_shoulder(-2)
         elif(key == 'o'):  #z increase
-            c.arm.move_elbow(10)
+            c.arm.move_elbow(2)
         elif(key == 'l'): #z decrease
-            c.arm.move_elbow(-10)
+            c.arm.move_elbow(-2)
         # to stop
         elif(key == ' '):
             c.motors.stop()
