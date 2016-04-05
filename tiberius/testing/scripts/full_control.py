@@ -10,7 +10,6 @@ from tiberius.control.robotic_arm.ramps import RoboticArmDriver
 
 c = Control()
 
-
 def getKey():
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
@@ -59,18 +58,18 @@ if __name__ == "__main__":
             c.motors.setSpeedPercent(100)
             c.motors.turnRight()
         #for the arm
-    elif(key == 'p'): #x increase
-            rotate_arm(10)
+        elif(key == 'p'): #x increase
+            c.arm.rotate_arm(10)
         elif(key == 'l'): #x decrease
-            rotate_arm(-10)
+            c.arm.rotate_arm(-10)
         elif(key == 'o'):  #y increase
-            move_shoulder(10)
+            c.arm.move_shoulder(10)
         elif(key == 'k'): #y decrease
-            move_shoulder(-10)
+            c.arm.move_shoulder(-10)
         elif(key == 'i'):  #z increase
-            move_elbow(10)
+            c.arm.move_elbow(10)
         elif(key == 'j'): #z decrease
-            move_elbow(-10)
+            c.arm.move_elbow(-10)
         # to stop
         elif(key == ' '):
             c.motors.stop()
