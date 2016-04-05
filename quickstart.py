@@ -101,8 +101,13 @@ if action == Action.KEYBOARD_CONTROL:
         shell=True)
 
 elif action == Action.KEYBOARD_CONTROL_COLLISION:
-    print "Starting unit test suite."
+    print "Starting keyboard collision control."
     check_output("python tiberius/testing/scripts/ultras_control.py", shell=True)
+
+elif action == Action.FULL_CONTROL:
+    print "Starting keyboard control with arm control."
+    check_output("python tiberius/testing/scripts/full_control.py", shell=True)
+
 
 elif action == Action.RUN_TESTS:
     print "Starting unit test suite."
