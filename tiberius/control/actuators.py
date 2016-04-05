@@ -37,6 +37,7 @@ class Arm:
                 self.waist_angle = 300
             elif self.waist_angle < 0:
                 self.waist_angle = 0
+	print str(self.waist_angle)
         self.arm.move_waist(self.waist_angle)
 
     def move_shoulder(self, change, angle=None):
@@ -48,6 +49,7 @@ class Arm:
                 self.shoulder_angle = 300
             elif self.shoulder_angle < 0:
                 self.shoulder_angle = 0
+	print str(self.shoulder_angle)
         self.arm.move_shoulder(self.shoulder_angle)
 
     def move_elbow(self, change, angle=None):
@@ -58,6 +60,7 @@ class Arm:
                 self.elbow_angle = 300
             elif self.elbow_angle < 0 :
                 self.elbow_angle = 0
+	print str(self.elbow_angle)
         self.arm.move_elbow(self.elbow_angle)
 
 

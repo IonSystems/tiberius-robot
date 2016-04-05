@@ -44,10 +44,10 @@ class RoboticArmDriver:
         self.ser.write("G0 X" + str(angle) + "\n")
 
     def move_shoulder(self, angle):
-        self.ser.write("G0 Z" + str(angle) + "\n")
+        self.ser.write("G0 Y" + str(angle) + "\n")
 
     def move_elbow(self, angle):
-        self.ser.write("G0 Y" + str(angle) + "\n")
+        self.ser.write("G0 Z" + str(angle) + "\n")
 
     def move_arm_to(self, x, y, z):
         arm_coords = to_arm_coords(x, y, z, self.m, self.n)
