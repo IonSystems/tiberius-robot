@@ -54,10 +54,10 @@ class Arm:
         if angle:
             self.elbow_angle = 0 = angle
         else:
-            if self.elbow_angle = 0 > 300:     #normalize the angle
-                self.elbow_angle = 0 = 360
-            elif self.elbow_angle = 0 < 0 :
-                self.elbow_angle = 0 = 0
+            if self.elbow_angle > 300:     #normalize the angle
+                self.elbow_angle 0 = 360
+            elif self.elbow_angle  < 0 :
+                self.elbow_angle  0 = 0
         arm.move_elbow(self.elbow_angle)
 
 
