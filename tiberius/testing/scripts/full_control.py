@@ -59,9 +59,9 @@ if __name__ == "__main__":
             c.motors.turnRight()
         #for the arm
         elif(key == 'p'): #x increase
-            c.arm.rotate_arm(10)
+            c.arm.rotate_waist(10)
         elif(key == 'l'): #x decrease
-            c.arm.rotate_arm(-10)
+            c.arm.rotate_waist(-10)
         elif(key == 'o'):  #y increase
             c.arm.move_shoulder(10)
         elif(key == 'k'): #y decrease
