@@ -28,9 +28,20 @@ class Arm:
     y = 0
     z = 0
 
+    #get the points location
+    def get_waist(self):
+        return self.waist_angle
+
+    def get_shoulder(self):
+        return self.shoulder_angle
+
+    def get_elbow(self):
+        return self.elbow_angle
+
+    #move the joints
     def rotate_waist(self, change, angle=None):
-        if angle:                               # if angle provided
-            self.waist_angle = angle       #move to that angle
+        if angle:
+            self.waist_angle = angle
         else:
             self.waist_angle += change      #move from current location by change
             if self.waist_angle > 360:      #normalize the angle
