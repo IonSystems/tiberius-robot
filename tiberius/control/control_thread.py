@@ -328,6 +328,23 @@ class ControlThread:
                                                                            ]})
             time.sleep(0.5)
 
+    def arm_thread(self):
+        arm = Arm()
+        arm_read_id = 0
+        X = 0   #set to 0 right now - will get the actual value later
+        Y = 0
+        Z = 0
+        while(True):
+            waist = arm.get_waist()
+            elbow = arm.get_elbow()
+            shoulder = arm.get_shoulder()
+
+            poly.insert(self.ARM_TABLE, {'id': arm_read_id, 'X': X, 'Y': Y, 'Z' : Z,
+                                           'waist' : waist, 'elbow' : elbow, 'shoulder' : shoulder,
+                                           'timestamp': time.time()})
+        arm_read_id += 1
+
+
     def diagnostics_thread(self):
         from tiberius.diagnostics.external_hardware_controller import ExternalHardwareController
 
@@ -352,29 +369,15 @@ class ControlThread:
                 traceback.print_exc()
             time.sleep(0.5)
 
-    def arm_thread(self):
-        arm = Arm()
-        arm_read_id = 0
-        X = 0   #set to 0 right now - will get the actual value later
-        Y = 0
-        Z = 0
-        waist = arm.get_waist()
-        elbow = arm.get_elbow()
-        shoulder = arm.get_shoulder()
-        while(True):
-               poly.insert(self.ARM_TABLE, {'id': arm_read_id, 'X': X, 'Y': Y, 'Z' : Z,
-                                           'waist' : waist, 'elbow' : elbow, 'shoulder' : shoulder,
-                                           'timestamp': time.time()})
-        arm_read_id += 1
 
 if __name__== "__main__":
-    c = ControlThread()
-    c.polycreate_compass()
-    c.polycreate_arm()
-    c.compass_thread()
-    print "doing compass malarky"
-    c.arm_thread()
-    print "doing arm malarky"
+#    c = ControlThread()
+##    c.polycreate_compass()
+#    c.polycreate_arm()
+#    c.compass_thread()
+#    print "doing compass malarky"
+#    c.arm_thread()
+#    print "doing arm malarky"
 
 # for testing purposes - we call the functions.
 # functions should be called as threads so they can run concurrently.
