@@ -48,10 +48,7 @@ class RoboticArmDriver:
     def move_arm_to(self, x, y, z):
         arm_coords = to_arm_coords(x, y, z, self.m, self.n)
         self.ser.write("G0 X" + str(arm_coords[0]) + "Y" + str(arm_coords[1]) + "Z" + str(arm_coords[2]) + "\n")
-<<<<<<< HEAD
-        # Tell the RAMPS console to move the given GCODE
-=======
->>>>>>> e50d856ed6bfde256bc57052da8c2cd3ac92ad27
+
 
     def move_gripper(self, close):
         if close:
