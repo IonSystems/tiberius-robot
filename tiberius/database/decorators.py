@@ -13,8 +13,9 @@ def database_arm_update(func):
         in the database.
     '''
     global arm_read_id
-    
+
     def func_wrapper(self, change, angle=None):
+        global arm_read_id
         # Call the originating function first,
         # so that the instance fields are up to date.
         result = func(self, change, angle=None)
