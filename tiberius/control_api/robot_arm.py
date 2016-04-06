@@ -21,6 +21,7 @@ class ArmCommands:
     CHANGE_X = "arm_dx" # Waist
     CHANGE_Y = "arm_dy" # Shoulder
     CHANGE_Z = "arm_dz" # Elbow
+    GRASP = "grasp"
     UNGRASP = "ungrasp"
     SET_SPEED = "set_speed"
     GET_SPEED = "get_speed"
@@ -82,16 +83,17 @@ class RobotArmResource(object):
         if(ArmCommands.SET_SPEED in req.params):
             self.speed = req.params[ArmCommands.SET_SPEED]
 	
-	command_name = request.params['command_name']
-	command_value = request.params['command_value']
-        # Arm positional commands
-        if(ArmCommands.CHANGE_X in command_name):
-            self.x += command_value
-	    self.arm_control.move_waist()
-        if(ArmCommands.CHANGE_Y in command_name):
-            self.y += command_value
-        if(ArmCommands.CHANGE_Z in command_name):
-            self.z += command_value
+	if 'command_name' in req.params and 'command_value' in req.params:
+            command_name = req.params['command_name']
+	    command_value = req.params['command_value']
+            # Arm positional commands
+            if(ArmCommands.CHANGE_X in command_name):
+                self.x += command_value
+	        self.arm_control.move_waist()
+            if(ArmCommands.CHANGE_Y in command_name):
+                self.y += command_value
+            if(ArmCommands.CHANGE_Z in command_name):
+                self.z += command_value
 
         # Arm gripper commands
         if(ArmCommands.GRASP in req.params):
