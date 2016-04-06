@@ -328,7 +328,7 @@ class ControlThread:
                                                                                }
                                                                            ]})
             time.sleep(0.5)
-
+    '''
     def arm_thread(self):
         arm = Arm()
         arm_read_id = 0
@@ -344,7 +344,7 @@ class ControlThread:
                                            'waist' : waist, 'elbow' : elbow, 'shoulder' : shoulder,
                                            'timestamp': time.time()})
         arm_read_id += 1
-
+    '''
 
     def diagnostics_thread(self):
         from tiberius.diagnostics.external_hardware_controller import ExternalHardwareController
