@@ -350,23 +350,15 @@ class ControlThread:
                                                                                }
                                                                            ]})
             time.sleep(0.5)
-    '''
-    def arm_thread(self):
-        arm = Arm()
-        arm_read_id = 0
-        X = 0   #set to 0 right now - will get the actual value later
-        Y = 0
-        Z = 0
-        while(True):
-            waist = arm.get_waist()
-            elbow = arm.get_elbow()
-            shoulder = arm.get_shoulder()
+    def lidar_thread(self):
+        lidar_read_id = 0
+        angle = 0
+        distance = 0
+        self.poly.insert(TableNames.LIDAR_TABLE, {'id': lidar_read_id, 'angle':angle, 'distance': distance,
+                                          'timestamp': time.timestamp})
+        lidar_read_id += 1
 
-            self.poly.insert(TableNames.ARM_TABLE, {'id': arm_read_id, 'X': X, 'Y': Y, 'Z' : Z,
-                                           'waist' : waist, 'elbow' : elbow, 'shoulder' : shoulder,
-                                           'timestamp': time.time()})
-        arm_read_id += 1
-    '''
+                                          
 
     def diagnostics_thread(self):
         from tiberius.diagnostics.external_hardware_controller import ExternalHardwareController
