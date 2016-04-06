@@ -1,4 +1,5 @@
 from tiberius.database.polyhedra_database import PolyhedraDatabase
+from tiberius.database.table_names import TableNames
 import time
 
 db = PolyhedraDatabase("decorator_instance")
@@ -16,7 +17,7 @@ def database_arm_update(func):
         result = func(self, change, angle=None)
 
         # Update the database with values from self
-        db.insert(self.ARM_TABLE, {
+        db.insert(TableNames.ARM_TABLE, {
             'id': arm_read_id,
             'X': self.x,
             'Y': self.y,
