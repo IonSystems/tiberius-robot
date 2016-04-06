@@ -3,7 +3,7 @@ from tiberius.database.table_names import TableNames
 import time
 
 db = PolyhedraDatabase("decorator_instance")
-
+arm_read_id = 0
 
 def database_arm_update(func):
     '''
@@ -26,5 +26,7 @@ def database_arm_update(func):
             'elbow': self.elbow_angle,
             'shoulder': self.shoulder_angle,
             'timestamp': time.time()
+
         })
+        arm_read_id += 1
     return func_wrapper
