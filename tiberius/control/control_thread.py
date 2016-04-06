@@ -65,8 +65,6 @@ class ControlThread:
             print "GPS table already exists"
 
     def polycreate_compass(self):
-
-
         try:
             self.poly.drop(self.COMPASS_TABLE)
         except PolyhedraDatabase.NoSuchTableError:
@@ -318,9 +316,9 @@ class ControlThread:
             time.sleep(0.5)
     
     def diagnostics_thread(self):
-        from tiberius.diagnostics.diagnostics_leds import diagnostics_leds
+        from tiberius.diagnostics.external_hardware_controller import ExternalHardwareController
 
-        leds = diagnostics_leds()
+        external_hardware_controller = ExternalHardwareController()
 
         ultrasonics_status, compass_status, gps_status = False, False, False
 
@@ -333,8 +331,8 @@ class ControlThread:
                     #ultrasonics_status = row.ultrasonics
                     #compass_status = row.compass
                     #gps_status = row.gps
-
-                leds.setLEDs(ultrasonics_status, compass_status, gps_status)
+                diagnostics_leds = {ultrasonics_status, compass_status, gps_status, -1, -1, -1, -1, -1}
+                external_hardware_controller.set_hardware(diagnostics_leds)
 
             except Exception as e:
                 print e
