@@ -78,7 +78,7 @@ class ControlThread:
             print "Table already exists."
         except PolyhedraDatabase.OperationalError:
             print "Compass table already exists"
-
+'''
     def polycreate_arm(self):
         print
         try:
@@ -99,7 +99,7 @@ class ControlThread:
             print "Table already exists."
         except PolyhedraDatabase.OperationalError:
             print "Arm table already exists"
-
+'''
     # This table is for overall sensor validity, individual validity is in a specific table for each sensor type.
     def polycreate_sensor_validity(self):
         try:
@@ -327,7 +327,7 @@ class ControlThread:
                                                                                }
                                                                            ]})
             time.sleep(0.5)
-
+'''
     def arm_thread(self):
         arm = Arm()
         arm_read_id = 0
@@ -344,7 +344,7 @@ class ControlThread:
                                            'timestamp': time.time()})
         arm_read_id += 1
 
-
+'''
     def diagnostics_thread(self):
         from tiberius.diagnostics.external_hardware_controller import ExternalHardwareController
 
