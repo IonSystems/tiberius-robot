@@ -168,7 +168,9 @@ int readSerial(){
         
 
       }   
-      
+
+
+      /* // DEBUG VIEW
       Serial.println("Got data");
       Serial.println("Diagnostics:");
       for(i = 0; i < NUMPIXELS_Diagnostics; i++){
@@ -187,6 +189,7 @@ int readSerial(){
         Serial.println(servo_positions[i]);
       }
       Serial.println("End of data");
+      */
       
     }
    
