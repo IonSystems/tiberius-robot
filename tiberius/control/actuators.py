@@ -72,17 +72,6 @@ class Arm:
         p = self.positions['park']
         self.move_arm_to(p['x'], p['y'], p['z'])
 
-    # Store current posisions of each joints
-    waist_angle = 0
-    shoulder_angle = 0
-    elbow_angle = 0
-
-
-    # Store cartesian coordinates
-    x = 0
-    y = 0
-    z = 0
-
     #get the points location
     def get_waist(self):
         return self.waist_angle
