@@ -3,9 +3,10 @@ from tiberius.database.table_names import TableNames
 import time
 
 db = PolyhedraDatabase("decorator_instance")
-arm_read_id = 0
+#arm_read_id = 0
 
 def database_arm_update(func):
+
     '''
         After each arm movement function call,
         ensure that the arm positions are stored
@@ -18,7 +19,7 @@ def database_arm_update(func):
 
         # Update the database with values from self
         db.insert(TableNames.ARM_TABLE, {
-            'id': arm_read_id,
+            #'id': arm_read_id,
             'X': self.x,
             'Y': self.y,
             'Z' : self.z,
@@ -28,5 +29,5 @@ def database_arm_update(func):
             'timestamp': time.time()
 
         })
-        arm_read_id += 1
+        #arm_read_id += 1
     return func_wrapper
