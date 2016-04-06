@@ -4,6 +4,7 @@ from tiberius.database.polyhedra_database import PolyhedraDatabase
 from tiberius.control.sensors import Ultrasonic
 from tiberius.control.sensors import Compass
 from tiberius.control.sensors import GPS
+from tiberius.control.actuators import Arm
 import traceback
 import numpy as np
 '''
@@ -80,7 +81,7 @@ class ControlThread:
     def polycreate_arm(self):
         try:
             self.poly.create(self.ARM_TABLE, {'id': 'int primary key', 'X': 'float', 'Y': 'float', 'Z': 'float',
-                                              'theta': 'float', 'phi': 'float', 'rho': 'float',
+                                              'waist': 'float', 'elbow': 'float', 'shoulder': 'float',
                                               'timestamp': 'float'})
         except PolyhedraDatabase.TableAlreadyExistsError:
             print "Table already exists."
@@ -314,7 +315,7 @@ class ControlThread:
                                                                                }
                                                                            ]})
             time.sleep(0.5)
-    
+
     def diagnostics_thread(self):
         from tiberius.diagnostics.external_hardware_controller import ExternalHardwareController
 
@@ -339,19 +340,25 @@ class ControlThread:
                 traceback.print_exc()
             time.sleep(0.5)
 
+    def arm_thread(self):
+        arm = Arm()
+        arm_read_id = 0
+        X = 0   #set to 0 right now - will get the actual value later
+        Y = 0
+        Z = 0
+        waist = arm.get_waist()
+        elbow = arm.get_elbow()
+        shoulder = arm.get_shoulder()
+        while(True):
+               poly.insert(self.ARM_TABLE, {'id': arm_read_id, 'X': X, 'Y': Y, 'Z' : Z,
+                                           'waist' : waist, 'elbow' : elbow, 'shoulder' : shoulder,
+                                           'timestamp': time.time()})
+        arm_read_id += 1
 
-            # **********************************Robotic arm - not currently implemented*********************
-            # def arm_thread(self):
-            #  arm_read_id = 0
-            #  while(True):
-            #        poly.insert(self.ARM_TABLE, {'id': arm_read_id, 'X': 'float', 'Y': 'float', 'Z' : 'float',
-            #                                    'theta' : 'float', 'phi' : 'float', 'rho' : 'float',
-            #                                    'timestamp':'float'})
-            # arm_read_id += 1;
-            # *********************************************************************************************************************
 if __name__== "__main__":
-    
-    compass_thread()        
-        
+
+    compass_thread()
+    arm_thread()
+
 # for testing purposes - we call the functions.
 # functions should be called as threads so they can run concurrently.
