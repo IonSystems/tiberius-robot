@@ -61,7 +61,8 @@ class GlobalPositioningSystem:
             if self.debug:
                 self.logger.warning("Serial port already open continuing.")
         data = self.ser.readline()
-        self.logger.debug("Read data: " + data)
+        if self.debug:
+            self.logger.debug("Read data: " + data)
         self.ser.close()
         return data
 

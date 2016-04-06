@@ -2,7 +2,7 @@ import md03
 from robotic_arm.ramps import RoboticArmDriver
 from tiberius.config.config_parser import TiberiusConfigParser
 import enum
-
+import time
 """
 .. module:: actuators
    :synopsis: Provides access to all actuators supported by Tiberius.
@@ -64,6 +64,66 @@ class Arm:
         self.move_arm_to(p['x'], p['y'], p['z'])
 
 
+    # Store current posisions of each joints
+    waist_angle = 0
+    shoulder_angle = 0
+    elbow_angle = 0
+
+
+    # Store cartesian coordinates
+    x = 0
+    y = 0
+    z = 0
+
+    #get the points location
+    def get_waist(self):
+        return self.waist_angle
+
+    def get_shoulder(self):
+        return self.shoulder_angle
+
+    def get_elbow(self):
+        return self.elbow_angle
+
+    #move the joints
+    def rotate_waist(self, change, angle=None):
+        if angle:
+            self.waist_angle = angle
+        else:
+            self.waist_angle += change      #move from current location by change
+            if self.waist_angle > 360:      #normalize the angle
+                self.waist_angle = 360
+            elif self.waist_angle < 0:
+                self.waist_angle = 0
+	print str(self.waist_angle)
+        self.arm.move_waist(self.waist_angle)
+        time.sleep(0.05)
+
+    def move_shoulder(self, change, angle=None):
+        if angle:
+            self.shoulder_angle = angle
+        else:
+            self.shoulder_angle += change
+            if self.shoulder_angle > 360:      #normalize the angle
+                self.shoulder_angle = 360
+            elif self.shoulder_angle < 0:
+                self.shoulder_angle = 0
+	print str(self.shoulder_angle)
+        self.arm.move_shoulder(self.shoulder_angle)
+        time.sleep(0.8)
+
+    def move_elbow(self, change, angle=None):
+        if angle:
+            self.elbow_angle = angle
+        else:
+            self.elbow_angle += change
+            if self.elbow_angle > 360:     #normalize the angle
+                self.elbow_angle = 360
+            elif self.elbow_angle < 0 :
+                self.elbow_angle = 0
+	print str(self.elbow_angle)
+        self.arm.move_elbow(self.elbow_angle)
+        time.sleep(0.05)
 
 class MotorState(enum.Enum):
     STOP = 0
