@@ -54,7 +54,7 @@ class Ultrasonic:
         for i in range(0, 5):
             if data[i] is False:
                 valid[i] = False
-                data[i] = 0  # Best to assume we might crash rather than
+                data[i] = 0.0  # Best to assume we might crash rather than
                 # risk it (0 means that any badly written scripts *should* stop)
                 # Also by putting a 0 in the data we can still add the row to the database.
             else:

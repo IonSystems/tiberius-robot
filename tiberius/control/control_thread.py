@@ -200,6 +200,7 @@ class ControlThread:
                 # We need to put the data in, even if it is all 0's.
                 # This gives a fail safe if a script was only relying on sensor data
                 # and not using data validity
+                print "Ultra Rear Left ", str(ultra_data['rl'])
                 self.poly.insert(self.ULTRASONICS_TABLE, {'id': ultrasonic_read_id,
                                                           'fr': ultra_data['fr'],
                                                           'fc': ultra_data['fc'],
