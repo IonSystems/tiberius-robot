@@ -85,15 +85,17 @@ class RobotArmResource(object):
 	
 	if 'command_name' in req.params and 'command_value' in req.params:
             command_name = req.params['command_name']
-	    command_value = req.params['command_value']
+	    command_value = int(req.params['command_value'])
             # Arm positional commands
             if(ArmCommands.CHANGE_X in command_name):
                 self.x += command_value
 	        self.arm_control.move_waist()
             if(ArmCommands.CHANGE_Y in command_name):
                 self.y += command_value
+                self.arm_control.move_shoulder()
             if(ArmCommands.CHANGE_Z in command_name):
                 self.z += command_value
+		self.arm_control.move_elbow()
 
         # Arm gripper commands
         if(ArmCommands.GRASP in req.params):
