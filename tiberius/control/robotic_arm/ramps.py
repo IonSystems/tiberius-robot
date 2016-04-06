@@ -49,7 +49,6 @@ class RoboticArmDriver:
         arm_coords = to_arm_coords(x, y, z, self.m, self.n)
         self.ser.write("G0 X" + str(arm_coords[0]) + "Y" + str(arm_coords[1]) + "Z" + str(arm_coords[2]) + "\n")
 
-
     def move_gripper(self, close):
         if close:
             self.ser.write("M280 P0 S0\n")
