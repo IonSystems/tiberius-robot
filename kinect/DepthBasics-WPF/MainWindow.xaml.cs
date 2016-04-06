@@ -63,39 +63,39 @@ namespace Microsoft.Samples.Kinect.DepthBasics
         public MainWindow()
         {
             // get the kinectSensor object
-            this.kinectSensor = KinectSensor.GetDefault();
+            kinectSensor = KinectSensor.GetDefault();
 
             // open the reader for the depth frames
-            this.depthFrameReader = this.kinectSensor.DepthFrameSource.OpenReader();
+            depthFrameReader = kinectSensor.DepthFrameSource.OpenReader();
 
             // wire handler for frame arrival
-            this.depthFrameReader.FrameArrived += this.Reader_FrameArrived;
+            depthFrameReader.FrameArrived += Reader_FrameArrived;
 
             // get FrameDescription from DepthFrameSource
-            this.depthFrameDescription = this.kinectSensor.DepthFrameSource.FrameDescription;
+            depthFrameDescription = kinectSensor.DepthFrameSource.FrameDescription;
 
             // allocate space to put the pixels being received and converted
-            this.depthPixels = new byte[this.depthFrameDescription.Width * this.depthFrameDescription.Height];
-            depthGrid = new ushort[this.depthFrameDescription.Height, this.depthFrameDescription.Width];
+            depthPixels = new byte[depthFrameDescription.Width * depthFrameDescription.Height];
+            depthGrid = new ushort[depthFrameDescription.Width, depthFrameDescription.Height];
 
             // create the bitmap to display
-            this.depthBitmap = new WriteableBitmap(this.depthFrameDescription.Width, this.depthFrameDescription.Height, 96.0, 96.0, PixelFormats.Gray8, null);
+            depthBitmap = new WriteableBitmap(depthFrameDescription.Width, depthFrameDescription.Height, 96.0, 96.0, PixelFormats.Gray8, null);
 
             // set IsAvailableChanged event notifier
-            this.kinectSensor.IsAvailableChanged += this.Sensor_IsAvailableChanged;
+            kinectSensor.IsAvailableChanged += Sensor_IsAvailableChanged;
 
             // open the sensor
-            this.kinectSensor.Open();
+            kinectSensor.Open();
 
             // set the status text
-            this.StatusText = this.kinectSensor.IsAvailable ? Properties.Resources.RunningStatusText
+            StatusText = kinectSensor.IsAvailable ? Properties.Resources.RunningStatusText
                                                             : Properties.Resources.NoSensorStatusText;
 
             // use the window object as the view model in this simple example
-            this.DataContext = this;
+            DataContext = this;
 
             // initialize the components (controls) of the window
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         /// <summary>
@@ -254,18 +254,30 @@ namespace Microsoft.Samples.Kinect.DepthBasics
         {
             // depth frame data is a 16 bit value
             ushort* frameData = (ushort*)depthFrameData;
-
+            int verticalLine = 0;
+            int horizontalLine = 0;
             // convert depth to a visual representation
             for (int i = 0; i < (int)(depthFrameDataSize / this.depthFrameDescription.BytesPerPixel); ++i)
             {
                 // Get the depth for this pixel
                 ushort depth = frameData[i];
-                depth += (ushort)i;
 
+                depthGrid[horizontalLine, verticalLine] = depth;
+
+                verticalLine++;
+                if (verticalLine >= 424)
+                {
+                    verticalLine = 0;
+                    horizontalLine++;
+                }
+               
                 // To convert to a byte, we're mapping the depth value to the byte range.
                 // Values outside the reliable depth range are mapped to 0 (black).
-                this.depthPixels[i] = (byte) (depth / 1000);
+                this.depthPixels[i] = (byte) (depth / (8000/256));
             }
+
+           
+            
         }
 
         /// <summary>
@@ -291,5 +303,33 @@ namespace Microsoft.Samples.Kinect.DepthBasics
             this.StatusText = this.kinectSensor.IsAvailable ? Properties.Resources.RunningStatusText
                                                             : Properties.Resources.SensorNotAvailableStatusText;
         }
+
+       
+
+        private void CalculateStandardDeviation(ushort[,] grid, int width, int height, out int mean, out double standardDeviation)
+        {
+            int n = width * height;
+            int sum = 0;
+            int vsum = 0;    
+            
+            
+            for (int i = 0; i < height; i++)
+            {
+                for(int j = 0; j < width; j++)
+                {
+                    
+                    sum += grid[i, j];
+                    vsum += (grid[i, j] * grid[i, j]);
+                    
+                }
+            }
+           
+           
+            mean = sum / n;
+            int variance = vsum / n;
+            standardDeviation = Math.Sqrt(variance / n); 
+        }
+
+
     }
 }
