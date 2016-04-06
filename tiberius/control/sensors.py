@@ -57,7 +57,8 @@ class Ultrasonic:
                 data[i] = 0  # Best to assume we might crash rather than
                 # risk it (0 means that any badly written scripts *should* stop)
                 # Also by putting a 0 in the data we can still add the row to the database.
-
+            else:
+                valid[i] = True
         return {'fr': data[0],
                 'fc': data[1],
                 'fl': data[2],
