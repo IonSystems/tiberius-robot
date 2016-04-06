@@ -20,6 +20,7 @@ class ControlThread:
         self.COMPASS_TABLE = 'compass_reading'
         self.GPS_TABLE = 'gps_reading'
         self.ARM_TABLE = 'arm_reading'
+        self.LIDAR_TABLE = 'lidar_reading'
         self.VALIDITY_TABLE = 'sensor_validity'
         self.VALIDITY_ULTRASONICS_TABLE = 'ultrasonics_validity'
 
@@ -82,6 +83,15 @@ class ControlThread:
         try:
             self.poly.create(self.ARM_TABLE, {'id': 'int primary key', 'X': 'float', 'Y': 'float', 'Z': 'float',
                                               'waist': 'float', 'elbow': 'float', 'shoulder': 'float',
+                                              'timestamp': 'float'})
+        except PolyhedraDatabase.TableAlreadyExistsError:
+            print "Table already exists."
+        except PolyhedraDatabase.OperationalError:
+            print "Arm table already exists"
+
+    def polycreate_lidar(self):
+        try:
+            self.poly.create(self.ARM_TABLE, {'id': 'int primary key', 'angle':'float', 'distance': 'float',
                                               'timestamp': 'float'})
         except PolyhedraDatabase.TableAlreadyExistsError:
             print "Table already exists."
