@@ -4,6 +4,7 @@ import time
 import sys
 from enum import Enum
 
+
 class Action(Enum):
     KEYBOARD_CONTROL = 0
     RUN_TESTS = 1
