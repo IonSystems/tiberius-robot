@@ -80,10 +80,12 @@ class ControlThread:
             print "Compass table already exists"
 
     def polycreate_arm(self):
+        print
         try:
             self.poly.create(self.ARM_TABLE, {'id': 'int primary key', 'X': 'float', 'Y': 'float', 'Z': 'float',
                                               'waist': 'float', 'elbow': 'float', 'shoulder': 'float',
                                               'timestamp': 'float'})
+            print "arm table created"
         except PolyhedraDatabase.TableAlreadyExistsError:
             print "Table already exists."
         except PolyhedraDatabase.OperationalError:
@@ -366,9 +368,13 @@ class ControlThread:
         arm_read_id += 1
 
 if __name__== "__main__":
-
-    compass_thread()
-    arm_thread()
+    c = ControlThread()
+    c.polycreate_compass()
+    c.polycreate_arm()
+    c.compass_thread()
+    print "doing compass malarky"
+    c.arm_thread()
+    print "doing arm malarky"
 
 # for testing purposes - we call the functions.
 # functions should be called as threads so they can run concurrently.
