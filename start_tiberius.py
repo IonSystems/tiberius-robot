@@ -60,23 +60,20 @@ print 'Starting sensor data threads...'
 # Start sensor data threads
 ultrasonics = Process(target=control_thread.ultrasonics_thread).start()
 time.sleep(5)
-
-ultrasonics = Process(target=control_thread.ultrasonics_thread).start()
+#gps = Process(target=control_thread.gps_thread).start()
 time.sleep(5)
-gps = Process(target=control_thread.gps_thread).start()
+#compass = Process(target=control_thread.compass_thread).start()
 time.sleep(5)
-compass = Process(target=control_thread.compass_thread).start()
-time.sleep(5)
-#arm = Process(target=control_thread.arm_thread).start()
+arm = Process(target=control_thread.arm_thread).start()
 time.sleep(5)
 #lidar = Process(target=control_thread.lidar_thread).start()
 time.sleep(5)
-diagnostics = Process(target=control_thread.diagnostics_thread()).start()
+#diagnostics = Process(target=control_thread.diagnostics_thread()).start()
 time.sleep(5)
 
 # Start the control API
 print "Starting the control API..."
-server = Popen("python tiberius/control_api/api.py", shell=True)
+#server = Popen("python tiberius/control_api/api.py", shell=True)
 print "Control API started"
 
 if action == Action.WEB_SERVER:
