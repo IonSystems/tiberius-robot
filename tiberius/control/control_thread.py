@@ -5,6 +5,7 @@ from tiberius.control.sensors import Ultrasonic
 from tiberius.control.sensors import Compass
 from tiberius.control.sensors import GPS
 from tiberius.control.actuators import Arm
+from tiberius.database.table_names import TableNames
 import traceback
 import numpy as np
 '''
@@ -16,24 +17,17 @@ class ControlThread:
     def __init__(self):
 
         self.poly = PolyhedraDatabase("poly")
-        self.ULTRASONICS_TABLE = 'ultrasonics_reading'
-        self.COMPASS_TABLE = 'compass_reading'
-        self.GPS_TABLE = 'gps_reading'
-        self.ARM_TABLE = 'arm_reading'
-        self.LIDAR_TABLE = 'lidar_reading'
-        self.VALIDITY_TABLE = 'sensor_validity'
-        self.VALIDITY_ULTRASONICS_TABLE = 'ultrasonics_validity'
 
     # *****************************Functions for creating the table*********************************
     # create polyhedra database to store data from ultrasonic sensors
     def polycreate_ultrasonic(self):
         try:
-            self.poly.drop(self.ULTRASONICS_TABLE)
+            self.poly.drop(TableNames.ULTRASONICS_TABLE)
         except PolyhedraDatabase.NoSuchTableError:
             print "Table doesn't exist"
         try:
 
-            self.poly.create(self.ULTRASONICS_TABLE, {'id': 'int primary key',
+            self.poly.create(TableNames.ULTRASONICS_TABLE, {'id': 'int primary key',
                                                       'fl': 'float',
                                                       'fc': 'float',
                                                       'fr': 'float',
@@ -48,11 +42,11 @@ class ControlThread:
 
     def polycreate_gps(self):
         try:
-            self.poly.drop(self.GPS_TABLE)
+            self.poly.drop(TableNames.GPS_TABLE)
         except PolyhedraDatabase.NoSuchTableError:
             print "Table doesn't exist"
         try:
-            self.poly.create(self.GPS_TABLE, {'id': 'int primary key',
+            self.poly.create(TableNames.GPS_TABLE, {'id': 'int primary key',
                                               'latitude': 'float',
                                               'longitude': 'float',
                                               'gls_qual': 'int',
@@ -68,12 +62,12 @@ class ControlThread:
 
     def polycreate_compass(self):
         try:
-            self.poly.drop(self.COMPASS_TABLE)
+            self.poly.drop(TableNames.COMPASS_TABLE)
         except PolyhedraDatabase.NoSuchTableError:
             print "Table doesn't exist"
         try:
 
-            self.poly.create(self.COMPASS_TABLE, {'id': 'int primary key', 'heading': 'float', 'timestamp': 'float'})
+            self.poly.create(TableNames.COMPASS_TABLE, {'id': 'int primary key', 'heading': 'float', 'timestamp': 'float'})
         except PolyhedraDatabase.TableAlreadyExistsError:
             print "Table already exists."
         except PolyhedraDatabase.OperationalError:
@@ -82,7 +76,7 @@ class ControlThread:
     def polycreate_arm(self):
         print
         try:
-            self.poly.create(self.ARM_TABLE, {'id': 'int primary key', 'X': 'float', 'Y': 'float', 'Z': 'float',
+            self.poly.create(TableNames.ARM_TABLE, {'id': 'int primary key', 'X': 'float', 'Y': 'float', 'Z': 'float',
                                               'waist': 'float', 'elbow': 'float', 'shoulder': 'float',
                                               'timestamp': 'float'})
             print "arm table created"
@@ -93,7 +87,7 @@ class ControlThread:
 
     def polycreate_lidar(self):
         try:
-            self.poly.create(self.ARM_TABLE, {'id': 'int primary key', 'angle':'float', 'distance': 'float',
+            self.poly.create(TableNames.ARM_TABLE, {'id': 'int primary key', 'angle':'float', 'distance': 'float',
                                               'timestamp': 'float'})
         except PolyhedraDatabase.TableAlreadyExistsError:
             print "Table already exists."
@@ -103,17 +97,17 @@ class ControlThread:
     # This table is for overall sensor validity, individual validity is in a specific table for each sensor type.
     def polycreate_sensor_validity(self):
         try:
-            self.poly.drop(self.VALIDITY_TABLE)
+            self.poly.drop(TableNames.VALIDITY_TABLE)
         except PolyhedraDatabase.NoSuchTableError:
             print "Table doesn't exist"
         try:
-            self.poly.create(self.VALIDITY_TABLE, {'id': 'int primary key',
+            self.poly.create(TableNames.VALIDITY_TABLE, {'id': 'int primary key',
                                                    'ultrasonics': 'bool',
                                                    'compass': 'bool',
                                                    'gps': 'bool',
                                                    'timestamp': 'float'})
 
-            self.poly.insert(self.VALIDITY_TABLE, {'id': 0,
+            self.poly.insert(TableNames.VALIDITY_TABLE, {'id': 0,
                                                    'ultrasonics': False,
                                                    'compass': False,
                                                    'gps': False,
@@ -125,11 +119,11 @@ class ControlThread:
 
     def polycreate_ultrasonics_validity(self):
         try:
-            self.poly.drop(self.VALIDITY_ULTRASONICS_TABLE)
+            self.poly.drop(TableNames.VALIDITY_ULTRASONICS_TABLE)
         except PolyhedraDatabase.NoSuchTableError:
             print "Table doesn't exist"
         try:
-            self.poly.create(self.VALIDITY_ULTRASONICS_TABLE, {'id': 'int primary key',
+            self.poly.create(TableNames.VALIDITY_ULTRASONICS_TABLE, {'id': 'int primary key',
                                                                'fr': 'bool',
                                                                'fc': 'bool',
                                                                'fl': 'bool',
@@ -138,7 +132,7 @@ class ControlThread:
                                                                'rl': 'bool',
                                                                'timestamp': 'float'})
 
-            self.poly.insert(self.VALIDITY_ULTRASONICS_TABLE, {'id': 0,
+            self.poly.insert(TableNames.VALIDITY_ULTRASONICS_TABLE, {'id': 0,
                                                                'fr': False,
                                                                'fc': False,
                                                                'fl': False,
@@ -172,7 +166,7 @@ class ControlThread:
 
                 if not valid:
                     valid = True
-                    self.poly.update(self.VALIDITY_TABLE, {'ultrasonics': any_valid_data},
+                    self.poly.update(TableNames.VALIDITY_TABLE, {'ultrasonics': any_valid_data},
                                      {'clause': 'WHERE',
                                       'data': [
                                           {
@@ -182,7 +176,7 @@ class ControlThread:
                                           }
                                       ]})
 
-                self.poly.update(self.VALIDITY_ULTRASONICS_TABLE, {'fr': validity[0],
+                self.poly.update(TableNames.VALIDITY_ULTRASONICS_TABLE, {'fr': validity[0],
                                                                    'fc': validity[1],
                                                                    'fl': validity[2],
                                                                    'rr': validity[3],
@@ -200,7 +194,7 @@ class ControlThread:
                 # We need to put the data in, even if it is all 0's.
                 # This gives a fail safe if a script was only relying on sensor data
                 # and not using data validity
-                self.poly.insert(self.ULTRASONICS_TABLE, {'id': ultrasonic_read_id,
+                self.poly.insert(TableNames.ULTRASONICS_TABLE, {'id': ultrasonic_read_id,
                                                           'fr': ultra_data['fr'],
                                                           'fc': ultra_data['fc'],
                                                           'fl': ultra_data['fl'],
@@ -213,7 +207,7 @@ class ControlThread:
             except Exception as e:              # set to invalid
                 if valid:
                     valid = False
-                    self.poly.update(self.VALIDITY_TABLE, {'ultrasonics': False},
+                    self.poly.update(TableNames.VALIDITY_TABLE, {'ultrasonics': False},
                                      {'clause': 'WHERE',
                                       'data': [
                                           {
@@ -235,7 +229,7 @@ class ControlThread:
                 if gps.has_fix():
                     gps_data = gps.read_gps()
                     if gps_data is not False:
-                        self.poly.insert(self.GPS_TABLE, {'id': gps_read_id,
+                        self.poly.insert(TableNames.GPS_TABLE, {'id': gps_read_id,
                                                           'latitude': gps_data['latitude'],
                                                           'longitude': gps_data['longitude'],
                                                           'gls_qual': gps_data['gls_qual'],
@@ -246,7 +240,7 @@ class ControlThread:
                                                           'timestamp': time.time()})
                         if not valid:
                             valid = True
-                            self.poly.update(self.VALIDITY_TABLE, {'gps': True}, {'clause': 'WHERE',
+                            self.poly.update(TableNames.VALIDITY_TABLE, {'gps': True}, {'clause': 'WHERE',
                                                                                'data': [
                                                                                    {
                                                                                        'column': 'id',
@@ -265,7 +259,7 @@ class ControlThread:
                 if no_data_time > 10:
                     if valid:
                         valid = False
-                        self.poly.update(self.VALIDITY_TABLE, {'gps': False}, {'clause': 'WHERE',
+                        self.poly.update(TableNames.VALIDITY_TABLE, {'gps': False}, {'clause': 'WHERE',
                                                                            'data': [
                                                                                {
                                                                                    'column': 'id',
@@ -297,14 +291,14 @@ class ControlThread:
                 if standard_deviation > 10:
                     raise Exception('invalid data')
                 else:
-                    self.poly.insert(self.COMPASS_TABLE,
+                    self.poly.insert(TableNames.COMPASS_TABLE,
                                      {'id': compass_read_id, 'heading': heading, 'timestamp': time.time()})
 
                     compass_read_id += 1
 
                 if not valid:
                     valid = True
-                    self.poly.update(self.VALIDITY_TABLE, {'compass': True}, {'clause': 'WHERE',
+                    self.poly.update(TableNames.VALIDITY_TABLE, {'compass': True}, {'clause': 'WHERE',
                                                                            'data': [
                                                                                {
                                                                                    'column': 'id',
@@ -318,7 +312,7 @@ class ControlThread:
                 if valid:
                     valid = False
 
-                    self.poly.update(self.VALIDITY_TABLE, {'compass': False}, {'clause': 'WHERE',
+                    self.poly.update(TableNames.VALIDITY_TABLE, {'compass': False}, {'clause': 'WHERE',
                                                                            'data': [
                                                                                {
                                                                                    'column': 'id',
@@ -339,7 +333,7 @@ class ControlThread:
             elbow = arm.get_elbow()
             shoulder = arm.get_shoulder()
 
-            self.poly.insert(self.ARM_TABLE, {'id': arm_read_id, 'X': X, 'Y': Y, 'Z' : Z,
+            self.poly.insert(TableNames.ARM_TABLE, {'id': arm_read_id, 'X': X, 'Y': Y, 'Z' : Z,
                                            'waist' : waist, 'elbow' : elbow, 'shoulder' : shoulder,
                                            'timestamp': time.time()})
         arm_read_id += 1
@@ -354,7 +348,7 @@ class ControlThread:
 
         while True:
             try:
-                rows = self.poly.query(self.VALIDITY_TABLE, ['ultrasonics', 'compass', 'gps'])
+                rows = self.poly.query(TableNames.VALIDITY_TABLE, ['ultrasonics', 'compass', 'gps'])
                 print rows
                 for row in rows:
                     print row
