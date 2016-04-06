@@ -1,4 +1,3 @@
-
 from tiberius.control.robotic_arm.cartesian import to_arm_coords
 import serial
 from tiberius.utils import detection
@@ -8,9 +7,9 @@ import time
 
 class RoboticArmDriver:
     """
-    Class to interface the stepper motors with the robotic arm using RAMPS
-    This will be using GCODE as used in 3D printers
-    All joints are using stepper motors except for the gripper which uses a servo
+        Class to interface the stepper motors with the robotic arm using RAMPS
+        This will be using GCODE as used in 3D printers
+        All joints are using stepper motors except for the gripper which uses a servo
     """
 
     if detection.detect_windows():
@@ -22,9 +21,6 @@ class RoboticArmDriver:
     n = 0.3
     # Time required to close and open the robotic gripper
     gripper_timeout = 5
-    current_arm_angle = 0
-    current_shoulder_angle = 0
-    current_elbow_angle = 0
 
     def __init__(self):
         self.logger = logging.getLogger('tiberius.control.robotic_arm.RoboticArmDriver')
@@ -52,7 +48,10 @@ class RoboticArmDriver:
     def move_arm_to(self, x, y, z):
         arm_coords = to_arm_coords(x, y, z, self.m, self.n)
         self.ser.write("G0 X" + str(arm_coords[0]) + "Y" + str(arm_coords[1]) + "Z" + str(arm_coords[2]) + "\n")
+<<<<<<< HEAD
         # Tell the RAMPS console to move the given GCODE
+=======
+>>>>>>> e50d856ed6bfde256bc57052da8c2cd3ac92ad27
 
     def move_gripper(self, close):
         if close:
