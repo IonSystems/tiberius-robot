@@ -1,6 +1,7 @@
 import md03
 from robotic_arm.ramps import RoboticArmDriver
 from tiberius.config.config_parser import TiberiusConfigParser
+from tiberius.database.decorators import database_arm_update
 import enum
 import time
 """
@@ -93,7 +94,7 @@ class Arm:
     def get_elbow(self):
         return self.elbow_angle
 
-    #move the joints
+    @database_arm_update
     def rotate_waist(self, change, angle=None):
         if angle:
             self.waist_angle = angle
@@ -107,6 +108,7 @@ class Arm:
         self.arm.move_waist(self.waist_angle)
         time.sleep(0.05)
 
+    @database_arm_update
     def move_shoulder(self, change, angle=None):
         if angle:
             self.shoulder_angle = angle
@@ -120,6 +122,7 @@ class Arm:
         self.arm.move_shoulder(self.shoulder_angle)
         time.sleep(0.8)
 
+    @database_arm_update
     def move_elbow(self, change, angle=None):
         if angle:
             self.elbow_angle = angle
