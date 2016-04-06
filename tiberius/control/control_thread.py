@@ -74,7 +74,9 @@ class ControlThread:
             print "Compass table already exists"
 
     def polycreate_arm(self):
-        print
+        try:
+            self.poly.drop(TableNames.ARM_TABLE)
+        except PolyhedraDatabase.NoSuchTableError:
         try:
             self.poly.create(TableNames.ARM_TABLE, {'id': 'int primary key', 'X': 'float', 'Y': 'float', 'Z': 'float',
                                               'waist': 'float', 'elbow': 'float', 'shoulder': 'float',
@@ -87,6 +89,9 @@ class ControlThread:
 
     def polycreate_lidar(self):
         try:
+            self.poly.drop(TableNames.LIDAR_TABLE)
+        except PolyhedraDatabase.NoSuchTableError:
+        try:
             self.poly.create(TableNames.LIDAR_TABLE, {'id': 'int primary key', 'angle':'float', 'distance': 'float',
                                               'timestamp': 'float'})
         except PolyhedraDatabase.TableAlreadyExistsError:
@@ -96,6 +101,9 @@ class ControlThread:
 
     def polycreate_motors(self):
         try:
+            self.poly.drop(TableNames.MOTORS_TABLE)
+        except PolyhedraDatabase.NoSuchTableError:
+        try:
             self.poly.create(TableNames.MOTORS_TABLE, {'id': 'int primary key', 'front_left':'float', 'front_right': 'float',
                                         'rear_left':'float', 'rear_right': 'float', 'timestamp': 'float'})
         except PolyhedraDatabase.TableAlreadyExistsError:
@@ -104,6 +112,9 @@ class ControlThread:
             print "Arm table already exists"
 
     def polycreate_steering(self):
+        try:
+            self.poly.drop(TableNames.STEERING_TABLE)
+        except PolyhedraDatabase.NoSuchTableError:
         try:
             self.poly.create(TableNames.STEERING_TABLE,  {'id': 'int primary key', 'front_left':'float', 'front_right': 'float',
                                         'rear_left':'float', 'rear_right': 'float', 'timestamp': 'float'})
