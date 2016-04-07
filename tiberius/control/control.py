@@ -30,7 +30,9 @@ class Control:
     if TiberiusConfigParser.isCompassEnabled():
         compass = sensors.Compass()
     motors = actuators.Motor()
-    arm = actuators.Arm()
+
+    if TiberiusConfigParser.isArmEnabled():
+        arm = actuators.Arm()
 
     def __init__(self):
         self.logger = logging.getLogger('tiberius.control.Control')

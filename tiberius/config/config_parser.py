@@ -111,6 +111,15 @@ class TiberiusConfigParser():
         addr = TiberiusConfigParser.getParser().get(COMPASS_SECTION, 'address')
         return int(addr)
 
+
+    '''******************************************
+        Arm
+    ******************************************'''
+
+    @staticmethod
+    def isArmEnabled():
+        return TiberiusConfigParser.getParser().getboolean(ROBOT_ARM_SECTION, 'installed')
+
     '''******************************************
         Networking
     ******************************************'''
