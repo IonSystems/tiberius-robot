@@ -76,14 +76,14 @@ int main(int argc, const char * argv[]) {
 
 //#############
 std::ofstream outfile;
-outfile.open("/home/pi/Desktop/Autonomy/lidardata.csv");
+outfile.open("/home/pi/git/tiberius-robot/tiberius/autonomy/lidardata.csv");
 int a=0;
 
 //############
 
 
     // read serial port from the command line...
-    if (argc>1) opt_com_path = argv[1]; // or set to a fixed value: e.g. "com3" 
+    if (argc>1) opt_com_path = argv[1]; // or set to a fixed value: e.g. "com3"
 
     // read baud rate from the command line if specified...
     if (argc>2) opt_com_baudrate = strtoul(argv[2], NULL, 10);
@@ -100,7 +100,7 @@ int a=0;
 
     // create the driver instance
     RPlidarDriver * drv = RPlidarDriver::CreateDriver(RPlidarDriver::DRIVER_TYPE_SERIALPORT);
-    
+
     if (!drv) {
         fprintf(stderr, "insufficent memory, exit\n");
         exit(-2);
@@ -138,10 +138,10 @@ int a=0;
             drv->ascendScanData(nodes, count);
             for (int pos = 0; pos < (int)count ; ++pos) {
 if (((nodes[pos].distance_q2/4.0f)>500) and ((nodes[pos].distance_q2/4.0f)<7000)){
-outfile << ((nodes[pos].angle_q6_checkbit >> RPLIDAR_RESP_MEASUREMENT_ANGLE_SHIFT)/64.0f) << " ," 
+outfile << ((nodes[pos].angle_q6_checkbit >> RPLIDAR_RESP_MEASUREMENT_ANGLE_SHIFT)/64.0f) << " ,"
 									<< (nodes[pos].distance_q2/4.0f) << "\n";
-                printf("%s theta: %03.2f Dist: %08.2f Q: %d \n", 
-                    (nodes[pos].sync_quality & RPLIDAR_RESP_MEASUREMENT_SYNCBIT) ?"S ":"  ", 
+                printf("%s theta: %03.2f Dist: %08.2f Q: %d \n",
+                    (nodes[pos].sync_quality & RPLIDAR_RESP_MEASUREMENT_SYNCBIT) ?"S ":"  ",
                     (nodes[pos].angle_q6_checkbit >> RPLIDAR_RESP_MEASUREMENT_ANGLE_SHIFT)/64.0f,
                     nodes[pos].distance_q2/4.0f,
                     nodes[pos].sync_quality >> RPLIDAR_RESP_MEASUREMENT_QUALITY_SHIFT);}
