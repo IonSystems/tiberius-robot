@@ -140,7 +140,7 @@ int a=0;
 if (((nodes[pos].distance_q2/4.0f)>500) and ((nodes[pos].distance_q2/4.0f)<7000)){
 outfile << ((nodes[pos].angle_q6_checkbit >> RPLIDAR_RESP_MEASUREMENT_ANGLE_SHIFT)/64.0f) << " ,"
 									<< (nodes[pos].distance_q2/4.0f) << "\n";
-                printf("{\"start_flag\": \"%s\", \"theta\" : %03.2f, \"dist\" : %08.2f, \"quality\" : %d } \n",
+                printf("{\"start_flag\": \"%s\", \"theta\" : %3.2f, \"dist\" : %8.2f, \"quality\" : %d } \n",
                     (nodes[pos].sync_quality & RPLIDAR_RESP_MEASUREMENT_SYNCBIT) ?"S ":"  ",
                     (nodes[pos].angle_q6_checkbit >> RPLIDAR_RESP_MEASUREMENT_ANGLE_SHIFT)/64.0f,
                     nodes[pos].distance_q2/4.0f,
