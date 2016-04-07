@@ -223,7 +223,12 @@
 																<td>{{ ob.waypoint.latitude }}</td>
 																<td>{{ ob.waypoint.longitude }}</td>
 																<td>{{ ob.task.name}}</td>
-																<td><button></button></td>
+																<td>
+																	<a href="#modal-dialog" class="btn btn-primary btn-sm m-r-5" data-toggle="modal">Goto</a>
+																	{% if ob.task %}
+																	<a href="#modal-dialog" class="btn btn-primary btn-sm m-r-5" data-toggle="modal">Run Task</a>
+																	{% endif %}
+																</td>
 														</tr>
 														{% endfor %}
 													</tbody>

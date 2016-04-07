@@ -78,13 +78,20 @@ def control(request, id):
             'arm',
             'get_speed'
         )
+
+        # If the platform is offline, indicate so with -1
+        if isinstance(initial_arm_values, dict):
+            initial_arm_speed = mark_safe(initial_arm_values['speed'])
+        else:
+            initial_arm_speed = -1
+
         context = RequestContext(request, {
             'ruc': tib,
             'form': form,
             'robot_online': robot_online,
             'initial_speed': mark_safe(initial_speed),
             'initial_arm_values': mark_safe(initial_arm_values),
-            'initial_arm_speed': mark_safe(initial_arm_values['speed'])
+            'initial_arm_speed': initial_arm_speed
         })
         return HttpResponse(template.render(context))
 
