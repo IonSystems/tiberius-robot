@@ -60,7 +60,7 @@ def database_motor_update(func):
             rear_left = args[0]
             front_right = args[1]
             rear_right = args[1]
-        else if len(args) == 4:
+        elif len(args) == 4:
             front_left = args[0]
             rear_left = args[2]
             front_right = args[1]
@@ -72,22 +72,22 @@ def database_motor_update(func):
                 rear_left = self.speed
                 front_right = self.speed
                 rear_right = self.speed
-            else if self.state = MotorState.BACKWARD:
+            elif self.state = MotorState.BACKWARD:
                 front_left = -self.speed
                 rear_left = -self.speed
                 front_right = -self.speed
                 rear_right = -self.speed
-            else if self.state = MotorState.LEFT:
+            elif self.state = MotorState.LEFT:
                 front_left = -self.speed
                 rear_left = -self.speed
                 front_right = self.speed
                 rear_right = self.speed
-            else if self.state = MotorState.RIGHT:
+            elif self.state = MotorState.RIGHT:
                 front_left = self.speed
                 rear_left = self.speed
                 front_right = -self.speed
                 rear_right = -self.speed
-            else if self.state = MotorState.STOP:
+            elif self.state = MotorState.STOP:
                 front_left = 0
                 rear_left = 0
                 front_right = 0
