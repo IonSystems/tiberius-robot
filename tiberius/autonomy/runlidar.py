@@ -2,7 +2,7 @@
 
 import subprocess
 
-args = ("/home/pi/Desktop/Autonomy/readlidar/readlidar")
+args = ("/home/pi/git/tiberius-robot/tiberius/autonomy/readlidar")
 popen = subprocess.Popen(args, stdout=subprocess.PIPE)
 popen.wait()
 output = popen.stdout.read()
