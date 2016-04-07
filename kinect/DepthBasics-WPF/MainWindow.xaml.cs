@@ -25,7 +25,12 @@ namespace Microsoft.Samples.Kinect.DepthBasics
         /// Map depth range to byte range
         /// </summary>
         private const int MapDepthToByte = 8000 / 256;
-        
+
+        private const int ChunkSize = 8;
+        private ushort[][][,] chunks = new ushort[ChunkSize][][,];
+        private long[,] chunkMean = new long[ChunkSize, ChunkSize];
+        private double[,] chunkStandardDeviation = new double[ChunkSize, ChunkSize];
+
         /// <summary>
         /// Active Kinect sensor
         /// </summary>
@@ -62,6 +67,10 @@ namespace Microsoft.Samples.Kinect.DepthBasics
         /// </summary>
         public MainWindow()
         {
+
+            
+
+
             // get the kinectSensor object
             kinectSensor = KinectSensor.GetDefault();
 
@@ -79,7 +88,7 @@ namespace Microsoft.Samples.Kinect.DepthBasics
             depthGrid = new ushort[depthFrameDescription.Width, depthFrameDescription.Height];
 
             // create the bitmap to display
-            depthBitmap = new WriteableBitmap(depthFrameDescription.Width, depthFrameDescription.Height, 96.0, 96.0, PixelFormats.Gray8, null);
+            depthBitmap = new WriteableBitmap(ChunkSize, ChunkSize, ChunkSize/2, ChunkSize/2, PixelFormats.Gray8, null);
 
             // set IsAvailableChanged event notifier
             kinectSensor.IsAvailableChanged += Sensor_IsAvailableChanged;
@@ -241,83 +250,14 @@ namespace Microsoft.Samples.Kinect.DepthBasics
         }
 
         /// <summary>
-        /// Directly accesses the underlying image buffer of the DepthFrame to 
-        /// create a displayable bitmap.
-        /// This function requires the /unsafe compiler option as we make use of direct
-        /// access to the native memory pointed to by the depthFrameData pointer.
-        /// </summary>
-        /// <param name="depthFrameData">Pointer to the DepthFrame image data</param>
-        /// <param name="depthFrameDataSize">Size of the DepthFrame image data</param>
-        /// <param name="minDepth">The minimum reliable depth value for the frame</param>
-        /// <param name="maxDepth">The maximum reliable depth value for the frame</param>
-        private unsafe void ProcessDepthFrameData(IntPtr depthFrameData, uint depthFrameDataSize, ushort minDepth, ushort maxDepth)
-        {
-            // depth frame data is a 16 bit value
-            ushort* frameData = (ushort*)depthFrameData;
-            int verticalLine = 0;
-            int horizontalLine = 0;
-            // convert depth to a visual representation
-            for (int i = 0; i < (int)(depthFrameDataSize / this.depthFrameDescription.BytesPerPixel); ++i)
-            {
-                // Get the depth for this pixel
-                ushort depth = frameData[i];
-
-                depthGrid[horizontalLine, verticalLine] = depth;
-
-                verticalLine++;
-                if (verticalLine >= 424)
-                {
-                    verticalLine = 0;
-                    horizontalLine++;
-                }
-               
-                // To convert to a byte, we're mapping the depth value to the byte range.
-                // Values outside the reliable depth range are mapped to 0 (black).
-                
-            }
-            ushort[][][,] chunkedData = createChunks(depthGrid);
-            double[,] chunkStandardDeviation = new double[8, 8];
-            long[,] chunkMean = new long[8,8];
-
-            for (int i = 0; i < 8; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    double standardDeviation = 0;
-                    long mean = 0;
-                    CalculateStandardDeviation(chunkedData[i][j], 53, 64, out mean, out standardDeviation);
-                    chunkStandardDeviation[i,j] = (i * j) *  4;
-                    chunkMean[i,j] = mean;
-                }
-            }
-            int column = 0, row = 0;
-            for (int i = 0; i < (int)(depthFrameDataSize / this.depthFrameDescription.BytesPerPixel); ++i)
-            {
-                
-                double temp = Math.Floor((double)(row / 64));
-                int chunkRow = (int)temp;
-                int chunkColumn = (int)Math.Floor((double)(column / 53));
-                this.depthPixels[i] = (byte)(chunkStandardDeviation[chunkColumn, chunkRow] );
-                row++;
-                
-                if (row > 512)
-                {
-                    row = 0;
-                    column++;
-                }
-            }
-            
-        }
-
-        /// <summary>
         /// Renders color pixels into the writeableBitmap.
         /// </summary>
         private void RenderDepthPixels()
         {
             this.depthBitmap.WritePixels(
-                new Int32Rect(0, 0, this.depthBitmap.PixelWidth, this.depthBitmap.PixelHeight),
-                this.depthPixels,
-                this.depthBitmap.PixelWidth,
+                new Int32Rect(0, 0, ChunkSize, ChunkSize),
+                depthPixels,
+                depthBitmap.PixelWidth,
                 0);
         }
 
@@ -333,35 +273,115 @@ namespace Microsoft.Samples.Kinect.DepthBasics
                                                             : Properties.Resources.SensorNotAvailableStatusText;
         }
 
-        private ushort[][][,] createChunks(ushort[,] grid)
+        /// <summary>
+        /// Directly accesses the underlying image buffer of the DepthFrame to 
+        /// create a displayable bitmap.
+        /// This function requires the /unsafe compiler option as we make use of direct
+        /// access to the native memory pointed to by the depthFrameData pointer.
+        /// </summary>
+        /// <param name="depthFrameData">Pointer to the DepthFrame image data</param>
+        /// <param name="depthFrameDataSize">Size of the DepthFrame image data</param>
+        /// <param name="minDepth">The minimum reliable depth value for the frame</param>
+        /// <param name="maxDepth">The maximum reliable depth value for the frame</param>
+        private unsafe void ProcessDepthFrameData(IntPtr depthFrameData, uint depthFrameDataSize, ushort minDepth, ushort maxDepth)
         {
-            int nuChunk = 64;
-            int rows = 53;
-            int columns = 64;
-            int sqrtChunk = (int)Math.Sqrt(nuChunk);
-            ushort[][][,] chunks = new ushort[sqrtChunk][][,];
+            // depth frame data is a 16 bit value
+            ushort* frameData = (ushort*)depthFrameData;
 
+            int verticalLine = 0;
+            int horizontalLine = 0;
 
-
-            for (int chunkColumn = 0; chunkColumn < Math.Sqrt(nuChunk); chunkColumn++)
+            // convert depth to a visual representation
+            for (int i = 0; i < (int)(depthFrameDataSize / this.depthFrameDescription.BytesPerPixel); ++i)
             {
-                chunks[chunkColumn] = new ushort[sqrtChunk][,];
-                for (int chunkRow = 0; chunkRow < Math.Sqrt(nuChunk); chunkRow++)
+                // Get the depth for this pixel
+                depthGrid[horizontalLine, verticalLine] = frameData[i];
+
+                // Work out which grid position we are in
+                verticalLine++;
+                if (verticalLine >= 424)
+                {
+                    verticalLine = 0;
+                    horizontalLine++;
+                }      
+                
+            }
+            // Split the data into chunks
+            createChunks(depthGrid);
+            
+            
+            // Calculate standard deviation on chunks
+            for (int i = 0; i < ChunkSize; i++)
+            {
+                for (int j = 0; j < ChunkSize; j++)
+                {
+                    CalculateStandardDeviation(chunks[i][j], 424 / ChunkSize, 512 / ChunkSize, out chunkMean[i, j], out chunkStandardDeviation[i, j]);
+
+                    // For testing ////////////////////////////
+                    chunkStandardDeviation[i,j] = (i * j) *  4;    
+                    ///////////////////////////////////////////   
+                }
+            }
+            
+            // Put the standard deviations into the display buffer
+            int counter = 0;
+            for (int i = 0; i < ChunkSize; i++)
+            {
+                for (int j = 0; j < ChunkSize; j++)
+                {
+                    this.depthPixels[counter] = (byte)chunkStandardDeviation[i, j];
+                    counter++;
+                }
+            }
+            
+        }
+
+        
+
+        /// <summary>
+        /// Splits a grid of data into a number of chunks specified by ChunkSize^2
+        /// 
+        /// Resulting chunks are stored in 'chunks'
+        /// </summary>
+        /// <param name="grid">The grid to split up</param>
+        private void createChunks(ushort[,] grid)
+        {
+            
+            int rows = 424 / ChunkSize;
+            int columns = 512 / ChunkSize;
+            int nuChunk = rows * columns;            
+            
+
+            // Loop through the column chunks
+            for (int chunkColumn = 0; chunkColumn < ChunkSize; chunkColumn++)
+            {
+                chunks[chunkColumn] = new ushort[ChunkSize][,];
+
+                for (int chunkRow = 0; chunkRow < ChunkSize; chunkRow++)
                 {
                     chunks[chunkColumn][chunkRow] = new ushort[columns, rows];
+
                     for (int i = 0; i < rows; i++)
                     {
+
                         for (int j = 0; j < columns; j++)
                         {
+                            // Map from the depth grid to chunk data
                             chunks[chunkColumn][chunkRow][j, i] = grid[j * chunkColumn, i * chunkRow];
                         }
                     }                    
                 }
-            }
-            return chunks;
+            }           
         }
        
-        //function calculates the standard deviation and mean of a given grid
+        /// <summary>
+        /// Calculate standard deviation and mean of a grid
+        /// </summary>
+        /// <param name="grid">The grid to use</param>
+        /// <param name="width">The width of the grid</param>
+        /// <param name="height">The height of the grid</param>
+        /// <param name="mean">The calculated mean from the grid</param>
+        /// <param name="standardDeviation">The calculated standard deviation from the grid</param>
         private void CalculateStandardDeviation(ushort[,] grid, int width, int height, out long mean, out double standardDeviation)
         {
             int n = width * height;
