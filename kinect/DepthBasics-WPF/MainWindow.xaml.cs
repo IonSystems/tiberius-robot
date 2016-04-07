@@ -15,7 +15,7 @@ namespace Microsoft.Samples.Kinect.DepthBasics
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
     using Microsoft.Kinect;
-
+    using System.Collections.Generic;
     /// <summary>
     /// Interaction logic for MainWindow
     /// </summary>
@@ -273,10 +273,39 @@ namespace Microsoft.Samples.Kinect.DepthBasics
                
                 // To convert to a byte, we're mapping the depth value to the byte range.
                 // Values outside the reliable depth range are mapped to 0 (black).
-                this.depthPixels[i] = (byte) (depth / (8000/256));
+                
             }
+            ushort[][][,] chunkedData = createChunks(depthGrid);
+            double[,] chunkStandardDeviation = new double[8, 8];
+            long[,] chunkMean = new long[8,8];
 
-           
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    double standardDeviation = 0;
+                    long mean = 0;
+                    CalculateStandardDeviation(chunkedData[i][j], 53, 64, out mean, out standardDeviation);
+                    chunkStandardDeviation[i,j] = (i * j) *  4;
+                    chunkMean[i,j] = mean;
+                }
+            }
+            int column = 0, row = 0;
+            for (int i = 0; i < (int)(depthFrameDataSize / this.depthFrameDescription.BytesPerPixel); ++i)
+            {
+                
+                double temp = Math.Floor((double)(row / 64));
+                int chunkRow = (int)temp;
+                int chunkColumn = (int)Math.Floor((double)(column / 53));
+                this.depthPixels[i] = (byte)(chunkStandardDeviation[chunkColumn, chunkRow] );
+                row++;
+                
+                if (row > 512)
+                {
+                    row = 0;
+                    column++;
+                }
+            }
             
         }
 
@@ -304,32 +333,52 @@ namespace Microsoft.Samples.Kinect.DepthBasics
                                                             : Properties.Resources.SensorNotAvailableStatusText;
         }
 
-       
+        private ushort[][][,] createChunks(ushort[,] grid)
+        {
+            int nuChunk = 64;
+            int rows = 53;
+            int columns = 64;
+            int sqrtChunk = (int)Math.Sqrt(nuChunk);
+            ushort[][][,] chunks = new ushort[sqrtChunk][][,];
 
-        private void CalculateStandardDeviation(ushort[,] grid, int width, int height, out int mean, out double standardDeviation)
+
+
+            for (int chunkColumn = 0; chunkColumn < Math.Sqrt(nuChunk); chunkColumn++)
+            {
+                chunks[chunkColumn] = new ushort[sqrtChunk][,];
+                for (int chunkRow = 0; chunkRow < Math.Sqrt(nuChunk); chunkRow++)
+                {
+                    chunks[chunkColumn][chunkRow] = new ushort[columns, rows];
+                    for (int i = 0; i < rows; i++)
+                    {
+                        for (int j = 0; j < columns; j++)
+                        {
+                            chunks[chunkColumn][chunkRow][j, i] = grid[j * chunkColumn, i * chunkRow];
+                        }
+                    }                    
+                }
+            }
+            return chunks;
+        }
+       
+        //function calculates the standard deviation and mean of a given grid
+        private void CalculateStandardDeviation(ushort[,] grid, int width, int height, out long mean, out double standardDeviation)
         {
             int n = width * height;
-            int sum = 0;
-            int vsum = 0;    
-            
+            long sum = 0;
+            long vsum = 0;    
             
             for (int i = 0; i < height; i++)
             {
                 for(int j = 0; j < width; j++)
                 {
-                    
                     sum += grid[i, j];
-                    vsum += (grid[i, j] * grid[i, j]);
-                    
+                    vsum += (grid[i, j] * grid[i, j]); 
                 }
             }
-           
-           
             mean = sum / n;
-            int variance = vsum / n;
+            long variance = vsum / n;
             standardDeviation = Math.Sqrt(variance / n); 
         }
-
-
     }
 }
