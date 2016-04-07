@@ -53,7 +53,7 @@ bool checkRPLIDARHealth(RPlidarDriver * drv)
 
         op_result = drv->getHealth(healthinfo);
         if (IS_OK(op_result)) { // the macro IS_OK is the preperred way to judge whether the operation is succeed.
-                printf("RPLidar health status : %d\n", healthinfo.status);
+                //printf("RPLidar health status : %d\n", healthinfo.status);
                 if (healthinfo.status == RPLIDAR_STATUS_ERROR) {
                         fprintf(stderr, "Error, rplidar internal error detected. Please reboot the device to retry.\n");
                         // enable the following code if you want rplidar to be reboot by software
@@ -141,13 +141,14 @@ int main(int argc, const char * argv[]) {
                                 if (((nodes[pos].distance_q2/4.0f)>500)and ((nodes[pos].distance_q2/4.0f)<7000)) {
                                         outfile << ((nodes[pos].angle_q6_checkbit >> RPLIDAR_RESP_MEASUREMENT_ANGLE_SHIFT)/64.0f) << " ,"
                                                 << (nodes[pos].distance_q2/4.0f) << "\n";
-                                        printf("{\"start_flag\": \"%s\", \"theta\" : %3.2f, \"dist\" : %8.2f, \"quality\" : %d } \n",
+                                        printf("{\"start_flag\": \"%s\", \"theta\" : %3.2f, \"dist\" : %8.2f, \"quality\" : %d } ",
                                                (nodes[pos].sync_quality & RPLIDAR_RESP_MEASUREMENT_SYNCBIT) ? "S " : "  ",
                                                (nodes[pos].angle_q6_checkbit >> RPLIDAR_RESP_MEASUREMENT_ANGLE_SHIFT)/64.0f,
                                                nodes[pos].distance_q2/4.0f,
                                                nodes[pos].sync_quality >> RPLIDAR_RESP_MEASUREMENT_QUALITY_SHIFT);
+                                        if (pos != count - 1) printf(",\n");
                                 }
-                                if (pos != count - 1) printf(",");
+
                         }
                         printf("]");
                 }
