@@ -3,9 +3,6 @@ import math
 from tiberius.control.gps20 import GlobalPositioningSystem
 from tiberius.utils import bearing_math
 
-if not __debug__:
-    from tiberius.control.control import Control
-
 
 class Algorithms:
     """
@@ -19,11 +16,12 @@ class Algorithms:
         given path.
     """
 
-    def __init__(self):
+    def __init__(self, control):
         self.gps = GlobalPositioningSystem()
 
         if not __debug__:
-            self.control = Control()
+            self.control = control
+
         self.SPEED = 0.5  # meters/second
 
         # get the current location of tiberius
