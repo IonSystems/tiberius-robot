@@ -23,7 +23,7 @@ class SentenceNotSupportedError(Exception):
 
 class GlobalPositioningSystem:
     if detection.detect_windows():
-        port = 'COM5'
+        port = 'COM3'
     else:
         port = '/dev/ttyACM0'
     baud = 9600
@@ -58,8 +58,7 @@ class GlobalPositioningSystem:
         try:
             self.ser.open()
         except:
-            if self.debug:
-                self.logger.warning("Serial port already open continuing.")
+            self.logger.warning("Serial port already open continuing.")
         data = self.ser.readline()
         if self.debug:
             self.logger.debug("Read data: " + data)
@@ -143,7 +142,6 @@ class GlobalPositioningSystem:
             else:
                 return False
 
-
 # For testing
 import time
 
@@ -151,5 +149,5 @@ if __name__ == "__main__":
     gps = GlobalPositioningSystem()
     while True:
         gps.update()
-        gps.print_data()
+        # gps.print_data()
         time.sleep(1)
