@@ -91,14 +91,18 @@ class Ultrasonic:
                 (results['rc'] < d) or
                 (results['rr'] < d))
 
-    # class Lidar:
-    #	lidar = RoboPeakLidar()
+    if TiberiusConfigParser.isLidarEnabled():
+        class Lidar:
+            '''
+                    Provides lidar data to be inserted into database
+            '''
+        #	lidar = RoboPeakLidar()
 
-    # TODO: This will eventually include methods such as generateImage(),
-    # fetchData() or similar
+        # TODO: This will eventually include methods such as generateImage(),
+        # fetchData() or similar
 
-    # class TimeOfFlight:
-    # If we ever get a TOF sensor.
+        # class TimeOfFlight:
+        # If we ever get a TOF sensor.
 
 
 # class Camera:
