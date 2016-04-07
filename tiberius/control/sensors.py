@@ -4,6 +4,7 @@ import srf08
 import time
 from tiberius.config.config_parser import TiberiusConfigParser
 from tiberius.control.gps20 import GlobalPositioningSystem
+from tiberius.control.lidar import RoboPeakLidar
 
 
 class Ultrasonic:
@@ -96,24 +97,27 @@ class Ultrasonic:
             '''
                     Provides lidar data to be inserted into database
             '''
-        #	lidar = RoboPeakLidar()
+            lidar = RoboPeakLidar()
 
-        # TODO: This will eventually include methods such as generateImage(),
-        # fetchData() or similar
+            def get_filtered_lidar_data():
+                '''
+                    The LIDAR is blocked by Tiberius's structure at some parts,
+                    so ignore these readings. Also remove obbiosly incorrect
+                    readings (e.g. < 10cm).
+                '''
+                return self.lidar.get_lidar_data()
 
-        # class TimeOfFlight:
-        # If we ever get a TOF sensor.
 
 
 # class Camera:
-#	'''
-#		Provides camera capture methods.
-#	'''
-#	camera = picamera.PiCamera()
+#    '''
+#        Provides camera capture methods.
+#    '''
+#    camera = picamera.PiCamera()
 #
-#	def capture_image(self):
-#		self.camera.resolution = (640,480)
-#		self.camera.capture('./pi_camera_image.jpg')
+#    def capture_image(self):
+#        self.camera.resolution = (640,480)
+#        self.camera.capture('./pi_camera_image.jpg')
 if TiberiusConfigParser.isCompassEnabled():
     class Compass:
         '''
