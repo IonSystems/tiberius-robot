@@ -48,7 +48,7 @@ if TiberiusConfigParser.isArmEnabled():
                     self.waist_angle = 360
                 elif self.waist_angle < 0:
                     self.waist_angle = 0
-        print str(self.waist_angle)
+                print str(self.waist_angle)
             self.arm.move_waist(self.waist_angle)
             time.sleep(0.05)
 
@@ -61,7 +61,7 @@ if TiberiusConfigParser.isArmEnabled():
                     self.shoulder_angle = 360
                 elif self.shoulder_angle < 0:
                     self.shoulder_angle = 0
-        print str(self.shoulder_angle)
+                print str(self.shoulder_angle)
             self.arm.move_shoulder(self.shoulder_angle)
             time.sleep(0.8)
 
@@ -74,7 +74,7 @@ if TiberiusConfigParser.isArmEnabled():
                     self.elbow_angle = 360
                 elif self.elbow_angle < 0 :
                     self.elbow_angle = 0
-        print str(self.elbow_angle)
+                print str(self.elbow_angle)
             self.arm.move_elbow(self.elbow_angle)
             time.sleep(0.05)
 
