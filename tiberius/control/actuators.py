@@ -138,7 +138,7 @@ class Arm:
         time.sleep(0.05)
 
 
-class MotorState(enum.Enum):
+class MotorState:
     STOP = 0
     FORWARD = 1
     BACKWARD = 2

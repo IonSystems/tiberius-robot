@@ -1,6 +1,6 @@
 from tiberius.database.polyhedra_database import PolyhedraDatabase
 from tiberius.database.table_names import TableNames
-from tiberius.control.actuators import MotorState
+from tiberius.control.states import MotorState
 import time
 
 db = PolyhedraDatabase("decorator_instance")
@@ -67,34 +67,34 @@ def database_motor_update(func):
             rear_right = args[3]
         else:
             # Get speeds using motor state and self
-            if self.state = MotorState.FORWARD:
+            if self.state == MotorState.FORWARD:
                 front_left = self.speed
                 rear_left = self.speed
                 front_right = self.speed
                 rear_right = self.speed
-            elif self.state = MotorState.BACKWARD:
+            elif self.state == MotorState.BACKWARD:
                 front_left = -self.speed
                 rear_left = -self.speed
                 front_right = -self.speed
                 rear_right = -self.speed
-            elif self.state = MotorState.LEFT:
+            elif self.state == MotorState.LEFT:
                 front_left = -self.speed
                 rear_left = -self.speed
                 front_right = self.speed
                 rear_right = self.speed
-            elif self.state = MotorState.RIGHT:
+            elif self.state == MotorState.RIGHT:
                 front_left = self.speed
                 rear_left = self.speed
                 front_right = -self.speed
                 rear_right = -self.speed
-            elif self.state = MotorState.STOP:
+            elif self.state == MotorState.STOP:
                 front_left = 0
                 rear_left = 0
                 front_right = 0
                 rear_right = 0
 
         # Update the database with values from self
-        db.insert(TableNames.MOTOR_TABLE, {
+        db.insert(TableNames.MOTORS_TABLE, {
             'id': motor_read_id,
             'front_left': front_left,
             'front_right': front_right,
@@ -102,5 +102,5 @@ def database_motor_update(func):
             'rear_right': rear_right,
             'timestamp' : time.time()
         })
-        arm_read_id += 1
+        motor_read_id += 1
     return func_wrapper
