@@ -2,18 +2,19 @@ import md03
 from robotic_arm.ramps import RoboticArmDriver
 from tiberius.config.config_parser import TiberiusConfigParser
 from tiberius.database.decorators import database_arm_update
+from tiberius.database.decorators import database_motor_update
 import enum
 import time
-"""
-.. module:: actuators
-   :synopsis: Provides access to all actuators supported by Tiberius.
-   This most importantly includes the motors to drive Tiberius's wheels.
-
-.. moduleauthor:: Cameron A. Craig <camieac@gmail.com>
-"""
 
 
 class Arm:
+	"""
+	.. module:: actuators
+	   :synopsis: Provides access to all actuators supported by Tiberius.
+	   This most importantly includes the motors to drive Tiberius's wheels.
+
+	.. moduleauthor:: Cameron A. Craig <camieac@gmail.com>
+	"""
     __config = TiberiusConfigParser()
     arm = RoboticArmDriver()
     positions = {
@@ -167,6 +168,7 @@ class Motor:
     def setSpeedPercent(self, speed_percent):
         self.speed = (255 * speed_percent) / 100
 
+	@database_motor_update
     def stop(self):
         self.front_left.move(0, 0)
         self.rear_left.move(0, 0)
@@ -174,6 +176,7 @@ class Motor:
         self.rear_right.move(0, 0)
         self.state = MotorState.STOP
 
+	@database_motor_update
     def moveForward(self):
         self.front_left.move(self.speed, self.accel)
         self.rear_left.move(self.speed, self.accel)
@@ -181,6 +184,7 @@ class Motor:
         self.rear_right.move(self.speed, self.accel)
         self.state = MotorState.FORWARD
 
+	@database_motor_update
     def moveBackward(self):
         self.front_left.move(-self.speed, self.accel)
         self.rear_left.move(-self.speed, self.accel)
@@ -189,6 +193,7 @@ class Motor:
         self.state = MotorState.BACKWARD
 
     # Turn on the spot, to the right
+    @database_motor_update
     def turnRight(self):
         self.front_left.move(self.speed, self.accel)
         self.rear_left.move(self.speed, self.accel)
@@ -197,6 +202,7 @@ class Motor:
         self.state = MotorState.RIGHT
 
     # Turn on the spot, to the left
+	@database_motor_update
     def turnLeft(self):
         self.front_right.move(self.speed, self.accel)
         self.rear_left.move(-self.speed, self.accel)
@@ -205,6 +211,7 @@ class Motor:
         self.state = MotorState.LEFT
 
     # Used for going forward accurately by adjusting left and right speeds.
+    @database_motor_update
     def moveForwardDualSpeed(self, left_speed, right_speed):
         left_speed = self.__clipSpeedValue(left_speed)
         right_speed = self.__clipSpeedValue(right_speed)
@@ -218,6 +225,9 @@ class Motor:
         self.state = MotorState.FORWARD
 
     # Used for going forward accurately by adjusting left and right speeds.
+    # TODO: The database takes the unclipped speeds! Make a decorator
+    # for clipping speeds so the correct args can be passed to database.
+	@database_motor_update
     def moveIndependentSpeeds(
             self,
             front_left,
