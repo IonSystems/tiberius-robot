@@ -12,115 +12,70 @@ import time
 """
 
 
-class Arm:
-    __config = TiberiusConfigParser()
-    arm = RoboticArmDriver()
-    positions = {
-        'park': __config.getArmParkParams(),
-        'centre': __config.getArmCentreParams(),
-        'basket': __config.getArmBasketParams(),
-    }
+if TiberiusConfigParser.isArmEnabled():
+    class Arm:
+        arm = RoboticArmDriver()
 
-    # Store current posisions of each joints
-    waist_angle = 0
-    shoulder_angle = 0
-    elbow_angle = 0
+        # Store current posisions of each joints
+        waist_angle = 0
+        shoulder_angle = 0
+        elbow_angle = 0
 
-    # Store cartesian coordinates
-    x = 0
-    y = 0
-    z = 0
 
-    def park(self):
-        '''
-            Move the arm to the parked position,
-            for safe storage whilst not in use.
-        '''
-        # Move arm out of harms way
-        self.arm.move_shoulder(180)
-        self.arm.move_elbow(180)
+        # Store cartesian coordinates
+        x = 0
+        y = 0
+        z = 0
 
-        # Move arm to parking position
-        p = self.positions['park']
-        self.arm.move_arm_to(p['x'], p['y'], p['z'])
+        # get the points location
+        def get_waist(self):
+            return self.waist_angle
 
-        # Close gripper
-        self.arm.move_gripper(True)
+        def get_shoulder(self):
+            return self.shoulder_angle
 
-    def centre(self):
-        '''
-            Bring the arm round to the centre position, ready to use.
-        '''
-        # Move arm out of harms way
-        self.arm.move_shoulder(180)
-        self.arm.move_elbow(180)
+        def get_elbow(self):
+            return self.elbow_angle
 
-        # Move arm to centre position
-        p = self.positions['centre']
-        self.move_arm_to(p['x'], p['y'], p['z'])
+        # move the joints
+        def rotate_waist(self, change, angle=None):
+            if angle:
+                self.waist_angle = angle
+            else:
+                self.waist_angle += change      #move from current location by change
+                if self.waist_angle > 360:      #normalize the angle
+                    self.waist_angle = 360
+                elif self.waist_angle < 0:
+                    self.waist_angle = 0
+                print str(self.waist_angle)
+            self.arm.move_waist(self.waist_angle)
+            time.sleep(0.05)
 
-    def basket(self):
-        '''
-            Swing the arm round around over the basket and ungrasp,
-            then return to the old position.
-        '''
-        # Move arm out of harms way
-        self.arm.move_shoulder(180)
-        self.arm.move_elbow(180)
+        def move_shoulder(self, change, angle=None):
+            if angle:
+                self.shoulder_angle = angle
+            else:
+                self.shoulder_angle += change
+                if self.shoulder_angle > 360:      #normalize the angle
+                    self.shoulder_angle = 360
+                elif self.shoulder_angle < 0:
+                    self.shoulder_angle = 0
+                print str(self.shoulder_angle)
+            self.arm.move_shoulder(self.shoulder_angle)
+            time.sleep(0.8)
 
-        # Move arm to centre position
-        p = self.positions['park']
-        self.move_arm_to(p['x'], p['y'], p['z'])
-
-    #get the points location
-    def get_waist(self):
-        return self.waist_angle
-
-    def get_shoulder(self):
-        return self.shoulder_angle
-
-    def get_elbow(self):
-        return self.elbow_angle
-
-    #move the joints
-    def rotate_waist(self, change, angle=None):
-        if angle:
-            self.waist_angle = angle
-        else:
-            self.waist_angle += change      # move from current location by change
-            if self.waist_angle > 360:      # normalize the angle
-                self.waist_angle = 360
-            elif self.waist_angle < 0:
-                self.waist_angle = 0
-        print str(self.waist_angle)
-        self.arm.move_waist(self.waist_angle)
-        time.sleep(0.05)
-
-    def move_shoulder(self, change, angle=None):
-        if angle:
-            self.shoulder_angle = angle
-        else:
-            self.shoulder_angle += change
-            if self.shoulder_angle > 360:      # normalize the angle
-                self.shoulder_angle = 360
-            elif self.shoulder_angle < 0:
-                self.shoulder_angle = 0
-        print str(self.shoulder_angle)
-        self.arm.move_shoulder(self.shoulder_angle)
-        time.sleep(0.8)
-
-    def move_elbow(self, change, angle=None):
-        if angle:
-            self.elbow_angle = angle
-        else:
-            self.elbow_angle += change
-            if self.elbow_angle > 360:     # normalize the angle
-                self.elbow_angle = 360
-            elif self.elbow_angle < 0:
-                self.elbow_angle = 0
-        print str(self.elbow_angle)
-        self.arm.move_elbow(self.elbow_angle)
-        time.sleep(0.05)
+        def move_elbow(self, change, angle=None):
+            if angle:
+                self.elbow_angle = angle
+            else:
+                self.elbow_angle += change
+                if self.elbow_angle > 360:     #normalize the angle
+                    self.elbow_angle = 360
+                elif self.elbow_angle < 0 :
+                    self.elbow_angle = 0
+                print str(self.elbow_angle)
+            self.arm.move_elbow(self.elbow_angle)
+            time.sleep(0.05)
 
 
 class MotorState(enum.Enum):
