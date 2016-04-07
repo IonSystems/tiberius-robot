@@ -56,42 +56,42 @@ def database_motor_update(func):
         # The information we need will either be in args,
         # or extrapolated from motor state.
         if len(args) == 2:
-			front_left = args[0]
-			rear_left = args[0]
-			front_right = args[1]
-			rear_right = args[1]
-		else if len(args) == 4:
-			front_left = args[0]
-			rear_left = args[2]
-			front_right = args[1]
-			rear_right = args[3]
+            front_left = args[0]
+            rear_left = args[0]
+            front_right = args[1]
+            rear_right = args[1]
+        else if len(args) == 4:
+            front_left = args[0]
+            rear_left = args[2]
+            front_right = args[1]
+            rear_right = args[3]
         else:
-			# Get speeds using motor state and self
-			if self.state = MotorState.FORWARD:
-				front_left = self.speed
-				rear_left = self.speed
-				front_right = self.speed
-				rear_right = self.speed
-			else if self.state = MotorState.BACKWARD:
-				front_left = -self.speed
-				rear_left = -self.speed
-				front_right = -self.speed
-				rear_right = -self.speed
-			else if self.state = MotorState.LEFT:
-				front_left = -self.speed
-				rear_left = -self.speed
-				front_right = self.speed
-				rear_right = self.speed
-			else if self.state = MotorState.RIGHT:
-				front_left = self.speed
-				rear_left = self.speed
-				front_right = -self.speed
-				rear_right = -self.speed
-			else if self.state = MotorState.STOP:
-				front_left = 0
-				rear_left = 0
-				front_right = 0
-				rear_right = 0
+            # Get speeds using motor state and self
+            if self.state = MotorState.FORWARD:
+                front_left = self.speed
+                rear_left = self.speed
+                front_right = self.speed
+                rear_right = self.speed
+            else if self.state = MotorState.BACKWARD:
+                front_left = -self.speed
+                rear_left = -self.speed
+                front_right = -self.speed
+                rear_right = -self.speed
+            else if self.state = MotorState.LEFT:
+                front_left = -self.speed
+                rear_left = -self.speed
+                front_right = self.speed
+                rear_right = self.speed
+            else if self.state = MotorState.RIGHT:
+                front_left = self.speed
+                rear_left = self.speed
+                front_right = -self.speed
+                rear_right = -self.speed
+            else if self.state = MotorState.STOP:
+                front_left = 0
+                rear_left = 0
+                front_right = 0
+                rear_right = 0
 
         # Update the database with values from self
         db.insert(TableNames.MOTOR_TABLE, {
