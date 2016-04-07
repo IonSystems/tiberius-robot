@@ -14,6 +14,7 @@ POWER_SECTION = 'power'
 NETWORKING_SECTION = 'networking'
 KINECT_SECTION = 'kinect'
 ROBOT_ARM_SECTION = 'arm'
+GPS_SECTION = 'gps'
 AUTHENTICATION_SECTION = 'authentication'
 ARM_BASKET_SECTION = 'arm_basket_positions'
 ARM_CENTRE_SECTION = 'arm_centre_positions'
@@ -36,6 +37,7 @@ class TiberiusConfigParser():
     '''******************************************
         LIDAR
     ******************************************'''
+
     @staticmethod
     def isLidarEnabled():
         return TiberiusConfigParser.getParser().getboolean(LIDAR_SECTION, 'installed')
@@ -113,7 +115,6 @@ class TiberiusConfigParser():
         addr = TiberiusConfigParser.getParser().get(COMPASS_SECTION, 'address')
         return int(addr)
 
-
     '''******************************************
         Arm
     ******************************************'''
@@ -121,6 +122,14 @@ class TiberiusConfigParser():
     @staticmethod
     def isArmEnabled():
         return TiberiusConfigParser.getParser().getboolean(ROBOT_ARM_SECTION, 'installed')
+
+    '''******************************************
+        GPS
+    ******************************************'''
+
+    @staticmethod
+    def isGPSEnabled():
+        return TiberiusConfigParser.getParser().getboolean(GPS_SECTION, 'installed')
 
     '''******************************************
         Networking

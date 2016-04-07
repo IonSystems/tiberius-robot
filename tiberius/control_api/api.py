@@ -47,9 +47,10 @@ api.add_route('/database', database)
 status = status.StatusResource(motors, database, sensors)
 api.add_route('/status', status)
 
-n = Algorithms(c)
-navigation = navigation.NavigationResource(m, n)
-api.add_route('/navigation', navigation)
+if TiberiusConfigParser.isGPSEnabled():
+    n = Algorithms(c)
+    navigation = navigation.NavigationResource(m, n)
+    api.add_route('/navigation', navigation)
 
 if __name__ == '__main__':
     httpd = simple_server.make_server('0.0.0.0', 8000, api)
