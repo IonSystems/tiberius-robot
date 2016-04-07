@@ -16,7 +16,11 @@ class RoboticArmDriver:
     if detection.detect_windows():
         port = 'COM6'
     else:
-        port = '/dev/ttyACM0'
+        try:
+            port = '/dev/ttyACM0'
+        except:
+            print "FOR CAMERON >>>: no arm plugged in <<<<<<< CAN YOU READ THIS NOW!"
+
     baud = 115200
     m = 0.3
     n = 0.3
