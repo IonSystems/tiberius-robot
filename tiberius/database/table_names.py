@@ -10,5 +10,5 @@ class TableNames:
     LIDAR_TABLE = 'lidar_reading'
     VALIDITY_TABLE = 'sensor_validity'
     VALIDITY_ULTRASONICS_TABLE = 'ultrasonics_validity'
-    MOTORS_TABLE = 'motors_readings'
+    MOTORS_TABLE = 'motors_reading'
     STEERING_TABLE = 'steering_table'

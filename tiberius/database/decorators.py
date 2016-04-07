@@ -7,6 +7,7 @@ db = PolyhedraDatabase("decorator_instance")
 
 # We have not currently implemented autoincrementing keys,
 # so we need to keep track of the key explicitly
+# test
 arm_read_id = 0
 motor_read_id = 0
 
