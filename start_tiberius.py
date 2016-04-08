@@ -64,10 +64,12 @@ ultrasonics = Process(target=control_thread.ultrasonics_thread).start()
 time.sleep(5)
 #gps = Process(target=control_thread.gps_thread).start()
 #time.sleep(5)
-#compass = Process(target=control_thread.compass_thread).start()
+if TiberiusConfigParser.isCompassEnabled():
+    compass = Process(target=control_thread.compass_thread).start()
 #time.sleep(5)
-#lidar = Process(target=control_thread.lidar_thread).start()
-#time.sleep(5)
+if TiberiusConfigParser.isLidarEnabled():
+    lidar = Process(target=control_thread.lidar_thread).start()
+time.sleep(5)
 #diagnostics = Process(target=control_thread.diagnostics_thread()).start()
 #time.sleep(5)
 
