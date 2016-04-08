@@ -109,6 +109,7 @@ class Ultrasonic:
                 data = self.lidar.get_lidar_data()
                 #put x in data for every x in data only if filtered_data() is true
                 data = [x for x in data if filtered_data(self, x)]
+                return data
 
             def filtered_data(self):
                     if 350 < item["angle"] < 10:

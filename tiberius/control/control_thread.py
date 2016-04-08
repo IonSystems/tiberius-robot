@@ -2,9 +2,11 @@ import threading
 import time
 from tiberius.database.polyhedra_database import PolyhedraDatabase
 from tiberius.control.sensors import Ultrasonic
-from tiberius.control.sensors import Compass
+if TiberiusConfigParser.isLidarEnabled():
+    from tiberius.control.sensors import Lidar
+if TiberiusConfigParser.isCompassEnabled():
+    from tiberius.control.sensors import Compass
 from tiberius.control.sensors import GPS
-from tiberius.control.actuators import Arm
 from tiberius.database.table_names import TableNames
 import traceback
 import numpy as np
@@ -99,7 +101,7 @@ class ControlThread:
         except PolyhedraDatabase.TableAlreadyExistsError:
             print "Table already exists."
         except PolyhedraDatabase.OperationalError:
-            print "Arm table already exists"
+            print "lidar table already exists"
 
     def polycreate_motors(self):
         try:
@@ -112,7 +114,7 @@ class ControlThread:
         except PolyhedraDatabase.TableAlreadyExistsError:
             print "Table already exists."
         except PolyhedraDatabase.OperationalError:
-            print "Arm table already exists"
+            print "motors table already exists"
 
     def polycreate_steering(self):
         try:
@@ -125,7 +127,7 @@ class ControlThread:
         except PolyhedraDatabase.TableAlreadyExistsError:
             print "Table already exists."
         except PolyhedraDatabase.OperationalError:
-            print "Arm table already exists"
+            print "steering table already exists"
 
     # This table is for overall sensor validity, individual validity is in a specific table for each sensor type.
     def polycreate_sensor_validity(self):
@@ -358,8 +360,9 @@ class ControlThread:
 
     def lidar_thread(self):
         lidar_read_id = 0
+        l = Lidar()
         while True:
-            data = get_filtered_lidar_data()
+            data = l.get_filtered_lidar_data()
             for item in data:
                 self.poly.insert(TableNames.LIDAR_TABLE, {
                     'id': lidar_read_id,
