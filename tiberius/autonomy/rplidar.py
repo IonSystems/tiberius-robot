@@ -13,7 +13,7 @@ import cv2
 
 
 def getdots():
-    args = ("/home/pi/Desktop/Autonomy/readlidar/readlidar")
+    args = ("/home/pi/git/tiberius-robot/tiberius/autonomy/readlidar/readlidar")
     popen = subprocess.Popen(args)
     popen.wait()
 
