@@ -1,8 +1,22 @@
 import threading
 import time
+import traceback
+import numpy as np
+
+import tiberius.database.update as up
+import tiberius.database.create as cr
+
 from tiberius.config.config_parser import TiberiusConfigParser
 from tiberius.database.polyhedra_database import PolyhedraDatabase
-from tiberius.database.table_names import TableNames
+from tiberius.database.tables import UltrasonicsTable
+from tiberius.database.tables import GPSTable
+from tiberius.database.tables import CompassTable
+from tiberius.database.tables import ArmTable
+from tiberius.database.tables import LidarTable
+from tiberius.database.tables import MotorsTable
+from tiberius.database.tables import SteeringTable
+from tiberius.database.tables import SensorValidityTable
+from tiberius.database.tables import UltrasonicsValidityTable
 from tiberius.control.sensors import Ultrasonic
 if TiberiusConfigParser.isCompassEnabled():
     from tiberius.control.sensors import Compass
@@ -10,185 +24,23 @@ if TiberiusConfigParser.isLidarEnabled():
     from tiberius.control.sensors import Lidar
 from tiberius.control.sensors import GPS
 
-import traceback
-import numpy as np
-'''
-    Responsible for creating threads to communicate with the database, in order to control Tiberius.
-'''
 
+class DatabaseThreadCreator:
+    '''
+        Responsible for creating threads to populate the Polyhedra database
+        with sensor data. A thread is created for each sensor. Each thread polls
+        the sensor at a rate suitable for the particular sensor. Timestamps are
+        included with each insert, to allow data to be queried based on age.
 
-class ControlThread:
+        On thread creation, a fresh database table is created, and any previous
+        table and possible data is dropped.
+
+        Actuator data is inserted at point of call using
+        database.decorators.
+    '''
     def __init__(self):
-
-        self.poly = PolyhedraDatabase("poly")
-
-    # *****************************Functions for creating the table*********************************
-    # create polyhedra database to store data from ultrasonic sensors
-    def polycreate_ultrasonic(self):
-        try:
-            self.poly.drop(TableNames.ULTRASONICS_TABLE)
-        except PolyhedraDatabase.NoSuchTableError:
-            print "Table doesn't exist"
-        try:
-
-            self.poly.create(TableNames.ULTRASONICS_TABLE, {'id': 'int primary key',
-                                                      'fl': 'float',
-                                                      'fc': 'float',
-                                                      'fr': 'float',
-                                                      'rl': 'float',
-                                                      'rc': 'float',
-                                                      'rr': 'float',
-                                                      'timestamp': 'float'})
-        except PolyhedraDatabase.OperationalError:
-            print "something went wrong... "
-        except PolyhedraDatabase.TableAlreadyExistsError:
-            print "Table already exists."
-
-    def polycreate_gps(self):
-        try:
-            self.poly.drop(TableNames.GPS_TABLE)
-        except PolyhedraDatabase.NoSuchTableError:
-            print "Table doesn't exist"
-        try:
-            self.poly.create(TableNames.GPS_TABLE, {'id': 'int primary key',
-                                              'latitude': 'float',
-                                              'longitude': 'float',
-                                              'gls_qual': 'int',
-                                              'num_sats': 'int',
-                                              'dilution_of_precision': 'float',
-                                              'velocity': 'float',
-                                              'fixmode': 'int',
-                                              'timestamp': 'float'})
-        except PolyhedraDatabase.TableAlreadyExistsError:
-            print "Table already exists."
-        except PolyhedraDatabase.OperationalError:
-            print "GPS table already exists"
-
-    def polycreate_compass(self):
-        try:
-            self.poly.drop(TableNames.COMPASS_TABLE)
-        except PolyhedraDatabase.NoSuchTableError:
-            print "Table doesn't exist"
-        try:
-
-            self.poly.create(TableNames.COMPASS_TABLE, {'id': 'int primary key', 'heading': 'float', 'timestamp': 'float'})
-        except PolyhedraDatabase.TableAlreadyExistsError:
-            print "Table already exists."
-        except PolyhedraDatabase.OperationalError:
-            print "Compass table already exists"
-
-    def polycreate_arm(self):
-        try:
-            self.poly.drop(TableNames.ARM_TABLE)
-        except PolyhedraDatabase.NoSuchTableError:
-            print "no such table"
-        try:
-            self.poly.create(TableNames.ARM_TABLE, {'id': 'int primary key', 'X': 'float', 'Y': 'float', 'Z': 'float',
-                                              'waist': 'float', 'elbow': 'float', 'shoulder': 'float',
-                                              'timestamp': 'float'})
-            print "arm table created"
-        except PolyhedraDatabase.TableAlreadyExistsError:
-            print "Table already exists."
-        except PolyhedraDatabase.OperationalError:
-            print "Arm table already exists"
-
-    def polycreate_lidar(self):
-        try:
-            self.poly.drop(TableNames.LIDAR_TABLE)
-        except PolyhedraDatabase.NoSuchTableError:
-            print "no such table"
-        try:
-            self.poly.create(TableNames.LIDAR_TABLE, {'id': 'int primary key',
-                                                    'start_flag':'varchar',
-                                                    'angle':'float',
-                                                    'distance': 'float',
-                                                    'quality': 'float',
-                                                    'reading_iteration': 'integer',
-                                                    'timestamp': 'float'})
-        except PolyhedraDatabase.TableAlreadyExistsError:
-            print "Table already exists."
-        except PolyhedraDatabase.OperationalError:
-            print "lidar table already exists"
-
-    def polycreate_motors(self):
-        try:
-            self.poly.drop(TableNames.MOTORS_TABLE)
-        except PolyhedraDatabase.NoSuchTableError:
-            print "no such table"
-        try:
-            self.poly.create(TableNames.MOTORS_TABLE, {'id': 'int primary key', 'front_left':'float', 'front_right': 'float',
-                                        'rear_left':'float', 'rear_right': 'float', 'timestamp': 'float'})
-        except PolyhedraDatabase.TableAlreadyExistsError:
-            print "Table already exists."
-        except PolyhedraDatabase.OperationalError:
-            print "motors table already exists"
-
-    def polycreate_steering(self):
-        try:
-            self.poly.drop(TableNames.STEERING_TABLE)
-        except PolyhedraDatabase.NoSuchTableError:
-            print "no such table"
-        try:
-            self.poly.create(TableNames.STEERING_TABLE,  {'id': 'int primary key', 'front_left':'float', 'front_right': 'float',
-                                        'rear_left':'float', 'rear_right': 'float', 'timestamp': 'float'})
-        except PolyhedraDatabase.TableAlreadyExistsError:
-            print "Table already exists."
-        except PolyhedraDatabase.OperationalError:
-            print "steering table already exists"
-
-    # This table is for overall sensor validity, individual validity is in a specific table for each sensor type.
-    def polycreate_sensor_validity(self):
-        try:
-            self.poly.drop(TableNames.VALIDITY_TABLE)
-        except PolyhedraDatabase.NoSuchTableError:
-            print "Table doesn't exist"
-        try:
-            self.poly.create(TableNames.VALIDITY_TABLE, {'id': 'int primary key',
-                                                   'ultrasonics': 'bool',
-                                                   'compass': 'bool',
-                                                   'gps': 'bool',
-                                                   'timestamp': 'float'})
-
-            self.poly.insert(TableNames.VALIDITY_TABLE, {'id': 0,
-                                                   'ultrasonics': False,
-                                                   'compass': False,
-                                                   'gps': False,
-                                                   'timestamp': time.time()})
-        except PolyhedraDatabase.TableAlreadyExistsError:
-            print "Table already exists."
-        except PolyhedraDatabase.OperationalError:
-            print "Sensor validity table already exists"
-
-    def polycreate_ultrasonics_validity(self):
-        try:
-            self.poly.drop(TableNames.VALIDITY_ULTRASONICS_TABLE)
-        except PolyhedraDatabase.NoSuchTableError:
-            print "Table doesn't exist"
-        try:
-            self.poly.create(TableNames.VALIDITY_ULTRASONICS_TABLE, {'id': 'int primary key',
-                                                               'fr': 'bool',
-                                                               'fc': 'bool',
-                                                               'fl': 'bool',
-                                                               'rr': 'bool',
-                                                               'rc': 'bool',
-                                                               'rl': 'bool',
-                                                               'timestamp': 'float'})
-
-            self.poly.insert(TableNames.VALIDITY_ULTRASONICS_TABLE, {'id': 0,
-                                                               'fr': False,
-                                                               'fc': False,
-                                                               'fl': False,
-                                                               'rr': False,
-                                                               'rc': False,
-                                                               'rl': False,
-                                                               'timestamp': time.time()})
-        except PolyhedraDatabase.TableAlreadyExistsError:
-            print "Table already exists."
-        except PolyhedraDatabase.OperationalError:
-            print "Ultrasonics validity table already exists"
-
-
-            # *****************************Functions for updating the table*********************************
+        # Used by every thread to insert into the database.
+        self.poly = PolyhedraDatabase("insert_threads")
 
     def ultrasonics_thread(self):
         ultrasonic = Ultrasonic()
@@ -208,56 +60,24 @@ class ControlThread:
 
                 if not valid:
                     valid = True
-                    self.poly.update(TableNames.VALIDITY_TABLE, {'ultrasonics': any_valid_data},
-                                     {'clause': 'WHERE',
-                                      'data': [
-                                          {
-                                              'column': 'id',
-                                              'assertion': '=',
-                                              'value': '0'
-                                          }
-                                      ]})
+                up.update_sensor_validity(any_data_valid)
 
-                self.poly.update(TableNames.VALIDITY_ULTRASONICS_TABLE, {'fr': validity[0],
-                                                                   'fc': validity[1],
-                                                                   'fl': validity[2],
-                                                                   'rr': validity[3],
-                                                                   'rc': validity[4],
-                                                                   'rl': validity[5]},
-                                 {'clause': 'WHERE',
-                                  'data': [
-                                      {
-                                          'column': 'id',
-                                          'assertion': '=',
-                                          'value': '0'
-                                      }
-                                  ]})
+                up.update_ultrasonics_validity(self.poly, ultra_data)
 
                 # We need to put the data in, even if it is all 0's.
                 # This gives a fail safe if a script was only relying on sensor data
                 # and not using data validity
-                self.poly.insert(TableNames.ULTRASONICS_TABLE, {'id': ultrasonic_read_id,
-                                                          'fr': ultra_data['fr'],
-                                                          'fc': ultra_data['fc'],
-                                                          'fl': ultra_data['fl'],
-                                                          'rr': ultra_data['rr'],
-                                                          'rc': ultra_data['rc'],
-                                                          'rl': ultra_data['rl'],
-                                                          'timestamp': time.time()})
+                ins.insert_ultrasonic_validity(
+                    self.poly,
+                    ultrasonic_read_id,
+                    ultra_data
+                )
                 ultrasonic_read_id += 1
                 time.sleep(0.2)
             except Exception as e:              # set to invalid
                 if valid:
                     valid = False
-                    self.poly.update(TableNames.VALIDITY_TABLE, {'ultrasonics': False},
-                                     {'clause': 'WHERE',
-                                      'data': [
-                                          {
-                                              'column': 'id',
-                                              'assertion': '=',
-                                              'value': '0'
-                                          }
-                                      ]})
+                    up.update_ultrasonics_sensor_validity(poly, False)
                 traceback.print_exc()
                 print e
 
@@ -271,7 +91,7 @@ class ControlThread:
                 if gps.has_fix():
                     gps_data = gps.read_gps()
                     if gps_data is not False:
-                        self.poly.insert(TableNames.GPS_TABLE, {'id': gps_read_id,
+                        self.poly.insert(GPSTable.table_name, {'id': gps_read_id,
                                                           'latitude': gps_data['latitude'],
                                                           'longitude': gps_data['longitude'],
                                                           'gls_qual': gps_data['gls_qual'],
@@ -282,7 +102,7 @@ class ControlThread:
                                                           'timestamp': time.time()})
                         if not valid:
                             valid = True
-                            self.poly.update(TableNames.VALIDITY_TABLE, {'gps': True}, {'clause': 'WHERE',
+                            self.poly.update(SensorValidityTable.table_name, {'gps': True}, {'clause': 'WHERE',
                                                                                'data': [
                                                                                    {
                                                                                        'column': 'id',
@@ -301,7 +121,7 @@ class ControlThread:
                 if no_data_time > 10:
                     if valid:
                         valid = False
-                        self.poly.update(TableNames.VALIDITY_TABLE, {'gps': False}, {'clause': 'WHERE',
+                        self.poly.update(SensorValidityTable.table_name, {'gps': False}, {'clause': 'WHERE',
                                                                            'data': [
                                                                                {
                                                                                    'column': 'id',
@@ -333,14 +153,14 @@ class ControlThread:
                 if standard_deviation > 10:
                     raise Exception('invalid data')
                 else:
-                    self.poly.insert(TableNames.COMPASS_TABLE,
+                    self.poly.insert(CompassTable.table_name,
                                      {'id': compass_read_id, 'heading': heading, 'timestamp': time.time()})
 
                     compass_read_id += 1
 
                 if not valid:
                     valid = True
-                    self.poly.update(TableNames.VALIDITY_TABLE, {'compass': True}, {'clause': 'WHERE',
+                    self.poly.update(SensorValidityTable.table_name, {'compass': True}, {'clause': 'WHERE',
                                                                            'data': [
                                                                                {
                                                                                    'column': 'id',
@@ -354,7 +174,7 @@ class ControlThread:
                 if valid:
                     valid = False
 
-                    self.poly.update(TableNames.VALIDITY_TABLE, {'compass': False}, {'clause': 'WHERE',
+                    self.poly.update(SensorValidityTable.table_name, {'compass': False}, {'clause': 'WHERE',
                                                                            'data': [
                                                                                {
                                                                                    'column': 'id',
@@ -372,7 +192,7 @@ class ControlThread:
         while True:
             data = l.get_filtered_lidar_data()
             for item in data:
-                self.poly.insert(TableNames.LIDAR_TABLE, {
+                self.poly.insert(LidarTable.table_name, {
                     'id': lidar_read_id,
                     'start_flag': item['start_flag'],
                     'angle':item['theta'],
@@ -396,7 +216,7 @@ class ControlThread:
 
         while True:
             try:
-                rows = self.poly.query(TableNames.VALIDITY_TABLE, ['ultrasonics', 'compass', 'gps'])
+                rows = self.poly.query(SensorValidityTable.table_name, ['ultrasonics', 'compass', 'gps'])
                 print rows
                 for row in rows:
                     print row

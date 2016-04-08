@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import abc
 import sqlite3
 from database import Database

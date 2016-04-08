@@ -1,13 +1,17 @@
-from tiberius.database.polyhedra_database import PolyhedraDatabase
-from tiberius.database.table_names import TableNames
-from tiberius.control.states import MotorState
+#!/usr/bin/python
+
+
 import time
+from tables import ArmTable
+from tables import MotorsTable
+from tiberius.database.polyhedra_database import PolyhedraDatabase
+from tiberius.control.states import MotorState
+
 
 db = PolyhedraDatabase("decorator_instance")
 
 # We have not currently implemented autoincrementing keys,
 # so we need to keep track of the key explicitly
-# test
 arm_read_id = 0
 motor_read_id = 0
 
@@ -27,7 +31,7 @@ def database_arm_update(func):
         result = func(self, change, angle=None)
 
         # Update the database with values from self
-        db.insert(TableNames.ARM_TABLE, {
+        db.insert(ArmTable.table_name, {
             'id': arm_read_id,
             'X': self.x,
             'Y': self.y,
@@ -95,7 +99,7 @@ def database_motor_update(func):
                 rear_right = 0
 
         # Update the database with values from self
-        db.insert(TableNames.MOTORS_TABLE, {
+        db.insert(MotorsTable.table_name, {
             'id': motor_read_id,
             'front_left': front_left,
             'front_right': front_right,

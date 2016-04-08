@@ -1,7 +1,7 @@
-from enum import Enum
+#!/usr/bin/python
 
 
-class SqlClauses(Enum):
+class SqlClauses:
     WHERE = "WHERE"
     SELECT = "SELECT"
     FROM = "FROM"

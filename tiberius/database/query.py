@@ -1,6 +1,8 @@
 #!/usr/bin/python
+
+
 from tiberius.database.polyhedra_database import PolyhedraDatabase
-from tiberius.database.tables import Tables
+from tables import Tables
 
 
 class Query:
