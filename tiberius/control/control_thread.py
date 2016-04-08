@@ -354,9 +354,12 @@ class ControlThread:
                                                                                }
                                                                            ]})
             time.sleep(0.5)
+
+
     def lidar_thread(self):
         lidar_read_id = 0
-        data = get_filtered_lidar_data()
+        while True:
+            data = get_filtered_lidar_data()
             for item in data:
                 self.poly.insert(TableNames.LIDAR_TABLE, {
                     'id': lidar_read_id,
@@ -367,6 +370,7 @@ class ControlThread:
                     'timestamp': time.timestamp
                 })
                 lidar_read_id += 1
+            time.sleep(0.5)
 
 
 
