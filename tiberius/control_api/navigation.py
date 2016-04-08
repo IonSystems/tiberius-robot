@@ -26,19 +26,19 @@ class NavigationResource(object):
         Allows a user to direct Tiberius to a lat/long location.
     '''
     def __init__(self, algorithms):
-        self.algorithms = algorithmns
+        self.algorithms = algorithms
 
     def on_post(self, req, resp):
         if("command" in req.params):
             command = req.params['command']
 
-            if command = NavigationCommands.GOTO_WAYPOINT:
-                latitude = req.parms['latitude']
-                longitude = req.parms['longitude']
+            if command == NavigationCommands.GOTO_WAYPOINT:
+                latitude = float(req.params['latitude'])
+                longitude = float(req.params['longitude'])
                 # Speed percent (0 - 100)
-                speed = req.params['speed']
+                speed = int(req.params['speed'])
 
-                self.algorithmns.pointToPoint([longitude, latitude], speed)
+                self.algorithms.pointToPoint([longitude, latitude], speed)
 
         else:
             resp.status = falcom.HTTP_404
