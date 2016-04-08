@@ -12,8 +12,9 @@ import numpy as n
 
 class RoboPeakLidar:
     '''
-            Provides methods of getting data from teh LIDAR.
-            TODO: Do something about the readLidar executable, I am thinking just replace the cpp with python.
+            Provides methods of getting data from the LIDAR.
+            TODO: Do something about the readLidar executable,
+            I am thinking just replace the cpp with python.
     '''
     # calls an executable file 'readlidar', which takes a 360 degrees sweep of data from lidar,
     # filters it to only use objects detected in the distance range from 500mm to 7000mm and

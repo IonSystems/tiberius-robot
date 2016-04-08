@@ -42,6 +42,10 @@ class TiberiusConfigParser():
     def isLidarEnabled():
         return TiberiusConfigParser.getParser().getboolean(LIDAR_SECTION, 'installed')
 
+    @staticmethod
+    def getLidarSerialPort():
+        return TiberiusConfigParser.getParser().get(LIDAR_SECTION, 'serial_port')
+
     '''******************************************
         Motors
     ******************************************'''
@@ -130,6 +134,10 @@ class TiberiusConfigParser():
     @staticmethod
     def isGPSEnabled():
         return TiberiusConfigParser.getParser().getboolean(GPS_SECTION, 'installed')
+
+    @staticmethod
+    def getGPSSerialPort():
+        return TiberiusConfigParser.getParser().get(GPS_SECTION, 'serial_port')
 
     '''******************************************
         Networking

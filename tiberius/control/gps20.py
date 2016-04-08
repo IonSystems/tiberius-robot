@@ -4,6 +4,7 @@ from enum import Enum
 
 from tiberius.logger import logger
 from tiberius.utils import detection
+from tiberius.config.config_parser import TiberiusConfigParser
 
 import logging
 from pynmea import nmea
@@ -25,7 +26,7 @@ class GlobalPositioningSystem:
     if detection.detect_windows():
         port = 'COM3'
     else:
-        port = '/dev/ttyACM0'
+        port = TiberiusConfigParser.getGPSSerialPort()
     baud = 9600
 
     supported_sentences = 3  # The number of NMEA sentences currently supported
