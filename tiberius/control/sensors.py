@@ -99,15 +99,22 @@ class Ultrasonic:
             '''
             lidar = RoboPeakLidar()
 
-            def get_filtered_lidar_data():
+            def get_filtered_lidar_data(self):
                 '''
+                    Decode lidar dictionary message
                     The LIDAR is blocked by Tiberius's structure at some parts,
                     so ignore these readings. Also remove obbiosly incorrect
                     readings (e.g. < 10cm).
                 '''
-                return self.lidar.get_lidar_data()
+                data = self.lidar.get_lidar_data()
+                #put x in data for every x in data only if filtered_data() is true
+                data = [x for x in data if filtered_data(self, x)]
 
-
+            def filtered_data(self):
+                    if 350 < item["angle"] < 10:
+                        return False
+                    else:
+                        return True
 
 # class Camera:
 #    '''
