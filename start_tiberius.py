@@ -61,25 +61,27 @@ time.sleep(10)
 print 'Starting sensor data threads...'
 # Start sensor data threads
 ultrasonics = Process(target=control_thread.ultrasonics_thread).start()
+print "ultrasonic thread started"
 time.sleep(5)
 #gps = Process(target=control_thread.gps_thread).start()
+print "GPS thread started"
 #time.sleep(5)
 if TiberiusConfigParser.isCompassEnabled():
     compass = Process(target=control_thread.compass_thread).start()
+    print "compass thread started"
 #time.sleep(5)
 if TiberiusConfigParser.isLidarEnabled():
     lidar = Process(target=control_thread.lidar_thread).start()
+    print "lidar thread started"
 time.sleep(5)
 #diagnostics = Process(target=control_thread.diagnostics_thread()).start()
 #time.sleep(5)
 
 # Start the control API
-print "Starting the control API..."
 #server = Popen("python tiberius/control_api/api.py", shell=True)
-print "Control API started"
+#print "Control API started"
 
 if action == Action.WEB_SERVER:
-    print "Starting the web server..."
     server = Popen("python tiberius/web-interface/manage.py runserver", shell=True)
     print "Web server started"
 
@@ -101,3 +103,5 @@ except KeyboardInterrupt:
         Popen.kill(server)
     print "Tiberius Software Suite Stopped"
 sys.exit()
+
+print "tiberius fully started"
