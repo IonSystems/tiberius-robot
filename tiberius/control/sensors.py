@@ -92,30 +92,30 @@ class Ultrasonic:
                 (results['rc'] < d) or
                 (results['rr'] < d))
 
-    if TiberiusConfigParser.isLidarEnabled():
-        class Lidar:
-            '''
-                    Provides lidar data to be inserted into database
-            '''
-            lidar = RoboPeakLidar()
+    #if TiberiusConfigParser.isLidarEnabled():
+    class Lidar:
+        '''
+                Provides lidar data to be inserted into database
+        '''
+        lidar = RoboPeakLidar()
 
-            def get_filtered_lidar_data(self):
-                '''
-                    Decode lidar dictionary message
-                    The LIDAR is blocked by Tiberius's structure at some parts,
-                    so ignore these readings. Also remove obbiosly incorrect
-                    readings (e.g. < 10cm).
-                '''
-                data = self.lidar.get_lidar_data()
-                #put x in data for every x in data only if filtered_data() is true
-                data = [x for x in data if filtered_data(self, x)]
-                return data
+        def get_filtered_lidar_data(self):
+            '''
+                Decode lidar dictionary message
+                The LIDAR is blocked by Tiberius's structure at some parts,
+                so ignore these readings. Also remove obbiosly incorrect
+                readings (e.g. < 10cm).
+            '''
+            data = self.lidar.get_lidar_data()
+            #put x in data for every x in data only if filtered_data() is true
+            data = [x for x in data if filtered_data(self, x)]
+            return data
 
-            def filtered_data(self):
-                    if 350 < item["angle"] < 10:
-                        return False
-                    else:
-                        return True
+        def filtered_data(self):
+                if 350 < item["angle"] < 10:
+                    return False
+                else:
+                    return True
 
 # class Camera:
 #    '''
