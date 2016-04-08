@@ -1,5 +1,6 @@
 import threading
 import time
+from tiberius.config.config_parser import TiberiusConfigParser
 from tiberius.database.polyhedra_database import PolyhedraDatabase
 from tiberius.control.sensors import Ultrasonic
 if TiberiusConfigParser.isLidarEnabled():
