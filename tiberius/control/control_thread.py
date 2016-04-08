@@ -369,8 +369,8 @@ class ControlThread:
                 self.poly.insert(TableNames.LIDAR_TABLE, {
                     'id': lidar_read_id,
                     'start_flag': item['start_flag'],
-                    'angle':item['angle'],
-                    'distance': item['distance'],
+                    'angle':item['theta'],
+                    'distance': item['dist'],
                     'quality': item['quality'],
                     'timestamp': time.timestamp
                 })
