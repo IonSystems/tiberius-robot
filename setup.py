@@ -103,7 +103,7 @@ class PostInstallDependencies(install):
 	self.un_blacklist_i2c()
 	self.enable_modules_i2c()
 
-    def self.create_lidar_executable(self):
+    def create_lidar_executable(self):
         check_output("cd ~/git/tiberius-robot/tiberius/autonomy/readlidar", shell=True)
         check_output("g++ -pthread -lrt rplidar_driver.cpp thread.cpp net_serial.cpp timer.cpp readlidar.cpp -o readlidar", shell=True)
         print "creating lidar executable"
