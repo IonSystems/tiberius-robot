@@ -99,12 +99,12 @@ class ControlThread:
             print "no such table"
         try:
             self.poly.create(TableNames.LIDAR_TABLE, {'id': 'int primary key',
-                                                         'start_flag':'varchar',
-                                                         'angle':'float',
-                                                         'distance': 'float',
-                                                         'quality': 'float',
-                                                         'reading_iteration': 'integer',
-                                                         'timestamp': 'float'})
+                                                    'start_flag':'varchar',
+                                                    'angle':'float',
+                                                    'distance': 'float',
+                                                    'quality': 'float',
+                                                    'reading_iteration': 'integer',
+                                                    'timestamp': 'float'})
         except PolyhedraDatabase.TableAlreadyExistsError:
             print "Table already exists."
         except PolyhedraDatabase.OperationalError:
@@ -367,7 +367,7 @@ class ControlThread:
 
     def lidar_thread(self):
         lidar_read_id = 0
-        reading_iteration
+        reading_iteration = 0
         l = Lidar()
         while True:
             data = l.get_filtered_lidar_data()
