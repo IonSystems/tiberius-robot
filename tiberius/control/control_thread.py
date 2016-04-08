@@ -9,6 +9,7 @@ if TiberiusConfigParser.isCompassEnabled():
     from tiberius.control.sensors import Compass
 from tiberius.control.sensors import GPS
 from tiberius.database.table_names import TableNames
+
 import traceback
 import numpy as np
 '''
