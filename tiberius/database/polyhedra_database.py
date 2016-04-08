@@ -10,7 +10,7 @@ class PolyhedraDatabase(Database):
     def __init__(self, name):
         # Start the database API if it is not already running
         popen = subprocess.Popen(
-            "/home/pi/poly9.0/linux/raspi/bin/rtrdb -r data_service=8001 db",
+            "rtrdb -r data_service=8001 db",
             shell=True, stdout=subprocess.PIPE)
         lines_iterator = iter(popen.stdout.readline, b"")
         for line in lines_iterator:
