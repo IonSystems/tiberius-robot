@@ -27,6 +27,7 @@ namespace Microsoft.Samples.Kinect.DepthBasics
         private const int MapDepthToByte = 8000 / 256;
 
         private const int ChunkSize = 8;
+        private const int scale = 8;
         private ushort[][][,] chunks = new ushort[ChunkSize][][,];
         private long[,] chunkMean = new long[ChunkSize, ChunkSize];
         private double[,] chunkStandardDeviation = new double[ChunkSize, ChunkSize];
@@ -45,7 +46,7 @@ namespace Microsoft.Samples.Kinect.DepthBasics
         /// Description of the data contained in the depth frame
         /// </summary>
         private FrameDescription depthFrameDescription = null;
-            
+
         /// <summary>
         /// Bitmap to display
         /// </summary>
@@ -68,7 +69,7 @@ namespace Microsoft.Samples.Kinect.DepthBasics
         public MainWindow()
         {
 
-            
+
 
 
             // get the kinectSensor object
@@ -84,11 +85,11 @@ namespace Microsoft.Samples.Kinect.DepthBasics
             depthFrameDescription = kinectSensor.DepthFrameSource.FrameDescription;
 
             // allocate space to put the pixels being received and converted
-            depthPixels = new byte[depthFrameDescription.Width * depthFrameDescription.Height];
+            depthPixels = new byte[ChunkSize * scale * ChunkSize * scale];
             depthGrid = new ushort[depthFrameDescription.Width, depthFrameDescription.Height];
 
             // create the bitmap to display
-            depthBitmap = new WriteableBitmap(ChunkSize, ChunkSize, ChunkSize/2, ChunkSize/2, PixelFormats.Gray8, null);
+            depthBitmap = new WriteableBitmap(ChunkSize * scale, ChunkSize * scale, ChunkSize, ChunkSize, PixelFormats.Gray8, null);
 
             // set IsAvailableChanged event notifier
             kinectSensor.IsAvailableChanged += Sensor_IsAvailableChanged;
@@ -119,7 +120,9 @@ namespace Microsoft.Samples.Kinect.DepthBasics
         {
             get
             {
+
                 return this.depthBitmap;
+
             }
         }
 
@@ -226,8 +229,7 @@ namespace Microsoft.Samples.Kinect.DepthBasics
                     using (Microsoft.Kinect.KinectBuffer depthBuffer = depthFrame.LockImageBuffer())
                     {
                         // verify data and write the color data to the display bitmap
-                        if (((this.depthFrameDescription.Width * this.depthFrameDescription.Height) == (depthBuffer.Size / this.depthFrameDescription.BytesPerPixel)) &&
-                            (this.depthFrameDescription.Width == this.depthBitmap.PixelWidth) && (this.depthFrameDescription.Height == this.depthBitmap.PixelHeight))
+                        if (((this.depthFrameDescription.Width * this.depthFrameDescription.Height) == (depthBuffer.Size / this.depthFrameDescription.BytesPerPixel)))
                         {
                             // Note: In order to see the full range of depth (including the less reliable far field depth)
                             // we are setting maxDepth to the extreme potential depth threshold
@@ -235,7 +237,7 @@ namespace Microsoft.Samples.Kinect.DepthBasics
 
                             // If you wish to filter by reliable depth distance, uncomment the following line:
                             //// maxDepth = depthFrame.DepthMaxReliableDistance
-                            
+
                             this.ProcessDepthFrameData(depthBuffer.UnderlyingBuffer, depthBuffer.Size, depthFrame.DepthMinReliableDistance, maxDepth);
                             depthFrameProcessed = true;
                         }
@@ -255,10 +257,11 @@ namespace Microsoft.Samples.Kinect.DepthBasics
         private void RenderDepthPixels()
         {
             this.depthBitmap.WritePixels(
-                new Int32Rect(0, 0, ChunkSize, ChunkSize),
+                new Int32Rect(0, 0, ChunkSize * scale, ChunkSize * scale),
                 depthPixels,
                 depthBitmap.PixelWidth,
                 0);
+
         }
 
         /// <summary>
@@ -288,55 +291,75 @@ namespace Microsoft.Samples.Kinect.DepthBasics
             // depth frame data is a 16 bit value
             ushort* frameData = (ushort*)depthFrameData;
 
-            int verticalLine = 0;
-            int horizontalLine = 0;
+            int column = 0;
+            int row = 0;
 
             // convert depth to a visual representation
             for (int i = 0; i < (int)(depthFrameDataSize / this.depthFrameDescription.BytesPerPixel); ++i)
             {
-                // Get the depth for this pixel
-                depthGrid[horizontalLine, verticalLine] = frameData[i];
+                // Get the depth for this pixel              
+
+                depthGrid[column, row] = (byte)(frameData[i] >= minDepth && frameData[i] <= maxDepth ? (frameData[i] / MapDepthToByte) : 0);
 
                 // Work out which grid position we are in
-                verticalLine++;
-                if (verticalLine >= 424)
+                column++;
+                if (column >= 512)
                 {
-                    verticalLine = 0;
-                    horizontalLine++;
-                }      
-                
+                    column = 0;
+                    row++;
+                }
+
             }
             // Split the data into chunks
             createChunks(depthGrid);
-            
-            
+
+
             // Calculate standard deviation on chunks
-            for (int i = 0; i < ChunkSize; i++)
+            int count = 63;
+
+            for (int gridRow = 0; gridRow < ChunkSize; gridRow++)
             {
-                for (int j = 0; j < ChunkSize; j++)
+                for (int gridColumn = 0; gridColumn < ChunkSize; gridColumn++)
                 {
-                    CalculateStandardDeviation(chunks[i][j], 424 / ChunkSize, 512 / ChunkSize, out chunkMean[i, j], out chunkStandardDeviation[i, j]);
+                    CalculateStandardDeviation(chunks[gridRow][gridColumn], 512 / ChunkSize, 424 / ChunkSize, out chunkMean[gridRow, gridColumn], out chunkStandardDeviation[gridRow, gridColumn]);
 
                     // For testing ////////////////////////////
-                    chunkStandardDeviation[i,j] = (i * j) *  4;    
+                    //chunkStandardDeviation[column,row] = count-- * 4;    
                     ///////////////////////////////////////////   
                 }
             }
-            
+
             // Put the standard deviations into the display buffer
             int counter = 0;
-            for (int i = 0; i < ChunkSize; i++)
+
+            for (int gridRow = 0; gridRow < ChunkSize; gridRow++)
             {
-                for (int j = 0; j < ChunkSize; j++)
+                for (int gridColumn = 0; gridColumn < ChunkSize; gridColumn++)
                 {
-                    this.depthPixels[counter] = (byte)chunkStandardDeviation[i, j];
-                    counter++;
+                    ExtractData(counter, gridRow, gridColumn);
+
+                    counter += scale;
+
                 }
+                counter -= scale * scale;
+                counter += scale * ChunkSize * scale;
             }
-            
+
         }
 
-        
+        private unsafe void ExtractData(int counter, int gridRow, int gridColumn)
+        {
+            for (int scaledRow = 0; scaledRow < scale; scaledRow++)
+            {
+                for (int scaledColumn = 0; scaledColumn < scale; scaledColumn++)
+                {
+                    this.depthPixels[counter + (ChunkSize * scale * scaledRow) + scaledColumn] = (byte)chunkStandardDeviation[gridRow, gridColumn];
+                }
+
+            }
+        }
+
+
 
         /// <summary>
         /// Splits a grid of data into a number of chunks specified by ChunkSize^2
@@ -347,33 +370,43 @@ namespace Microsoft.Samples.Kinect.DepthBasics
         private void createChunks(ushort[,] grid)
         {
             
-            int rows = 424 / ChunkSize;
-            int columns = 512 / ChunkSize;
-            int nuChunk = rows * columns;            
-            
 
-            // Loop through the column chunks
-            for (int chunkColumn = 0; chunkColumn < ChunkSize; chunkColumn++)
+
+            for (int i = 0; i < ChunkSize; i++)
             {
-                chunks[chunkColumn] = new ushort[ChunkSize][,];
-
-                for (int chunkRow = 0; chunkRow < ChunkSize; chunkRow++)
+                chunks[i] = new ushort[ChunkSize][,];
+                for (int j = 0; j < ChunkSize; j++)
                 {
-                    chunks[chunkColumn][chunkRow] = new ushort[columns, rows];
-
-                    for (int i = 0; i < rows; i++)
-                    {
-
-                        for (int j = 0; j < columns; j++)
-                        {
-                            // Map from the depth grid to chunk data
-                            chunks[chunkColumn][chunkRow][j, i] = grid[j * chunkColumn, i * chunkRow];
-                        }
-                    }                    
+                    chunks[i][j] = new ushort[512 / ChunkSize, 424 / ChunkSize];
                 }
-            }           
+            }
+
+
+
+
+            for (int row = 0; row < 424; row++)
+            {
+                for (int column = 0; column < 512; column++)
+                {
+                    chunks[row / 53][column / 64][column % 64, row % 53] = grid[column, row];
+                }
+            }
+
+
+
         }
-       
+
+
+
+
+
+
+
+
+
+
+
+
         /// <summary>
         /// Calculate standard deviation and mean of a grid
         /// </summary>
@@ -386,19 +419,32 @@ namespace Microsoft.Samples.Kinect.DepthBasics
         {
             int n = width * height;
             long sum = 0;
-            long vsum = 0;    
-            
-            for (int i = 0; i < height; i++)
+            long vsum = 0;
+
+            for (int column = 0; column < width; column++)
             {
-                for(int j = 0; j < width; j++)
+                for (int row = 0; row < height; row++)
                 {
-                    sum += grid[i, j];
-                    vsum += (grid[i, j] * grid[i, j]); 
+
+                    // if (grid[column, row] < 5000 && grid[column, row] > 1000)
+                    //{
+                    sum += grid[column, row];
+                    vsum += (grid[column, row] * grid[column, row]);
+                    //    n++;
+                    //}
+
                 }
             }
-            mean = sum / n;
-            long variance = vsum / n;
-            standardDeviation = Math.Sqrt(variance / n); 
+            mean = 0;
+            standardDeviation = 0;
+            
+                mean = (sum / n);
+                long variance = vsum / n;
+                standardDeviation = (Math.Sqrt(variance / n)) * 80;
+            
+
+
+
         }
     }
 }
