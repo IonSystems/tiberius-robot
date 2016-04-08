@@ -2,13 +2,13 @@ import threading
 import time
 from tiberius.config.config_parser import TiberiusConfigParser
 from tiberius.database.polyhedra_database import PolyhedraDatabase
+from tiberius.database.table_names import TableNames
 from tiberius.control.sensors import Ultrasonic
-if TiberiusConfigParser.isLidarEnabled():
-    from tiberius.control.sensors import Lidar
 if TiberiusConfigParser.isCompassEnabled():
     from tiberius.control.sensors import Compass
+if TiberiusConfigParser.isLidarEnabled():
+    from tiberius.control.sensors import Lidar
 from tiberius.control.sensors import GPS
-from tiberius.database.table_names import TableNames
 
 import traceback
 import numpy as np
