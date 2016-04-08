@@ -372,7 +372,7 @@ class ControlThread:
                     'angle':item['theta'],
                     'distance': item['dist'],
                     'quality': item['quality'],
-                    'timestamp': time.timestamp
+                    'timestamp': time.time()
                 })
                 lidar_read_id += 1
             time.sleep(0.5)
