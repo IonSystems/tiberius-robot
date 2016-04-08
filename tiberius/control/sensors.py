@@ -92,6 +92,7 @@ class Ultrasonic:
                 (results['rc'] < d) or
                 (results['rr'] < d))
 
+
 # if TiberiusConfigParser.isLidarEnabled():
 class Lidar:
     '''
@@ -99,7 +100,7 @@ class Lidar:
     '''
     lidar = RoboPeakLidar()
 
-    def filtered_data(self,x):
+    def filtered_data(self, x):
             if 350 < x < 10:
                 return False
             else:
@@ -113,8 +114,8 @@ class Lidar:
             readings (e.g. < 10cm).
         '''
         data = self.lidar.get_lidar_data()
-        #put x in data for every x in data only if filtered_data() is true
-        data = [x for x in data if filtered_data(self, x)]
+        # put x in data for every x in data only if filtered_data() is true
+        data = [x for x in data if self.filtered_data(x)]
         return data
 
 # class Camera:
