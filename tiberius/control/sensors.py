@@ -99,6 +99,12 @@ class Lidar:
     '''
     lidar = RoboPeakLidar()
 
+    def filtered_data(self):
+            if 350 < item["angle"] < 10:
+                return False
+            else:
+                return True
+                
     def get_filtered_lidar_data(self):
         '''
             Decode lidar dictionary message
@@ -110,12 +116,6 @@ class Lidar:
         #put x in data for every x in data only if filtered_data() is true
         data = [x for x in data if filtered_data(self, x)]
         return data
-
-    def filtered_data(self):
-            if 350 < item["angle"] < 10:
-                return False
-            else:
-                return True
 
 # class Camera:
 #    '''
