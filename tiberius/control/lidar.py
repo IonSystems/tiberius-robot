@@ -14,9 +14,7 @@ class RoboPeakLidar:
         return self.format_data(output)
 
     def format_data(self, data):
-        print data
        	data = self.check_commas(data)
-        print data # debug
         return json.loads(data)
 
     def check_commas(self, data):
@@ -24,4 +22,4 @@ class RoboPeakLidar:
 
 if __name__ == "__main__":
     l = RoboPeakLidar()
-    print l.get_lidar_data()
+    l.get_lidar_data()
