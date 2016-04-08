@@ -49,7 +49,7 @@ api.add_route('/status', status)
 
 if TiberiusConfigParser.isGPSEnabled():
     n = Algorithms(c)
-    navigation = navigation.NavigationResource(m, n)
+    navigation = navigation.NavigationResource(n)
     api.add_route('/navigation', navigation)
 
 if __name__ == '__main__':
