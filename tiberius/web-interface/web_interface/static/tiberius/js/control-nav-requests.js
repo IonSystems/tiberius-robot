@@ -29,7 +29,7 @@ var handleNavigationButtons = function(ip_address) {
 			var longitude = parseFloat($(this).data('longitude'));
 			var button_ip_address = $(this).data('ipaddress');
 			var speed = $(this).data('speed');
-			send_waypoint_request(ip_address, latitude, longitude)
+			send_waypoint_request(ip_address, latitude, longitude, speed)
     //  $(".modal-body #bookId").val( myBookId );
 		alert("button clicked. Lat: " + latitude + ", Long: " + longitude + ", ip: " + button_ip_address);
      // As pointed out in comments,
