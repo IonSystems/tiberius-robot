@@ -146,7 +146,7 @@ int main(int argc, const char * argv[]) {
                                                (nodes[pos].angle_q6_checkbit >> RPLIDAR_RESP_MEASUREMENT_ANGLE_SHIFT)/64.0f,
                                                nodes[pos].distance_q2/4.0f,
                                                nodes[pos].sync_quality >> RPLIDAR_RESP_MEASUREMENT_QUALITY_SHIFT);
-                                        if (pos != count - 2) printf(",\n");
+                                        if (pos != count - 1){ printf(",\n");}
                                 }
 
                         }
