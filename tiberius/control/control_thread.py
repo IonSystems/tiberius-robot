@@ -77,6 +77,7 @@ class ControlThread:
         try:
             self.poly.drop(TableNames.ARM_TABLE)
         except PolyhedraDatabase.NoSuchTableError:
+            print "no such table"
         try:
             self.poly.create(TableNames.ARM_TABLE, {'id': 'int primary key', 'X': 'float', 'Y': 'float', 'Z': 'float',
                                               'waist': 'float', 'elbow': 'float', 'shoulder': 'float',
@@ -91,6 +92,7 @@ class ControlThread:
         try:
             self.poly.drop(TableNames.LIDAR_TABLE)
         except PolyhedraDatabase.NoSuchTableError:
+            print "no such table"
         try:
             self.poly.create(TableNames.LIDAR_TABLE, {'id': 'int primary key', 'angle':'float', 'distance': 'float',
                                               'timestamp': 'float'})
@@ -103,6 +105,7 @@ class ControlThread:
         try:
             self.poly.drop(TableNames.MOTORS_TABLE)
         except PolyhedraDatabase.NoSuchTableError:
+            print "no such table"
         try:
             self.poly.create(TableNames.MOTORS_TABLE, {'id': 'int primary key', 'front_left':'float', 'front_right': 'float',
                                         'rear_left':'float', 'rear_right': 'float', 'timestamp': 'float'})
@@ -115,6 +118,7 @@ class ControlThread:
         try:
             self.poly.drop(TableNames.STEERING_TABLE)
         except PolyhedraDatabase.NoSuchTableError:
+            print "no such table"
         try:
             self.poly.create(TableNames.STEERING_TABLE,  {'id': 'int primary key', 'front_left':'float', 'front_right': 'float',
                                         'rear_left':'float', 'rear_right': 'float', 'timestamp': 'float'})
@@ -358,7 +362,7 @@ class ControlThread:
                                           'timestamp': time.timestamp})
         lidar_read_id += 1
 
-                                          
+
 
     def diagnostics_thread(self):
         from tiberius.diagnostics.external_hardware_controller import ExternalHardwareController

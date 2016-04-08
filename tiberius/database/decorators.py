@@ -1,12 +1,13 @@
 from tiberius.database.polyhedra_database import PolyhedraDatabase
 from tiberius.database.table_names import TableNames
-from tiberius.control.actuators import MotorState
+from tiberius.control.states import MotorState
 import time
 
 db = PolyhedraDatabase("decorator_instance")
 
 # We have not currently implemented autoincrementing keys,
 # so we need to keep track of the key explicitly
+# test
 arm_read_id = 0
 motor_read_id = 0
 
@@ -56,45 +57,45 @@ def database_motor_update(func):
         # The information we need will either be in args,
         # or extrapolated from motor state.
         if len(args) == 2:
-			front_left = args[0]
-			rear_left = args[0]
-			front_right = args[1]
-			rear_right = args[1]
-		else if len(args) == 4:
-			front_left = args[0]
-			rear_left = args[2]
-			front_right = args[1]
-			rear_right = args[3]
+            front_left = args[0]
+            rear_left = args[0]
+            front_right = args[1]
+            rear_right = args[1]
+        elif len(args) == 4:
+            front_left = args[0]
+            rear_left = args[2]
+            front_right = args[1]
+            rear_right = args[3]
         else:
-			# Get speeds using motor state and self
-			if self.state = MotorState.FORWARD:
-				front_left = self.speed
-				rear_left = self.speed
-				front_right = self.speed
-				rear_right = self.speed
-			else if self.state = MotorState.BACKWARD:
-				front_left = -self.speed
-				rear_left = -self.speed
-				front_right = -self.speed
-				rear_right = -self.speed
-			else if self.state = MotorState.LEFT:
-				front_left = -self.speed
-				rear_left = -self.speed
-				front_right = self.speed
-				rear_right = self.speed
-			else if self.state = MotorState.RIGHT:
-				front_left = self.speed
-				rear_left = self.speed
-				front_right = -self.speed
-				rear_right = -self.speed
-			else if self.state = MotorState.STOP:
-				front_left = 0
-				rear_left = 0
-				front_right = 0
-				rear_right = 0
+            # Get speeds using motor state and self
+            if self.state == MotorState.FORWARD:
+                front_left = self.speed
+                rear_left = self.speed
+                front_right = self.speed
+                rear_right = self.speed
+            elif self.state == MotorState.BACKWARD:
+                front_left = -self.speed
+                rear_left = -self.speed
+                front_right = -self.speed
+                rear_right = -self.speed
+            elif self.state == MotorState.LEFT:
+                front_left = -self.speed
+                rear_left = -self.speed
+                front_right = self.speed
+                rear_right = self.speed
+            elif self.state == MotorState.RIGHT:
+                front_left = self.speed
+                rear_left = self.speed
+                front_right = -self.speed
+                rear_right = -self.speed
+            elif self.state == MotorState.STOP:
+                front_left = 0
+                rear_left = 0
+                front_right = 0
+                rear_right = 0
 
         # Update the database with values from self
-        db.insert(TableNames.MOTOR_TABLE, {
+        db.insert(TableNames.MOTORS_TABLE, {
             'id': motor_read_id,
             'front_left': front_left,
             'front_right': front_right,
@@ -102,5 +103,5 @@ def database_motor_update(func):
             'rear_right': rear_right,
             'timestamp' : time.time()
         })
-        arm_read_id += 1
+        motor_read_id += 1
     return func_wrapper
