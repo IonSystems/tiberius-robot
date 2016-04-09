@@ -82,7 +82,7 @@ if TiberiusConfigParser.isLidarEnabled():
 if TiberiusConfigParser.areDiagnosticsEnabled():
     diagnostics = Process(target=c.diagnostics_thread()).start()
     print "diagnostics thread started"
-    time.sleep(5)
+    time.sleep(3)
 
 # Start the control API
 #server = Popen("python tiberius/control_api/api.py", shell=True)
