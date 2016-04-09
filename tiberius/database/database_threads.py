@@ -5,6 +5,8 @@ import numpy as np
 
 import tiberius.database.update as up
 import tiberius.database.create as cr
+import tiberius.databse.insert as ins
+import tiberius.database.query as q
 
 from tiberius.config.config_parser import TiberiusConfigParser
 from tiberius.database.polyhedra_database import PolyhedraDatabase
@@ -17,39 +19,56 @@ from tiberius.database.tables import MotorsTable
 from tiberius.database.tables import SteeringTable
 from tiberius.database.tables import SensorValidityTable
 from tiberius.database.tables import UltrasonicsValidityTable
+
+# TODO: This 'ExternalHardwareController' would be be best split up into
+# individual drivers as with cmps11, gps20 etc.
+from tiberius.diagnostics.external_hardware_controller import ExternalHardwareController
+
 from tiberius.control.sensors import Ultrasonic
+from tiberius.control.sensors import GPS
 if TiberiusConfigParser.isCompassEnabled():
     from tiberius.control.sensors import Compass
 if TiberiusConfigParser.isLidarEnabled():
     from tiberius.control.sensors import Lidar
-from tiberius.control.sensors import GPS
 
 
 class DatabaseThreadCreator:
     '''
-        Responsible for creating threads to populate the Polyhedra database
-        with sensor data. A thread is created for each sensor. Each thread polls
-        the sensor at a rate suitable for the particular sensor. Timestamps are
-        included with each insert, to allow data to be queried based on age.
+    Responsible for creating threads to populate the Polyhedra database
+    with sensor data. A thread is created for each sensor. Each thread
+    polls the sensor at a rate suitable for the particular sensor.
+    Timestamps are included with each insert, to allow data to be queried
+    based on age.
 
-        On thread creation, a fresh database table is created, and any previous
-        table and possible data is dropped.
+    On thread creation, a fresh database table is created, and any previous
+    table and possible data is dropped.
 
-        Actuator data is inserted at point of call using
-        database.decorators.
+    Actuator data is inserted at point of call using
+    database.decorators.
+
+    We avoid creating an instance of Control to prevent access to actuators.
     '''
+
     def __init__(self):
         # Used by every thread to insert into the database.
         self.poly = PolyhedraDatabase("insert_threads")
 
+    '''******************************************
+        Ultrasonics
+    ******************************************'''
+
     def ultrasonics_thread(self):
+        '''
+        Repeatedly insert ultrasonics data into the database.
+        '''
         ultrasonic = Ultrasonic()
         ultrasonic_read_id = 0
         valid = False
 
         while True:
             try:
-
+                # TODO: Validity should not come from here, move validity checks
+                # to validity module.
                 ultra_data = ultrasonic.senseUltrasonic()
                 validity = ultra_data['valid']
 
@@ -58,6 +77,7 @@ class DatabaseThreadCreator:
                 else:
                     any_valid_data = False
 
+                # TODO: Something doesn't feel right here!
                 if not valid:
                     valid = True
                 up.update_sensor_validity(any_data_valid)
@@ -81,6 +101,10 @@ class DatabaseThreadCreator:
                 traceback.print_exc()
                 print e
 
+    '''******************************************
+        GPS
+    ******************************************'''
+
     def gps_thread(self):
         gps = GPS()
         gps_read_id = 0
@@ -91,26 +115,10 @@ class DatabaseThreadCreator:
                 if gps.has_fix():
                     gps_data = gps.read_gps()
                     if gps_data is not False:
-                        self.poly.insert(GPSTable.table_name, {'id': gps_read_id,
-                                                          'latitude': gps_data['latitude'],
-                                                          'longitude': gps_data['longitude'],
-                                                          'gls_qual': gps_data['gls_qual'],
-                                                          'num_sats': gps_data['num_sats'],
-                                                          'dilution_of_precision': gps_data['dilution_of_precision'],
-                                                          'velocity': gps_data['velocity'],
-                                                          'fixmode': gps_data['fixmode'],
-                                                          'timestamp': time.time()})
+                        ins.insert_gps_reading(self.poly, gps_read_id, gps_data)
                         if not valid:
                             valid = True
-                            self.poly.update(SensorValidityTable.table_name, {'gps': True}, {'clause': 'WHERE',
-                                                                               'data': [
-                                                                                   {
-                                                                                       'column': 'id',
-                                                                                       'assertion': '=',
-                                                                                       'value': '0'
-                                                                                   }
-                                                                               ]})
-
+                            up.update_gps_sensor_validity(self.poly, True)
                         gps_read_id += 1
                         no_data_time = 0
                 else:
@@ -121,18 +129,15 @@ class DatabaseThreadCreator:
                 if no_data_time > 10:
                     if valid:
                         valid = False
-                        self.poly.update(SensorValidityTable.table_name, {'gps': False}, {'clause': 'WHERE',
-                                                                           'data': [
-                                                                               {
-                                                                                   'column': 'id',
-                                                                                   'assertion': '=',
-                                                                                   'value': '0'
-                                                                               }
-                                                                           ]})
+                        up.update_gps_sensor_validity(self.poly, False)
 
             except Exception as e:
                 traceback.print_exc()
                 print e
+
+    '''******************************************
+        Compass
+    ******************************************'''
 
     def compass_thread(self):
         compass = Compass()
@@ -143,6 +148,7 @@ class DatabaseThreadCreator:
             try:
                 # validate compass data by differentiating (shouldn't change too quickly)
                 heading = compass.headingNormalized()
+                # TODO: Move validity checks to it's own module.
                 # check if the compass data makes sense - common sense check
 
                 previous_values.append(heading)
@@ -153,37 +159,25 @@ class DatabaseThreadCreator:
                 if standard_deviation > 10:
                     raise Exception('invalid data')
                 else:
-                    self.poly.insert(CompassTable.table_name,
-                                     {'id': compass_read_id, 'heading': heading, 'timestamp': time.time()})
-
+                    ins.insert_compass_reading(self.poly, compass_read_id, reading)
                     compass_read_id += 1
 
+                # TODO: Again, something weird is going on here!
+                # If not valid then valid = True?!
                 if not valid:
                     valid = True
-                    self.poly.update(SensorValidityTable.table_name, {'compass': True}, {'clause': 'WHERE',
-                                                                           'data': [
-                                                                               {
-                                                                                   'column': 'id',
-                                                                                   'assertion': '=',
-                                                                                   'value': '0'
-                                                                               }
-                                                                           ]})
+                    up.update_compass_sensor_validity(self.poly, True)
 
             except Exception as e:
                 print e
                 if valid:
                     valid = False
-
-                    self.poly.update(SensorValidityTable.table_name, {'compass': False}, {'clause': 'WHERE',
-                                                                           'data': [
-                                                                               {
-                                                                                   'column': 'id',
-                                                                                   'assertion': '=',
-                                                                                   'value': '0'
-                                                                               }
-                                                                           ]})
+                    up.update_compass_sensor_validity(self.poly, False)
             time.sleep(0.5)
 
+    '''******************************************
+        Lidar
+    ******************************************'''
 
     def lidar_thread(self):
         lidar_read_id = 0
@@ -192,31 +186,23 @@ class DatabaseThreadCreator:
         while True:
             data = l.get_filtered_lidar_data()
             for item in data:
-                self.poly.insert(LidarTable.table_name, {
-                    'id': lidar_read_id,
-                    'start_flag': item['start_flag'],
-                    'angle':item['theta'],
-                    'distance': item['dist'],
-                    'quality': item['quality'],
-                    'reading_iteration' : reading_iteration,
-                    'timestamp': time.time()
-                })
+                ins.insert_lidar_reading(self.poly, lidar_read_id, reading_iteration, item)
                 lidar_read_id += 1
             reading_iteration += 1
             time.sleep(0.5)
 
-
+    '''******************************************
+        Diagnostics
+    ******************************************'''
 
     def diagnostics_thread(self):
-        from tiberius.diagnostics.external_hardware_controller import ExternalHardwareController
-
         external_hardware_controller = ExternalHardwareController()
 
         ultrasonics_status, compass_status, gps_status = False, False, False
 
         while True:
             try:
-                rows = self.poly.query(SensorValidityTable.table_name, ['ultrasonics', 'compass', 'gps'])
+                rows = q.query_sensor_validity(self.poly)
                 print rows
                 for row in rows:
                     print row

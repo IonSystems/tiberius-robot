@@ -24,6 +24,19 @@ def update_ultrasonics_sensor_validity(poly, valid):
     )
 
 
+def update_gps_sensor_validity(poly, value):
+    self.poly.update(
+        SensorValidityTable.table_name,
+        {'gps': value}, {'clause': 'WHERE',
+                        'data': [
+                            {
+                                'column': 'id',
+                                'assertion': '=',
+                                'value': '0'
+                            }
+                        ]})
+
+
 def update_ultrasonics_validity(poly, validity):
     poly.update(
         UltrasonicsValidityTable.table_name,
@@ -38,11 +51,30 @@ def update_ultrasonics_validity(poly, validity):
         {
             'clause': 'WHERE',
             'data': [
-                        {
-                            'column': 'id',
-                            'assertion': '=',
-                            'value': '0'
-                         }
-                    ]
+                {
+                    'column': 'id',
+                    'assertion': '=',
+                    'value': '0'
+                }
+            ]
+        }
+    )
+
+
+def update_compass_sensor_validity(poly, value):
+    poly.update(
+        SensorValidityTable.table_name,
+        {
+            'compass': value
+        },
+        {
+            'clause': 'WHERE',
+            'data': [
+                {
+                    'column': 'id',
+                    'assertion': '=',
+                    'value': '0'
+                }
+            ]
         }
     )
