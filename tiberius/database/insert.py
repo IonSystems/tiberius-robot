@@ -3,6 +3,9 @@ import time
 from tables import UltrasonicsTable
 from tables import GPSTable
 from tables import CompassTable
+from tables import LidarTable
+from tables import SensorValidityTable
+from tables import UltrasonicsValidityTable
 
 
 def insert(poly, table, data):
@@ -11,7 +14,7 @@ def insert(poly, table, data):
     PolyhedraDatabase.OperationalError.
     '''
     try:
-        poly.insert(SensorValidityTable.table_name, data)
+        poly.insert(table.table_name, data)
     except poly.OperationalError:
         print table.table_name + " already exists."
 
@@ -56,7 +59,7 @@ def insert_ultrasonics_validity(poly, id, data):
 
 
 def insert_gps_reading(poly, id, data):
-    self.poly.insert(
+    poly.insert(
         GPSTable.table_name,
         {
             'id': id,
@@ -73,7 +76,7 @@ def insert_gps_reading(poly, id, data):
 
 
 def insert_compass_reading(poly, id, heading):
-    self.poly.insert(
+    poly.insert(
         CompassTable.table_name,
         {
             'id': id,
@@ -84,7 +87,7 @@ def insert_compass_reading(poly, id, heading):
 
 
 def insert_lidar_reading(poly, id, r_id, data):
-    self.poly.insert(
+    poly.insert(
         LidarTable.table_name,
         {
             'id': id,

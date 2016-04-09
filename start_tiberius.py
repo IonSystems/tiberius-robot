@@ -63,21 +63,21 @@ time.sleep(10)
 
 print 'Starting sensor data threads...'
 # Start sensor data threads
-ultrasonics = Process(target=control_thread.ultrasonics_thread).start()
+ultrasonics = Process(target=c.ultrasonics_thread).start()
 print "ultrasonic thread started"
 time.sleep(5)
-#gps = Process(target=control_thread.gps_thread).start()
+#gps = Process(target=c.gps_thread).start()
 print "GPS thread started"
 #time.sleep(5)
 if TiberiusConfigParser.isCompassEnabled():
-    compass = Process(target=control_thread.compass_thread).start()
+    compass = Process(target=c.compass_thread).start()
     print "compass thread started"
 #time.sleep(5)
 if TiberiusConfigParser.isLidarEnabled():
-    lidar = Process(target=control_thread.lidar_thread).start()
+    lidar = Process(target=c.lidar_thread).start()
     print "lidar thread started"
 time.sleep(5)
-#diagnostics = Process(target=control_thread.diagnostics_thread()).start()
+#diagnostics = Process(target=c.diagnostics_thread()).start()
 #time.sleep(5)
 
 # Start the control API

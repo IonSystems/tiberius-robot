@@ -1,6 +1,4 @@
 #!/usr/bin/python
-
-
 import abc
 from tiberius.database_wrapper.table import Table
 
@@ -20,7 +18,7 @@ class UltrasonicsTable(Table):
 
 
 class GPSTable(Table):
-    table_name = "compass_reading"
+    table_name = "gps_reading"
     columns = {
         'id': 'int primary key',
         'latitude': 'float',

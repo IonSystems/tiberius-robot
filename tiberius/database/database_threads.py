@@ -80,14 +80,14 @@ class DatabaseThreadCreator:
                 # TODO: Something doesn't feel right here!
                 if not valid:
                     valid = True
-                up.update_sensor_validity(any_data_valid)
+                up.update_ultrasonics_sensor_validity(self.poly, any_valid_data)
 
-                up.update_ultrasonics_validity(self.poly, ultra_data)
+                up.update_ultrasonics_validity(self.poly, validity)
 
                 # We need to put the data in, even if it is all 0's.
                 # This gives a fail safe if a script was only relying on sensor data
                 # and not using data validity
-                ins.insert_ultrasonic_validity(
+                ins.insert_ultrasonics_validity(
                     self.poly,
                     ultrasonic_read_id,
                     ultra_data
@@ -97,7 +97,7 @@ class DatabaseThreadCreator:
             except Exception as e:              # set to invalid
                 if valid:
                     valid = False
-                    up.update_ultrasonics_sensor_validity(poly, False)
+                    up.update_ultrasonics_sensor_validity(self.poly, False)
                 traceback.print_exc()
                 print e
 
@@ -159,7 +159,7 @@ class DatabaseThreadCreator:
                 if standard_deviation > 10:
                     raise Exception('invalid data')
                 else:
-                    ins.insert_compass_reading(self.poly, compass_read_id, reading)
+                    ins.insert_compass_reading(self.poly, compass_read_id, heading)
                     compass_read_id += 1
 
                 # TODO: Again, something weird is going on here!

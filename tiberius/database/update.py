@@ -25,7 +25,7 @@ def update_ultrasonics_sensor_validity(poly, valid):
 
 
 def update_gps_sensor_validity(poly, value):
-    self.poly.update(
+    poly.update(
         SensorValidityTable.table_name,
         {'gps': value}, {'clause': 'WHERE',
                         'data': [
@@ -78,3 +78,4 @@ def update_compass_sensor_validity(poly, value):
             ]
         }
     )
+

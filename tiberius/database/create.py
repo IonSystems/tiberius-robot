@@ -40,11 +40,11 @@ def create_gps_table(poly):
     drop_create(poly, GPSTable)
 
 
-def create_compass_tables(poly):
+def create_compass_table(poly):
     drop_create(poly, CompassTable)
 
 
-def polycreate_arm(poly):
+def create_arm_table(poly):
     drop_create(poly, ArmTable)
 
 
