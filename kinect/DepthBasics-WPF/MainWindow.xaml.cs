@@ -334,7 +334,7 @@ namespace Microsoft.Samples.Kinect.DepthBasics
 
             for (int gridRow = 0; gridRow < ChunkSize; gridRow++)
             {
-                for (int gridColumn = 0; gridColumn < ChunkSize; gridColumn++)
+                for (int gridColumn = ChunkSize-1; gridColumn >= 0; gridColumn--)
                 {
                     ExtractData(counter, gridRow, gridColumn);
 
@@ -382,7 +382,13 @@ namespace Microsoft.Samples.Kinect.DepthBasics
             }
 
 
-
+            for(int i = 1; i < 100; i++)
+            {
+                if(512 % i == 0)
+                {
+                    Console.WriteLine("divisable by: " + i);
+                }
+            }
 
             for (int row = 0; row < 424; row++)
             {
@@ -417,7 +423,7 @@ namespace Microsoft.Samples.Kinect.DepthBasics
         /// <param name="standardDeviation">The calculated standard deviation from the grid</param>
         private void CalculateStandardDeviation(ushort[,] grid, int width, int height, out long mean, out double standardDeviation)
         {
-            int n = width * height;
+            int n = 0;
             long sum = 0;
             long vsum = 0;
 
@@ -426,22 +432,23 @@ namespace Microsoft.Samples.Kinect.DepthBasics
                 for (int row = 0; row < height; row++)
                 {
 
-                    // if (grid[column, row] < 5000 && grid[column, row] > 1000)
-                    //{
+                    if (grid[column, row] < 255 && grid[column, row] > 0)
+                    {
                     sum += grid[column, row];
                     vsum += (grid[column, row] * grid[column, row]);
-                    //    n++;
-                    //}
+                     n++;
+                    }
 
                 }
             }
             mean = 0;
             standardDeviation = 0;
-            
+            if (n > 0)
+            {
                 mean = (sum / n);
                 long variance = vsum / n;
-                standardDeviation = (Math.Sqrt(variance / n)) * 80;
-            
+                standardDeviation = (Math.Sqrt(variance / n) / mean) * 100 * 20;
+            }
 
 
 
