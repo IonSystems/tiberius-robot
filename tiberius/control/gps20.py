@@ -4,6 +4,7 @@ from enum import Enum
 
 from tiberius.logger import logger
 from tiberius.utils import detection
+from tiberius.config.config_parser import TiberiusConfigParser
 
 import logging
 from pynmea import nmea
@@ -23,9 +24,9 @@ class SentenceNotSupportedError(Exception):
 
 class GlobalPositioningSystem:
     if detection.detect_windows():
-        port = 'COM5'
+        port = 'COM3'
     else:
-        port = '/dev/ttyACM0'
+        port = TiberiusConfigParser.getGPSSerialPort()
     baud = 9600
 
     supported_sentences = 3  # The number of NMEA sentences currently supported
@@ -58,8 +59,7 @@ class GlobalPositioningSystem:
         try:
             self.ser.open()
         except:
-            if self.debug:
-                self.logger.warning("Serial port already open continuing.")
+            self.logger.warning("Serial port already open continuing.")
         data = self.ser.readline()
         if self.debug:
             self.logger.debug("Read data: " + data)
@@ -143,7 +143,6 @@ class GlobalPositioningSystem:
             else:
                 return False
 
-
 # For testing
 import time
 
@@ -151,5 +150,5 @@ if __name__ == "__main__":
     gps = GlobalPositioningSystem()
     while True:
         gps.update()
-        gps.print_data()
+        # gps.print_data()
         time.sleep(1)

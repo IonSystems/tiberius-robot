@@ -87,6 +87,7 @@ class PostInstallDependencies(install):
 	    print "Installing on Linux."
             self.install_deps_linux()
             self.install_poly_linux()
+            self.create_lidar_executable()
         else:
             print 'No suitable operating system detected, terminating install'
             sys.exit()
@@ -101,6 +102,11 @@ class PostInstallDependencies(install):
         self.install_if_missing("i2c-tools")
 	self.un_blacklist_i2c()
 	self.enable_modules_i2c()
+
+    def create_lidar_executable(self):
+        check_output("cd ~/git/tiberius-robot/tiberius/autonomy/readlidar", shell=True)
+        check_output("g++ -pthread -lrt rplidar_driver.cpp thread.cpp net_serial.cpp timer.cpp readlidar.cpp -o readlidar", shell=True)
+        print "creating lidar executable"
 
     def install_deps_linux(self):
         print "Checking for missing packages"
@@ -338,6 +344,7 @@ setup(name='Tiberius',
           'tiberius/navigation',
           'tiberius/logger',
           'tiberius/database',
+          'tiberius/database_wrapper',
           'tiberius/utils',
           'tiberius/config',
           'tiberius/smbus_dummy'],
@@ -348,7 +355,7 @@ setup(name='Tiberius',
           (odbc_directory, ['vendor/polyhedra-driver/odbcinst.ini']),
       ],
       platforms=['Raspberry Pi 2', 'Raspberry Pi 1'],
-      install_requires=requirements,
-      cmdclass={
-       'install': PostInstallDependencies},
+      install_requires=requirements
+      #cmdclass={
+      # 'install': PostInstallDependencies},
       )

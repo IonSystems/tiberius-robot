@@ -14,10 +14,12 @@ class RoboPeakLidar:
         return self.format_data(output)
 
     def format_data(self, data):
-        print data # debug
+       	data = self.check_commas(data)
         return json.loads(data)
 
+    def check_commas(self, data):
+        return data.replace(',\n]', ']')
 
 if __name__ == "__main__":
     l = RoboPeakLidar()
-    print l.get_lidar_data()
+    l.get_lidar_data()

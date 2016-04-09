@@ -55,7 +55,7 @@ class Ultrasonic:
         for i in range(0, 5):
             if data[i] is False:
                 valid[i] = False
-                data[i] = 0  # Best to assume we might crash rather than
+                data[i] = 0.0  # Best to assume we might crash rather than
                 # risk it (0 means that any badly written scripts *should* stop)
                 # Also by putting a 0 in the data we can still add the row to the database.
             else:
@@ -92,22 +92,31 @@ class Ultrasonic:
                 (results['rc'] < d) or
                 (results['rr'] < d))
 
-    if TiberiusConfigParser.isLidarEnabled():
-        class Lidar:
-            '''
-                    Provides lidar data to be inserted into database
-            '''
-            lidar = RoboPeakLidar()
 
-            def get_filtered_lidar_data():
-                '''
-                    The LIDAR is blocked by Tiberius's structure at some parts,
-                    so ignore these readings. Also remove obbiosly incorrect
-                    readings (e.g. < 10cm).
-                '''
-                return self.lidar.get_lidar_data()
+# if TiberiusConfigParser.isLidarEnabled():
+class Lidar:
+    '''
+            Provides lidar data to be inserted into database
+    '''
+    lidar = RoboPeakLidar()
 
+    def filtered_data(self, x):
+            if 350 < x < 10:
+                return False
+            else:
+                return True
 
+    def get_filtered_lidar_data(self):
+        '''
+            Decode lidar dictionary message
+            The LIDAR is blocked by Tiberius's structure at some parts,
+            so ignore these readings. Also remove obbiosly incorrect
+            readings (e.g. < 10cm).
+        '''
+        data = self.lidar.get_lidar_data()
+        # put x in data for every x in data only if filtered_data() is true
+        data = [x for x in data if self.filtered_data(x)]
+        return data
 
 # class Camera:
 #    '''
