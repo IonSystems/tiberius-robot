@@ -1,5 +1,14 @@
 #!/usr/bin/python
-
+import time
+from tables import SensorValidityTable
+from tables import UltrasonicsValidityTable
+from tables import UltrasonicsTable
+from tables import GPSTable
+from tables import CompassTable
+from tables import ArmTable
+from tables import LidarTable
+from tables import MotorsTable
+from tables import SteeringTable
 
 def drop_create(poly, table):
     '''
@@ -57,11 +66,11 @@ def create_motors_table(poly):
     drop_create(poly, MotorsTable)
 
 
-def create_steering_table(self):
+def create_steering_table(poly):
     drop_create(poly, SteeringTable)
 
 
-def create_sensor_validity_table(self):
+def create_sensor_validity_table(poly):
     '''
     This table is for overall sensor validity,
     individual validity is in a specific table for each sensor type.
@@ -78,8 +87,8 @@ def create_sensor_validity_table(self):
     insert(poly, SensorValidityTable, data)
 
 
-def create_ultrasonics_validity_table(self):
-    drop_insert(poly, UltrasonicsValidityTable)
+def create_ultrasonics_validity_table(poly):
+    drop_create(poly, UltrasonicsValidityTable)
     data = {
         'id': 0,
         'fr': False,

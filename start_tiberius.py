@@ -1,12 +1,12 @@
 from optparse import OptionParser
 from subprocess import Popen, PIPE
-from tiberius.control.control_thread import ControlThread
+from tiberius.database.database_threads import DatabaseThreadCreator
 from multiprocessing import Process
 from enum import Enum
 import sys
 import time
 from tiberius.config.config_parser import TiberiusConfigParser
-
+import tiberius.database.create as cr
 
 
 class Action(Enum):
@@ -42,18 +42,18 @@ for line in lines_iterator:
 
 # Create database tables for data
 print "Creating database tables for data"
-control_thread = ControlThread()
+c = DatabaseThreadCreator()
 # Wait for the connection to the database to start
 time.sleep(2)
-control_thread.polycreate_sensor_validity()
-control_thread.polycreate_ultrasonics_validity()
-control_thread.polycreate_ultrasonic()
-control_thread.polycreate_compass()
-control_thread.polycreate_gps()
-control_thread.polycreate_lidar()
-control_thread.polycreate_arm()
-control_thread.polycreate_motors()
-control_thread.polycreate_steering()
+cr.create_sensor_validity_table(c.poly)
+cr.create_ultrasonics_validity_table(c.poly)
+cr.create_ultrasonics_table(c.poly)
+cr.create_compass_table(c.poly)
+cr.create_gps_table(c.poly)
+cr.create_lidar_table(c.poly)
+cr.create_arm_table(c.poly)
+cr.create_motors_table(c.poly)
+cr.create_steering_table(c.poly)
 
 print 'Waiting for tables to finish being created...'
 time.sleep(10)

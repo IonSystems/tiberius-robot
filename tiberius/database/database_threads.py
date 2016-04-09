@@ -3,22 +3,22 @@ import time
 import traceback
 import numpy as np
 
-import tiberius.database.update as up
-import tiberius.database.create as cr
-import tiberius.databse.insert as ins
-import tiberius.database.query as q
+import update as up
+import create as cr
+import insert as ins
+import query as q
 
 from tiberius.config.config_parser import TiberiusConfigParser
-from tiberius.database.polyhedra_database import PolyhedraDatabase
-from tiberius.database.tables import UltrasonicsTable
-from tiberius.database.tables import GPSTable
-from tiberius.database.tables import CompassTable
-from tiberius.database.tables import ArmTable
-from tiberius.database.tables import LidarTable
-from tiberius.database.tables import MotorsTable
-from tiberius.database.tables import SteeringTable
-from tiberius.database.tables import SensorValidityTable
-from tiberius.database.tables import UltrasonicsValidityTable
+from polyhedra_database import PolyhedraDatabase
+from tables import UltrasonicsTable
+from tables import GPSTable
+from tables import CompassTable
+from tables import ArmTable
+from tables import LidarTable
+from tables import MotorsTable
+from tables import SteeringTable
+from tables import SensorValidityTable
+from tables import UltrasonicsValidityTable
 
 # TODO: This 'ExternalHardwareController' would be be best split up into
 # individual drivers as with cmps11, gps20 etc.
