@@ -5,6 +5,42 @@ from tables import GPSTable
 from tables import CompassTable
 
 
+def insert(poly, table, data):
+    '''
+    Insert into the Polyhedra database with protection from
+    PolyhedraDatabase.OperationalError.
+    '''
+    try:
+        poly.insert(SensorValidityTable.table_name, data)
+    except poly.OperationalError:
+        print table.table_name + " already exists."
+
+
+def insert_initial_sensor_validity(poly):
+    data = {
+        'id': 0,
+        'ultrasonics': False,
+        'compass': False,
+        'gps': False,
+        'timestamp': time.time()
+    }
+    insert(poly, SensorValidityTable, data)
+
+
+def insert_initial_ultrasonics_validity(poly):
+    data = {
+        'id': 0,
+        'fr': False,
+        'fc': False,
+        'fl': False,
+        'rr': False,
+        'rc': False,
+        'rl': False,
+        'timestamp': time.time()
+    }
+    insert(poly, UltrasonicsValidityTable, data)
+
+
 def insert_ultrasonics_validity(poly, id, data):
     poly.insert(
         UltrasonicsTable.table_name,

@@ -7,6 +7,7 @@ import sys
 import time
 from tiberius.config.config_parser import TiberiusConfigParser
 import tiberius.database.create as cr
+import tiberius.database.insert as ins
 
 
 class Action(Enum):
@@ -46,7 +47,9 @@ c = DatabaseThreadCreator()
 # Wait for the connection to the database to start
 time.sleep(2)
 cr.create_sensor_validity_table(c.poly)
+ins.insert_initial_sensor_validity(c.poly)
 cr.create_ultrasonics_validity_table(c.poly)
+ins.insert_initial_ultrasonics_validity(c.poly)
 cr.create_ultrasonics_table(c.poly)
 cr.create_compass_table(c.poly)
 cr.create_gps_table(c.poly)
