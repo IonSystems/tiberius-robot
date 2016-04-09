@@ -78,13 +78,13 @@ class PostInstallDependencies(install):
     '''
     def run(self):
         if is_windows():
-        print "Installing on Windows."
+            print "Installing on Windows."
         elif is_pi():
-        print "Installing on Raspberry Pi."
+            print "Installing on Raspberry Pi."
             self.install_deps_pi()
             self.install_poly_pi()
         elif is_linux():
-        print "Installing on Linux."
+            print "Installing on Linux."
             self.install_deps_linux()
             self.install_poly_linux()
             self.create_lidar_executable()
