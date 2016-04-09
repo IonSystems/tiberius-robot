@@ -19,6 +19,7 @@ AUTHENTICATION_SECTION = 'authentication'
 ARM_BASKET_SECTION = 'arm_basket_positions'
 ARM_CENTRE_SECTION = 'arm_centre_positions'
 ARM_PARK_SECTION = 'arm_park_positions'
+DIAGNOSTICS_SECTION = 'diagnostics'
 
 class TiberiusConfigParser():
 
@@ -138,6 +139,15 @@ class TiberiusConfigParser():
     @staticmethod
     def getGPSSerialPort():
         return TiberiusConfigParser.getParser().get(GPS_SECTION, 'serial_port')
+
+    '''******************************************
+        diagnostics
+    ******************************************'''
+
+    @staticmethod
+    def areDiagnosticsEnabled():
+        return TiberiusConfigParser.getParser().getboolean(DIAGNOSTICS_SECTION, 'installed')
+
 
     '''******************************************
         Networking
