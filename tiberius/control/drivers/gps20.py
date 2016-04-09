@@ -14,14 +14,6 @@ from pynmea import nmea
 '''
 
 
-class SentenceNotSupportedError(Exception):
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return repr(self.value)
-
-
 class GlobalPositioningSystem:
     if detection.detect_windows():
         port = 'COM3'
@@ -41,7 +33,6 @@ class GlobalPositioningSystem:
         self.gpvtg = nmea.GPVTG()
         self.gpgsa = nmea.GPGSA()
 
-
         self.debug = debug
 
         # Accessible fields that can be directly accessed.
@@ -53,7 +44,6 @@ class GlobalPositioningSystem:
         self.dilution_of_precision = None
         self.velocity = None
         self.fixmode = None
-
 
     def fetch_raw_data(self):
         try:
@@ -124,15 +114,22 @@ class GlobalPositioningSystem:
 
     def read_gps(self):
         successful_sentences = 0
-        for i in range(0, self.supported_sentences):  # Query for the number of sentences to ensure we get latest data
+        # Query for the number of sentences to ensure we get latest data
+        for i in range(0, self.supported_sentences):
             if self.update():
                 successful_sentences += 1
         if successful_sentences < self.supported_sentences:
             return False
 
-        return {'latitude': self.latitude, 'longitude': self.longitude, 'gls_qual': self.gps_qual,
-                'num_sats': self.num_sats, 'dilution_of_precision': self.dilution_of_precision,
-                'velocity': self.velocity, 'fixmode': self.fixmode}
+        return {
+            'latitude': self.latitude,
+            'longitude': self.longitude,
+            'gls_qual': self.gps_qual,
+            'num_sats': self.num_sats,
+            'dilution_of_precision': self.dilution_of_precision,
+            'velocity': self.velocity,
+            'fixmode': self.fixmode
+        }
 
     def has_fix(self):
         # Checks if there is a valid gps fix

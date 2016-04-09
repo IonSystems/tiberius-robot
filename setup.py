@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 from setuptools import setup
 from setuptools.command.install import install
 from subprocess import check_output, CalledProcessError
@@ -336,6 +335,7 @@ setup(name='Tiberius',
       packages=[
           'tiberius',
           'tiberius/control',
+          'tiberius/control/drivers',
           'tiberius/control/robotic_arm',
           'tiberius/control_api',
           'tiberius/control_api/tasks',
