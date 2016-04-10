@@ -2,7 +2,7 @@ Getting Started
 ===============
 
 The following tutorial will guide you through all the steps necessary to build a system using compatible hardware, and getting the system up and running.
-The instructions are ordered with the biggets steps at the start, so you don't get a head of yourself doing the easy bits at the beginning. In summary,
+The instructions are ordered with the biggest steps at the start, so you don't get a head of yourself doing the easy bits at the beginning. In summary,
 in order to get a robot up and running you will need to set up a network, make sure you have compatible hardware, get a hold of our software, and
 configure our software for your hardware.
 
