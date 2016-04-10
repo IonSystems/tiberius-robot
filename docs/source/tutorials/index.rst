@@ -5,3 +5,6 @@ Tutorials
    :maxdepth: 2
 
    intro
+   getting_started
+   networking
+   hardware_installation
