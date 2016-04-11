@@ -51,8 +51,7 @@ class GlobalPositioningSystem:
         except:
             self.logger.warning("Serial port already open continuing.")
         data = self.ser.readline()
-        if self.debug:
-            self.logger.debug("Read data: " + data)
+        #self.logger.debug("Read data: " + data)
         self.ser.close()
         return data
 
@@ -65,6 +64,7 @@ class GlobalPositioningSystem:
             self.num_sats = self.gpgga.num_sats
             self.num_sats = self.gpgga.num_sats
             self.dilution_of_precision = self.gpgga.horizontal_dil
+            self.fixmode = self.gpgga.gps_qual
 
         elif "GPVTG" in data:
             data = self.gpvtg.parse(data)
@@ -137,8 +137,8 @@ class GlobalPositioningSystem:
         if self.fixmode > 0:  # we have a gps fix
             if self.latitude is not None and self.longitude is not None:
                 return True
-            else:
-                return False
+        self.logger.warning("No GPS fix!")
+        return False
 
 # For testing
 import time
@@ -146,6 +146,8 @@ import time
 if __name__ == "__main__":
     gps = GlobalPositioningSystem()
     while True:
-        gps.update()
-        # gps.print_data()
-        time.sleep(1)
+        gps.has_fix()
+        print gps.read_gps()
+        print "LAT:" + str(gps.latitude)
+        time.sleep(0.1)
+
