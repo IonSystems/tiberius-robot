@@ -32,6 +32,7 @@ class GlobalPositioningSystem:
         self.gpgga = nmea.GPGGA()
         self.gpvtg = nmea.GPVTG()
         self.gpgsa = nmea.GPGSA()
+        self.gprmc = nmea.GPRMC()
 
         self.debug = debug
 
@@ -74,6 +75,14 @@ class GlobalPositioningSystem:
             data = self.gpgsa.parse(data)
             self.fixmode = self.gpgsa.mode_fix_type
 
+        elif "GPRMC" in data:
+            data = self.gprmc.parse(data)
+            self.latitude = self.gprmc.lat
+            self.longitude = self.gprmc.lon
+            # We NEED to set fixmode
+            if self.gprmc.data_validity == 'A':
+                self.fixmode = 1
+
         else:
             return False
         if self.latitude is not None:
@@ -108,7 +117,6 @@ class GlobalPositioningSystem:
         # Reads the gps a set number of times to ensure latest data
         for i in range(0, self.invalid_sentences_count):
             if self.parse_data(self.fetch_raw_data()):
-                break
                 return True
         return False
 
@@ -146,8 +154,9 @@ import time
 if __name__ == "__main__":
     gps = GlobalPositioningSystem()
     while True:
-        gps.has_fix()
+        #print gps.fetch_raw_data()
+        #gps.has_fix()
         print gps.read_gps()
-        print "LAT:" + str(gps.latitude)
+        print gps.update()
+        #print "LAT:" + str(gps.latitude)
         time.sleep(0.1)
-
