@@ -105,7 +105,8 @@ class PolyhedraDatabase(Database):
                 raise PolyhedraDatabase.UnknownError(e)
 
     def sql(self, statement):
-        return self.c.execute(statement)
+        self.c.execute(statement)
+        self.c.fetchall()
 
     '''*******************************************************************
         Hidden functions
