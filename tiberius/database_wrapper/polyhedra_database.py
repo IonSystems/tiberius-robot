@@ -104,6 +104,9 @@ class PolyhedraDatabase(Database):
             else:
                 raise PolyhedraDatabase.UnknownError(e)
 
+    def sql(self, statement):
+        return self.c.execute(statement)
+
     '''*******************************************************************
         Hidden functions
     *******************************************************************'''
