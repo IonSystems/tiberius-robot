@@ -107,7 +107,7 @@ class SqliteDatabase(Database):
         return query
 
     def __generate_drop(self, table_name):
-        query = SqlClauses.DROP_TABLE.value + " "
+        query = SqlClauses.DROP_TABLE + " "
         query += table_name
         return query
 
