@@ -46,7 +46,7 @@ def insert_initial_ultrasonics_validity(poly):
 
 def insert_ultrasonics_validity(poly, id, data):
     poly.insert(
-        UltrasonicsTable.table_name,
+        UltrasonicsValidityTable.table_name,
         {
             'id': id,
             'fr': data['fr'],
