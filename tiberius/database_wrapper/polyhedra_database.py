@@ -36,7 +36,7 @@ class PolyhedraDatabase(Database):
 
         return self.c.fetchall()
 
-    def insert(self, table_name, values):   #add new adta
+    def insert(self, table_name, values):
         query = self.__generate_insert("insert", table_name, values)
         try:
             self.c.execute(query)

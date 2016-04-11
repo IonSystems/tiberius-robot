@@ -26,13 +26,25 @@ class Database:
 
         >>> import tiberius.database_wrapper.polyhedra_database as pd
         >>> a = pd.PolyhedraDatabase("test_instance")
-        >>> r = a.query("test_table","test_column")
-        2
+        >>> a.sql("CREATE TABLE test_table (id int primary key, test_column varchar(1));")
+        >>> a.sql("INSERT INTO test_table (0, 'a');")
+        >>> a.query("test_table","test_column")
+        [('a', )]
+        >>> a.query("test_table","*")
+        [(0, 'a')]
         '''
         pass
 
     @abc.abstractmethod
-    def insert(self):
+    def insert(self, table_name, values):
+        '''
+        A wrapper function allowing SQL insert statements to be generated
+        without providing SQL statements directly.
+
+        :param table_name: The table to insert into.
+        :param values: .
+        :return: A dictionary containing the results of the query.
+        '''
         pass
 
     @abc.abstractmethod
