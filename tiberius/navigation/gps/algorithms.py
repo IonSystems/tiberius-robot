@@ -70,14 +70,14 @@ class Algorithms:
 
         r = 6371000.0  # radius of the earth in meters
 
-        theata1 = math.radians(curlocation[0])
-        theata2 = math.radians(destination[0])
+        theta1 = math.radians(curlocation[0])
+        theta2 = math.radians(destination[0])
 
-        deltaThetha = math.radians(destination[0] - curlocation[0])
+        deltaTheta = math.radians(destination[0] - curlocation[0])
         deltaLambda = math.radians(destination[1] - curlocation[1])
 
-        a = math.pow(math.sin(deltaThetha / 2.0), 2) + \
-            math.cos(theata1) * math.cos(theata2) * \
+        a = math.pow(math.sin(deltaTheta / 2.0), 2) + \
+            math.cos(theta1) * math.cos(theta2) * \
             math.pow(math.sin(deltaLambda / 2.0), 2)
 
         c = 2.0 * math.atan2(math.sqrt(a), math.sqrt(1.0 - a))
@@ -85,6 +85,22 @@ class Algorithms:
         d = r * c
 
         return d
+
+    # untested
+    def getDestination(self, startlocation, distance, bearing):
+        r = 6371000.0
+        destination = []
+        startlat = math.radians(startlocation[0])
+        startlon = math.radians(startlocation[1])
+
+        destination[0] = math.asin(math.sin(startlat) * math.cos(distance / r) +
+                                   math.cos(startlat) * math.sin(distance / r) * math.cos(bearing))
+
+        destination[1] = startlon + math.atan2(
+            math.sin(bearing) * math.sin(distance / r) * math.cos(startlocation[0], math.cos(distance / r) - math.sin(
+                startlat) * math.sin(destination[0])))
+
+        return destination
 
     # move from current location to a given destination (a longitude and latitude)
     def pointToPoint(self, destination, speedpercent):

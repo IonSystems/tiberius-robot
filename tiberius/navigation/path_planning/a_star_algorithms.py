@@ -34,7 +34,8 @@ class Astar(object):
         '''
         return walls
 
-    def init_grid(self, startlocation, endlocation):
+    # need to give the grids there lat and long positions.
+    def init_grid(self, startlocation, endlocation, bearirng):
         walls = self.create_walls()
 
         for x in range(self.grid_width):
@@ -43,9 +44,21 @@ class Astar(object):
                     reachable = False
                 else:
                     reachable = True
-                self.cells.append(self.cell(x, y, reachable))
-                self.start = self.get_cell(startlocation)
-                self.end = self.get_cell(endlocation)
+                self.cells.append(self.cell(x, y, reachable, 0, 0))
+
+                if x == 0 & y == 0:
+                    lat = startlocation[0]
+                    lon = startlocation[1]
+                elif x == self.grid_width & y == self.grid_height:  # make sure that
+                    lat = endlocation[0]
+                    lon = endlocation[1]
+                else:
+                    curlocation = [lat, lon]
+                    curlocation = self.gps.getDestination(curlocation, 1, )
+                    lat = curlocation[0]
+                    lon = curlocation[1]
+        self.start = self.get_cell(startlocation)
+        self.end = self.get_cell(endlocation)
 
     def get_heuristic(self, cell):
         '''
@@ -153,28 +166,29 @@ class Astar(object):
         grid_height = abs(grid_height)
         grid_width = abs(grid_width)
 
-        startlocation = (0, 0)
-        endlocation = (grid_width, grid_height)
+        startlocation = [0, 0]
+        endlocation = [grid_width, grid_height]
 
         if 0 < bearing < 180:
             if bearing < 90:  # less than 90 so between 0 and 90
-                startlocation = (0, 0)
-                endlocation = (grid_width, grid_height)
+                startlocation = [0, 0]
+                endlocation = [grid_width, grid_height]
             else:  # more than 90 so between 90 and 180
-                startlocation = (0, grid_height)
-                endlocation = (grid_width, 0)
+                startlocation = [0, grid_height]
+                endlocation = [grid_width, 0]
         elif -180 < bearing < 0:
             if bearing > -90:  # more than -90 so between 0 and -90
-                startlocation = (grid_width, 0)
-                endlocation = (0, grid_height)
+                startlocation = [grid_width, 0]
+                endlocation = [0, grid_height]
             else:  # between -90 and -180
-                startlocation = (grid_width, grid_height)
-                endlocation = (0, 0)
+                startlocation = [grid_width, grid_height]
+                endlocation = [0, 0]
 
         return [curlocation, distance, bearing, grid_width, grid_height, startlocation, endlocation]
 
     def run_astar(self, destination):
-        # 0 - curlocation, 1 - distance, 2 - bearing, 3 - grid_width, 4 - grid_height, 5 - startlocation, 6 - endlocation
+        # 0 - curlocation, 1 - distance, 2 - bearing, 3 - grid_width,
+        # 4 - grid_height, 5 - startlocation, 6 - endlocation
         grid_values = self.get_grid_data(destination)
 
         curlocation = grid_values[0]
@@ -190,12 +204,18 @@ class Astar(object):
         self.create_walls()
 
         # build the grid using including the walls created by the database data
-        self.init_grid(startlocation, endlocation)
+        self.init_grid(startlocation, endlocation, bearing)
 
         # find a path through the current grid
         self.solve()
         path = self.get_path()
+        points = []
 
-        self.gps.pointToPoint()
+        # build points
+        for i in range(0, len(path), 1):
+            points.append([path[i].lat, path[i].long])
+
+        self.gps.followPath(points, 50)
+
         # need loop to update and get to end
         return
