@@ -31,7 +31,7 @@ class PolyhedraDatabase(Database):
 
     def query(self, table_name, column_name, conditions=None):
         query = self.__generate_query(
-            SqlClauses.SELECT.value, table_name, column_name, conditions)
+            SqlClauses.SELECT, table_name, column_name, conditions)
         self.c.execute(query)
 
         return self.c.fetchall()
