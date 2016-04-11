@@ -23,7 +23,7 @@ class SqliteDatabase(Database):
 
     def query(self, table_name, column_name, conditions=None):
         query = self.__generate_query(
-            SqlClauses.SELECT.value, table_name, column_name, conditions)
+            SqlClauses.SELECT, table_name, column_name, conditions)
         self.c.execute(query)
         return self.c.fetchall()
 
@@ -93,9 +93,9 @@ class SqliteDatabase(Database):
 
     def __generate_update(self, table_name, data, conditions):
         query = ""
-        query += SqlClauses.UPDATE.value + " "
+        query += SqlClauses.UPDATE + " "
         query += table_name + " "
-        query += SqlClauses.SET.value + " "
+        query += SqlClauses.SET + " "
         for c_name, c_value in data.iteritems():
             query += c_name
             query += '='
@@ -114,12 +114,12 @@ class SqliteDatabase(Database):
     def __generate_insert(self, t, table_name, values):
         query = ""
         if "insert" in t:
-            query += SqlClauses.INSERT.value + " "
+            query += SqlClauses.INSERT + " "
         if "or" in t:
-            query += SqlClauses.OR.value + " "
+            query += SqlClauses.OR + " "
         if "replace" in t:
-            query += SqlClauses.REPLACE.value + " "
-        query += SqlClauses.INTO.value + " "
+            query += SqlClauses.REPLACE + " "
+        query += SqlClauses.INTO + " "
 
         query += table_name
         query += " ("
@@ -128,7 +128,7 @@ class SqliteDatabase(Database):
             q += c_name + ", "
             query += q
         query = query[:-2]
-        query += ") " + SqlClauses.VALUES.value + " ("
+        query += ") " + SqlClauses.VALUES + " ("
         for c_name, value in values.iteritems():
             q = ""
             q += self.__generate_representation(value) + ", "
@@ -138,8 +138,8 @@ class SqliteDatabase(Database):
         return query
 
     def __generate_delete(self, table_name, conditions):
-        query = SqlClauses.DELETE.value + " "
-        query += SqlClauses.FROM.value + " "
+        query = SqlClauses.DELETE + " "
+        query += SqlClauses.FROM + " "
         query += table_name
         if not conditions:
             return query
@@ -154,10 +154,10 @@ class SqliteDatabase(Database):
             column_name,
             conditions):
         query = ""
-        if query_type.upper() == SqlClauses.SELECT.value:
-            query += SqlClauses.SELECT.value + " "
+        if query_type.upper() == SqlClauses.SELECT:
+            query += SqlClauses.SELECT + " "
         query += column_name + " "
-        query += SqlClauses.FROM.value + " "
+        query += SqlClauses.FROM + " "
         query += table_name
         if conditions:
             query += " " + self.__generate_conditions(conditions)
@@ -193,7 +193,7 @@ class SqliteDatabase(Database):
 
     def __generate_create(self, table_name, columns):
         query = ""
-        query += SqlClauses.CREATE_TABLE.value + " "
+        query += SqlClauses.CREATE_TABLE + " "
         query += table_name
         query += " " + self.__generate_columns(columns)
         return query

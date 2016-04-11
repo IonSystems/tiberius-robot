@@ -2,6 +2,10 @@
 
 
 class SqlClauses:
+    '''
+    A storage class containing SQL clauses,
+    for use when building SQL statements.
+    '''
     WHERE = "WHERE"
     SELECT = "SELECT"
     FROM = "FROM"
