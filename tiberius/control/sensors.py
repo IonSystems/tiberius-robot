@@ -59,7 +59,7 @@ class Ultrasonic:
         ]
 
         # Check if the data is valid
-        for i in range(0, 5):
+        for i in range(0, 6):
             if data[i] is False:
                 valid[i] = False
                 data[i] = 0.0  # Best to assume we might crash rather than
