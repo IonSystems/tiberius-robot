@@ -299,7 +299,7 @@ namespace Microsoft.Samples.Kinect.DepthBasics
             {
                 // Get the depth for this pixel              
 
-                depthGrid[column, row] = (byte)(frameData[i] >= minDepth && frameData[i] <= maxDepth ? (frameData[i] / MapDepthToByte) : 0);
+                depthGrid[column, row] = (byte)(frameData[i] >= minDepth && frameData[i] <= maxDepth ? (frameData[i]) : 0);
 
                 // Work out which grid position we are in
                 column++;
@@ -353,7 +353,7 @@ namespace Microsoft.Samples.Kinect.DepthBasics
             {
                 for (int scaledColumn = 0; scaledColumn < scale; scaledColumn++)
                 {
-                    this.depthPixels[counter + (ChunkSize * scale * scaledRow) + scaledColumn] = (byte)chunkStandardDeviation[gridRow, gridColumn];
+                    this.depthPixels[counter + (ChunkSize * scale * scaledRow) + scaledColumn] = (byte)(chunkStandardDeviation[gridRow, gridColumn] * 20);
                 }
 
             }
@@ -432,7 +432,7 @@ namespace Microsoft.Samples.Kinect.DepthBasics
                 for (int row = 0; row < height; row++)
                 {
 
-                    if (grid[column, row] < 255 && grid[column, row] > 0)
+                    if (grid[column, row] != 0)
                     {
                     sum += grid[column, row];
                     vsum += (grid[column, row] * grid[column, row]);
@@ -447,7 +447,7 @@ namespace Microsoft.Samples.Kinect.DepthBasics
             {
                 mean = (sum / n);
                 long variance = vsum / n;
-                standardDeviation = (Math.Sqrt(variance / n) / mean) * 100 * 20;
+                standardDeviation = Math.Sqrt(variance / n);
             }
 
 
