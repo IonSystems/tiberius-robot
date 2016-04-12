@@ -159,7 +159,10 @@ class DatabaseThreadCreator:
                 if standard_deviation > 10:
                     raise Exception('invalid data')
                 else:
-                    ins.insert_compass_reading(self.poly, compass_read_id, heading)
+                    if compass_read_id < 10:
+                        ins.insert_compass_reading(self.poly, compass_read_id, heading)
+                    else:
+                        up.overwrite_compass_reading(self.poly, heading)
                     compass_read_id += 1
 
                 # TODO: Again, something weird is going on here!
@@ -185,10 +188,14 @@ class DatabaseThreadCreator:
         l = Lidar()
         while True:
             data = l.get_filtered_lidar_data()
+            # if reading_iteration < 5:
             for item in data:
                 ins.insert_lidar_reading(self.poly, lidar_read_id, reading_iteration, item)
                 lidar_read_id += 1
             reading_iteration += 1
+            #else:
+            #    for item in data:
+            #        up.overwrite_lidar_reading(self.poly,reading_iteration, item)
             time.sleep(0.5)
 
     '''******************************************
