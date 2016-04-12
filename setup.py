@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 from setuptools import setup
 from setuptools.command.install import install
 from subprocess import check_output, CalledProcessError
@@ -335,13 +334,15 @@ setup(name='Tiberius',
       packages=[
           'tiberius',
           'tiberius/control',
-          'tiberius/control/robotic_arm',
+          'tiberius/control/drivers',
           'tiberius/control_api',
           'tiberius/control_api/tasks',
           'tiberius/diagnostics',
           'tiberius/navigation/gps',
+          'tiberius/navigation/path_planning',
           'tiberius/navigation',
           'tiberius/logger',
+          'tiberius/testing',
           'tiberius/database',
           'tiberius/database_wrapper',
           'tiberius/utils',
@@ -354,7 +355,7 @@ setup(name='Tiberius',
           (odbc_directory, ['vendor/polyhedra-driver/odbcinst.ini']),
       ],
       platforms=['Raspberry Pi 2', 'Raspberry Pi 1'],
-      install_requires=requirements
-      #cmdclass={
-      # 'install': PostInstallDependencies},
+      install_requires=requirements,
+      cmdclass={
+       'install': PostInstallDependencies},
       )

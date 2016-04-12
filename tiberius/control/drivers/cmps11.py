@@ -15,14 +15,6 @@ class TiltCompensatedCompass:
         self.bus = smbus.SMBus(1)
         self.address = address
 
-    class CompassReadError(Exception):
-
-        def __init__(self, value):
-            self.value = value
-
-        def __str__(self):
-            return repr(self.value)
-
     # Used for future work on 'smart' readings
     # TODO:Will return previous reading rather
     # than reading a new reading that is probably the same.
@@ -85,8 +77,8 @@ class TiltCompensatedCompass:
     ROLL_RAW = 27
 
     '''******************************************
-		Compass functions
-	******************************************'''
+        Compass functions
+    ******************************************'''
 
     def __read_compass_8(self):
         byte = self.bus.read_byte_data(self.address, self.COMPASS_8_BIT)
@@ -94,17 +86,16 @@ class TiltCompensatedCompass:
         return self.__heading
 
     def __read_compass_16(self):
-        # cmps11 returns two 8bits registers values
+        # cmps11 returns two 8 bit registers values
         # providing the range of 0-3599, representing 0 - 359.9 degrees
         high_byte = self.bus.read_byte_data(self.address, self.COMPASS_H)
         low_byte = self.bus.read_byte_data(self.address, self.COMPASS_L)
         self.__heading = float((high_byte << 8) + low_byte)
-        #self.__heading_degrees = self.__heading / 10
         return self.__heading
 
     '''******************************************
-		Kalman filtered Pitch and Roll functions
-	******************************************'''
+        Kalman filtered Pitch and Roll functions
+    ******************************************'''
 
     def __read_filtered_pitch(self):
         byte = self.bus.read_byte_data(self.address, self.PITCH_FILTERED)
@@ -117,8 +108,8 @@ class TiltCompensatedCompass:
         return self.__roll_filtered
 
     '''******************************************
-		Magnetometer functions
-	******************************************'''
+        Magnetometer functions
+    ******************************************'''
 
     def __read_magnetometer_x(self):
         high_byte = self.bus.read_byte_data(self.address, self.MAGNET_X_H)
@@ -139,8 +130,8 @@ class TiltCompensatedCompass:
         return self.__magnet_z
 
     '''******************************************
-		Accelerometer functions
-	******************************************'''
+        Accelerometer functions
+    ******************************************'''
 
     def __read_accelerometer_x(self):
         high_byte = self.bus.read_byte_data(self.address, self.ACCEL_X_H)
@@ -161,8 +152,8 @@ class TiltCompensatedCompass:
         return self.__accel_z
 
     '''******************************************
-		Gyroscope functions
-	******************************************'''
+        Gyroscope functions
+    ******************************************'''
 
     def __read_gyroscope_x(self):
         high_byte = self.bus.read_byte_data(self.address, self.GYRO_X_H)
@@ -183,8 +174,8 @@ class TiltCompensatedCompass:
         return self.__gyro_z
 
     '''******************************************
-		Temperature function
-	******************************************'''
+        Temperature function
+    ******************************************'''
 
     def __read_temperature(self):
         high_byte = self.bus.read_byte_data(self.address, self.TEMP_H)
@@ -193,8 +184,8 @@ class TiltCompensatedCompass:
         return self.__temp
 
     '''******************************************
-		Raw Pitch and Roll functions
-	******************************************'''
+        Raw Pitch and Roll functions
+    ******************************************'''
 
     def __read_raw_pitch(self):
         byte = self.bus.read_byte_data(self.address, self.PITCH_RAW)
@@ -207,12 +198,12 @@ class TiltCompensatedCompass:
         return self.__roll_raw
 
     '''******************************************
-		Accessible functions
-	******************************************'''
+        Accessible functions
+    ******************************************'''
 
     def getMostRecentDegrees(self):
         # if self.__heading_degrees < 0:
-        #	return False
+        #    return False
         return self.__heading_degrees
 
     # TODO: We cannot rely on such a crude method for getting a heading

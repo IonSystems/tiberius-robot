@@ -1,6 +1,6 @@
 from tiberius.control.robotic_arm.cartesian import to_arm_coords
-import serial
 from tiberius.utils import detection
+import serial
 import logging
 import time
 
