@@ -87,7 +87,7 @@ def update_compass_sensor_validity(poly, value):
     )
 
 
-def update_ultrasonics_sensor_reading(poly, id, data):
+def overwrite_ultrasonics_reading(poly, id, data):
     '''******************************************
         Ultrasonics
     ******************************************'''
@@ -116,7 +116,7 @@ def update_ultrasonics_sensor_reading(poly, id, data):
     )
 
 
-def update_gps_sensor(poly, id, data):
+def overwrite_gps_reading(poly, id, data):
     '''******************************************
         GPS
     ******************************************'''
@@ -146,7 +146,7 @@ def update_gps_sensor(poly, id, data):
     )
 
 
-def update_compass_sensor(poly, id, value):
+def overwrite_compass_reading(poly, id, value):
     '''******************************************
         Compass
     ******************************************'''
@@ -169,7 +169,7 @@ def update_compass_sensor(poly, id, value):
     )
 
 
-def update_lidar_sensor(poly, id, r_id, data):
+def overwrite_lidar_reading(poly, id, r_id, data):
     '''******************************************
         Lidar
     ******************************************'''
