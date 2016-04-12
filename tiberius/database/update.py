@@ -64,7 +64,7 @@ def update_ultrasonics_validity(poly, validity):
                     'value': '0'
                 }
             ]
-        }s
+        }
     )
 
 
