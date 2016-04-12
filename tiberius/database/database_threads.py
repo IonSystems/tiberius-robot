@@ -87,7 +87,7 @@ class DatabaseThreadCreator:
                 # We need to put the data in, even if it is all 0's.
                 # This gives a fail safe if a script was only relying on sensor data
                 # and not using data validity
-                ins.insert_ultrasonics_validity(
+                ins.insert_ultrasonics_reading(
                     self.poly,
                     ultrasonic_read_id,
                     ultra_data
@@ -142,27 +142,32 @@ class DatabaseThreadCreator:
     def compass_thread(self):
         compass = Compass()
         compass_read_id = 0
+        compass_update_id = 0
         valid = False
         previous_values = []
+        NUMBER_OF_READINGS = 10
         while True:
             try:
-                # validate compass data by differentiating (shouldn't change too quickly)
+                # get the compass heading
                 heading = compass.headingNormalized()
                 # TODO: Move validity checks to it's own module.
-                # check if the compass data makes sense - common sense check
 
+                # maintain a short array of previous values
                 previous_values.append(heading)
                 if len(previous_values) >= 10:
                     previous_values.pop(0)
 
+                # ensure the compass heading has not changed too much between readings
                 standard_deviation = np.std(np.diff(np.asarray(previous_values)))
-                if standard_deviation > 10:
+
+                if standard_deviation > NUMBEROFREADINGS:
                     raise Exception('invalid data')
                 else:
-                    if compass_read_id < 10:
+                    if compass_read_id < NUMBER_OF_READINGS: # store the first 10 results
                         ins.insert_compass_reading(self.poly, compass_read_id, heading)
-                    else:
-                        up.overwrite_compass_reading(self.poly, heading)
+                    else: # start updating results
+                        compass_update_id = compass_read_id % NUMBER_OF_READINGS
+                        up.overwrite_compass_reading(self.poly, compass_update_id, heading)
                     compass_read_id += 1
 
                 # TODO: Again, something weird is going on here!

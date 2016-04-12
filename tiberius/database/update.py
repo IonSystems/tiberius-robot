@@ -60,12 +60,21 @@ def update_ultrasonics_validity(poly, validity):
         }
     )
 
-
-def update_compass_sensor_validity(poly, value):
+'''******************************************
+    Ultrasonics
+******************************************'''
+def update_ultrasonics_sensor_reading(poly, id, data):
     poly.update(
         SensorValidityTable.table_name,
         {
-            'compass': value
+            # 'id': id,
+            'fr': data['fr'],
+            'fc': data['fc'],
+            'fl': data['fl'],
+            'rr': data['rr'],
+            'rc': data['rc'],
+            'rl': data['rl'],
+            'timestamp': time.time()})
         },
         {
             'clause': 'WHERE',
@@ -73,17 +82,77 @@ def update_compass_sensor_validity(poly, value):
                 {
                     'column': 'id',
                     'assertion': '=',
-                    'value': '0'
+                    'value': id
                 }
             ]
         }
     )
 
+'''******************************************
+    GPS
+******************************************'''
+def update_gps_sensor(poly, id, data):
+    poly.update(
+        CompassTable.table_name,
+        {
+            # 'id': id,
+            'latitude': data['latitude'],
+            'longitude': data['longitude'],
+            'gls_qual': data['gls_qual'],
+            'num_sats': data['num_sats'],
+            'dilution_of_precision': data['dilution_of_precision'],
+            'velocity': data['velocity'],
+            'fixmode': data['fixmode'],
+            'timestamp': time.time()
+        },
+        {
+            'clause': 'WHERE',
+            'data': [
+                {
+                    'column': 'id',
+                    'assertion': '=',
+                    'value': id
+                }
+            ]
+        }
+    )
+
+'''******************************************
+    Compass
+******************************************'''
 def update_compass_sensor(poly, id, value):
     poly.update(
         CompassTable.table_name,
         {
             'compass': value
+            'timestamp': time.time()
+        },
+        {
+            'clause': 'WHERE',
+            'data': [
+                {
+                    'column': 'id',
+                    'assertion': '=',
+                    'value': id
+                }
+            ]
+        }
+    )
+
+'''******************************************
+    Lidar
+******************************************'''
+def update_lidar_sensor(poly, id, r_id, data):
+    poly.update(
+        CompassTable.table_name,
+        {
+            # 'id': id,
+            'reading_iteration': r_id,
+            'start_flag': data['start_flag'],
+            'angle': data['theta'],
+            'distance': data['dist'],
+            'quality': data['quality'],
+            'timestamp': time.time()
         },
         {
             'clause': 'WHERE',
