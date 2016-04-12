@@ -112,7 +112,7 @@ class DatabaseThreadCreator:
         valid = False
         while True:
             try:
-                if gps.has_fix():
+                if gps.usable():
                     gps_data = gps.read_gps()
                     if gps_data is not False:
                         ins.insert_gps_reading(self.poly, gps_read_id, gps_data)

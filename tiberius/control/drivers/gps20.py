@@ -92,7 +92,7 @@ class GlobalPositioningSystem:
     def usable(self):
         # Checks if there is a valid gps fix
         self.__update()
-        usable = self.__has_fix() and self.__has_pos() and self.__in_recent()
+        usable = self.__has_fix() and self.__has_pos() and self.__is_recent()
         if not usable:
             self.logger.warning("Data not usable!")
         return usable
@@ -124,10 +124,7 @@ class GlobalPositioningSystem:
 
     def __update(self):
         # Reads the gps a set number of times to ensure latest data
-        for i in range(0, self.invalid_sentences_count):
-            if self.parse_data(self.fetch_raw_data()):
-                return True
-        return False
+        return self.__parse_data(self.__fetch_raw_data())
 
     def __parse_data(self, data):
         '''
@@ -149,30 +146,30 @@ class GlobalPositioningSystem:
         :return: True if a sentence is parsed succesfully, False otherwise.
         '''
         if "GPGGA" in data:
-            data = self.gpgga.parse(data)
-            self.__latitude = self.gpgga.latitude
-            self.__longitude = self.gpgga.longitude
-            self.__gps_qual = self.gpgga.gps_qual
-            self.__num_sats = self.gpgga.num_sats
-            self.__num_sats = self.gpgga.num_sats
-            self.__dilution_of_precision = self.gpgga.horizontal_dil
-            self.__fixmode = self.gpgga.gps_qual
+            data = self.__gpgga.parse(data)
+            self.__latitude = self.__gpgga.latitude
+            self.__longitude = self.__gpgga.longitude
+            self.__gps_qual = self.__gpgga.gps_qual
+            self.__num_sats = self.__gpgga.num_sats
+            self.__num_sats = self.__gpgga.num_sats
+            self.__dilution_of_precision = self.__gpgga.horizontal_dil
+            self.__fixmode = self.__gpgga.gps_qual
             self.__timestamp = time.time()
 
         elif "GPVTG" in data:
-            data = self.gpvtg.parse(data)
-            self.__velocity = self.gpvtg.spd_over_grnd_kmph
+            data = self.__gpvtg.parse(data)
+            self.__velocity = self.__gpvtg.spd_over_grnd_kmph
 
         elif "GPGSA" in data:
-            data = self.gpgsa.parse(data)
-            self.__fixmode = self.gpgsa.mode_fix_type
+            data = self.__gpgsa.parse(data)
+            self.__fixmode = self.__gpgsa.mode_fix_type
 
         elif "GPRMC" in data:
-            data = self.gprmc.parse(data)
-            self.__latitude = self.gprmc.lat
-            self.__longitude = self.gprmc.lon
+            data = self.__gprmc.parse(data)
+            self.__latitude = self.__gprmc.lat
+            self.__longitude = self.__gprmc.lon
             # We NEED to set fixmode
-            if self.gprmc.data_validity == 'A':
+            if self.__gprmc.data_validity == 'A':
                 self.__fixmode = 1
             self.__timestamp = time.time()
 
@@ -187,7 +184,7 @@ import time
 if __name__ == "__main__":
     gps = GlobalPositioningSystem(debug=True)
     while True:
-        #print gps.fetch_raw_data()
+        #print gps.__fetch_raw_data()
         #gps.has_fix()
         print gps.read_gps()
         print gps.update()
