@@ -203,7 +203,7 @@ class DatabaseThreadCreator:
                 if reading_iteration < 5:
                     ins.insert_lidar_reading(self.poly, lidar_read_id, reading_iteration, item)
                 else:
-                    lidar_update_id = lidar_read_id % LIDAR_NUMBER_OF_READING
+                    lidar_update_id = lidar_read_id % LIDAR_NUMBER_OF_READINGS
                     up.overwrite_lidar_reading(self.poly, lidar_update_id, reading_iteration, item)
                 lidar_read_id += 1
             reading_iteration += 1
