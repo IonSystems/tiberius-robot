@@ -160,7 +160,7 @@ class DatabaseThreadCreator:
                 # ensure the compass heading has not changed too much between readings
                 standard_deviation = np.std(np.diff(np.asarray(previous_values)))
 
-                if standard_deviation > NUMBEROFREADINGS:
+                if standard_deviation > NUMBER_OF_READINGS:
                     raise Exception('invalid data')
                 else:
                     if compass_read_id < NUMBER_OF_READINGS: # store the first 10 results
