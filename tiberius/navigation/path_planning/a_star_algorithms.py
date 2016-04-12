@@ -37,18 +37,20 @@ class Astar(object):
     # need to give the grids there lat and long positions.
     def init_grid(self, startlocation, endlocation, bearing):
         walls = self.create_walls()
-        lat = 0.0
-        lon = 0.0
+        lat = startlocation[0] - 0.00004
+        lon = startlocation[1] - 0.00004
         for x in range(self.grid_width):
+            lon += 1
             for y in range(self.grid_height):
                 if (x, y) in walls:
                     reachable = False
                 else:
                     reachable = True
 
+
                 self.cells.append(self.cell(x, y, reachable, lat, lon))
-        self.start = self.get_cell(startlocation)
-        self.end = self.get_cell(endlocation)
+        self.start = self.get_cell(startlocation[0], startlocation[1])
+        self.end = self.get_cell(endlocation[0], endlocation[1])
 
     def get_heuristic(self, cell):
         '''
@@ -112,7 +114,7 @@ class Astar(object):
         while cell.parent is not self.start:
             path.append(cell)
             cell = cell.parent
-            print 'path: cell: %d, %d' % (cell.x,cell.y)
+            print 'path: cell: %d, %d' % (cell.x, cell.y)
         return path
 
     def solve(self):
@@ -150,20 +152,16 @@ class Astar(object):
         distance = self.gps.getDistance(curlocation, destination)
         bearing = self.gps.getHeading(curlocation, destination)
 
-        grid_height = int(distance * math.sin(bearing))
-        grid_width = int(distance * math.cos(bearing))
-
-        grid_height = abs(grid_height)
-        grid_width = abs(grid_width)
+        grid_height = abs(self.grid_height)
+        grid_width = abs(self.grid_width)
 
         calc_width = 0
         calc_height = 0
 
-        # endlocation = [grid_width, grid_height]
-
         centre_width = math.floor(self.grid_width / 2)
         centre_height = math.floor(self.grid_height / 2)
         startlocation = [centre_width, centre_height]
+
         if distance < centre_height:
             if 0 < bearing < 180:
                 if bearing < 90:
@@ -211,23 +209,8 @@ class Astar(object):
                     else:
                         calc_width = centre_width - math.floor(centre_height / math.tan(math.fabs(bearing + 90)))
                         calc_height = 0
-        endlocation = [calc_width,calc_height]
-        '''
-        if 0 < bearing < 180:
-            if bearing < 90:  # less than 90 so between 0 and 90
-                startlocation = [0, 0]
-                endlocation = [grid_width, grid_height]
-            else:  # more than 90 so between 90 and 180
-                startlocation = [0, grid_height]
-                endlocation = [grid_width, 0]
-        elif -180 < bearing < 0:
-            if bearing > -90:  # more than -90 so between 0 and -90
-                startlocation = [grid_width, 0]
-                endlocation = [0, grid_height]
-            else:  # between -90 and -180
-                startlocation = [grid_width, grid_height]
-                endlocation = [0, 0]
-        '''
+        endlocation = [calc_width, calc_height]
+
         return [curlocation, distance, bearing, grid_width, grid_height, startlocation, endlocation]
 
     def run_astar(self, destination):
