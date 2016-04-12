@@ -76,7 +76,7 @@ def update_ultrasonics_sensor_reading(poly, id, data):
             'rc': data['rc'],
             'rl': data['rl'],
             'timestamp': time.time()})
-    },
+        },
         {
             'clause': 'WHERE',
             'data': [
