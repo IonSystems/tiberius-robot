@@ -92,7 +92,7 @@ class GlobalPositioningSystem:
     def usable(self):
         # Checks if there is a valid gps fix
         self.__update()
-	fix = self.__has_fix()
+        fix = self.__has_fix()
         pos = self.__has_pos()
         rec = self.__is_recent()
         usable = fix and pos and rec
@@ -152,8 +152,8 @@ class GlobalPositioningSystem:
         '''
         if "GPGGA" in data:
             data = self.__gpgga.parse(data)
-            self.__latitude = float(self.__gpgga.latitude)
-            self.__longitude = float(self.__gpgga.longitude)
+            self.__latitude = self.__parse_lat(self.__gpgga.latitude)
+            self.__longitude = self.__parse_long(self.__gpgga.longitude)
             self.__gps_qual = self.__gpgga.gps_qual
             self.__num_sats = self.__gpgga.num_sats
             self.__num_sats = self.__gpgga.num_sats
@@ -171,8 +171,8 @@ class GlobalPositioningSystem:
 
         elif "GPRMC" in data:
             data = self.__gprmc.parse(data)
-            self.__latitude = float(self.__gprmc.lat)
-            self.__longitude = float(self.__gprmc.lon)
+            self.__latitude = self.__parse_lat(self.__gprmc.lat)
+            self.__longitude = self.__parse_long(self.__gprmc.lon)
             # We NEED to set fixmode
             if self.__gprmc.data_validity == 'A':
                 self.__fixmode = 1
@@ -182,6 +182,19 @@ class GlobalPositioningSystem:
             return False
         return True
 
+    def __parse_long(longitude):
+        '''
+        Convert the NMEA string into a valid floating point representation.
+        '''
+        longitude = float(longitude[3:])/60+float(longitude[:3])
+        return longitude
+
+    def __parse_lat(latitude):
+        '''
+        Convert the NMEA string into a valid floating point representation.
+        '''
+        latitude = float(latitude[2:])/60+float(latitude[:2])
+        return latitude
 
 # For testing
 import time
