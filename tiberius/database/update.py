@@ -1,6 +1,10 @@
+import time
+from tables import UltrasonicsTable
+from tables import GPSTable
+from tables import CompassTable
+from tables import LidarTable
 from tables import SensorValidityTable
 from tables import UltrasonicsValidityTable
-import time
 
 
 def update_ultrasonics_sensor_validity(poly, valid):
