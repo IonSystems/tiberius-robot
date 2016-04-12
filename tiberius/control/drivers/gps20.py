@@ -113,8 +113,11 @@ class GlobalPositioningSystem:
 
     def __is_recent(self):
         # Units are seconds
-        age = time.time() - self.__timestamp
-        return age < 5
+        try:
+            age = time.time() - self.__timestamp
+        except TypeError as e:
+            return False
+        return (age < 5)
 
     def __fetch_raw_data(self):
         try:
@@ -182,14 +185,14 @@ class GlobalPositioningSystem:
             return False
         return True
 
-    def __parse_long(longitude):
+    def __parse_long(self, longitude):
         '''
         Convert the NMEA string into a valid floating point representation.
         '''
         longitude = float(longitude[3:])/60+float(longitude[:3])
         return longitude
 
-    def __parse_lat(latitude):
+    def __parse_lat(self, latitude):
         '''
         Convert the NMEA string into a valid floating point representation.
         '''
