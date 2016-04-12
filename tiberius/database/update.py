@@ -79,3 +79,20 @@ def update_compass_sensor_validity(poly, value):
         }
     )
 
+def update_compass_sensor(poly, id, value):
+    poly.update(
+        CompassTable.table_name,
+        {
+            'compass': value
+        },
+        {
+            'clause': 'WHERE',
+            'data': [
+                {
+                    'column': 'id',
+                    'assertion': '=',
+                    'value': id
+                }
+            ]
+        }
+    )
