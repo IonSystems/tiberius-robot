@@ -170,5 +170,5 @@ class GPS:
     def read_gps(self):
         return self.gps.read_gps()
 
-    def has_fix(self):
-        return self.gps.has_fix()
+    def usable(self):
+        return self.gps.usable()
