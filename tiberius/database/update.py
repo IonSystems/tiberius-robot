@@ -134,7 +134,7 @@ def update_compass_sensor(poly, id, value):
     poly.update(
         CompassTable.table_name,
         {
-            'compass': value
+            'compass': value,
             'timestamp': time.time()
         },
         {
