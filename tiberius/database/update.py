@@ -1,5 +1,6 @@
 from tables import SensorValidityTable
 from tables import UltrasonicsValidityTable
+import time
 
 
 def update_ultrasonics_sensor_validity(poly, valid):
