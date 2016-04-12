@@ -125,16 +125,16 @@ def overwrite_gps_reading(poly, id, data):
         GPS
     ******************************************'''
     poly.update(
-        CompassTable.table_name,
+        GPSTable.table_name,
         {
             # 'id': id,
             'latitude': data['latitude'],
             'longitude': data['longitude'],
             'gps_qual': data['gps_qual'],
             'num_sats': data['num_sats'],
-             # 'dilution_of_precision': data['dilution_of_precision'],  #having problem updating this
+            'dilution_of_precision': data['dilution_of_precision'],  #having problem updating this
             'velocity': data['velocity'],
-            # 'fixmode': data['fixmode'], #same problem as above
+            'fixmode': data['fixmode'], #same problem as above
             'timestamp': time.time()
         },
         {
@@ -178,7 +178,7 @@ def overwrite_lidar_reading(poly, id, r_id, data):
         Lidar
     ******************************************'''
     poly.update(
-        CompassTable.table_name,
+        LidarTable.table_name,
         {
             # 'id': id,
             'reading_iteration': r_id,
