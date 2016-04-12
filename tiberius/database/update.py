@@ -27,14 +27,20 @@ def update_ultrasonics_sensor_validity(poly, valid):
 def update_gps_sensor_validity(poly, value):
     poly.update(
         SensorValidityTable.table_name,
-        {'gps': value}, {'clause': 'WHERE',
-                        'data': [
+        {
+            'gps': value
+        },
+        {
+            'clause': 'WHERE',
+            'data': [
                             {
                                 'column': 'id',
                                 'assertion': '=',
                                 'value': '0'
                             }
-                        ]})
+                        ]
+                    }
+                )
 
 
 def update_ultrasonics_validity(poly, validity):
@@ -75,7 +81,7 @@ def update_ultrasonics_sensor_reading(poly, id, data):
             'rr': data['rr'],
             'rc': data['rc'],
             'rl': data['rl'],
-            'timestamp': time.time()})
+            'timestamp': time.time()
         },
         {
             'clause': 'WHERE',
