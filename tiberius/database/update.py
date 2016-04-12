@@ -132,7 +132,7 @@ def overwrite_gps_reading(poly, id, data):
             'longitude': data['longitude'],
             'gps_qual': data['gps_qual'],
             'num_sats': data['num_sats'],
-            'dilution_of_precision': data['dilution_of_precision'],
+             # 'dilution_of_precision': data['dilution_of_precision'],  #having problem updating this
             'velocity': data['velocity'],
             'fixmode': data['fixmode'],
             'timestamp': time.time()
