@@ -203,11 +203,12 @@ class DatabaseThreadCreator:
                 for item in data:
                     ins.insert_lidar_reading(self.poly, lidar_read_id, reading_iteration, item)
                     lidar_read_id += 1
-                else:
-                    lidar_update_id = lidar_read_id % LIDAR_NUMBER_OF_READINGS
+            else:
+                lidar_update_id = lidar_read_id % LIDAR_NUMBER_OF_READINGS
+                for item in data:
                     up.overwrite_lidar_reading(self.poly, lidar_update_id, reading_iteration, item)
                     lidar_read_id += 1
-                reading_iteration += 1
+            reading_iteration += 1
             #else:
             #    for item in data:
             #        up.overwrite_lidar_reading(self.poly,reading_iteration, item)
