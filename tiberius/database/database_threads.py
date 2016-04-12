@@ -116,7 +116,7 @@ class DatabaseThreadCreator:
                 if gps.usable():
                     gps_data = gps.read_gps()
                     if gps_data is not False:
-                        if compass_read_id < GPS_NUMBER_OF_READINGS:
+                        if gps_read_id < GPS_NUMBER_OF_READINGS:
                             ins.insert_gps_reading(self.poly, gps_read_id, gps_data)
                         else:  # start updating results
                             gps_update_id = gps_read_id % GPS_NUMBER_OF_READINGS
