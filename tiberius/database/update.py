@@ -60,10 +60,11 @@ def update_ultrasonics_validity(poly, validity):
         }
     )
 
-'''******************************************
-    Ultrasonics
-******************************************'''
+
 def update_ultrasonics_sensor_reading(poly, id, data):
+    '''******************************************
+        Ultrasonics
+    ******************************************'''
     poly.update(
         SensorValidityTable.table_name,
         {
@@ -75,7 +76,7 @@ def update_ultrasonics_sensor_reading(poly, id, data):
             'rc': data['rc'],
             'rl': data['rl'],
             'timestamp': time.time()})
-        },
+    },
         {
             'clause': 'WHERE',
             'data': [
@@ -88,10 +89,11 @@ def update_ultrasonics_sensor_reading(poly, id, data):
         }
     )
 
-'''******************************************
-    GPS
-******************************************'''
+
 def update_gps_sensor(poly, id, data):
+    '''******************************************
+        GPS
+    ******************************************'''
     poly.update(
         CompassTable.table_name,
         {
@@ -117,10 +119,11 @@ def update_gps_sensor(poly, id, data):
         }
     )
 
-'''******************************************
-    Compass
-******************************************'''
+
 def update_compass_sensor(poly, id, value):
+    '''******************************************
+        Compass
+    ******************************************'''
     poly.update(
         CompassTable.table_name,
         {
@@ -139,10 +142,11 @@ def update_compass_sensor(poly, id, value):
         }
     )
 
-'''******************************************
-    Lidar
-******************************************'''
+
 def update_lidar_sensor(poly, id, r_id, data):
+    '''******************************************
+        Lidar
+    ******************************************'''
     poly.update(
         CompassTable.table_name,
         {
