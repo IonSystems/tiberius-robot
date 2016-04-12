@@ -110,12 +110,17 @@ class DatabaseThreadCreator:
         gps_read_id = 0
         no_data_time = 0
         valid = False
+        GPS_NUMBER_OF_READINGS = 10
         while True:
             try:
                 if gps.usable():
                     gps_data = gps.read_gps()
                     if gps_data is not False:
-                        ins.insert_gps_reading(self.poly, gps_read_id, gps_data)
+                        if compass_read_id < GPS_NUMBER_OF_READINGS:
+                            ins.insert_gps_reading(self.poly, gps_read_id, gps_data)
+                        else:  # start updating results
+                            gps_update_id = gps_read_id % GPS_NUMBER_OF_READINGS
+                            up.overwrite_gps_reading(self.poly, gps_update_id, gps_data)
                         if not valid:
                             valid = True
                             up.update_gps_sensor_validity(self.poly, True)
@@ -145,7 +150,7 @@ class DatabaseThreadCreator:
         compass_update_id = 0
         valid = False
         previous_values = []
-        NUMBER_OF_READINGS = 10
+        COMPASS_NUMBER_OF_READINGS = 10
         while True:
             try:
                 # get the compass heading
@@ -160,13 +165,13 @@ class DatabaseThreadCreator:
                 # ensure the compass heading has not changed too much between readings
                 standard_deviation = np.std(np.diff(np.asarray(previous_values)))
 
-                if standard_deviation > NUMBER_OF_READINGS:
+                if standard_deviation > 10:
                     raise Exception('invalid data')
                 else:
-                    if compass_read_id < NUMBER_OF_READINGS: # store the first 10 results
+                    if compass_read_id < COMPASS_NUMBER_OF_READINGS: # store the first 10 results
                         ins.insert_compass_reading(self.poly, compass_read_id, heading)
-                    else: # start updating results
-                        compass_update_id = compass_read_id % NUMBER_OF_READINGS
+                    else:  # start updating results
+                        compass_update_id = compass_read_id % COMPASS_NUMBER_OF_READINGS
                         up.overwrite_compass_reading(self.poly, compass_update_id, heading)
                     compass_read_id += 1
 
@@ -218,9 +223,9 @@ class DatabaseThreadCreator:
                 print rows
                 for row in rows:
                     print row
-                    #ultrasonics_status = row.ultrasonics
-                    #compass_status = row.compass
-                    #gps_status = row.gps
+                    # ultrasonics_status = row.ultrasonics
+                    # compass_status = row.compass
+                    # gps_status = row.gps
                 diagnostics_leds = {ultrasonics_status, compass_status, gps_status, -1, -1, -1, -1, -1}
                 external_hardware_controller.set_hardware(diagnostics_leds)
 
