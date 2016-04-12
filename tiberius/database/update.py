@@ -64,6 +64,25 @@ def update_ultrasonics_validity(poly, validity):
                     'value': '0'
                 }
             ]
+        }s
+    )
+
+
+def update_compass_sensor_validity(poly, value):
+    poly.update(
+        SensorValidityTable.table_name,
+        {
+            'compass': value
+        },
+        {
+            'clause': 'WHERE',
+            'data': [
+                {
+                    'column': 'id',
+                    'assertion': '=',
+                    'value': '0'
+                }
+            ]
         }
     )
 
