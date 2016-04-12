@@ -1,16 +1,16 @@
 #!/usr/bin/env python
-import cmps11
-import srf08
 import time
+import drivers.cmps11 as cmps11
+import drivers.srf08 as srf08
+import drivers.gps20 as gps20
+import drivers.lidar as rplidar
 from tiberius.config.config_parser import TiberiusConfigParser
-from tiberius.control.gps20 import GlobalPositioningSystem
-from tiberius.control.lidar import RoboPeakLidar
 
 
 class Ultrasonic:
     '''
         Contains the ultrasonic sensors, and methods to receive data from them.
-        Data is returned from teh sensors in centimeters.
+        Data is returned from the sensors in centimeters.
     '''
 
     # Front Right
@@ -38,8 +38,12 @@ class Ultrasonic:
         # We need to check each sensor and make sure its giving us valid data.
         # So if we fail to write to a sensor we need to mark it as invalid.
 
-        valid = [self.srfrr.doranging(), self.srffc.doranging(), self.srffc.doranging(), self.srffl.doranging(),
-                 self.srfrr.doranging(), self.srfrc.doranging(), self.srfrl.doranging()]
+        valid = [
+            self.srfrr.doranging(), self.srffc.doranging(),
+            self.srffc.doranging(), self.srffl.doranging(),
+            self.srfrr.doranging(), self.srfrc.doranging(),
+            self.srfrl.doranging()
+        ]
 
         # We need to wait for the measurement to be made before reading the
         # result.
@@ -47,12 +51,15 @@ class Ultrasonic:
 
         # Read the data from sensor's memory
 
-        data = [self.srfrr.getranging(), self.srffc.getranging(), self.srffc.getranging(), self.srffl.getranging(),
-                 self.srfrr.getranging(), self.srfrc.getranging(), self.srfrl.getranging()]
-
+        data = [
+            self.srfrr.getranging(), self.srffc.getranging(),
+            self.srffc.getranging(), self.srffl.getranging(),
+            self.srfrr.getranging(), self.srfrc.getranging(),
+            self.srfrl.getranging()
+        ]
 
         # Check if the data is valid
-        for i in range(0, 5):
+        for i in range(0, 6):
             if data[i] is False:
                 valid[i] = False
                 data[i] = 0.0  # Best to assume we might crash rather than
@@ -98,7 +105,7 @@ class Lidar:
     '''
             Provides lidar data to be inserted into database
     '''
-    lidar = RoboPeakLidar()
+    lidar = rplidar.RoboPeakLidar()
 
     def filtered_data(self, x):
             if 350 < x < 10:
@@ -158,26 +165,10 @@ if TiberiusConfigParser.isCompassEnabled():
 
 class GPS:
     def __init__(self):
-        self.gps = GlobalPositioningSystem()
+        self.gps = gps20.GlobalPositioningSystem()
 
     def read_gps(self):
         return self.gps.read_gps()
 
     def has_fix(self):
         return self.gps.has_fix()
-
-
-class I2CReadError(Exception):
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return repr(self.value)
-
-
-class I2CWriteError(Exception):
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return repr(self.value)

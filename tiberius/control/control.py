@@ -1,11 +1,10 @@
 #!/usr/bin/python
-
-import md03
-import srf08
 import sensors
 import actuators
+import math
 import time
 import logging
+from tiberius.logger import logger
 from tiberius.utils import bearing_math
 from tiberius.config.config_parser import TiberiusConfigParser
 from tiberius.control.exceptions import SensorNotEnabledError

@@ -31,12 +31,12 @@ class PolyhedraDatabase(Database):
 
     def query(self, table_name, column_name, conditions=None):
         query = self.__generate_query(
-            SqlClauses.SELECT.value, table_name, column_name, conditions)
+            SqlClauses.SELECT, table_name, column_name, conditions)
         self.c.execute(query)
 
         return self.c.fetchall()
 
-    def insert(self, table_name, values):   #add new adta
+    def insert(self, table_name, values):
         query = self.__generate_insert("insert", table_name, values)
         try:
             self.c.execute(query)
@@ -104,15 +104,19 @@ class PolyhedraDatabase(Database):
             else:
                 raise PolyhedraDatabase.UnknownError(e)
 
+    def sql(self, statement):
+        self.c.execute(statement)
+        self.c.fetchall()
+
     '''*******************************************************************
         Hidden functions
     *******************************************************************'''
 
     def __generate_update(self, table_name, data, conditions):
         query = ""
-        query += SqlClauses.UPDATE.value + " "
+        query += SqlClauses.UPDATE + " "
         query += table_name + " "
-        query += SqlClauses.SET.value + " "
+        query += SqlClauses.SET + " "
         for c_name, c_value in data.iteritems():
             query += c_name
             query += '='
@@ -124,19 +128,19 @@ class PolyhedraDatabase(Database):
         return query
 
     def __generate_drop(self, table_name):
-        query = SqlClauses.DROP_TABLE.value + " "
+        query = SqlClauses.DROP_TABLE + " "
         query += table_name
         return query
 
     def __generate_insert(self, t, table_name, values):
         query = ""
         if "insert" in t:
-            query += SqlClauses.INSERT.value + " "
+            query += SqlClauses.INSERT + " "
         if "or" in t:
-            query += SqlClauses.OR.value + " "
+            query += SqlClauses.OR + " "
         if "replace" in t:
-            query += SqlClauses.REPLACE.value + " "
-        query += SqlClauses.INTO.value + " "
+            query += SqlClauses.REPLACE + " "
+        query += SqlClauses.INTO + " "
 
         query += table_name
         query += " ("
@@ -145,7 +149,7 @@ class PolyhedraDatabase(Database):
             q += c_name + ", "
             query += q
         query = query[:-2]
-        query += ") " + SqlClauses.VALUES.value + " ("
+        query += ") " + SqlClauses.VALUES + " ("
         for c_name, value in values.iteritems():
             q = ""
             q += self.__generate_representation(value) + ", "
@@ -155,8 +159,8 @@ class PolyhedraDatabase(Database):
         return query
 
     def __generate_delete(self, table_name, conditions):
-        query = SqlClauses.DELETE.value + " "
-        query += SqlClauses.FROM.value + " "
+        query = SqlClauses.DELETE + " "
+        query += SqlClauses.FROM + " "
         query += table_name
         if not conditions:
             return query
@@ -171,14 +175,17 @@ class PolyhedraDatabase(Database):
             column_name,
             conditions):
         query = ""
-        if query_type.upper() == SqlClauses.SELECT.value:
-            query += SqlClauses.SELECT.value + " "
+        if query_type.upper() == SqlClauses.SELECT:
+            query += SqlClauses.SELECT + " "
 
-        for column in column_name:
-            query += column + ", "
-        query = query[:-2]
+        if isinstance(column_name, list):
+            for column in column_name:
+                query += column + ", "
+            query = query[:-2]
+        else:
+            query += column_name
         query += " "
-        query += SqlClauses.FROM.value + " "
+        query += SqlClauses.FROM + " "
         query += table_name
         if conditions:
             query += " " + self.__generate_conditions(conditions)
@@ -215,7 +222,7 @@ class PolyhedraDatabase(Database):
 
     def __generate_create(self, table_name, columns):
         query = ""
-        query += SqlClauses.CREATE_TABLE.value + " "
+        query += SqlClauses.CREATE_TABLE + " "
         query += table_name
         query += " " + self.__generate_columns(columns)
         return query

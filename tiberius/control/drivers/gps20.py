@@ -1,0 +1,195 @@
+import serial
+import sys
+import logging
+import time
+
+from pynmea import nmea
+from tiberius.logger import logger
+from tiberius.utils import detection
+from tiberius.config.config_parser import TiberiusConfigParser
+
+
+class GlobalPositioningSystem:
+    '''
+    Reads GPS data.
+    GPS data comes in many formats. We parse the most useful senstences for
+    our needs and ignore the rest.
+
+    The serial port must be correctly set in the config file for successful
+    communication.
+
+    The publically accessible functions allow access to the most recent GPS
+    data, and allow to check if there is a current fix. Fields and the remainder
+    of the functions have been hidden to prevent misuse of the class. E.g
+    externally changing fields, or accidentally calling the wrong function.
+    '''
+    if detection.detect_windows():
+        port = 'COM3'
+    else:
+        port = TiberiusConfigParser.getGPSSerialPort()
+    baud = 9600
+
+    def __init__(self, debug=False):
+        self.logger = logging.getLogger(
+            'tiberius.control.GlobalPositioningSystem')
+        self.logger.info('Creating an instance of GlobalPositioningSystem')
+        self.ser = serial.Serial(self.port, self.baud, timeout=1)
+
+        # Each GP* instance is used to decode the matching raw sentence.
+        self.__gpgga = nmea.GPGGA()
+        self.__gpvtg = nmea.GPVTG()
+        self.__gpgsa = nmea.GPGSA()
+        self.__gprmc = nmea.GPRMC()
+
+        self.debug = debug
+        ''' Set debug to true to enable addition print outs.'''
+
+        self.__latitude = None
+        self.__longitude = None
+
+        self.__gps_qual = None
+        self.__num_sats = None
+        self.__dilution_of_precision = None
+        self.__velocity = None
+        self.__fixmode = None
+        self.__timestamp = None
+
+    def read_gps(self):
+        '''
+        When this function is called, a singular GPS sentence is read and saved
+        to our fields. A portion of these fields are then returned.
+
+        Return a dictionary containing:
+            - latitude
+            - longitude
+            - GPS quality
+            - number of satilites
+            - dilution of precision
+            - velocity
+            - fix quality
+
+        :note: Due to the nature of how we collect GPS data, different values
+        may have been read at different times, but we make the assumption that
+        data arrives often enough that it is not a big issue.
+
+        All of the above just happen to be exactly what we store in the
+        database.
+        '''
+        self.__update()
+        results = {
+            'latitude': self.__latitude,
+            'longitude': self.__longitude,
+            'gps_qual': self.__gps_qual,
+            'num_sats': self.__num_sats,
+            'dilution_of_precision': self.__dilution_of_precision,
+            'velocity': self.__velocity,
+            'fixmode': self.__fixmode,
+            'timestamp': self.__timestamp
+        }
+
+        return results
+
+    def usable(self):
+        # Checks if there is a valid gps fix
+        self.__update()
+        usable = self.__has_fix() and self.__has_pos() and self.__in_recent()
+        if not usable:
+            self.logger.warning("Data not usable!")
+        return usable
+
+    '''***********************************
+            Hidden Functions
+    ***********************************'''
+
+    def __has_fix(self):
+        return self.__fixmode > 0
+
+    def __has_pos(self):
+        return self.__latitude and self.__longitude
+
+    def __is_recent(self):
+        # Units are seconds
+        return (time.time() - self.__timestamp) > 5
+
+    def __fetch_raw_data(self):
+        try:
+            self.ser.open()
+        except:
+            self.logger.warning("Serial port already open continuing.")
+        data = self.ser.readline()
+        if self.debug:
+            self.logger.debug("Read data: " + data)
+        self.ser.close()
+        return data
+
+    def __update(self):
+        # Reads the gps a set number of times to ensure latest data
+        for i in range(0, self.invalid_sentences_count):
+            if self.parse_data(self.fetch_raw_data()):
+                return True
+        return False
+
+    def __parse_data(self, data):
+        '''
+        Extract data items from raw NMEA sentences and update the values
+        stored in the fields.
+
+        .. note:: Only the following NMEA senstences are supported:
+            - GPGGA
+            - GPVTG
+            - GPGSA
+            - GPRMC
+
+        :note: Previously the timestamp was generated further on in the call
+        stack. But it seems more appropriate to record the timestamp as close
+        to the capture time as possible, hence why we not record the timestamp
+        here. Also we purposely only update the timestamp if we get a new
+        latitude and longitude, because those are the most valuable members.
+
+        :return: True if a sentence is parsed succesfully, False otherwise.
+        '''
+        if "GPGGA" in data:
+            data = self.gpgga.parse(data)
+            self.__latitude = self.gpgga.latitude
+            self.__longitude = self.gpgga.longitude
+            self.__gps_qual = self.gpgga.gps_qual
+            self.__num_sats = self.gpgga.num_sats
+            self.__num_sats = self.gpgga.num_sats
+            self.__dilution_of_precision = self.gpgga.horizontal_dil
+            self.__fixmode = self.gpgga.gps_qual
+            self.__timestamp = time.time()
+
+        elif "GPVTG" in data:
+            data = self.gpvtg.parse(data)
+            self.__velocity = self.gpvtg.spd_over_grnd_kmph
+
+        elif "GPGSA" in data:
+            data = self.gpgsa.parse(data)
+            self.__fixmode = self.gpgsa.mode_fix_type
+
+        elif "GPRMC" in data:
+            data = self.gprmc.parse(data)
+            self.__latitude = self.gprmc.lat
+            self.__longitude = self.gprmc.lon
+            # We NEED to set fixmode
+            if self.gprmc.data_validity == 'A':
+                self.__fixmode = 1
+            self.__timestamp = time.time()
+
+        else:
+            return False
+        return True
+
+
+# For testing
+import time
+
+if __name__ == "__main__":
+    gps = GlobalPositioningSystem(debug=True)
+    while True:
+        #print gps.fetch_raw_data()
+        #gps.has_fix()
+        print gps.read_gps()
+        print gps.update()
+        #print "LAT:" + str(gps.latitude)
+        time.sleep(0.1)

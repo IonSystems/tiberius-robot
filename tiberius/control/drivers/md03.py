@@ -13,7 +13,11 @@ from enum import Enum
 
 
 class MotorDriver:
-    '''Motor Driver'''
+    '''
+    An instance of this class is created for each motor.
+    This driver interfaces with the motor using I2C.
+    This driver interfaces with an MD03 Motor Driver.
+    '''
 
     def __init__(self, address, debug=False, inverted=False):
         self.logger = logging.getLogger('tiberius.control.MotorDriver')
@@ -73,22 +77,16 @@ class MotorDriver:
         version = self.bus.read_byte_data(self.address, self.version_register)
         return version
 
-    '''	Returns the status register bits:
-		0: Acceleration in progress LSB
-		1: Over-current indicator
-		2: Over-temperature indicator
-		The bits are returned in dictionary form.
-	'''
+    '''    Returns the status register bits:
+        0: Acceleration in progress LSB
+        1: Over-current indicator
+        2: Over-temperature indicator
+        The bits are returned in dictionary form.
+    '''
 
     def status(self):
         status = self.bus.read_byte_data(self.address, self.status_register)
         return status
-        # print str(status)
-        #accel = status & 1
-        # over-current = (status >> 1) & 1
-        # over-temp = (stats >> 2) & 1
-# return {'accel' : accel, 'over-current' : over-current, 'over-temp' :
-# over-temp}
 
     def register_dump(self):
         dict = {'speed': 0, 'acceleration': 0, 'direction': 0}
@@ -125,22 +123,13 @@ class MotorDriver:
         return accel
 
     '''
-		NOTE: Ensure rear facing motors are wired opposite from the rest.
-	'''
+        NOTE: Ensure rear facing motors are wired opposite from the rest.
+    '''
 
     def move(self, speed, accel):
         try:
-            '''if ((speed < -255) or (speed > 255)):
-                raise OutOfRangeError('Speed parameter out of range.')
-
-            if ((accel < 0) or (accel > 255)):
-                raise OutOfRangeError('Acceleration parameter out of range.')'''
-
             # Set acceleration, must be done before direction register.
             self.bus.write_byte_data(self.address, self.accel_register, accel)
-            '''self.logger.debug(
-                "Address: %s, Accel: %s", hex(
-                    self.address), str(accel))'''
             speed = int(speed)
             if speed == 0:
                 # Make sure to set speed and acceleration before issuing direction
@@ -148,17 +137,10 @@ class MotorDriver:
                 # direction
                 self.bus.write_byte_data(
                     self.address, self.speed_register, speed)
-                '''self.logger.debug(
-                    "Address: %s, Speed: %s", hex(
-                        self.address), str(speed))'''
                 self.bus.write_byte_data(
                     self.address,
                     self.direction_register,
                     self.Direction.NONE.value)
-                ''' self.logger.debug(
-                    "Address: %s, Direction: %s", hex(
-                        self.address), str(
-                        self.Direction.NONE.value))'''
 
             # If we want to go forward, set direction reg to 1
             elif (speed > 0):
@@ -188,11 +170,3 @@ class MotorDriver:
             self.logger.warn(
                 'IO error on I2C bus, address %s (%s)', hex(
                     self.address), e)
-
-    '''class OutOfRangeError(Exception):
-
-        def __init__(self, value):
-            self.value = values
-
-        def __str__(self):
-            return repr(value)'''

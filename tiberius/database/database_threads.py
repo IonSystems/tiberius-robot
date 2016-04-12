@@ -87,7 +87,7 @@ class DatabaseThreadCreator:
                 # We need to put the data in, even if it is all 0's.
                 # This gives a fail safe if a script was only relying on sensor data
                 # and not using data validity
-                ins.insert_ultrasonics_validity(
+                ins.insert_ultrasonics_reading(
                     self.poly,
                     ultrasonic_read_id,
                     ultra_data
