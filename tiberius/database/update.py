@@ -134,7 +134,7 @@ def overwrite_gps_reading(poly, id, data):
             'num_sats': data['num_sats'],
              # 'dilution_of_precision': data['dilution_of_precision'],  #having problem updating this
             'velocity': data['velocity'],
-            'fixmode': data['fixmode'],
+            # 'fixmode': data['fixmode'], #same problem as above
             'timestamp': time.time()
         },
         {
