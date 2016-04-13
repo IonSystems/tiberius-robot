@@ -129,9 +129,9 @@ def overwrite_gps_reading(poly, id, data):
             'longitude': data['longitude'],
             'gps_qual': data['gps_qual'],
             'num_sats': data['num_sats'],
-            'dilution_of_precision': data['dilution_of_precision'],  #having problem updating this
+            'dilution_of_precision': data['dilution_of_precision'],
             'velocity': data['velocity'],
-            'fixmode': data['fixmode'], #same problem as above
+            'fixmode': data['fixmode'],
             'timestamp': time.time()
         },
         {
@@ -171,7 +171,7 @@ def overwrite_lidar_reading(poly, id, r_id, data):
     poly.update(
         LidarTable.table_name,
         {
-            # 'id': id,
+            # 'id': id,     # no need to update since it will be the same
             'reading_iteration': r_id,
             'start_flag': data['start_flag'],
             'angle': data['theta'],
@@ -190,4 +190,3 @@ def overwrite_lidar_reading(poly, id, r_id, data):
             ]
         }
     )
-    #print "poly update carried out"
