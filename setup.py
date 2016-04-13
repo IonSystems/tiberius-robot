@@ -99,8 +99,8 @@ class PostInstallDependencies(install):
         self.install_if_missing("libffi-dev")
         self.install_if_missing("libi2c-dev")
         self.install_if_missing("i2c-tools")
-    self.un_blacklist_i2c()
-    self.enable_modules_i2c()
+        self.un_blacklist_i2c()
+        self.enable_modules_i2c()
 
     def create_lidar_executable(self):
         binaries = check_output("cd ~/git/tiberius-robot/tiberius/autonomy/readlidar && g++ -pthread -lrt rplidar_driver.cpp thread.cpp net_serial.cpp timer.cpp readlidar.cpp -o readlidar", shell=True)
@@ -116,7 +116,7 @@ class PostInstallDependencies(install):
         print "Removing I2C from blacklist on Raspberry Pi"
         blacklist_dir = "/etc/modprobe.d/raspi-blacklist.conf"
         enable_command = "sed -i 's/blacklist i2c-bcm2708/#blacklist" \
-         " i2c-bcm2708/g' " + blacklist_dir
+            " i2c-bcm2708/g' " + blacklist_dir
         check_output(enable_command, shell=True)
 
     def enable_modules_i2c(self):
@@ -133,7 +133,7 @@ class PostInstallDependencies(install):
             print "i2c-bcm2708 already enabled"
         else:
             enable_command = "echo 'i2c-bcm2708' | sudo tee -a " + \
-            modules_dir
+                modules_dir
             check_output(enable_command, shell=True)
 
     def is_package_installed(self, package_name):
@@ -262,7 +262,7 @@ class PostInstallDependencies(install):
             print "removing old job"
             oldjob = cron.find_comment('poly_start')
             print ('OldJob', oldjob)
-            #cron.remove(oldjob)
+            # cron.remove(oldjob)
             print "Installing poly_start crontab..."
             job = cron.new(command=command, comment=comment)
             job.every_reboot()
@@ -276,8 +276,6 @@ class PostInstallDependencies(install):
             print cronjob
 
         print "poly_start configuration finished"
-
-
 
     def install_pyodbc(self, platform):
         if "pi" in platform or "linux" in platform:
