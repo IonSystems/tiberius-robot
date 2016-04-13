@@ -77,16 +77,16 @@ class PostInstallDependencies(install):
     '''
     def run(self):
         if is_windows():
-	    print "Installing on Windows."
+        print "Installing on Windows."
         elif is_pi():
-	    print "Installing on Raspberry Pi."
+        print "Installing on Raspberry Pi."
             self.install_deps_pi()
             self.install_poly_pi()
+            self.create_lidar_executable()
         elif is_linux():
-	    print "Installing on Linux."
+        print "Installing on Linux."
             self.install_deps_linux()
             self.install_poly_linux()
-            self.create_lidar_executable()
         else:
             print 'No suitable operating system detected, terminating install'
             sys.exit()
@@ -99,8 +99,9 @@ class PostInstallDependencies(install):
         self.install_if_missing("libffi-dev")
         self.install_if_missing("libi2c-dev")
         self.install_if_missing("i2c-tools")
-	self.un_blacklist_i2c()
-	self.enable_modules_i2c()
+        self.install_if_missing("motion")
+        self.un_blacklist_i2c()
+        self.enable_modules_i2c()
 
     def create_lidar_executable(self):
         binaries = check_output("cd ~/git/tiberius-robot/tiberius/autonomy/readlidar && g++ -pthread -lrt rplidar_driver.cpp thread.cpp net_serial.cpp timer.cpp readlidar.cpp -o readlidar", shell=True)
@@ -116,7 +117,7 @@ class PostInstallDependencies(install):
         print "Removing I2C from blacklist on Raspberry Pi"
         blacklist_dir = "/etc/modprobe.d/raspi-blacklist.conf"
         enable_command = "sed -i 's/blacklist i2c-bcm2708/#blacklist" \
-         " i2c-bcm2708/g' " + blacklist_dir
+            " i2c-bcm2708/g' " + blacklist_dir
         check_output(enable_command, shell=True)
 
     def enable_modules_i2c(self):
@@ -133,7 +134,7 @@ class PostInstallDependencies(install):
             print "i2c-bcm2708 already enabled"
         else:
             enable_command = "echo 'i2c-bcm2708' | sudo tee -a " + \
-            modules_dir
+                modules_dir
             check_output(enable_command, shell=True)
 
     def is_package_installed(self, package_name):
