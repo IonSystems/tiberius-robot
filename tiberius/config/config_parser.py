@@ -128,6 +128,10 @@ class TiberiusConfigParser():
     def isArmEnabled():
         return TiberiusConfigParser.getParser().getboolean(ROBOT_ARM_SECTION, 'installed')
 
+    @staticmethod
+    def isArmCamEnabled():
+        return TiberiusConfigParser.getParser().getboolean(ROBOT_ARM_SECTION, 'camera')
+
     '''******************************************
         GPS
     ******************************************'''
