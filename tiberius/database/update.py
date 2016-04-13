@@ -121,6 +121,9 @@ def overwrite_ultrasonics_reading(poly, id, data):
 
 
 def overwrite_gps_reading(poly, id, data):
+    '''******************************************
+        GPS
+    ******************************************'''
     poly.update(
         GPSTable.table_name,
         {
@@ -148,6 +151,9 @@ def overwrite_gps_reading(poly, id, data):
 
 
 def overwrite_compass_reading(poly, id, value):
+    '''******************************************
+        Compass
+    ******************************************'''
     poly.update(
         CompassTable.table_name,
         {
@@ -168,6 +174,9 @@ def overwrite_compass_reading(poly, id, value):
 
 
 def overwrite_lidar_reading(poly, id, r_id, data):
+    '''******************************************
+        Lidar
+    ******************************************'''
     poly.update(
         LidarTable.table_name,
         {
