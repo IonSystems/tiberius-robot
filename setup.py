@@ -100,6 +100,7 @@ class PostInstallDependencies(install):
         self.install_if_missing("libffi-dev")
         self.install_if_missing("libi2c-dev")
         self.install_if_missing("i2c-tools")
+        self.install_if_missing("motion")
         self.un_blacklist_i2c()
         self.enable_modules_i2c()
 
