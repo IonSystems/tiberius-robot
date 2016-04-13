@@ -55,19 +55,19 @@
 											<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 											<h4 class="modal-title">Select a Robot</h4>
 										</div>
-										<div class="modal-body">
-											Please select a robot from the drop-down list below:
+										<form action="/control/" method="post">
+											<div class="modal-body">
+												Please select a robot from the drop-down list below:
 
-											<form action="/control/" method="post">
-												{% csrf_token %}
-												{{ form }}
-												<input type="submit" value="Submit" />
+													{% csrf_token %}
+													{{ form }}
+
+											</div>
+											<div class="modal-footer">
+												<input class= "btn btn-sm btn-success" type="submit" value="Submit" />
+											</div>
 										</form>
 
-										</div>
-										<div class="modal-footer">
-											<a href="javascript:;" class="btn btn-sm btn-success">Action</a>
-										</div>
 									</div>
 								</div>
 							</div>

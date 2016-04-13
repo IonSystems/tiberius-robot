@@ -1,4 +1,11 @@
 Tutorials - an introduction
 ===========================
 
-Tiberius the name of a robotics R&D platform developed by J.T Herd is Masters students at Heriot-Watt University.
+Please find the following tutorials useful. Each tutorial is designed to be as unambiguous as possible
+
+Scope
+-----
+
+These tutorials are designed to be read by developers.
+Whether they are part of the Tiberius development team at Heriot-Watt University,
+or an external developer interested in using, extending, forking, or developing the existing software repository.

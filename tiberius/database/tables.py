@@ -24,7 +24,7 @@ class GPSTable(Table):
         'latitude': 'float',
         'longitude': 'float',
         'altitude': 'float',
-        'gls_qual': 'int',
+        'gps_qual': 'int',
         'num_sats': 'int',
         'dilution_of_precision': 'float',
         'velocity': 'float',

@@ -87,7 +87,7 @@ class DatabaseThreadCreator:
                 # We need to put the data in, even if it is all 0's.
                 # This gives a fail safe if a script was only relying on sensor data
                 # and not using data validity
-                ins.insert_ultrasonics_validity(
+                ins.insert_ultrasonics_reading(
                     self.poly,
                     ultrasonic_read_id,
                     ultra_data
@@ -110,12 +110,17 @@ class DatabaseThreadCreator:
         gps_read_id = 0
         no_data_time = 0
         valid = False
+        GPS_NUMBER_OF_READINGS = 10
         while True:
             try:
-                if gps.has_fix():
+                if gps.usable():
                     gps_data = gps.read_gps()
                     if gps_data is not False:
-                        ins.insert_gps_reading(self.poly, gps_read_id, gps_data)
+                        if gps_read_id < GPS_NUMBER_OF_READINGS:
+                            ins.insert_gps_reading(self.poly, gps_read_id, gps_data)
+                        else:  # start updating results
+                            gps_update_id = gps_read_id % GPS_NUMBER_OF_READINGS
+                            up.overwrite_gps_reading(self.poly, gps_update_id, gps_data)
                         if not valid:
                             valid = True
                             up.update_gps_sensor_validity(self.poly, True)
@@ -142,24 +147,32 @@ class DatabaseThreadCreator:
     def compass_thread(self):
         compass = Compass()
         compass_read_id = 0
+        compass_update_id = 0
         valid = False
         previous_values = []
+        COMPASS_NUMBER_OF_READINGS = 10
         while True:
             try:
-                # validate compass data by differentiating (shouldn't change too quickly)
+                # get the compass heading
                 heading = compass.headingNormalized()
                 # TODO: Move validity checks to it's own module.
-                # check if the compass data makes sense - common sense check
 
+                # maintain a short array of previous values
                 previous_values.append(heading)
                 if len(previous_values) >= 10:
                     previous_values.pop(0)
 
+                # ensure the compass heading has not changed too much between readings
                 standard_deviation = np.std(np.diff(np.asarray(previous_values)))
+
                 if standard_deviation > 10:
                     raise Exception('invalid data')
                 else:
-                    ins.insert_compass_reading(self.poly, compass_read_id, heading)
+                    if compass_read_id < COMPASS_NUMBER_OF_READINGS: # store the first 10 results
+                        ins.insert_compass_reading(self.poly, compass_read_id, heading)
+                    else:  # start updating results
+                        compass_update_id = compass_read_id % COMPASS_NUMBER_OF_READINGS
+                        up.overwrite_compass_reading(self.poly, compass_update_id, heading)
                     compass_read_id += 1
 
                 # TODO: Again, something weird is going on here!
@@ -183,10 +196,16 @@ class DatabaseThreadCreator:
         lidar_read_id = 0
         reading_iteration = 0
         l = Lidar()
+        LIDAR_NUMBER_OF_READINGS = 3600
         while True:
             data = l.get_filtered_lidar_data()
+
             for item in data:
-                ins.insert_lidar_reading(self.poly, lidar_read_id, reading_iteration, item)
+                if lidar_read_id < LIDAR_NUMBER_OF_READINGS:
+                    ins.insert_lidar_reading(self.poly, lidar_read_id, reading_iteration, item)
+                else:
+                    lidar_update_id = lidar_read_id % LIDAR_NUMBER_OF_READINGS
+                    up.overwrite_lidar_reading(self.poly, lidar_update_id, reading_iteration, item)
                 lidar_read_id += 1
             reading_iteration += 1
             time.sleep(0.5)
@@ -206,9 +225,9 @@ class DatabaseThreadCreator:
                 print rows
                 for row in rows:
                     print row
-                    #ultrasonics_status = row.ultrasonics
-                    #compass_status = row.compass
-                    #gps_status = row.gps
+                    # ultrasonics_status = row.ultrasonics
+                    # compass_status = row.compass
+                    # gps_status = row.gps
                 diagnostics_leds = {ultrasonics_status, compass_status, gps_status, -1, -1, -1, -1, -1}
                 external_hardware_controller.set_hardware(diagnostics_leds)
 

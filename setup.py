@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 from setuptools import setup
 from setuptools.command.install import install
 from subprocess import check_output, CalledProcessError
@@ -104,8 +103,7 @@ class PostInstallDependencies(install):
 	self.enable_modules_i2c()
 
     def create_lidar_executable(self):
-        check_output("cd ~/git/tiberius-robot/tiberius/autonomy/readlidar", shell=True)
-        check_output("g++ -pthread -lrt rplidar_driver.cpp thread.cpp net_serial.cpp timer.cpp readlidar.cpp -o readlidar", shell=True)
+        binaries = check_output("cd ~/git/tiberius-robot/tiberius/autonomy/readlidar && g++ -pthread -lrt rplidar_driver.cpp thread.cpp net_serial.cpp timer.cpp readlidar.cpp -o readlidar", shell=True)
         print "creating lidar executable"
 
     def install_deps_linux(self):
@@ -336,13 +334,15 @@ setup(name='Tiberius',
       packages=[
           'tiberius',
           'tiberius/control',
-          'tiberius/control/robotic_arm',
+          'tiberius/control/drivers',
           'tiberius/control_api',
           'tiberius/control_api/tasks',
           'tiberius/diagnostics',
           'tiberius/navigation/gps',
+          'tiberius/navigation/path_planning',
           'tiberius/navigation',
           'tiberius/logger',
+          'tiberius/testing',
           'tiberius/database',
           'tiberius/database_wrapper',
           'tiberius/utils',
@@ -355,7 +355,7 @@ setup(name='Tiberius',
           (odbc_directory, ['vendor/polyhedra-driver/odbcinst.ini']),
       ],
       platforms=['Raspberry Pi 2', 'Raspberry Pi 1'],
-      install_requires=requirements
-      #cmdclass={
-      # 'install': PostInstallDependencies},
+      install_requires=requirements,
+      cmdclass={
+       'install': PostInstallDependencies},
       )

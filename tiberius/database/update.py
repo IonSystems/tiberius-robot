@@ -1,3 +1,8 @@
+import time
+from tables import UltrasonicsTable
+from tables import GPSTable
+from tables import CompassTable
+from tables import LidarTable
 from tables import SensorValidityTable
 from tables import UltrasonicsValidityTable
 
@@ -27,14 +32,20 @@ def update_ultrasonics_sensor_validity(poly, valid):
 def update_gps_sensor_validity(poly, value):
     poly.update(
         SensorValidityTable.table_name,
-        {'gps': value}, {'clause': 'WHERE',
-                        'data': [
+        {
+            'gps': value
+        },
+        {
+            'clause': 'WHERE',
+            'data': [
                             {
                                 'column': 'id',
                                 'assertion': '=',
                                 'value': '0'
                             }
-                        ]})
+                        ]
+                    }
+                )
 
 
 def update_ultrasonics_validity(poly, validity):
@@ -79,3 +90,103 @@ def update_compass_sensor_validity(poly, value):
         }
     )
 
+
+def overwrite_ultrasonics_reading(poly, id, data):
+    '''******************************************
+        Ultrasonics
+    ******************************************'''
+    poly.update(
+        SensorValidityTable.table_name,
+        {
+            # 'id': id,
+            'fr': data['fr'],
+            'fc': data['fc'],
+            'fl': data['fl'],
+            'rr': data['rr'],
+            'rc': data['rc'],
+            'rl': data['rl'],
+            'timestamp': time.time()
+        },
+        {
+            'clause': 'WHERE',
+            'data': [
+                {
+                    'column': 'id',
+                    'assertion': '=',
+                    'value': id
+                }
+            ]
+        }
+    )
+
+
+def overwrite_gps_reading(poly, id, data):
+    poly.update(
+        GPSTable.table_name,
+        {
+            # 'id': id,
+            'latitude': data['latitude'],
+            'longitude': data['longitude'],
+            'gps_qual': data['gps_qual'],
+            'num_sats': data['num_sats'],
+            'dilution_of_precision': data['dilution_of_precision'],
+            'velocity': data['velocity'],
+            'fixmode': data['fixmode'],
+            'timestamp': time.time()
+        },
+        {
+            'clause': 'WHERE',
+            'data': [
+                {
+                    'column': 'id',
+                    'assertion': '=',
+                    'value': id
+                }
+            ]
+        }
+    )
+
+
+def overwrite_compass_reading(poly, id, value):
+    poly.update(
+        CompassTable.table_name,
+        {
+            'compass': value,
+            'timestamp': time.time()
+        },
+        {
+            'clause': 'WHERE',
+            'data': [
+                {
+                    'column': 'id',
+                    'assertion': '=',
+                    'value': id
+                }
+            ]
+        }
+    )
+
+
+def overwrite_lidar_reading(poly, id, r_id, data):
+    poly.update(
+        LidarTable.table_name,
+        {
+            # 'id': id,     # no need to update since it will be the same
+            'reading_iteration': r_id,
+            'start_flag': data['start_flag'],
+            'angle': data['theta'],
+            'distance': data['dist'],
+            'quality': data['quality'],
+            'timestamp': time.time()
+        },
+        {
+            'clause': 'WHERE',
+            'data': [
+                {
+                    'column': 'id',
+                    'assertion': '=',
+                    'value': id
+                }
+            ]
+        }
+    )

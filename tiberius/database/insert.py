@@ -44,7 +44,21 @@ def insert_initial_ultrasonics_validity(poly):
     insert(poly, UltrasonicsValidityTable, data)
 
 
-def insert_ultrasonics_validity(poly, id, data):
+def insert_ultrasonics_reading(poly, id, data):
+    poly.insert(
+        UltrasonicsValidityTable.table_name,
+        {
+            'id': id,
+            'fr': data['fr'],
+            'fc': data['fc'],
+            'fl': data['fl'],
+            'rr': data['rr'],
+            'rc': data['rc'],
+            'rl': data['rl'],
+            'timestamp': time.time()})
+
+
+def insert_ultrasonics_reading(poly, id, data):
     poly.insert(
         UltrasonicsTable.table_name,
         {
@@ -65,12 +79,12 @@ def insert_gps_reading(poly, id, data):
             'id': id,
             'latitude': data['latitude'],
             'longitude': data['longitude'],
-            'gls_qual': data['gls_qual'],
+            'gps_qual': data['gps_qual'],
             'num_sats': data['num_sats'],
             'dilution_of_precision': data['dilution_of_precision'],
             'velocity': data['velocity'],
             'fixmode': data['fixmode'],
-            'timestamp': time.time()
+            'timestamp': data['timestamp']
         }
     )
 
