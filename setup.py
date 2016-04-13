@@ -83,11 +83,11 @@ class PostInstallDependencies(install):
             print "Installing on Raspberry Pi."
             self.install_deps_pi()
             self.install_poly_pi()
+            self.create_lidar_executable()
         elif is_linux():
             print "Installing on Linux."
             self.install_deps_linux()
             self.install_poly_linux()
-            self.create_lidar_executable()
         else:
             print 'No suitable operating system detected, terminating install'
             sys.exit()
@@ -296,7 +296,6 @@ class PostInstallDependencies(install):
             # TODO: this should check if these files exist before deleting them
             if os.path.isfile('/etc/odbc.ini'):
                 self.remove_file('/etc/odbc.ini')
-                print "remove files"
             if os.path.isfile('/etc/odbcinst.ini'):
                 self.remove_file('/etc/odbcinst.ini')
         elif "windows" in platform:
