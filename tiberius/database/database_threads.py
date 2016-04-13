@@ -196,17 +196,21 @@ class DatabaseThreadCreator:
         lidar_read_id = 0
         reading_iteration = 0
         l = Lidar()
-        LIDAR_NUMBER_OF_READINGS = 100
+        LIDAR_NUMBER_OF_READINGS = 3600
         while True:
             data = l.get_filtered_lidar_data()
+	    #print "new data received"
             for item in data:
-                if reading_iteration < 5:
+                if lidar_read_id < LIDAR_NUMBER_OF_READINGS:
                     ins.insert_lidar_reading(self.poly, lidar_read_id, reading_iteration, item)
                 else:
                     lidar_update_id = lidar_read_id % LIDAR_NUMBER_OF_READINGS
                     up.overwrite_lidar_reading(self.poly, lidar_update_id, reading_iteration, item)
+		    #print "overwrite called"
                 lidar_read_id += 1
+		#print lidar_read_id 
             reading_iteration += 1
+	    #print reading_iteration
             time.sleep(0.5)
 
     '''******************************************
