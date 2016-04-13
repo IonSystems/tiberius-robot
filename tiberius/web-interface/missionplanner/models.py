@@ -24,6 +24,9 @@ class Waypoint(models.Model):
                 "altitude": str(self.altitude)
                 }
 
+    def natural_key(self):
+        return self.dict()
+
 
 class Task(models.Model):
     task_id = models.IntegerField()
@@ -46,17 +49,19 @@ class Task(models.Model):
                 "supported_platforms": str(self.supported_platforms),
                 }
 
-'''
-    A mission is a collection of MissionAssignments.
-'''
+    def natural_key(self):
+        return self.dict()
 
 
 class Mission(models.Model):
+    '''
+        A mission is a collection of MissionAssignments.
+    '''
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=500, null=True)
 
     # The creator of the mission
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, default = '0')
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, default='0')
 
     # The robot the mision is assigned to
     #robot = models.ForeignKey(Robot, on_delete=models.CASCADE, default = '0')
@@ -75,19 +80,18 @@ class Mission(models.Model):
     def get_absolute_url(self):
         return "/missionplanner/view_mission/%i/" % self.id
 
-'''
-    Assigns waypoints and tasks to missions.
-    Each MissionObjective represensts:
-    - a waypoint
-    - OR a waypoint and a task
-    - OR a task
-
-    This structure can be adapted to suit waypoint defined missions
-    or task defined missions.
-'''
-
 
 class MissionObjective(models.Model):
+    '''
+        Assigns waypoints and tasks to missions.
+        Each MissionObjective represensts:
+        - a waypoint
+        - OR a waypoint and a task
+        - OR a task
+
+        This structure can be adapted to suit waypoint defined missions
+        or task defined missions.
+    '''
     mission = models.ForeignKey(Mission, on_delete=models.CASCADE)
     waypoint = models.ForeignKey(Waypoint, on_delete=models.CASCADE, null=True)
     task = models.ForeignKey(Task, on_delete=models.CASCADE, null=True)

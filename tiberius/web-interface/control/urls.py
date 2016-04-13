@@ -9,4 +9,6 @@ urlpatterns = [
         name='send_control_request'),
     url(r'^send_task_request', views.send_task_request,
         name='send_task_request'),
+    url(r'^send_arm_request', views.send_arm_request,
+        name='send_arm_request'),
 ]
