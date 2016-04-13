@@ -96,9 +96,9 @@ class Algorithms:
         destination[0] = math.asin(math.sin(startlat) * math.cos(distance / r) +
                                    math.cos(startlat) * math.sin(distance / r) * math.cos(bearing))
 
-        destination[1] = startlon + math.atan2(
-            math.sin(bearing) * math.sin(distance / r) * math.cos(startlocation[0], math.cos(distance / r) - math.sin(
-                startlat) * math.sin(destination[0])))
+        x = math.sin(bearing) * math.sin(distance / r) * math.cos(startlocation[0])
+        y = math.cos(distance / r) - math.sin(startlat) * math.sin(destination[0])
+        destination[1] = startlon + math.atan2(x, y)
 
         return destination
 

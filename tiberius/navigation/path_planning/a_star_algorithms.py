@@ -37,18 +37,22 @@ class Astar(object):
     # need to give the grids there lat and long positions.
     def init_grid(self, startlocation, endlocation, bearing):
         walls = self.create_walls()
-        lat = startlocation[0] - 0.00004
-        lon = startlocation[1] - 0.00004
+        # mkae a variable so it relates to the size of the
+        bottom_left_location_lat = math.floor(self.grid_height / 2) * 0.00001
+        bottom_left_location_lon = math.floor(self.grid_width / 2) * 0.00001
+        lat = startlocation[0] - bottom_left_location_lat  # one more than the actual distance as it gets inc'ed first
+        lon = startlocation[1] - bottom_left_location_lon  # one more than the actual distance as it gets inc'ed first
         for x in range(self.grid_width):
-            lon += 1
+            lon += 0.00001
             for y in range(self.grid_height):
                 if (x, y) in walls:
                     reachable = False
                 else:
                     reachable = True
-
+                lat += 0.00001
 
                 self.cells.append(self.cell(x, y, reachable, lat, lon))
+
         self.start = self.get_cell(startlocation[0], startlocation[1])
         self.end = self.get_cell(endlocation[0], endlocation[1])
 
@@ -114,7 +118,7 @@ class Astar(object):
         while cell.parent is not self.start:
             path.append(cell)
             cell = cell.parent
-            print 'path: cell: %d, %d' % (cell.x, cell.y)
+            print 'path: cell: %d, %d, %d. %d' % (cell.x, cell.y, cell.lat, cell.lon)
         return path
 
     def solve(self):
@@ -216,6 +220,8 @@ class Astar(object):
     def run_astar(self, destination):
         # 0 - curlocation, 1 - distance, 2 - bearing, 3 - grid_width,
         # 4 - grid_height, 5 - startlocation, 6 - endlocation
+
+        destination = format(destination, '.5f')
         grid_values = self.get_grid_data(destination)
 
         curlocation = grid_values[0]
@@ -227,6 +233,9 @@ class Astar(object):
         startlocation = grid_values[5]
         endlocation = grid_values[6]
 
+        startlocation = format(startlocation, '.5f')
+        endlocation = format(endlocation, '.5f')
+
         # this is where data is read from the database to fill the grid with non reachable locations
         self.create_walls()
 
@@ -236,6 +245,8 @@ class Astar(object):
         # find a path through the current grid
         self.solve()
         path = self.get_path()
+
+        '''
         points = []
 
         # build points
@@ -245,4 +256,5 @@ class Astar(object):
         self.gps.followPath(points, 50)
 
         # need loop to update and get to end
+        '''
         return

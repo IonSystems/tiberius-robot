@@ -19,4 +19,4 @@ class Cell(object):
         self.h = 0  # the heuristic value of the cell
         self.f = 0  # the final cost of the cell
         self.lat = lat  # the latitude position of the cell
-        self.long = lon  # the longitude position of the cell
+        self.lon = lon  # the longitude position of the cell
