@@ -65,13 +65,14 @@
                     </ul>
                 </div>
 
+
+
 								<div class="btn-group map-btn pull-right">
-                    <button type="button" class="btn btn-sm btn-inverse" id="btn-save-plot">Save Plot</button>
 										<form id ="form-submit" action = "/missionplanner/plotting/{{ mission_id }}/" method="POST">
 											{% csrf_token %}
 											<input id="input-waypoints" type="hidden" name="waypoints" value="" />
 												<input type="hidden" name="mission_id" value="{{mission_id}}" />
-												<input id="btn-submit" type="submit" value="Better Button">
+												<input style="margin-right:1em;" class="btn btn-sm btn-inverse" id="btn-submit" type="submit" value="Save Plot">
 										</form>
 								</div>
             </div>
