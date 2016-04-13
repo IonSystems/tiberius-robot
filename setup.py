@@ -5,6 +5,7 @@ from subprocess import check_output, CalledProcessError
 import os
 import sys
 from optparse import OptionParser
+import os.path
 
 '''*****************************************
         Utility Functions
@@ -292,8 +293,11 @@ class PostInstallDependencies(install):
             # Remove default odbc config files,
             # so that setuptools replaces them
             # TODO: this should check if these files exist before deleting them
-            self.remove_file('/etc/odbc.ini')
-            self.remove_file('/etc/odbcinst.ini')
+            if os.path.isfile('/etc/odbc.ini'):
+                self.remove_file('/etc/odbc.ini')
+                print "remove files"
+            if os.path.isfile('/etc/odbcinst.ini'):
+                self.remove_file('/etc/odbcinst.ini')
         elif "windows" in platform:
             # TODO: pyodbc on windows
             print "ODBC on windows currently not supported, skipping."
