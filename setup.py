@@ -77,13 +77,13 @@ class PostInstallDependencies(install):
     '''
     def run(self):
         if is_windows():
-	    print "Installing on Windows."
+            print "Installing on Windows."
         elif is_pi():
-	    print "Installing on Raspberry Pi."
+            print "Installing on Raspberry Pi."
             self.install_deps_pi()
             self.install_poly_pi()
         elif is_linux():
-	    print "Installing on Linux."
+            print "Installing on Linux."
             self.install_deps_linux()
             self.install_poly_linux()
             self.create_lidar_executable()
@@ -99,8 +99,8 @@ class PostInstallDependencies(install):
         self.install_if_missing("libffi-dev")
         self.install_if_missing("libi2c-dev")
         self.install_if_missing("i2c-tools")
-	self.un_blacklist_i2c()
-	self.enable_modules_i2c()
+    self.un_blacklist_i2c()
+    self.enable_modules_i2c()
 
     def create_lidar_executable(self):
         binaries = check_output("cd ~/git/tiberius-robot/tiberius/autonomy/readlidar && g++ -pthread -lrt rplidar_driver.cpp thread.cpp net_serial.cpp timer.cpp readlidar.cpp -o readlidar", shell=True)
@@ -293,6 +293,7 @@ class PostInstallDependencies(install):
 
             # Remove default odbc config files,
             # so that setuptools replaces them
+            # TODO: this should check if these files exist before deleting them
             self.remove_file('/etc/odbc.ini')
             self.remove_file('/etc/odbcinst.ini')
         elif "windows" in platform:
