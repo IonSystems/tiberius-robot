@@ -123,3 +123,18 @@ class UltrasonicsValidityTable(Table):
         'rl': 'bool',
         'timestamp': 'float'
     }
+
+class GridTable(Table):
+    table_name = "grid_table"
+    columns = {
+        'id': 'int primary key',
+        'row': 'int',
+        'column': 'int',
+        'lat': 'float',
+        'lon': 'float',
+        'cost': 'int',
+        'heuristic': 'int',
+        'final': 'int',
+        'parent': 'int primary key',
+        'timestamp': 'float'
+    }
