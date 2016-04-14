@@ -16,9 +16,10 @@ namespace Microsoft.Samples.Kinect.DepthBasics
     using System.Windows.Media.Imaging;
     using Microsoft.Kinect;
     using System.Collections.Generic;
-    /// <summary>
-    /// Interaction logic for MainWindow
-    /// </summary>
+    using System.Drawing.Imaging;
+    using System.Drawing;/// <summary>
+                         /// Interaction logic for MainWindow
+                         /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         /// <summary>
@@ -31,7 +32,7 @@ namespace Microsoft.Samples.Kinect.DepthBasics
         private ushort[][][,] chunks = new ushort[ChunkSize][][,];
         private long[,] chunkMean = new long[ChunkSize, ChunkSize];
         private double[,] chunkStandardDeviation = new double[ChunkSize, ChunkSize];
-
+        private int counter = 0;
         /// <summary>
         /// Active Kinect sensor
         /// </summary>
@@ -344,7 +345,7 @@ namespace Microsoft.Samples.Kinect.DepthBasics
                 counter -= scale * scale;
                 counter += scale * ChunkSize * scale;
             }
-
+            SaveImage();
         }
 
         private unsafe void ExtractData(int counter, int gridRow, int gridColumn)
@@ -452,6 +453,98 @@ namespace Microsoft.Samples.Kinect.DepthBasics
 
 
 
+        }
+
+        private Bitmap BitmapFromWriteableBitmap(WriteableBitmap writeBmp)
+        {
+            System.Drawing.Bitmap bmp;
+            using (MemoryStream outStream = new MemoryStream())
+            {
+                BitmapEncoder enc = new BmpBitmapEncoder();
+                enc.Frames.Add(BitmapFrame.Create(writeBmp));
+                enc.Save(outStream);
+                System.Drawing.Size size = new System.Drawing.Size(360, 360);
+                bmp = new Bitmap(outStream);
+                bmp = new Bitmap(bmp, size);
+                outStream.Close();
+            }
+            return bmp;
+        }
+        private static ImageCodecInfo GetEncoderInfo(String mimeType)
+        {
+            int j;
+            ImageCodecInfo[] encoders;
+            encoders = ImageCodecInfo.GetImageEncoders();
+            for (j = 0; j < encoders.Length; ++j)
+            {
+                if (encoders[j].MimeType == mimeType)
+                    return encoders[j];
+            }
+            return null;
+        }
+        private void SaveImage()
+        {
+
+            if (this.depthBitmap != null && counter++ > 2)
+            {
+                counter = 0;
+
+
+
+                ImageCodecInfo myImageCodecInfo;
+                Encoder myEncoder;
+                EncoderParameter myEncoderParameter;
+                EncoderParameters myEncoderParameters;
+
+                // Create a Bitmap object based on a BMP file.
+
+
+                // Get an ImageCodecInfo object that represents the JPEG codec.
+                myImageCodecInfo = GetEncoderInfo("image/jpeg");
+
+                // Create an Encoder object based on the GUID
+
+                // for the Quality parameter category.
+                myEncoder = Encoder.Quality;
+
+                // Create an EncoderParameters object.
+
+                // An EncoderParameters object has an array of EncoderParameter
+
+                // objects. In this case, there is only one
+
+                // EncoderParameter object in the array.
+                myEncoderParameters = new EncoderParameters(1);
+
+                // Save the bitmap as a JPEG file with quality level 25.
+                myEncoderParameter = new EncoderParameter(myEncoder, 25L);
+                myEncoderParameters.Param[0] = myEncoderParameter;
+
+
+
+
+
+
+
+                Bitmap bitmap = BitmapFromWriteableBitmap(this.depthBitmap);
+                bitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
+
+
+
+
+                string path = "C:\\inetpub\\wwwroot\\colour.jpg";
+
+                // write the new file to disk
+                try
+                {
+                    bitmap.Save(path, myImageCodecInfo, myEncoderParameters);
+                    this.StatusText = string.Format(Properties.Resources.SavedScreenshotStatusTextFormat, path);
+                }
+                catch (IOException)
+                {
+                    this.StatusText = string.Format(Properties.Resources.FailedScreenshotStatusTextFormat, path);
+                }
+            }
         }
     }
 }
