@@ -3,6 +3,7 @@
 
 <head>
 <link rel="stylesheet" href="grid.css">
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 </head>
 
 <body>
@@ -12,52 +13,118 @@
 </table>
 
 <script> 
-//create a function which takes the heuristics from 
-//the database to create a corresponding hsla colour
-//code from it to use in the gui to colour each cell differently.
-//0 to 130 is from red to green.
+var img0 = document.createElement("tiberius");
+var img1 = document.createElement("noEntry");
+var img2 = document.createElement("wall");
+var img3 = document.createElement("tree");
+img0.src = "/tiberius.png";
+img1.src = "noEntry.png";
+img2.src = "wall.png";
+img3.src = "tree.png";
+
+document.body.appendChild(img0);
+
 function getColours(Heuristic){
 return (120 * Heuristic);
 }
 
-function createCell(row, i, j, rows){
+function createArray(length) {
+    var arr = new Array(length || 0),
+        i = length;
+
+    if (arguments.length > 1) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        while(i--) arr[length-1 - i] = createArray.apply(this, args);
+    }
+
+    return arr;
+}
+
+function createCell(row, i, j, rows, cols){
 	var cell = row.insertCell(j);
-	cell.innerHTML = "(" + (rows-i-1) + ","+ (j-1) + ")<br>";
-	cell.style.backgroundColor = "hsla(" + getColours(Math.random())+ ", 100%, 50%, 1)";
+	if (i == 4 && j == 5){
+		cell.innerHTML = "<img \"img0\">";
+		//cell.appendChild(img0);
+	}
+	else if ( i == rows && j == 0){
+		cell.innerHTML = "";
+		cell.style.backgroundColor = "white";
+		cell.style.border = "thin solid white";
+	}
+	else if(i == rows){
+		cell.innerHTML = ""+(j-1);
+		cell.style.backgroundColor = "white";
+		cell.style.border = "thin solid white";
+	}
+	else if(j == 0){
+		cell.innerHTML = ""+(rows - i-1);
+		cell.style.backgroundColor = "white";
+		cell.style.border = "thin solid white";
+	}
+	else{
+		cell.innerHTML = "(" + (rows-i-1) + ","+ (j-1) + ")<br>";
+		cell.style.backgroundColor = "hsla(" + getColours(Math.random())+ ", 100%, 50%, 1)";
+		cell.style.border = "2px solid black";
+	}
 	return cell;
 }
 
-function getLatLong(cell){
-	lat = (Math.random()*360).toFixed(5);
-	lon = (Math.random()*100).toFixed(5);
-	this.innerHTML = "<h1> Lat.: " + lat + "<br></h1>";
-	this.innerHTML += "<h1> Long.: " + lon + "<br></h1>";
+function getLatLong(i, j){
+	var latLong = [];
+	latLong.push((Math.random()*360).toFixed(5));
+	latLong.push((Math.random()*100).toFixed(5));
+	return latLong;
 }
 
-
-function hideLongLat(){
-	
+function showLongLat(row, col, cell){
+		cell.html("<h1> Lat.: " + cellData[row][col][0] + "<br></h1>"+
+		"<h1> Long.: " + cellData[row][col][1] + "<br></h1>");
 }
+
+function hideLongLat(row, col, cell){
+	cell.html(cellPositionData[row][col]);
+}
+var cellData;
+var cellPositionData;
 
 function createGrid(name, rows, cols, data, heuristic) {
+	cellData = createArray(rows,cols);
+	cellPositionData = createArray(rows,cols);
     var table = document.getElementById(name);
 	var lat, lon;			//latitude and longitude data
-    var cellData = [];		//dictionary to store values
+    		//dictionary to store values
 	for (i = 0; i < rows+1; i++){
 		var row = table.insertRow(i);
 		for (j=0; j < cols+1; j++){
-			cell = createCell(row, i, j, rows);
-			cell.onmouseover = getLatLong(cell);
-		}	
-	}													
+			cell = createCell(row, i, j, rows, cols);	
+			if(i < rows && j > 0){
+				latLong = getLatLong(i,j);
+				cellData[i][j] = latLong;
+				cellPositionData[i][j] = cell.innerHTML;
+			}
+			cell.id = i + "," + j;
+		}													
+	}
 }
 
-createGrid("table", 4, 4, "data", 1)
+createGrid("table", 9,9, "data", 1)
+$(function(){
+    $("#table tr td").mouseenter(function(event) {
+		var position = $(this).attr('id').split(",");
+		var row = position[0];
+		var col = position[1];
+        showLongLat(row, col, $(this));
+    });
+});
 
-function changeCellData(i, j, cell){
-	
-}
-
+$(function(){
+    $("#table tr td").mouseleave(function(event) {
+		var position = $(this).attr('id').split(",");
+		var row = position[0];
+		var col = position[1];
+        hideLongLat(row, col, $(this));
+    });
+});
 			
 </script>
 </body>
