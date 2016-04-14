@@ -245,16 +245,14 @@ class Astar(object):
         # find a path through the current grid
         self.solve()
         path = self.get_path()
-
-        '''
         points = []
 
         # build points
         for i in range(0, len(path), 1):
-            points.append([path[i].lat, path[i].long])
+            points.append([path[i].lat, path[i].lon])
 
         self.gps.followPath(points, 50)
 
         # need loop to update and get to end
-        '''
+
         return
