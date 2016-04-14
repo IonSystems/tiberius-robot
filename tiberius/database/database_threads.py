@@ -9,7 +9,7 @@ import insert as ins
 import query as q
 
 from tiberius.config.config_parser import TiberiusConfigParser
-from polyhedra_database import PolyhedraDatabase
+from tiberius.database_wrapper.polyhedra_database import PolyhedraDatabase
 from tables import UltrasonicsTable
 from tables import GPSTable
 from tables import CompassTable

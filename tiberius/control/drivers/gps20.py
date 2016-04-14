@@ -154,6 +154,9 @@ class GlobalPositioningSystem:
         :return: True if a sentence is parsed succesfully, False otherwise.
         '''
         if "GPGGA" in data:
+            if(self.debug):
+                self.logger.debug("Lat:" + str(self.__gpgga.latitude))
+                self.logger.debug("Lng:" + str(self.__gpgga.longitude))
             data = self.__gpgga.parse(data)
             self.__latitude = self.__parse_lat(self.__gpgga.latitude)
             self.__longitude = self.__parse_long(self.__gpgga.longitude)
@@ -174,8 +177,10 @@ class GlobalPositioningSystem:
 
         elif "GPRMC" in data:
             data = self.__gprmc.parse(data)
-            self.__latitude = self.__parse_lat(self.__gprmc.lat)
-            self.__longitude = self.__parse_long(self.__gprmc.lon)
+            if hasattr(self.__gprmc, 'lat'):
+                self.__latitude = self.__parse_lat(self.__gprmc.lat)
+            if hasattr(self.__gprmc, 'lon'):
+                self.__longitude = self.__parse_long(self.__gprmc.lon)
             # We NEED to set fixmode
             if self.__gprmc.data_validity == 'A':
                 self.__fixmode = 1
@@ -189,14 +194,24 @@ class GlobalPositioningSystem:
         '''
         Convert the NMEA string into a valid floating point representation.
         '''
-        longitude = float(longitude[3:])/60+float(longitude[:3])
+        if self.debug:
+            self.logger.debug("Converting " + str(longitude) + " to long.")
+        try:
+            longitude = float(longitude[3:])/60+float(longitude[:3])
+        except ValueError:
+            return -1
         return longitude
 
     def __parse_lat(self, latitude):
         '''
         Convert the NMEA string into a valid floating point representation.
         '''
-        latitude = float(latitude[2:])/60+float(latitude[:2])
+        if self.debug:
+            self.logger.debug("Converting " + str(latitude) + " to lat.")
+        try:
+            latitude = float(latitude[2:])/60+float(latitude[:2])
+        except ValueError:
+            return -1
         return latitude
 
 # For testing
