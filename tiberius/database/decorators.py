@@ -14,6 +14,8 @@ db = PolyhedraDatabase("decorator_instance")
 # so we need to keep track of the key explicitly
 arm_read_id = 0
 motor_read_id = 0
+grid_read_id = 0
+
 
 def database_arm_update(func):
 
@@ -45,6 +47,7 @@ def database_arm_update(func):
         arm_read_id += 1
     return func_wrapper
 
+
 def database_motor_update(func):
 
     '''
@@ -72,6 +75,7 @@ def database_motor_update(func):
             rear_right = args[3]
         else:
             # Get speeds using motor state and self
+            # could be cleaned down
             if self.state == MotorState.FORWARD:
                 front_left = self.speed
                 rear_left = self.speed
@@ -108,4 +112,38 @@ def database_motor_update(func):
             'timestamp' : time.time()
         })
         motor_read_id += 1
+    return func_wrapper
+
+
+def database_grid_update(func):
+
+    '''
+        After each grid  function call,
+        ensure that the grid positions are stored
+        in the database.
+    '''
+    global grid_read_id
+
+    def func_wrapper(self, change, angle=None):
+        global grid_read_id
+        # Call the originating function first,
+        # so that the instance fields are up to date.
+        result = func(self, change, angle=None)
+
+        # Update the database with values from self
+        # TODO add iteration id, so each grid is on the same ID
+        for cell in self.cells:
+            db.insert(GridTable.table_name, {
+                'id': grid_read_id,
+                'row': cell.x,
+                'column': cell.y,
+                'lat': cell.lat,
+                'lon': cell.lon,
+                'cost': cell.cost,
+                'heuristic': cell.heuristic,
+                'final': cell.final,
+                'parent': cell.parent,
+                'timestamp': time.timestamp()
+            })
+            grid_read_id += 1
     return func_wrapper

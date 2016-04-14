@@ -24,7 +24,6 @@ if TiberiusConfigParser.isArmEnabled():
             'basket': __config.getArmBasketParams(),
         }
 
-
         # Store current posisions of each joints
         waist_angle = 0
         shoulder_angle = 0
