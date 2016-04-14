@@ -9,6 +9,7 @@
 <h2>Table</h2>
 </table>
 
+<td onmouseover="showText(this)" onmouseout="hideText(this)">
 <script> 
 //create a function which takes the heuristics from 
 //the database to create a corresponding hsla colour
@@ -17,10 +18,17 @@
 function getColours(Heuristic){
 return (120 * Heuristic);
 }
+var dataValues = [81] 
+for (k = 0; k < dataValues.size; k++){
+	dataValues[k] = Math.Random();
+}
 
 function createGrid(name, rows, cols, data, heuristic) {
     var table = document.getElementById(name);
     
+function createLat(a, b){
+	return Math.random()*100*(a+b);
+}
 	for (i = 0; i < rows; i++){
 		var row = table.insertRow(i);
 		for (j=0; j < cols; j++){
@@ -30,7 +38,7 @@ function createGrid(name, rows, cols, data, heuristic) {
 			cell.innerHTML = "(" + (rows-i-1) + ","+ j + ")<br>";
 			cell.style.backgroundColor = "hsla(" + getColours(Math.random())+ ", 100%, 50%, 1)";
 			cell.onmouseover = function (){
-				this.innerHTML = "<h1> Lat.: " + lat + "<br></h1>";
+				this.innerHTML = "<h1> Lat.: " + createLat(i,j) + "<br></h1>";
 				this.innerHTML += "<h1> Long.: " + lon + "<br></h1>";
 			}
 			cell.onmouseout = function (){
@@ -41,6 +49,14 @@ function createGrid(name, rows, cols, data, heuristic) {
 }
 createGrid("table", 9, 9, "data", 1)
 
+function showText(){
+	this.innerHTML = "<h1> Lat.: " + lat + "<br></h1>";
+	this.innerHTML += "<h1> Long.: " + lon + "<br></h1>";
+}
+
+function hideText(){
+	this.innerHTML = "(" + (rows-i-1) + ","+ j + ")<br>";
+}
 </script>
 
 
