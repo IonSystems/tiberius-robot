@@ -321,6 +321,7 @@ else:
     # Parameters for Linux-based operating systems
     data_directory = '/etc/tiberius'
     odbc_directory = '/etc'
+    motion_directory = '/etc/motion'
     requirements = ['enum34',
                     'autopep8',
                     'pynmea',
@@ -359,6 +360,8 @@ setup(name='Tiberius',
           (data_directory, ['tiberius/smbus_dummy/smbus_database.db']),
           (odbc_directory, ['vendor/polyhedra-driver/odbc.ini']),
           (odbc_directory, ['vendor/polyhedra-driver/odbcinst.ini']),
+          (odbc_directory, ['vendor/polyhedra-driver/odbcinst.ini']),
+          (motion_directory, ['vendor/motion.conf']),     
       ],
       platforms=['Raspberry Pi 2', 'Raspberry Pi 1'],
       install_requires=requirements,
