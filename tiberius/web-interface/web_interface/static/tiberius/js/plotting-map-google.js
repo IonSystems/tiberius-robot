@@ -8,9 +8,52 @@ Website: http://www.seantheme.com/color-admin-v1.9/admin/
 // An array of MarkerStorage objects, representing each marker
 // and it's related tasks
 var marker_storage = [];
+var task_list = [];
 
 function getWaypoints(){
 	return JSON.stringify(marker_storage);
+}
+
+function updateWaypointTree(waypoints){
+	waypoints = JSON.parse(waypoints);
+	var html = "<ul>";
+	for(var i = 0; i < waypoints.length; i++) {
+		var waypoint = waypoints[i];
+		var pt_name = "Waypoint " + (i+1);
+		//Each item in array is a waypoint, so add a element to the waypoint list
+		html += "<li data-jstree='{\x22opened\x22:true, \x22icon\x22 : \x22fa fa-map-marker fa-lg text-primary\x22}' >"
+		+ pt_name + "</li>";
+		if (waypoint['tasks'].length > 0) html += "<ul>";
+		for(var j = 0; j < waypoint['tasks'].length; j++){
+			var task_id = waypoint['tasks'][j];
+			//var task = json_tasks[task_id];
+			var task_name = task_list[task_id].name;
+			html += "<li data-jstree='{\x22opened\x22:true, \x22selected\x22:true, \x22icon\x22 : \x22fa fa-tasks fa-lg text-inverse\x22 }'>"
+			+ task_name + "</li>";
+		}
+		if (waypoint['tasks'].length > 0) html += "</ul>";
+		console.log(waypoint);
+		handleJstreeDefault();
+	}
+	html += "</ul>";
+	document.getElementById('jstree-default').innerHTML = html;
+
+	$('#jstree-default').jstree({
+			"core": {
+					"themes": {
+							"responsive": false
+					}
+			},
+			"types": {
+					"default": {
+							"icon": "fa fa-folder text-warning fa-lg"
+					},
+					"file": {
+							"icon": "fa fa-file text-inverse fa-lg"
+					}
+			},
+			"plugins": ["types"]
+	});
 }
 
 function onTaskFormSubmit(form){
@@ -22,7 +65,9 @@ function onTaskFormSubmit(form){
 	marker_storage[marker_index].addTask(task_id);
 
 	// Update our
-	document.getElementById("input-waypoints").value = getWaypoints();
+	var waypoints = getWaypoints();
+	document.getElementById("input-waypoints").value = waypoints;
+	updateWaypointTree(waypoints);
 
 	// Always return false to prevent page reload after form submit
 	return false;
@@ -50,6 +95,7 @@ var handleGoogleMapSetting = function(mission_id, json_tasks) {
 
 	function onTaskAdd(task_id, marker_index){
 		marker_storage[marker_index].addTask(task_id);
+
 	}
 
 	function MarkerStorage(id, latLng, distance){
@@ -83,6 +129,8 @@ var handleGoogleMapSetting = function(mission_id, json_tasks) {
 
 
 	}
+
+
 
 	function addLatLng(event) {
 	  var path = poly.getPath();
@@ -133,21 +181,6 @@ var handleGoogleMapSetting = function(mission_id, json_tasks) {
 		      content: contentwindow
 		  });
 
-			// google.maps.event.addListener(infowindow, 'click', function(){
-	    //    alert("infi ");
-	    //  });
-
-			// $('button#btn-add-task-' + path.getLength()).submit(function(e){
-			// 	alert("Clicked;");
-			// 	var task_id = $('.sel-add-task').value();
-			// 	var marker_index =
-			// 	onTaskAdd(task_id, marker_index);
-			// });
-
-		// document.getElementById(button_id).addEventListener("click", function(){
-		// 	alert("hahsh");
-		// });
-
 
 		google.maps.event.addListener(marker, 'click', function(){
        infowindow.open(map, marker);
@@ -158,10 +191,10 @@ var handleGoogleMapSetting = function(mission_id, json_tasks) {
 		 // marker_store.addTask(0);
  		marker_storage.push(marker_store);
 		//document.forms[0].elements["waypoints"].value = marker_storage;
-		document.getElementById("input-waypoints").value = getWaypoints();
+		var waypoints = getWaypoints()
+		document.getElementById("input-waypoints").value = waypoints;
+		updateWaypointTree(waypoints);
 	}
-
-
 
 	google.maps.event.addDomListener(window, 'load', initialize);
 
@@ -225,6 +258,7 @@ var PlottingGoogleMap = function (mission_id, json_tasks) {
         //main function
         init: function (mission_id, json_tasks) {
             handleGoogleMapSetting(mission_id, json_tasks);
+						task_list = json_tasks;
         }
     };
 }();
