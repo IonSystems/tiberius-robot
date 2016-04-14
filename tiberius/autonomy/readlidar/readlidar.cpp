@@ -74,10 +74,10 @@ int main(int argc, const char * argv[]) {
         _u32 opt_com_baudrate = 115200;
         u_result op_result;
 
-//#############
-        std::ofstream outfile;
-        outfile.open("/home/pi/git/tiberius-robot/tiberius/autonomy/lidardata.csv");
-        int a=0;
+//############# old code to write to csv file that is not used now
+         std::ofstream outfile;
+         outfile.open("/home/pi/git/tiberius-robot/tiberius/autonomy/lidardata.csv");
+         int a=0;
 
 //############
 
