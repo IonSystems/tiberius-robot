@@ -1,6 +1,6 @@
  td{
-  height: 5em;
-  width: 5em;
+  height: 4em;
+  width: 4em;
   float: center;
   background-color: yellowgreen;
   text-align: center;
@@ -8,8 +8,13 @@
 
 element{
 	text-align: center;
+	font-size: 100%;
 }
 
 element: hover{
 	
+}
+
+h1{
+	font-size: 50%;
 }

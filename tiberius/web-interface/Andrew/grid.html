@@ -1,13 +1,10 @@
 <!DOCTYPE=html>
 <html>
 <head>
-
 <link rel="stylesheet" href="grid.css">
-<!--
--->
+
 </head>
 <body>
-
 <table border=1 style="border-collapse: collapse;" id="table">
 <h2>Table</h2>
 </table>
@@ -21,22 +18,28 @@ function getColours(Heuristic){
 return (120 * Heuristic);
 }
 
-function myFunction(name, rows, cols, data, heuristic) {
+function createGrid(name, rows, cols, data, heuristic) {
     var table = document.getElementById(name);
     
 	for (i = 0; i < rows; i++){
 		var row = table.insertRow(i);
 		for (j=0; j < cols; j++){
 			var cell = row.insertCell(j);
-			cell.innerHTML = "(" + (8-i) + ","+ j + ")<br>";
-			//cell.onfocus)
-			cell.innerHTML += " Longitude: <br>" + data;
-			cell.innerHTML += " Latitude: <br>" + data;
-			cell.style.backgroundColor = "hsla(" + getColours(heuristic)+ ", 100%, 50%, 1)";
+			var lat = (Math.random()*360).toFixed(5);
+			var lon = (Math.random()*100).toFixed(5);
+			cell.innerHTML = "(" + (rows-i-1) + ","+ j + ")<br>";
+			cell.style.backgroundColor = "hsla(" + getColours(Math.random())+ ", 100%, 50%, 1)";
+			cell.onmouseover = function (){
+				this.innerHTML = "<h1> Lat.: " + lat + "<br></h1>";
+				this.innerHTML += "<h1> Long.: " + lon + "<br></h1>";
+			}
+			cell.onmouseout = function (){
+				this.innerHTML = "(" + (rows-i-1) + ","+ j + ")<br>";
+			}
 		}
 	}
 }
-myFunction("table", 9, 9, "data", 1)
+createGrid("table", 9, 9, "data", 1)
 
 </script>
 
