@@ -5,6 +5,8 @@ from subprocess import check_output, CalledProcessError
 import os
 import sys
 from optparse import OptionParser
+import os.path
+from subprocess import Popen, PIPE
 
 '''*****************************************
         Utility Functions
@@ -82,11 +84,11 @@ class PostInstallDependencies(install):
             print "Installing on Raspberry Pi."
             self.install_deps_pi()
             self.install_poly_pi()
+            self.create_lidar_executable()
         elif is_linux():
             print "Installing on Linux."
             self.install_deps_linux()
             self.install_poly_linux()
-            self.create_lidar_executable()
         else:
             print 'No suitable operating system detected, terminating install'
             sys.exit()
@@ -99,11 +101,14 @@ class PostInstallDependencies(install):
         self.install_if_missing("libffi-dev")
         self.install_if_missing("libi2c-dev")
         self.install_if_missing("i2c-tools")
+        self.install_if_missing("motion")
         self.un_blacklist_i2c()
         self.enable_modules_i2c()
 
     def create_lidar_executable(self):
-        binaries = check_output("cd ~/git/tiberius-robot/tiberius/autonomy/readlidar && g++ -pthread -lrt rplidar_driver.cpp thread.cpp net_serial.cpp timer.cpp readlidar.cpp -o readlidar", shell=True)
+        binary = Popen("cd /home/pi/git/tiberius-robot/tiberius/autonomy/readlidar \
+            && g++ -pthread -lrt rplidar_driver.cpp thread.cpp net_serial.cpp \
+            timer.cpp readlidar.cpp -o readlidar", shell=True)
         print "creating lidar executable"
 
     def install_deps_linux(self):
@@ -292,8 +297,10 @@ class PostInstallDependencies(install):
             # Remove default odbc config files,
             # so that setuptools replaces them
             # TODO: this should check if these files exist before deleting them
-            self.remove_file('/etc/odbc.ini')
-            self.remove_file('/etc/odbcinst.ini')
+            if os.path.isfile('/etc/odbc.ini'):
+                self.remove_file('/etc/odbc.ini')
+            if os.path.isfile('/etc/odbcinst.ini'):
+                self.remove_file('/etc/odbcinst.ini')
         elif "windows" in platform:
             # TODO: pyodbc on windows
             print "ODBC on windows currently not supported, skipping."
