@@ -16,7 +16,6 @@ from tiberius.navigation.gps.algorithms import Algorithms
 
 class Astar(object):
     def __init__(self):
-        self.cell = Cell()
         self.gps = Algorithms()
         self.opened = []
         heapq.heapfiy(self.opened)
@@ -51,7 +50,7 @@ class Astar(object):
                     reachable = True
                 lat += 0.00001
 
-                self.cells.append(self.cell(x, y, reachable, lat, lon))
+                self.cells.append(Cell(x, y, reachable, lat, lon))
 
         self.start = self.get_cell(startlocation[0], startlocation[1])
         self.end = self.get_cell(endlocation[0], endlocation[1])
@@ -253,6 +252,15 @@ class Astar(object):
 
         self.gps.followPath(points, 50)
 
-        # need loop to update and get to end
+        # get the new current location after following the path
+        curlocation = format(self.gps.getLocation(), '.5f')
 
+        # check if the destination has been reached.
+        if curlocation != destination:
+            print 'Current location is : {0}.\nRe-running A-Star to get to Destination : {1}'.format(str(curlocation),
+                                                                                                  str(destination))
+            self.run_astar(destination)
+
+        print 'A-Star complete, with current location : {0}.\nThe given destination was : {1}'.format(str(curlocation),
+                                                                                                  str(destination))
         return

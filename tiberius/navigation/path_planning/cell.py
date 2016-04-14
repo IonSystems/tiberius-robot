@@ -2,6 +2,8 @@
 cell object that is used to create the grid for the A* algorithm.
 
 '''
+
+
 class Cell(object):
     def __init__(self, x, y, reachable, lat, lon):
         '''
