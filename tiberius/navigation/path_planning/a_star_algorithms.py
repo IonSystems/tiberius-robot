@@ -110,7 +110,7 @@ class Astar(object):
         while cell.parent is not self.start:
             path.append(cell)
             cell = cell.parent
-            print 'path: cell: %d, %d' % (cell.x,cell.y)
+            print 'path: cell: %d, %d' % (cell.x, cell.y)
         return path
 
     def solve(self):

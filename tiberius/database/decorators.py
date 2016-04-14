@@ -124,11 +124,11 @@ def database_grid_update(func):
     '''
     global grid_read_id
 
-    def func_wrapper(self, change, angle=None):
+    def func_wrapper(self, *args, **kwargs):
         global grid_read_id
         # Call the originating function first,
         # so that the instance fields are up to date.
-        result = func(self, change, angle=None)
+        result = func(self, *args, **kwargs)
 
         # Update the database with values from self
         # TODO add iteration id, so each grid is on the same ID
