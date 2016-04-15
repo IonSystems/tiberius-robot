@@ -44,7 +44,7 @@ def insert_initial_ultrasonics_validity(poly):
     insert(poly, UltrasonicsValidityTable, data)
 
 
-def insert_ultrasonics_validity(poly, id, data):
+def insert_ultrasonics_reading(poly, id, data):
     poly.insert(
         UltrasonicsValidityTable.table_name,
         {
@@ -110,6 +110,23 @@ def insert_lidar_reading(poly, id, r_id, data):
             'angle': data['theta'],
             'distance': data['dist'],
             'quality': data['quality'],
+            'timestamp': time.time()
+        }
+    )
+
+def insert_grid_reading(poly, id, data):
+    poly.insert(
+        LidarTable.table_name,
+        {
+            'id': 'int primary key',
+            'row': 'int',
+            'column': 'int',
+            'lat': 'float',
+            'lon': 'float',
+            'cost': 'int',
+            'heuristic': 'int',
+            'final': 'int',
+            'parent': 'int primary key',
             'timestamp': time.time()
         }
     )

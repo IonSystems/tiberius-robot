@@ -81,12 +81,15 @@ if TiberiusConfigParser.isLidarEnabled():
     time.sleep(3)
 if TiberiusConfigParser.areDiagnosticsEnabled():
     diagnostics = Process(target=c.diagnostics_thread()).start()
-    print "diagnostics thread started"
+    print "diagnostics thread stasrted"
     time.sleep(3)
 
+if TiberiusConfigParser.isArmCamEnabled():
+    arm_camera_start = check_output("sudo service motion", shell=True)
+
 # Start the control API
-#server = Popen("python tiberius/control_api/api.py", shell=True)
-#print "Control API started"
+# server = Popen("python tiberius/control_api/api.py", shell=True)
+# print "Control API started"
 
 if action == Action.WEB_SERVER:
     server = Popen("python tiberius/web-interface/manage.py runserver", shell=True)
