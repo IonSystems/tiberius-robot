@@ -14,27 +14,34 @@ from tiberius.navigation.path_planning.cell import Cell
 from tiberius.navigation.gps.algorithms import Algorithms
 
 
-class Astar(object):
-    def __init__(self):
-        self.gps = Algorithms()
+class Astar:
+    def __init__(self, control):
+        self.control = control
+        self.gps = Algorithms(self.control)
         self.opened = []
-        heapq.heapfiy(self.opened)
+        heapq.heapify(self.opened)
         self.closed = set()
         self.cells = []
+        self.walls = []
         self.grid_height = 9  # size of the y-axis
         self.grid_width = 9  # size of the x-axis
 
     def create_walls(self):
+        '''
         walls = ((0, 5), (1, 0), (1, 1), (1, 5), (2, 3),  # This is a test array should be filled from sensor data
                  (3, 1), (3, 2), (3, 5), (4, 1), (4, 4), (5, 1))
-        '''
+
         this should be filled with database requests for all information about the grid area.
         then any obstacles should be added the the walls array
         '''
-        return walls
+
+        self.walls = [Wall(0, 5, 5), Wall(1, 0, 5), Wall(1, 1, 5), Wall(1, 5, 5), Wall(2, 3, 5), Wall(3, 1, 5),
+                 Wall(3, 2, 5), Wall(3, 5, 5), Wall(4, 1, 5), Wall(4, 4, 5), Wall(5, 1, 5)]
+
+        return self.walls
 
     # need to give the grids there lat and long positions.
-    def init_grid(self, startlocation, endlocation, bearing):
+    def init_grid(self, startlocation, endlocation):
         walls = self.create_walls()
         # mkae a variable so it relates to the size of the
         bottom_left_location_lat = math.floor(self.grid_height / 2) * 0.00001
@@ -44,10 +51,11 @@ class Astar(object):
         for x in range(self.grid_width):
             lon += 0.00001
             for y in range(self.grid_height):
-                if (x, y) in walls:
-                    reachable = False
+                wall = self.find_wall(x, y)
+                if isinstance(wall, Wall):
+                    reachable = wall.accessibility
                 else:
-                    reachable = True
+                    reachable = 1
                 lat += 0.00001
 
                 self.cells.append(Cell(x, y, reachable, lat, lon))
@@ -64,6 +72,12 @@ class Astar(object):
         :return heuristic value:
         '''
         return 10 * (abs(cell.x - self.end.x) + abs(cell.y - self.end.y))
+
+    def find_wall(self, x, y):
+        for wall in self.walls:
+            if wall.x == x and wall.y == y:
+                return wall
+        return False
 
     def get_cell(self, x, y):
         '''
@@ -106,7 +120,7 @@ class Astar(object):
         @param adj adjacent cell to current cell
         @param cell current cell being processed
         """
-        adj.g = cell.g + 10
+        adj.g = (cell.g + 10) * cell.reachable  # this is iffy but will see what happens
         adj.h = self.get_heuristic(adj)
         adj.parent = cell
         adj.f = adj.h + adj.g
@@ -137,7 +151,7 @@ class Astar(object):
             # get adjacent cells for cell
             adj_cells = self.get_adjacent_cells(cell)
             for adj_cell in adj_cells:
-                if adj_cell.reachable and adj_cell not in self.closed:
+                if adj_cell.reachable < 4 and adj_cell not in self.closed:
                     if (adj_cell.f, adj_cell) in self.opened:
                         # if adj cell in open list, check if current path is
                         # better than the one previously found
@@ -239,7 +253,7 @@ class Astar(object):
         self.create_walls()
 
         # build the grid using including the walls created by the database data
-        self.init_grid(startlocation, endlocation, bearing)
+        self.init_grid(startlocation, endlocation)
 
         # find a path through the current grid
         self.solve()
@@ -264,3 +278,11 @@ class Astar(object):
         print 'A-Star complete, with current location : {0}.\nThe given destination was : {1}'.format(str(curlocation),
                                                                                                   str(destination))
         return
+
+
+# object that is used to give a wall an accessibility value
+class Wall(object):
+    def __init__(self, x, y, accessibility):
+        self.x = x
+        self.y = y
+        self.accessibility = accessibility

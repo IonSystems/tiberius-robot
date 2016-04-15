@@ -1,8 +1,9 @@
+from tiberius.control.control import Control
 from tiberius.navigation.path_planning.a_star_algorithms import Astar
 import sys
 
-
-a = Astar()
+control = Control()
+a = Astar(control)
 
 destination = []
 destination[0] = sys.argv[1]
