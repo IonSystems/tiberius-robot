@@ -109,6 +109,7 @@ class PostInstallDependencies(install):
         binary = Popen("cd /home/pi/git/tiberius-robot/tiberius/autonomy/readlidar \
             && g++ -pthread -lrt rplidar_driver.cpp thread.cpp net_serial.cpp \
             timer.cpp readlidar.cpp -o readlidar", shell=True)
+	binary.communicate() #now wait
         print "creating lidar executable"
 
     def install_deps_linux(self):
@@ -322,6 +323,7 @@ else:
     data_directory = '/etc/tiberius'
     odbc_directory = '/etc'
     motion_directory = '/etc/motion'
+    default_directory = '/etc/default'
     requirements = ['enum34',
                     'autopep8',
                     'pynmea',
@@ -362,6 +364,7 @@ setup(name='Tiberius',
           (odbc_directory, ['vendor/polyhedra-driver/odbcinst.ini']),
           (odbc_directory, ['vendor/polyhedra-driver/odbcinst.ini']),
           (motion_directory, ['vendor/motion/motion.conf']),
+          (default_directory, ['vendor/motion/motion']),
       ],
       platforms=['Raspberry Pi 2', 'Raspberry Pi 1'],
       install_requires=requirements,
