@@ -6,15 +6,16 @@ Website: http://www.seantheme.com/color-admin-v1.9/admin/
 */
 
 var handleJstreeDefault = function() {
-    $('#jstree-default').jstree({
+    $('#jstree-waypoints').jstree({
         "core": {
+            "check_callback": true,
             "themes": {
                 "responsive": false
             }
         },
         "types": {
             "default": {
-                "icon": "fa fa-folder text-warning fa-lg"
+                "icon": "fa fa-map-marker text-warning fa-lg"
             },
             "file": {
                 "icon": "fa fa-file text-inverse fa-lg"
@@ -23,7 +24,7 @@ var handleJstreeDefault = function() {
         "plugins": ["types"]
     });
 
-    $('#jstree-default').on('select_node.jstree', function(e,data) {
+    $('#jstree-waypoints').on('select_node.jstree', function(e,data) {
         var link = $('#' + data.selected).find('a');
         if (link.attr("href") != "#" && link.attr("href") != "javascript:;" && link.attr("href") != "") {
             if (link.attr("target") == "_blank") {

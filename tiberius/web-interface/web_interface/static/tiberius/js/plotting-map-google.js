@@ -10,50 +10,23 @@ Website: http://www.seantheme.com/color-admin-v1.9/admin/
 var marker_storage = [];
 var task_list = [];
 
+/* Return all waypoints currently created in string format.*/
 function getWaypoints(){
 	return JSON.stringify(marker_storage);
 }
 
-function updateWaypointTree(waypoints){
-	waypoints = JSON.parse(waypoints);
-	var html = "<ul>";
-	for(var i = 0; i < waypoints.length; i++) {
-		var waypoint = waypoints[i];
-		var pt_name = "Waypoint " + (i+1);
-		//Each item in array is a waypoint, so add a element to the waypoint list
-		html += "<li data-jstree='{\x22opened\x22:true, \x22icon\x22 : \x22fa fa-map-marker fa-lg text-primary\x22}' >"
-		+ pt_name + "</li>";
-		if (waypoint['tasks'].length > 0) html += "<ul>";
-		for(var j = 0; j < waypoint['tasks'].length; j++){
-			var task_id = waypoint['tasks'][j];
-			//var task = json_tasks[task_id];
-			var task_name = task_list[task_id].name;
-			html += "<li data-jstree='{\x22opened\x22:true, \x22selected\x22:true, \x22icon\x22 : \x22fa fa-tasks fa-lg text-inverse\x22 }'>"
-			+ task_name + "</li>";
-		}
-		if (waypoint['tasks'].length > 0) html += "</ul>";
-		console.log(waypoint);
-		handleJstreeDefault();
-	}
-	html += "</ul>";
-	document.getElementById('jstree-default').innerHTML = html;
+function addTaskToTree(task, wpt_index, task_index){
+	$("#jstree-waypoints").jstree('create_node', '#tree-waypoint-' + wpt_index, {
+		'id' : 'tree-waypoint-' + wpt_index + '-task-' + task_index,
+		'text' : "Task"
+	}, 'last');
+}
 
-	$('#jstree-default').jstree({
-			"core": {
-					"themes": {
-							"responsive": false
-					}
-			},
-			"types": {
-					"default": {
-							"icon": "fa fa-folder text-warning fa-lg"
-					},
-					"file": {
-							"icon": "fa fa-file text-inverse fa-lg"
-					}
-			},
-			"plugins": ["types"]
-	});
+function addWaypointToTree(marker, index){
+	$("#jstree-waypoints").jstree('create_node', '#tree-top-level', {
+		'id' : 'tree-waypoint-' + index,
+		'text' : marker.latLng.latitude
+	}, 'last');
 }
 
 function onTaskFormSubmit(form){
@@ -67,7 +40,7 @@ function onTaskFormSubmit(form){
 	// Update our
 	var waypoints = getWaypoints();
 	document.getElementById("input-waypoints").value = waypoints;
-	updateWaypointTree(waypoints);
+	addTaskToTree("Task name", marker_index, task_id);
 
 	// Always return false to prevent page reload after form submit
 	return false;
@@ -193,7 +166,7 @@ var handleGoogleMapSetting = function(mission_id, json_tasks) {
 		//document.forms[0].elements["waypoints"].value = marker_storage;
 		var waypoints = getWaypoints()
 		document.getElementById("input-waypoints").value = waypoints;
-		updateWaypointTree(waypoints);
+		addWaypointToTree(marker_store, path.getLength());
 	}
 
 	google.maps.event.addDomListener(window, 'load', initialize);
