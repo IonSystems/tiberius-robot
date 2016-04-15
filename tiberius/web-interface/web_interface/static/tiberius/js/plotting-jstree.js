@@ -15,10 +15,13 @@ var handleJstreeDefault = function() {
         },
         "types": {
             "default": {
-                "icon": "fa fa-map-marker text-warning fa-lg"
+                "icon": "fa fa-map text-warning fa-lg"
             },
-            "file": {
-                "icon": "fa fa-file text-inverse fa-lg"
+            "task": {
+                "icon": "fa fa-tasks text-warning fa-lg"
+            },
+            "waypoint": {
+                "icon": "fa fa-map-marker text-warning fa-lg"
             }
         },
         "plugins": ["types"]

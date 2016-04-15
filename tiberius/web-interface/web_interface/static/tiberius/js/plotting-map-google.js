@@ -18,14 +18,16 @@ function getWaypoints(){
 function addTaskToTree(task, wpt_index, task_index){
 	$("#jstree-waypoints").jstree('create_node', '#tree-waypoint-' + wpt_index, {
 		'id' : 'tree-waypoint-' + wpt_index + '-task-' + task_index,
-		'text' : "Task"
+		'text' : "Task",
+		'type': 'task'
 	}, 'last');
 }
 
 function addWaypointToTree(marker, index){
 	$("#jstree-waypoints").jstree('create_node', '#tree-top-level', {
 		'id' : 'tree-waypoint-' + index,
-		'text' : marker.latLng.latitude
+		'text' : marker.latLng.latitude,
+		'type': 'waypoint'
 	}, 'last');
 }
 
@@ -166,7 +168,7 @@ var handleGoogleMapSetting = function(mission_id, json_tasks) {
 		//document.forms[0].elements["waypoints"].value = marker_storage;
 		var waypoints = getWaypoints()
 		document.getElementById("input-waypoints").value = waypoints;
-		addWaypointToTree(marker_store, path.getLength());
+		addWaypointToTree(marker_store, path.getLength()-1);
 	}
 
 	google.maps.event.addDomListener(window, 'load', initialize);
