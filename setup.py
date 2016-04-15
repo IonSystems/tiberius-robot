@@ -322,6 +322,7 @@ else:
     data_directory = '/etc/tiberius'
     odbc_directory = '/etc'
     motion_directory = '/etc/motion'
+    default_directory = '/etc/default'
     requirements = ['enum34',
                     'autopep8',
                     'pynmea',
@@ -362,6 +363,7 @@ setup(name='Tiberius',
           (odbc_directory, ['vendor/polyhedra-driver/odbcinst.ini']),
           (odbc_directory, ['vendor/polyhedra-driver/odbcinst.ini']),
           (motion_directory, ['vendor/motion/motion.conf']),
+          (default_directory, ['vendor/motion/motion']),
       ],
       platforms=['Raspberry Pi 2', 'Raspberry Pi 1'],
       install_requires=requirements,
