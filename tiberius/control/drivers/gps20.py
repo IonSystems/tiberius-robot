@@ -154,12 +154,17 @@ class GlobalPositioningSystem:
         :return: True if a sentence is parsed succesfully, False otherwise.
         '''
         if "GPGGA" in data:
-            if(self.debug):
-                self.logger.debug("Lat:" + str(self.__gpgga.latitude))
-                self.logger.debug("Lng:" + str(self.__gpgga.longitude))
             data = self.__gpgga.parse(data)
-            self.__latitude = self.__parse_lat(self.__gpgga.latitude, self.__gpgga.lat_direction)
-            self.__longitude = self.__parse_long(self.__gpgga.longitude, self.__gpgga.lon_direction)
+            if hasattr(self.__gpgga, 'latitude'):
+                self.__latitude = self.__parse_lat(self.__gpgga.latitude, self.__gpgga.lat_direction)
+                if self.debug:
+                    self.logger.debug("Lat:" + str(self.__gpgga.latitude))
+
+            if hasattr(self.__gpgga, 'longitude'):
+                self.__longitude = self.__parse_long(self.__gpgga.longitude, self.__gpgga.lon_direction)
+                if self.debug:
+                    self.logger.debug("Lng:" + str(self.__gpgga.longitude))
+
             self.__gps_qual = self.__gpgga.gps_qual
             self.__num_sats = self.__gpgga.num_sats
             self.__num_sats = self.__gpgga.num_sats
@@ -203,7 +208,7 @@ class GlobalPositioningSystem:
         # Check direction field and modify result accordingly
         # Longitude direction will be either E or W, if we get W,
         # negate the longitude.
-        if direction = "W":
+        if direction == "W":
             longitude *= -1
         return longitude
 
@@ -220,7 +225,7 @@ class GlobalPositioningSystem:
         # Check direction field and modify result accordingly
         # Latitude direction will be either N or S, if we get S,
         # negate the latitude.
-        if direction = "S":
+        if direction == "S":
             latitude *= -1
         return latitude
 
