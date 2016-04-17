@@ -8,6 +8,7 @@ import threading
 import json
 from task_state import TaskState
 
+
 class TaskThread (threading.Thread):
     def __init__(self, threadID, task):
         threading.Thread.__init__(self)
@@ -29,8 +30,10 @@ def generate_response(req, resp, resource):
                  'task_status': "Complete",
     })
 
+
 class TaskCommands:
     RUN = "run_task"
+
 
 class TaskControllerResource(object):
 

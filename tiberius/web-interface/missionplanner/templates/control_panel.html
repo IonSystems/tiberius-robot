@@ -223,7 +223,19 @@
 																<td>{{ ob.waypoint.latitude }}</td>
 																<td>{{ ob.waypoint.longitude }}</td>
 																<td>{{ ob.task.name}}</td>
-																<td><button></button></td>
+																<td>
+																	<button
+																		id = "goto_button"
+																		class="btn btn-primary btn-sm m-r-5"
+																		data-longitude= "{{ ob.waypoint.longitude }}"
+																		data-latitude= "{{ ob.waypoint.latitude }}"
+																		data-ipaddress= "{{ platform.ip_address }}"
+																		data-speed= "100"
+																	>Goto</button>
+																	{% if ob.task %}
+																	<a href="#modal-dialog" class="btn btn-primary btn-sm m-r-5" data-toggle="modal">Run Task</a>
+																	{% endif %}
+																</td>
 														</tr>
 														{% endfor %}
 													</tbody>
@@ -297,7 +309,9 @@
 	{% include "script.html" %}
 	<script src="https://maps.googleapis.com/maps/api/js?libraries=geometry&key=AIzaSyDkFor-_BtfyOvNRxfqbNJdacVzIpQTw0Y"></script>
 	<script src="{% static 'tiberius/js/charify.js' %}"></script>
+	<script src="{% static 'tiberius/js/tiblib.js' %}"></script>
 	<script src="{% static 'tiberius/js/control-map-google.js' %}"></script>
+	<script src="{% static 'tiberius/js/control-nav-requests.js' %}"></script>
 	<script src="{% static 'color-admin/plugins/DataTables/media/js/jquery.dataTables.js' %}"></script>
 	<script src="{% static 'color-admin/plugins/DataTables/media/js/dataTables.bootstrap.min.js' %}"></script>
 	<script src="{% static 'color-admin/plugins/DataTables/extensions/Responsive/js/dataTables.responsive.min.js' %}"></script>
@@ -307,6 +321,7 @@
 		$(document).ready(function() {
 			App.init();
 			ViewingGoogleMap.init({{ json_objectives }});
+			NavigationRequests.init("{{ platform.ip_address }}");
 		});
 	</script>
 </body>

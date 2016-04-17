@@ -14,10 +14,12 @@ POWER_SECTION = 'power'
 NETWORKING_SECTION = 'networking'
 KINECT_SECTION = 'kinect'
 ROBOT_ARM_SECTION = 'arm'
+GPS_SECTION = 'gps'
 AUTHENTICATION_SECTION = 'authentication'
 ARM_BASKET_SECTION = 'arm_basket_positions'
 ARM_CENTRE_SECTION = 'arm_centre_positions'
 ARM_PARK_SECTION = 'arm_park_positions'
+DIAGNOSTICS_SECTION = 'diagnostics'
 
 class TiberiusConfigParser():
 
@@ -36,9 +38,14 @@ class TiberiusConfigParser():
     '''******************************************
         LIDAR
     ******************************************'''
+
     @staticmethod
     def isLidarEnabled():
         return TiberiusConfigParser.getParser().getboolean(LIDAR_SECTION, 'installed')
+
+    @staticmethod
+    def getLidarSerialPort():
+        return TiberiusConfigParser.getParser().get(LIDAR_SECTION, 'serial_port')
 
     '''******************************************
         Motors
@@ -112,6 +119,39 @@ class TiberiusConfigParser():
     def getCompassAddress():
         addr = TiberiusConfigParser.getParser().get(COMPASS_SECTION, 'address')
         return int(addr)
+
+    '''******************************************
+        Arm
+    ******************************************'''
+
+    @staticmethod
+    def isArmEnabled():
+        return TiberiusConfigParser.getParser().getboolean(ROBOT_ARM_SECTION, 'installed')
+
+    @staticmethod
+    def isArmCamEnabled():
+        return TiberiusConfigParser.getParser().getboolean(ROBOT_ARM_SECTION, 'camera')
+
+    '''******************************************
+        GPS
+    ******************************************'''
+
+    @staticmethod
+    def isGPSEnabled():
+        return TiberiusConfigParser.getParser().getboolean(GPS_SECTION, 'installed')
+
+    @staticmethod
+    def getGPSSerialPort():
+        return TiberiusConfigParser.getParser().get(GPS_SECTION, 'serial_port')
+
+    '''******************************************
+        diagnostics
+    ******************************************'''
+
+    @staticmethod
+    def areDiagnosticsEnabled():
+        return TiberiusConfigParser.getParser().getboolean(DIAGNOSTICS_SECTION, 'installed')
+
 
     '''******************************************
         Networking

@@ -9,7 +9,11 @@ function send_command(ip_address, command_name, command_value){
 	$.ajax({
 			url: '../send_arm_request',
 			type: 'POST',
-			data: {command_name:command_value, 'ip_address':ip_address},
+			data: {
+				'command_name':command_name,
+				'command_value':command_value,
+				'ip_address':ip_address
+			},
 			success: function (result) {
 				//alert("anything");
 			},
@@ -52,38 +56,33 @@ var handleArmButtons = function(ip_address, initial_values) {
 	var x_pos = initial_values['x'];
 	var y_pos = initial_values['y'];
 	var z_pos = initial_values['z'];
-
+	var d = 10;
 	// If we don't get valid initial positions, disable arm buttons.
 	if(!x_pos){
 		arm_unavailable();
 	}
 
+	// Buttons to change positions by d
   $('#arm_button_x_minus').click(function() {
-		x_pos = x_pos - 20;
-		send_command(ip_address, 'arm_button_x', x_pos);
+		send_command(ip_address, 'arm_dx', -d);
   });
 	$('#arm_button_y_plus').click(function() {
-		y_pos = y_pos + 20;
-		send_command(ip_address, 'arm_button_y', y_pos);
+		send_command(ip_address, 'arm_dy', d);
   });
 	$('#arm_button_y_minus').click(function() {
-		y_pos = y_pos - 20;
-		send_command(ip_address, 'arm_button_y', y_pos);
+		send_command(ip_address, 'arm_dy', -d);
   });
 	$('#arm_button_x_plus').click(function() {
-		x_pos = x_pos + 20;
-		send_command(ip_address, 'arm_button_x', x_pos);
+		send_command(ip_address, 'arm_dx', d);
   });
 	$('#arm_button_stop').click(function() {
 		send_command(ip_address, 'stop', 'True');
   });
 	$('#arm_button_z_plus').click(function() {
-		z_pos = z_pos + 20;
-		send_command(ip_address, 'arm_button_z', z_pos);
+		send_command(ip_address, 'arm_dz', d);
   });
 	$('#arm_button_z_minus').click(function() {
-		z_pos = z_pos + 20;
-		send_command(ip_address, 'arm_button_z', z_pos);
+		send_command(ip_address, 'arm_dz', -d);
   });
 };
 

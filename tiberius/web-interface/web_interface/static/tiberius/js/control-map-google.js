@@ -50,7 +50,9 @@ var handleGoogleMapViewing = function(objectives) {
     }
 		poly.setMap(map);
 	}
-
+	function setCurrentWaypoint(index){
+		stuff[index].setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png')
+	}
 	function addLatLng(json_pt, json_tk) {
 	  var path = poly.getPath();
     var latLng = new google.maps.LatLng(json_pt.latitude,json_pt.longitude);
@@ -67,7 +69,7 @@ var handleGoogleMapViewing = function(objectives) {
 			draggable: false,
       label: label
 	  });
-		marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png')
+
 
 		// Calculate the distance travelled from the previous marker to this one.
     // We can only do this if there are are least two markers to calculate between.

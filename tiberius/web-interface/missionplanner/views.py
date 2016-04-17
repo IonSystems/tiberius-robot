@@ -177,7 +177,8 @@ def view_mission(request, id):
 
 
 @login_required(login_url='/users/login/')
-def control_panel(request, id):
+def control_panel(request, id, platform):
+    platform = Robot.objects.get(id=platform)
     template = loader.get_template('control_panel.html')
     mission = Mission.objects.get(pk=id)
     objectives = MissionObjective.objects.filter(mission=id)
@@ -186,6 +187,7 @@ def control_panel(request, id):
         'mission': mission,
         'objectives': objectives,
         'json_objectives': mark_safe(json_objectives),
+        'platform': platform,
     })
     return HttpResponse(template.render(context))
 
@@ -198,6 +200,7 @@ def view_task(request, id):
         'task': task,
     })
     return HttpResponse(template.render(context))
+
 
 @require_http_methods(["POST"])
 def send_task_request(request):
@@ -238,6 +241,28 @@ def send_task_request(request):
         response = e
     return HttpResponse(response)
 
+
+@require_http_methods(["POST"])
+def send_nav_request(request):
+    '''
+    Tell Tiberius to navigate to a waypoint. Call from Ajax.
+    '''
+    headers = {'X-Auth-Token': settings.SUPER_SECRET_PASSWORD}
+    
+    ip_address = request.POST.get('ip_address')
+    url_start = "http://"
+    url_end = ":8000/navigation"
+    url = url_start + ip_address + url_end
+    response = ""
+
+    try:
+        r = requests.post(url,
+                          data=request.POST.lists(),
+                          headers=headers)
+        response = r.text
+    except ConnectionError as e:
+        response = e
+    return HttpResponse(response)
 
 class MissionDeleteView(DeleteView):
     """

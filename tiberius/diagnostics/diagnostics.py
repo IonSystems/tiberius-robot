@@ -1,6 +1,6 @@
 import sys
 
-from tiberuis.control.control import Control
+from tiberius.control.control import Control
 from tiberius.logger import logger
 import logging
 
@@ -9,7 +9,7 @@ import logging
 
 class Diagnostics:
     '''
-            Runs constantly during operation of tiberius to look for faults in the system.
+    Runs constantly during operation of tiberius to look for faults in the system.
     '''
     c = Control()
 

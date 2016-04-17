@@ -14,6 +14,7 @@ Contents:
    quickstart/index
    tutorials/index
    userguide/index
+   code/modules
 
 
 Indices and tables

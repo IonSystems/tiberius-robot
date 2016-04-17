@@ -9,34 +9,48 @@ import debug
 import task_controller
 import database
 import status
+import navigation
 
-# #Import control module
+# Import control module
 from tiberius.control.control import Control
+from tiberius.navigation.gps.algorithms import Algorithms
+from tiberius.config.config_parser import TiberiusConfigParser
 from tiberius.control_api.middleware import AuthMiddleware
 
 # This is the main instance of Control that is used widely throughout this API.
 c = Control()
-m = c.motors
-a = c.arm
 
 api = application = falcon.API(media_type='application/json; charset=utf-8',
                                middleware=[AuthMiddleware()])
 
 sensors = sensors.SensorResource()
-motors = motors.MotorResource(m)
-arm = robot_arm.RobotArmResource(a)
-debug = debug.DebugResource()
-task_controller = task_controller.TaskControllerResource()
-database = database.DatabaseResource()
-status = status.StatusResource(motors, database, sensors)
-
 api.add_route('/sensors', sensors)
+
+m = c.motors
+motors = motors.MotorResource(m)
 api.add_route('/motors', motors)
-api.add_route('/arm', arm)
+
+if TiberiusConfigParser.isArmEnabled():
+    a = c.arm
+    arm = robot_arm.RobotArmResource(a)
+    api.add_route('/arm', arm)
+
+debug = debug.DebugResource()
 api.add_route('/debug', debug)
+
+task_controller = task_controller.TaskControllerResource()
 api.add_route('/task', task_controller)
+
+database = database.DatabaseResource()
 api.add_route('/database', database)
+
+status = status.StatusResource(motors, database, sensors)
 api.add_route('/status', status)
+
+if TiberiusConfigParser.isGPSEnabled():
+    n = Algorithms(c)
+    navigation = navigation.NavigationResource(n)
+    api.add_route('/navigation', navigation)
 
 if __name__ == '__main__':
     httpd = simple_server.make_server('0.0.0.0', 8000, api)
