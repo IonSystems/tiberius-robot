@@ -1,6 +1,6 @@
 import time
 import sys
-from tiberius.database.polyhedra_database import PolyhedraDatabase
+from tiberius.database_wrapper.polyhedra_database import PolyhedraDatabase
 from tiberius.database.sqlite_database import SqliteDatabase
 
 #creating instance of class
