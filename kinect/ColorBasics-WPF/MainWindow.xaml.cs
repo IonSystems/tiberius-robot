@@ -7,16 +7,12 @@ namespace Microsoft.Samples.Kinect.ColorBasics
 {
     using System;
     using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Globalization;
     using System.IO;
     using System.Windows;
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
     using Microsoft.Kinect;
-    using System.Timers;
     using System.Drawing;
-    using System.Threading;
     using System.Drawing.Imaging;/// <summary>
                                  /// Interaction logic for MainWindow
                                  /// </summary>
