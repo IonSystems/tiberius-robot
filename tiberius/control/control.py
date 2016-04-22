@@ -28,7 +28,8 @@ class Control:
     ultrasonics = sensors.Ultrasonic()
     if TiberiusConfigParser.isCompassEnabled():
         compass = sensors.Compass()
-    motors = actuators.Motor()
+    if TiberiusConfigParser.areMotorsEnabled():
+        motors = actuators.Motor()
 
     if TiberiusConfigParser.isArmEnabled():
         arm = actuators.Arm()
