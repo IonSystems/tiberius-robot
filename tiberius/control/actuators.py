@@ -67,6 +67,11 @@ if TiberiusConfigParser.isArmEnabled():
 
             return [theta, math.degrees(rho), math.degrees(sigma)]
 
+        def home(self):
+            self.arm.home_x()
+            self.arm.home_y()
+            self.arm.home_z()
+
         def park(self):
             '''
                 Move the arm to the parked position,

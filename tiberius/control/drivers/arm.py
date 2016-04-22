@@ -15,7 +15,7 @@ class RoboticArmDriver:
     if detection.detect_windows():
         port = 'COM6'
     else:
-        port = '/dev/ttyACM1'
+        port = '/dev/ttyACM0'
     baud = 19200
     m = 0.3
     n = 0.3

@@ -73,9 +73,11 @@ if __name__ == "__main__":
         elif (key == 'l'):  # z decrease
             c.arm.move_elbow(-2)
         elif (key == 'p'):
-            c.arm.park();
+            c.arm.park()
         elif (key == 'P'):
-            c.arm.centre();
+            c.arm.centre()
+        elif (key == 'H'):
+            c.arm.home()
         # to stop
         elif (key == ' '):
             c.motors.stop()
