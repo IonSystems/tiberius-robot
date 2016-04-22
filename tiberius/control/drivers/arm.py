@@ -35,9 +35,9 @@ class RoboticArmDriver:
         except:
             self.logger.warning("Serial port already open continuing.")
 
-    def move_arm_to(self, x, y, z):
-        arm_coords = to_arm_coords(x, y, z, self.m, self.n)
-        self.ser.write("G0 X" + str(arm_coords[0]) + "Y" + str(arm_coords[1]) + "Z" + str(arm_coords[2]) + "\n")
+
+    def move_joints_to(self, rotation, shoulder, elbow):
+        self.ser.write("G0 X" + str(rotation) + "Y" + str(shoulder) + "Z" + str(elbow) + "\n")
 
     def move_gripper(self, close):
         if close:
@@ -49,6 +49,15 @@ class RoboticArmDriver:
             time.sleep(self.gripper_timeout)
             self.ser.write("M280 P0 S75\n")
 
+    def home_x(self):
+        self.ser.write("G28 X")
+
+    def home_y(self):
+        self.ser.write("G28 X")
+
+    def home_z(self):
+        self.ser.write("G28 X")
+
     def rotate_arm(self, angle):
         self.ser.write("G0 Y" + str(angle) + "\n")
 
@@ -57,12 +66,3 @@ class RoboticArmDriver:
 
     def move_elbow(self, angle):
         self.ser.write("G0 X" + str(angle) + "\n")
-
-    def park_arm(self):
-        self.ser.write("G0 Y100 Z100")
-        self.ser.write("G28 X")
-        self.ser.write("G0 Y55 Z100")
-
-    def centre_arm(self):
-        self.ser.write("G0 Y100 Z100")
-        self.ser.write("G0 X145 X60 Y50")

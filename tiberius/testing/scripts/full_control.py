@@ -7,7 +7,6 @@ d_logger = logging.getLogger('tiberius.testing.keyboard_control')
 import tty
 import termios
 import time
-from tiberius.control.robotic_arm.ramps import RoboticArmDriver
 
 c = Control()
 
@@ -74,9 +73,9 @@ if __name__ == "__main__":
         elif (key == 'l'):  # z decrease
             c.arm.move_elbow(-2)
         elif (key == 'p'):
-            c.arm.park_arm();
+            c.arm.park();
         elif (key == 'P'):
-            c.arm.centre_arm();
+            c.arm.centre();
         # to stop
         elif (key == ' '):
             c.motors.stop()

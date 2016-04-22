@@ -50,6 +50,11 @@ class TiberiusConfigParser():
     '''******************************************
         Motors
     ******************************************'''
+
+    @staticmethod
+    def areMotorsEnabled():
+        return TiberiusConfigParser.getParser().getboolean(MOTORS_SECTION, 'installed')
+
     @staticmethod
     def getMotorFrontLeftAddress():
         addr = TiberiusConfigParser.getParser().get(MOTORS_SECTION, 'front_left')

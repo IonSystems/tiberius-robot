@@ -73,12 +73,12 @@ if TiberiusConfigParser.isArmEnabled():
                 for safe storage whilst not in use.
             '''
             # Move arm out of harms way
-            self.arm.move_shoulder(180)
-            self.arm.move_elbow(180)
+            self.arm.move_joints_to(self.waist_angle, 100, 100)
 
             # Move arm to parking position
+            self.arm.home_x()
             p = self.positions['park']
-            self.arm.move_arm_to(p['x'], p['y'], p['z'])
+            self.arm.move_joints_to(p['x'], p['y'], p['z'])
 
             # Close gripper
             self.arm.move_gripper(True)
@@ -88,12 +88,11 @@ if TiberiusConfigParser.isArmEnabled():
                 Bring the arm round to the centre position, ready to use.
             '''
             # Move arm out of harms way
-            self.arm.move_shoulder(180)
-            self.arm.move_elbow(180)
+            self.arm.move_joints_to(self.waist_angle, 100, 100)
 
             # Move arm to centre position
             p = self.positions['centre']
-            self.move_arm_to(p['x'], p['y'], p['z'])
+            self.arm.move_joints_to(p['x'], p['y'], p['z'])
 
         def basket(self):
             '''
@@ -101,12 +100,15 @@ if TiberiusConfigParser.isArmEnabled():
                 then return to the old position.
             '''
             # Move arm out of harms way
-            self.arm.move_shoulder(180)
-            self.arm.move_elbow(180)
+            self.arm.move_joints_to(self.waist_angle, 100, 100)
 
-            # Move arm to centre position
+            # Move arm to parking position
+            self.arm.home_x()
             p = self.positions['park']
-            self.move_arm_to(p['x'], p['y'], p['z'])
+            self.arm.move_joints_to(p['x'], p['y'], p['z'])
+
+            # Close gripper
+            self.arm.move_gripper(True)
 
         # get the points location
         def get_waist(self):
@@ -124,8 +126,8 @@ if TiberiusConfigParser.isArmEnabled():
                 self.waist_angle = angle
             else:
                 self.waist_angle += change      # move from current location by change
-                if self.waist_angle > 360:      # normalize the angle
-                    self.waist_angle = 360
+                if self.waist_angle > 300:      # normalize the angle
+                    self.waist_angle = 300
                 elif self.waist_angle < 0:
                     self.waist_angle = 0
             print str(self.waist_angle)
@@ -138,8 +140,8 @@ if TiberiusConfigParser.isArmEnabled():
                 self.shoulder_angle = angle
             else:
                 self.shoulder_angle += change
-                if self.shoulder_angle > 360:      # normalize the angle
-                    self.shoulder_angle = 360
+                if self.shoulder_angle > 210:      # normalize the angle
+                    self.shoulder_angle = 210
                 elif self.shoulder_angle < 0:
                     self.shoulder_angle = 0
             print str(self.shoulder_angle)
@@ -152,8 +154,8 @@ if TiberiusConfigParser.isArmEnabled():
                 self.elbow_angle = angle
             else:
                 self.elbow_angle += change
-                if self.elbow_angle > 360:     # normalize the angle
-                    self.elbow_angle = 360
+                if self.elbow_angle > 205:     # normalize the angle
+                    self.elbow_angle = 205
                 elif self.elbow_angle < 0:
                     self.elbow_angle = 0
             print str(self.elbow_angle)
@@ -161,110 +163,111 @@ if TiberiusConfigParser.isArmEnabled():
             time.sleep(0.05)
 
 
-class Motor:
-    '''
-            Tiberius's four motors.
-            Contains basic motor movement methods.
-            Does not contain any feedback.
-    '''
-    __config = TiberiusConfigParser()
+if TiberiusConfigParser.areMotorsEnabled():
+    class Motor:
+        '''
+                Tiberius's four motors.
+                Contains basic motor movement methods.
+                Does not contain any feedback.
+        '''
+        __config = TiberiusConfigParser()
 
-    front_left = md03.MotorDriver(__config.getMotorFrontLeftAddress())
-    rear_left = md03.MotorDriver(__config.getMotorRearLeftAddress())
-    front_right = md03.MotorDriver(__config.getMotorFrontRightAddress())
-    rear_right = md03.MotorDriver(__config.getMotorRearRightAddress())
+        front_left = md03.MotorDriver(__config.getMotorFrontLeftAddress())
+        rear_left = md03.MotorDriver(__config.getMotorRearLeftAddress())
+        front_right = md03.MotorDriver(__config.getMotorFrontRightAddress())
+        rear_right = md03.MotorDriver(__config.getMotorRearRightAddress())
 
-    state = MotorState.STOP
+        state = MotorState.STOP
 
-    # 0 - 255
-    speed = 255
-    accel = 0
+        # 0 - 255
+        speed = 255
+        accel = 0
 
-    def setSpeedPercent(self, speed_percent):
-        self.speed = (255 * speed_percent) / 100
+        def setSpeedPercent(self, speed_percent):
+            self.speed = (255 * speed_percent) / 100
 
-    @database_motor_update
-    def stop(self):
-        self.front_left.move(0, 0)
-        self.rear_left.move(0, 0)
-        self.front_right.move(0, 0)
-        self.rear_right.move(0, 0)
-        self.state = MotorState.STOP
+        @database_motor_update
+        def stop(self):
+            self.front_left.move(0, 0)
+            self.rear_left.move(0, 0)
+            self.front_right.move(0, 0)
+            self.rear_right.move(0, 0)
+            self.state = MotorState.STOP
 
-    @database_motor_update
-    def moveForward(self):
-        self.front_left.move(self.speed, self.accel)
-        self.rear_left.move(self.speed, self.accel)
-        self.front_right.move(self.speed, self.accel)
-        self.rear_right.move(self.speed, self.accel)
-        self.state = MotorState.FORWARD
+        @database_motor_update
+        def moveForward(self):
+            self.front_left.move(self.speed, self.accel)
+            self.rear_left.move(self.speed, self.accel)
+            self.front_right.move(self.speed, self.accel)
+            self.rear_right.move(self.speed, self.accel)
+            self.state = MotorState.FORWARD
 
-    @database_motor_update
-    def moveBackward(self):
-        self.front_left.move(-self.speed, self.accel)
-        self.rear_left.move(-self.speed, self.accel)
-        self.front_right.move(-self.speed, self.accel)
-        self.rear_right.move(-self.speed, self.accel)
-        self.state = MotorState.BACKWARD
+        @database_motor_update
+        def moveBackward(self):
+            self.front_left.move(-self.speed, self.accel)
+            self.rear_left.move(-self.speed, self.accel)
+            self.front_right.move(-self.speed, self.accel)
+            self.rear_right.move(-self.speed, self.accel)
+            self.state = MotorState.BACKWARD
 
-    # Turn on the spot, to the right
-    @database_motor_update
-    def turnRight(self):
-        self.front_left.move(self.speed, self.accel)
-        self.rear_left.move(self.speed, self.accel)
-        self.front_right.move(-self.speed, self.accel)
-        self.rear_right.move(-self.speed, self.accel)
-        self.state = MotorState.RIGHT
+        # Turn on the spot, to the right
+        @database_motor_update
+        def turnRight(self):
+            self.front_left.move(self.speed, self.accel)
+            self.rear_left.move(self.speed, self.accel)
+            self.front_right.move(-self.speed, self.accel)
+            self.rear_right.move(-self.speed, self.accel)
+            self.state = MotorState.RIGHT
 
-    # Turn on the spot, to the left
-    @database_motor_update
-    def turnLeft(self):
-        self.front_right.move(self.speed, self.accel)
-        self.rear_left.move(-self.speed, self.accel)
-        self.front_left.move(-self.speed, self.accel)
-        self.rear_right.move(self.speed, self.accel)
-        self.state = MotorState.LEFT
+        # Turn on the spot, to the left
+        @database_motor_update
+        def turnLeft(self):
+            self.front_right.move(self.speed, self.accel)
+            self.rear_left.move(-self.speed, self.accel)
+            self.front_left.move(-self.speed, self.accel)
+            self.rear_right.move(self.speed, self.accel)
+            self.state = MotorState.LEFT
 
-    # Used for going forward accurately by adjusting left and right speeds.
-    @database_motor_update
-    def moveForwardDualSpeed(self, left_speed, right_speed):
-        left_speed = self.__clipSpeedValue(left_speed)
-        right_speed = self.__clipSpeedValue(right_speed)
+        # Used for going forward accurately by adjusting left and right speeds.
+        @database_motor_update
+        def moveForwardDualSpeed(self, left_speed, right_speed):
+            left_speed = self.__clipSpeedValue(left_speed)
+            right_speed = self.__clipSpeedValue(right_speed)
 
-        self.front_right.move(right_speed, self.accel)
-        self.front_left.move(left_speed, self.accel)
-        self.rear_right.move(right_speed, self.accel)
-        self.rear_left.move(left_speed, self.accel)
+            self.front_right.move(right_speed, self.accel)
+            self.front_left.move(left_speed, self.accel)
+            self.rear_right.move(right_speed, self.accel)
+            self.rear_left.move(left_speed, self.accel)
 
-        # TODO:This is unsafe! could be going forwards,backwards,left or right
-        self.state = MotorState.FORWARD
+            # TODO:This is unsafe! could be going forwards,backwards,left or right
+            self.state = MotorState.FORWARD
 
-    # Used for going forward accurately by adjusting left and right speeds.
-    # TODO: The database takes the unclipped speeds! Make a decorator
-    # for clipping speeds so the correct args can be passed to database.
-    @database_motor_update
-    def moveIndependentSpeeds(
-            self,
-            front_left,
-            front_right,
-            rear_left,
-            rear_right):
-        front_left = self.__clipSpeedValue(front_left)
-        front_right = self.__clipSpeedValue(front_right)
-        rear_left = self.__clipSpeedValue(rear_left)
-        rear_right = self.__clipSpeedValue(rear_right)
+        # Used for going forward accurately by adjusting left and right speeds.
+        # TODO: The database takes the unclipped speeds! Make a decorator
+        # for clipping speeds so the correct args can be passed to database.
+        @database_motor_update
+        def moveIndependentSpeeds(
+                self,
+                front_left,
+                front_right,
+                rear_left,
+                rear_right):
+            front_left = self.__clipSpeedValue(front_left)
+            front_right = self.__clipSpeedValue(front_right)
+            rear_left = self.__clipSpeedValue(rear_left)
+            rear_right = self.__clipSpeedValue(rear_right)
 
-        self.front_left.move(front_left, self.accel)
-        self.front_right.move(front_right, self.accel)
-        self.rear_left.move(rear_left, self.accel)
-        self.rear_right.move(rear_right, self.accel)
+            self.front_left.move(front_left, self.accel)
+            self.front_right.move(front_right, self.accel)
+            self.rear_left.move(rear_left, self.accel)
+            self.rear_right.move(rear_right, self.accel)
 
-        # TODO: This is unsafe! could be going forwards,backwards,left or right
-        self.state = MotorState.FORWARD
+            # TODO: This is unsafe! could be going forwards,backwards,left or right
+            self.state = MotorState.FORWARD
 
-    def __clipSpeedValue(self, speed):
-        if speed > 255:
-            speed = 255
-        elif speed < -255:
-            speed = -255
-        return speed
+        def __clipSpeedValue(self, speed):
+            if speed > 255:
+                speed = 255
+            elif speed < -255:
+                speed = -255
+            return speed
