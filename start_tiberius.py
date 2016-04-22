@@ -32,14 +32,7 @@ print "Starting Tiberius Software Suite..."
 # Start the database API if it is not already running
 print "Checking if database is running..."
 database = Popen("/home/pi/poly9.0/linux/raspi/bin/rtrdb -r data_service=8001 db", shell=True, stdout=PIPE)
-lines_iterator = iter(database.stdout.readline, b"")
-for line in lines_iterator:
-    if line == "Ready":
-        print "Database started successfully"
-        break
-    if "Failed" in line:
-        print "Database already running"
-        break
+time.sleep(5)
 
 # Create database tables for data
 print "Creating database tables for data"
