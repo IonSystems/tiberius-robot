@@ -1,15 +1,16 @@
 #!/usr/bin/env python
-import cmps11
-import srf08
 import time
+import drivers.cmps11 as cmps11
+import drivers.srf08 as srf08
+import drivers.gps20 as gps20
+import drivers.lidar as rplidar
 from tiberius.config.config_parser import TiberiusConfigParser
-from tiberius.control.gps20 import GlobalPositioningSystem
 
 
 class Ultrasonic:
     '''
         Contains the ultrasonic sensors, and methods to receive data from them.
-        Data is returned from teh sensors in centimeters.
+        Data is returned from the sensors in centimeters.
     '''
 
     # Front Right
@@ -37,8 +38,12 @@ class Ultrasonic:
         # We need to check each sensor and make sure its giving us valid data.
         # So if we fail to write to a sensor we need to mark it as invalid.
 
-        valid = [self.srfrr.doranging(), self.srffc.doranging(), self.srffc.doranging(), self.srffl.doranging(),
-                 self.srfrr.doranging(), self.srfrc.doranging(), self.srfrl.doranging()]
+        valid = [
+            self.srfrr.doranging(), self.srffc.doranging(),
+            self.srffc.doranging(), self.srffl.doranging(),
+            self.srfrr.doranging(), self.srfrc.doranging(),
+            self.srfrl.doranging()
+        ]
 
         # We need to wait for the measurement to be made before reading the
         # result.
@@ -46,15 +51,18 @@ class Ultrasonic:
 
         # Read the data from sensor's memory
 
-        data = [self.srfrr.getranging(), self.srffc.getranging(), self.srffc.getranging(), self.srffl.getranging(),
-                 self.srfrr.getranging(), self.srfrc.getranging(), self.srfrl.getranging()]
-
+        data = [
+            self.srfrr.getranging(), self.srffc.getranging(),
+            self.srffc.getranging(), self.srffl.getranging(),
+            self.srfrr.getranging(), self.srfrc.getranging(),
+            self.srfrl.getranging()
+        ]
 
         # Check if the data is valid
-        for i in range(0, 5):
+        for i in range(0, 6):
             if data[i] is False:
                 valid[i] = False
-                data[i] = 0  # Best to assume we might crash rather than
+                data[i] = 0.0  # Best to assume we might crash rather than
                 # risk it (0 means that any badly written scripts *should* stop)
                 # Also by putting a 0 in the data we can still add the row to the database.
             else:
@@ -91,25 +99,41 @@ class Ultrasonic:
                 (results['rc'] < d) or
                 (results['rr'] < d))
 
-    # class Lidar:
-    #	lidar = RoboPeakLidar()
 
-    # TODO: This will eventually include methods such as generateImage(),
-    # fetchData() or similar
+# if TiberiusConfigParser.isLidarEnabled():
+class Lidar:
+    '''
+            Provides lidar data to be inserted into database
+    '''
+    lidar = rplidar.RoboPeakLidar()
 
-    # class TimeOfFlight:
-    # If we ever get a TOF sensor.
+    def filtered_data(self, x):
+            if 350 < x < 10:
+                return False
+            else:
+                return True
 
+    def get_filtered_lidar_data(self):
+        '''
+            Decode lidar dictionary message
+            The LIDAR is blocked by Tiberius's structure at some parts,
+            so ignore these readings. Also remove obbiosly incorrect
+            readings (e.g. < 10cm).
+        '''
+        data = self.lidar.get_lidar_data()
+        # put x in data for every x in data only if filtered_data() is true
+        data = [x for x in data if self.filtered_data(x)]
+        return data
 
 # class Camera:
-#	'''
-#		Provides camera capture methods.
-#	'''
-#	camera = picamera.PiCamera()
+#    '''
+#        Provides camera capture methods.
+#    '''
+#    camera = picamera.PiCamera()
 #
-#	def capture_image(self):
-#		self.camera.resolution = (640,480)
-#		self.camera.capture('./pi_camera_image.jpg')
+#    def capture_image(self):
+#        self.camera.resolution = (640,480)
+#        self.camera.capture('./pi_camera_image.jpg')
 if TiberiusConfigParser.isCompassEnabled():
     class Compass:
         '''
@@ -141,26 +165,10 @@ if TiberiusConfigParser.isCompassEnabled():
 
 class GPS:
     def __init__(self):
-        self.gps = GlobalPositioningSystem()
+        self.gps = gps20.GlobalPositioningSystem()
 
     def read_gps(self):
         return self.gps.read_gps()
 
-    def has_fix(self):
-        return self.gps.has_fix()
-
-
-class I2CReadError(Exception):
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return repr(self.value)
-
-
-class I2CWriteError(Exception):
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return repr(self.value)
+    def usable(self):
+        return self.gps.usable()

@@ -1,11 +1,12 @@
 #!/usr/bin/env python
-
 from setuptools import setup
 from setuptools.command.install import install
 from subprocess import check_output, CalledProcessError
 import os
 import sys
 from optparse import OptionParser
+import os.path
+from subprocess import Popen, PIPE
 
 '''*****************************************
         Utility Functions
@@ -78,13 +79,14 @@ class PostInstallDependencies(install):
     '''
     def run(self):
         if is_windows():
-	    print "Installing on Windows."
+            print "Installing on Windows."
         elif is_pi():
-	    print "Installing on Raspberry Pi."
+            print "Installing on Raspberry Pi."
             self.install_deps_pi()
             self.install_poly_pi()
+            self.create_lidar_executable()
         elif is_linux():
-	    print "Installing on Linux."
+            print "Installing on Linux."
             self.install_deps_linux()
             self.install_poly_linux()
         else:
@@ -99,8 +101,16 @@ class PostInstallDependencies(install):
         self.install_if_missing("libffi-dev")
         self.install_if_missing("libi2c-dev")
         self.install_if_missing("i2c-tools")
-	self.un_blacklist_i2c()
-	self.enable_modules_i2c()
+        self.install_if_missing("motion")
+        self.un_blacklist_i2c()
+        self.enable_modules_i2c()
+
+    def create_lidar_executable(self):
+        binary = Popen("cd /home/pi/git/tiberius-robot/tiberius/autonomy/readlidar \
+            && g++ -pthread -lrt rplidar_driver.cpp thread.cpp net_serial.cpp \
+            timer.cpp readlidar.cpp -o readlidar", shell=True)
+	binary.communicate() #now wait
+        print "creating lidar executable"
 
     def install_deps_linux(self):
         print "Checking for missing packages"
@@ -112,7 +122,7 @@ class PostInstallDependencies(install):
         print "Removing I2C from blacklist on Raspberry Pi"
         blacklist_dir = "/etc/modprobe.d/raspi-blacklist.conf"
         enable_command = "sed -i 's/blacklist i2c-bcm2708/#blacklist" \
-         " i2c-bcm2708/g' " + blacklist_dir
+            " i2c-bcm2708/g' " + blacklist_dir
         check_output(enable_command, shell=True)
 
     def enable_modules_i2c(self):
@@ -129,7 +139,7 @@ class PostInstallDependencies(install):
             print "i2c-bcm2708 already enabled"
         else:
             enable_command = "echo 'i2c-bcm2708' | sudo tee -a " + \
-            modules_dir
+                modules_dir
             check_output(enable_command, shell=True)
 
     def is_package_installed(self, package_name):
@@ -258,7 +268,7 @@ class PostInstallDependencies(install):
             print "removing old job"
             oldjob = cron.find_comment('poly_start')
             print ('OldJob', oldjob)
-            #cron.remove(oldjob)
+            # cron.remove(oldjob)
             print "Installing poly_start crontab..."
             job = cron.new(command=command, comment=comment)
             job.every_reboot()
@@ -272,8 +282,6 @@ class PostInstallDependencies(install):
             print cronjob
 
         print "poly_start configuration finished"
-
-
 
     def install_pyodbc(self, platform):
         if "pi" in platform or "linux" in platform:
@@ -289,8 +297,11 @@ class PostInstallDependencies(install):
 
             # Remove default odbc config files,
             # so that setuptools replaces them
-            self.remove_file('/etc/odbc.ini')
-            self.remove_file('/etc/odbcinst.ini')
+            # TODO: this should check if these files exist before deleting them
+            if os.path.isfile('/etc/odbc.ini'):
+                self.remove_file('/etc/odbc.ini')
+            if os.path.isfile('/etc/odbcinst.ini'):
+                self.remove_file('/etc/odbcinst.ini')
         elif "windows" in platform:
             # TODO: pyodbc on windows
             print "ODBC on windows currently not supported, skipping."
@@ -311,6 +322,8 @@ else:
     # Parameters for Linux-based operating systems
     data_directory = '/etc/tiberius'
     odbc_directory = '/etc'
+    motion_directory = '/etc/motion'
+    default_directory = '/etc/default'
     requirements = ['enum34',
                     'autopep8',
                     'pynmea',
@@ -330,14 +343,17 @@ setup(name='Tiberius',
       packages=[
           'tiberius',
           'tiberius/control',
-          'tiberius/control/robotic_arm',
+          'tiberius/control/drivers',
           'tiberius/control_api',
           'tiberius/control_api/tasks',
           'tiberius/diagnostics',
           'tiberius/navigation/gps',
+          'tiberius/navigation/path_planning',
           'tiberius/navigation',
           'tiberius/logger',
+          'tiberius/testing',
           'tiberius/database',
+          'tiberius/database_wrapper',
           'tiberius/utils',
           'tiberius/config',
           'tiberius/smbus_dummy'],
@@ -346,6 +362,9 @@ setup(name='Tiberius',
           (data_directory, ['tiberius/smbus_dummy/smbus_database.db']),
           (odbc_directory, ['vendor/polyhedra-driver/odbc.ini']),
           (odbc_directory, ['vendor/polyhedra-driver/odbcinst.ini']),
+          (odbc_directory, ['vendor/polyhedra-driver/odbcinst.ini']),
+          (motion_directory, ['vendor/motion/motion.conf']),
+          (default_directory, ['vendor/motion/motion']),
       ],
       platforms=['Raspberry Pi 2', 'Raspberry Pi 1'],
       install_requires=requirements,

@@ -14,8 +14,12 @@ POWER_SECTION = 'power'
 NETWORKING_SECTION = 'networking'
 KINECT_SECTION = 'kinect'
 ROBOT_ARM_SECTION = 'arm'
+GPS_SECTION = 'gps'
 AUTHENTICATION_SECTION = 'authentication'
-
+ARM_BASKET_SECTION = 'arm_basket_positions'
+ARM_CENTRE_SECTION = 'arm_centre_positions'
+ARM_PARK_SECTION = 'arm_park_positions'
+DIAGNOSTICS_SECTION = 'diagnostics'
 
 class TiberiusConfigParser():
 
@@ -34,9 +38,14 @@ class TiberiusConfigParser():
     '''******************************************
         LIDAR
     ******************************************'''
+
     @staticmethod
     def isLidarEnabled():
         return TiberiusConfigParser.getParser().getboolean(LIDAR_SECTION, 'installed')
+
+    @staticmethod
+    def getLidarSerialPort():
+        return TiberiusConfigParser.getParser().get(LIDAR_SECTION, 'serial_port')
 
     '''******************************************
         Motors
@@ -111,7 +120,6 @@ class TiberiusConfigParser():
         addr = TiberiusConfigParser.getParser().get(COMPASS_SECTION, 'address')
         return int(addr)
 
-
     '''******************************************
         Arm
     ******************************************'''
@@ -119,6 +127,31 @@ class TiberiusConfigParser():
     @staticmethod
     def isArmEnabled():
         return TiberiusConfigParser.getParser().getboolean(ROBOT_ARM_SECTION, 'installed')
+
+    @staticmethod
+    def isArmCamEnabled():
+        return TiberiusConfigParser.getParser().getboolean(ROBOT_ARM_SECTION, 'camera')
+
+    '''******************************************
+        GPS
+    ******************************************'''
+
+    @staticmethod
+    def isGPSEnabled():
+        return TiberiusConfigParser.getParser().getboolean(GPS_SECTION, 'installed')
+
+    @staticmethod
+    def getGPSSerialPort():
+        return TiberiusConfigParser.getParser().get(GPS_SECTION, 'serial_port')
+
+    '''******************************************
+        diagnostics
+    ******************************************'''
+
+    @staticmethod
+    def areDiagnosticsEnabled():
+        return TiberiusConfigParser.getParser().getboolean(DIAGNOSTICS_SECTION, 'installed')
+
 
     '''******************************************
         Networking
@@ -166,7 +199,35 @@ class TiberiusConfigParser():
         password = TiberiusConfigParser.getParser().get(AUTHENTICATION_SECTION, 'password')
         return password
 
+    '''******************************************
+        Arm Positions
+    ******************************************'''
+
+    @staticmethod
+    def getArmParkParams():
+        x = TiberiusConfigParser.getParser().getint(ARM_PARK_SECTION, 'x')
+        y = TiberiusConfigParser.getParser().getint(ARM_PARK_SECTION, 'y')
+        z = TiberiusConfigParser.getParser().getint(ARM_PARK_SECTION, 'z')
+        return {'x': x, 'y': y, 'z': z}
+
+    @staticmethod
+    def getArmCentreParams():
+        x = TiberiusConfigParser.getParser().getint(ARM_CENTRE_SECTION, 'x')
+        y = TiberiusConfigParser.getParser().getint(ARM_CENTRE_SECTION, 'y')
+        z = TiberiusConfigParser.getParser().getint(ARM_CENTRE_SECTION, 'z')
+        return {'x': x, 'y': y, 'z': z}
+
+    @staticmethod
+    def getArmBasketParams():
+        x = TiberiusConfigParser.getParser().getint(ARM_BASKET_SECTION, 'x')
+        y = TiberiusConfigParser.getParser().getint(ARM_BASKET_SECTION, 'y')
+        z = TiberiusConfigParser.getParser().getint(ARM_BASKET_SECTION, 'z')
+        return {'x': x, 'y': y, 'z': z}
+
 
 if __name__ == "__main__":
 
     print TiberiusConfigParser.getIPAddress()
+    print TiberiusConfigParser.getArmParkParams()
+    print TiberiusConfigParser.getArmCentreParams()
+    print TiberiusConfigParser.getArmBasketParams()

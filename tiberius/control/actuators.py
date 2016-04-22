@@ -1,32 +1,112 @@
-import md03
-from robotic_arm.ramps import RoboticArmDriver
-from tiberius.config.config_parser import TiberiusConfigParser
-import enum
 import time
-"""
-.. module:: actuators
-   :synopsis: Provides access to all actuators supported by Tiberius.
-   This most importantly includes the motors to drive Tiberius's wheels.
+import drivers.md03 as md03
+import drivers.arm as robotic_arm
+from states import MotorState
+from tiberius.config.config_parser import TiberiusConfigParser
+from tiberius.database.decorators import database_arm_update
+from tiberius.database.decorators import database_motor_update
 
-.. moduleauthor:: Cameron A. Craig <camieac@gmail.com>
-
-
-"""
 
 if TiberiusConfigParser.isArmEnabled():
     class Arm:
-        arm = RoboticArmDriver()
+        """
+        .. module:: actuators
+           :synopsis: Provides access to all actuators supported by Tiberius.
+           This most importantly includes the motors to drive Tiberius's wheels.
+
+        .. moduleauthor:: Cameron A. Craig <camieac@gmail.com>
+        """
+        __config = TiberiusConfigParser()
+        arm = robotic_arm.RoboticArmDriver()
+        positions = {
+            'park': __config.getArmParkParams(),
+            'centre': __config.getArmCentreParams(),
+            'basket': __config.getArmBasketParams(),
+        }
+
 
         # Store current posisions of each joints
         waist_angle = 0
         shoulder_angle = 0
         elbow_angle = 0
 
-
         # Store cartesian coordinates
         x = 0
         y = 0
         z = 0
+
+        def to_arm_coords(x, y, z, m, n):
+            # We cannot handle the arm going straight up or down, it breaks the math (divide by 0)
+            if x == 0 and y == 0:
+                print 'Invalid Position - Must not be straight up'
+                return
+
+            theta = 0.0  # Rotation around base
+            rho = 0.0  # Angle of elevation from base (Shoulder)
+            sigma = 0.0  # Angle of elbow
+
+            # Calculate base rotation
+            theta = math.atan2(x, y)
+
+            # -180->180    ->     0->360
+            theta = math.degrees(theta)
+            if theta < 0:
+                theta += 360
+
+            # Calculate angle of elbow
+            sigma = math.acos(
+                (math.pow(m, 2) + math.pow(n, 2) - (math.pow(x, 2) + math.pow(y, 2) + math.pow(z, 2))) / (2 * m * n))
+
+            # Temporary variables for rho calculation
+            j = (math.pow(m, 2) + (math.pow(x, 2) + math.pow(y, 2) + math.pow(z, 2)) - math.pow(n, 2)) / (
+            2 * m * math.sqrt(math.pow(x, 2) + math.pow(y, 2) + math.pow(z, 2)))
+            k = (math.sqrt(math.pow(x, 2) + math.pow(y, 2)))
+
+            l = math.atan(z / k)
+            rho = l + math.acos(j)
+
+            return [theta, math.degrees(rho), math.degrees(sigma)]
+
+        def park(self):
+            '''
+                Move the arm to the parked position,
+                for safe storage whilst not in use.
+            '''
+            # Move arm out of harms way
+            self.arm.move_shoulder(180)
+            self.arm.move_elbow(180)
+
+            # Move arm to parking position
+            p = self.positions['park']
+            self.arm.move_arm_to(p['x'], p['y'], p['z'])
+
+            # Close gripper
+            self.arm.move_gripper(True)
+
+        def centre(self):
+            '''
+                Bring the arm round to the centre position, ready to use.
+            '''
+            # Move arm out of harms way
+            self.arm.move_shoulder(180)
+            self.arm.move_elbow(180)
+
+            # Move arm to centre position
+            p = self.positions['centre']
+            self.move_arm_to(p['x'], p['y'], p['z'])
+
+        def basket(self):
+            '''
+                Swing the arm round around over the basket and ungrasp,
+                then return to the old position.
+            '''
+            # Move arm out of harms way
+            self.arm.move_shoulder(180)
+            self.arm.move_elbow(180)
+
+            # Move arm to centre position
+            p = self.positions['park']
+            self.move_arm_to(p['x'], p['y'], p['z'])
 
         # get the points location
         def get_waist(self):
@@ -38,52 +118,47 @@ if TiberiusConfigParser.isArmEnabled():
         def get_elbow(self):
             return self.elbow_angle
 
-        # move the joints
+        @database_arm_update
         def rotate_waist(self, change, angle=None):
             if angle:
                 self.waist_angle = angle
             else:
-                self.waist_angle += change      #move from current location by change
-                if self.waist_angle > 360:      #normalize the angle
+                self.waist_angle += change      # move from current location by change
+                if self.waist_angle > 360:      # normalize the angle
                     self.waist_angle = 360
                 elif self.waist_angle < 0:
                     self.waist_angle = 0
-                print str(self.waist_angle)
+            print str(self.waist_angle)
             self.arm.move_waist(self.waist_angle)
             time.sleep(0.05)
 
+        @database_arm_update
         def move_shoulder(self, change, angle=None):
             if angle:
                 self.shoulder_angle = angle
             else:
                 self.shoulder_angle += change
-                if self.shoulder_angle > 360:      #normalize the angle
+                if self.shoulder_angle > 360:      # normalize the angle
                     self.shoulder_angle = 360
                 elif self.shoulder_angle < 0:
                     self.shoulder_angle = 0
-                print str(self.shoulder_angle)
+            print str(self.shoulder_angle)
             self.arm.move_shoulder(self.shoulder_angle)
             time.sleep(0.8)
 
+        @database_arm_update
         def move_elbow(self, change, angle=None):
             if angle:
                 self.elbow_angle = angle
             else:
                 self.elbow_angle += change
-                if self.elbow_angle > 360:     #normalize the angle
+                if self.elbow_angle > 360:     # normalize the angle
                     self.elbow_angle = 360
-                elif self.elbow_angle < 0 :
+                elif self.elbow_angle < 0:
                     self.elbow_angle = 0
-                print str(self.elbow_angle)
+            print str(self.elbow_angle)
             self.arm.move_elbow(self.elbow_angle)
             time.sleep(0.05)
-
-class MotorState(enum.Enum):
-    STOP = 0
-    FORWARD = 1
-    BACKWARD = 2
-    RIGHT = 3
-    LEFT = 4
 
 
 class Motor:
@@ -108,6 +183,7 @@ class Motor:
     def setSpeedPercent(self, speed_percent):
         self.speed = (255 * speed_percent) / 100
 
+    @database_motor_update
     def stop(self):
         self.front_left.move(0, 0)
         self.rear_left.move(0, 0)
@@ -115,6 +191,7 @@ class Motor:
         self.rear_right.move(0, 0)
         self.state = MotorState.STOP
 
+    @database_motor_update
     def moveForward(self):
         self.front_left.move(self.speed, self.accel)
         self.rear_left.move(self.speed, self.accel)
@@ -122,6 +199,7 @@ class Motor:
         self.rear_right.move(self.speed, self.accel)
         self.state = MotorState.FORWARD
 
+    @database_motor_update
     def moveBackward(self):
         self.front_left.move(-self.speed, self.accel)
         self.rear_left.move(-self.speed, self.accel)
@@ -130,6 +208,7 @@ class Motor:
         self.state = MotorState.BACKWARD
 
     # Turn on the spot, to the right
+    @database_motor_update
     def turnRight(self):
         self.front_left.move(self.speed, self.accel)
         self.rear_left.move(self.speed, self.accel)
@@ -138,6 +217,7 @@ class Motor:
         self.state = MotorState.RIGHT
 
     # Turn on the spot, to the left
+    @database_motor_update
     def turnLeft(self):
         self.front_right.move(self.speed, self.accel)
         self.rear_left.move(-self.speed, self.accel)
@@ -146,6 +226,7 @@ class Motor:
         self.state = MotorState.LEFT
 
     # Used for going forward accurately by adjusting left and right speeds.
+    @database_motor_update
     def moveForwardDualSpeed(self, left_speed, right_speed):
         left_speed = self.__clipSpeedValue(left_speed)
         right_speed = self.__clipSpeedValue(right_speed)
@@ -159,6 +240,9 @@ class Motor:
         self.state = MotorState.FORWARD
 
     # Used for going forward accurately by adjusting left and right speeds.
+    # TODO: The database takes the unclipped speeds! Make a decorator
+    # for clipping speeds so the correct args can be passed to database.
+    @database_motor_update
     def moveIndependentSpeeds(
             self,
             front_left,

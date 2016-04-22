@@ -17,13 +17,20 @@ import os
 import shlex
 import sphinx_rtd_theme
 
+'''
+Command to generate code documentation:
+cd docs/
+sphinx-apidoc -o source/code/ ../tiberius/ ../tiberius/testing/scripts/
+../tiberius/testing/ ../tiberius/smbus_dummy/ ../tiberius/navigation/ -f
+'''
+
 # on_rtd is whether we are on readthedocs.org
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.append(os.path.join(os.path.dirname(__name__), '..'))
+sys.path.insert(0, os.path.abspath("../../tiberius/"))
 
 # -- General configuration ------------------------------------------------
 # autosummary_generate = True

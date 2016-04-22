@@ -1,11 +1,11 @@
 /*
 Template Name: Color Admin - Responsive Admin Dashboard Template build with Twitter Bootstrap 3.3.5
 Version: 1.9.0
-Author: Sean Ngu
+Author: Sean Ngu, Cameron A. Craig
 Website: http://www.seantheme.com/color-admin-v1.9/admin/
 */
 
-var handleGoogleMapViewing = function(waypoints) {
+var handleGoogleMapViewing = function(objectives) {
 	"use strict";
 	var map;
 	var poly;
@@ -14,10 +14,6 @@ var handleGoogleMapViewing = function(waypoints) {
 	function getWaypoints(){
 		return waypoints;
 	}
-
-	// $('#btn-submit').click(function(){
-	//
-	// }
 
 	function MarkerStorage(id, latLng, distance){
 		this.id = id;
@@ -45,26 +41,25 @@ var handleGoogleMapViewing = function(waypoints) {
 	  });
 
 		map = new google.maps.Map(document.getElementById('google-map-viewing'), mapOptions);
-    for(var i = 0; i < waypoints.length; i++) {
-      var pt = waypoints[i];
-      addLatLng(pt)
+
+    for(var i = 0; i < objectives.length; i++) {
+      var pt = objectives[i]['fields']['waypoint'];
+			var tk = objectives[i]['fields']['task'];
+      addLatLng(pt, tk)
 
     }
 		poly.setMap(map);
 	}
 
-	function addLatLng(json_pt) {
+	function addLatLng(json_pt, json_tk) {
 	  var path = poly.getPath();
     var latLng = new google.maps.LatLng(json_pt.latitude,json_pt.longitude);
-    // console.log(json_pt.latitude);
-	  // Because path is an MVCArray, we can simply append a new coordinate
-	  // and it will automatically appear.
 
 	  path.push(latLng);
 
 	  // Add a new marker at the new plotted point on the polyline.
 		var order = '' + path.getLength()
-    var label = charify(path.getLength());
+    var label = charify(path.getLength()-1);
 	  var marker = new google.maps.Marker({
 	    position: latLng,
 	    title: '#' + order,
@@ -83,12 +78,18 @@ var handleGoogleMapViewing = function(waypoints) {
 			var distance = 0;
 		}
 
-		var contentwindow  = "Hello from " + path.getLength() + "<br>" +
-											   "Distance: " + distance + "<br>" +
-												 "Latitude: " + latLng.lat() + "<br>" +
+		// Set task text if the objective has a task.
+		var task_html = "";
+		if(json_tk){
+			task_html = "Task: " + json_tk.name;
+		}else{
+			task_html = "No Task Assigned";
+		}
+		var contentwindow  = "Order:     " + path.getLength() + "<br>" +
+											   "Distance:  " + distance + "<br>" +
+												 "Latitude:  " + latLng.lat() + "<br>" +
 												 "Longitude: " + latLng.lng() + "<br>" +
-												 '<button type="button">Add Task</button>' +
-												 '<button id="rm-' + path.getLength() + '" type="button">Remove Waypoint</button>';
+												 task_html;
 
 		var infowindow = new google.maps.InfoWindow({
 		      content: contentwindow
@@ -98,12 +99,6 @@ var handleGoogleMapViewing = function(waypoints) {
 		google.maps.event.addListener(marker, 'click', function(){
        infowindow.open(map, marker);
      });
-
-		 //Add all info to stuff array
-		 var marker_store = new MarkerStorage(path.getLength(), latLng, distance);
-		 marker_store.addTask(0);
- 		stuff.push(marker_store);
-		//document.forms[0].elements["waypoints"].value = stuff;
 
 	}
 	google.maps.event.addDomListener(window, 'load', initialize);
@@ -162,12 +157,12 @@ var handleGoogleMapViewing = function(waypoints) {
 	});
 };
 
-var ViewingGoogleMap = function (mission_id) {
+var ViewingGoogleMap = function (objectives) {
 	"use strict";
     return {
         //main function
-        init: function (mission_id) {
-            handleGoogleMapViewing(mission_id);
+        init: function (objectives) {
+            handleGoogleMapViewing(objectives);
         }
     };
 }();

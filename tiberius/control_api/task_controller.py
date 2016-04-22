@@ -8,6 +8,7 @@ import threading
 import json
 from task_state import TaskState
 
+
 class TaskThread (threading.Thread):
     def __init__(self, threadID, task):
         threading.Thread.__init__(self)
@@ -30,6 +31,10 @@ def generate_response(req, resp, resource):
     })
 
 
+class TaskCommands:
+    RUN = "run_task"
+
+
 class TaskControllerResource(object):
 
     def __init__(self):
@@ -46,19 +51,17 @@ class TaskControllerResource(object):
         command = None
         if("command" in req.params):
             command = req.params['command']
-            print "command g2g"
             task_id = None
             if("task_id" in req.params):
                 task_id = int(req.params['task_id'])
-                print "Task g2g"
 
         if("available" in req.params):
             resp.status = falcon.HTTP_200
             resp.body = json.dumps(self.tasks)
 
         if (command is not None) and (task_id is not None):
-            print "We have a task."
-            if (command == "run") and (self.current_task_id is None):
+            self.logger.info("Valid task request received.")
+            if (command == TaskCommands.RUN) and (self.current_task_id is None):
                 if not self.run_task(task_id):
                     resp.status = falcon.HTTP_404
 
@@ -87,6 +90,7 @@ class TaskControllerResource(object):
 
                 self.logger.info("Completed Task: %s", str(task))
         if not task_found:
+	    self.logger.warning("Task with ID %s was not found.", task_id)
             return False
         else:
             return True
