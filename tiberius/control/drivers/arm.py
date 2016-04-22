@@ -16,7 +16,7 @@ class RoboticArmDriver:
         port = 'COM6'
     else:
         port = '/dev/ttyACM1'
-    baud = 25000
+    baud = 19200
     m = 0.3
     n = 0.3
     # Time required to close and open the robotic gripper
