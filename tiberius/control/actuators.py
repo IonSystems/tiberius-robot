@@ -131,7 +131,7 @@ if TiberiusConfigParser.isArmEnabled():
                 elif self.waist_angle < 0:
                     self.waist_angle = 0
             print str(self.waist_angle)
-            self.arm.move_waist(self.waist_angle)
+            self.arm.rotate_arm(self.waist_angle)
             time.sleep(0.05)
 
         @database_arm_update
