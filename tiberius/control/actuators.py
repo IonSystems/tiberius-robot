@@ -69,6 +69,7 @@ def to_arm_coords(x, y, z, m, n):
     # to the second at the bottom. ie so it forms a set of triangles
 
     # We then round the result to remove the pointless precision
+    print [round(theta, 2), round(rho, 2), round(sigma, 2)]
 
     if theta > 300 or theta < 0:
         print 'Cannot move to that position'
