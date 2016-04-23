@@ -62,7 +62,7 @@ def to_arm_coords(x, y, z, m, n):
     # The added numbers are the offset that the arm cannot travel too.
 
     # Since the shoulder joint can go below horizontal we  add some to make it properly horizontal
-    rho = math.degrees(rho) + 10  # This is the angle from horizontal to the first arm segment
+    rho = math.degrees(rho) + 52  # This is the angle from horizontal to the first arm segment
 
     # Since the elbow joint cannot go inline with the lower arm segment we need to take away the difference
     sigma = math.degrees(sigma) - 40  # This is the angle from the first arm segment
@@ -91,7 +91,7 @@ if TiberiusConfigParser.isArmEnabled():
             'park': __config.getArmParkParams(),
             'centre': __config.getArmCentreParams(),
             'basket': __config.getArmBasketParams(),
-            'home': __config.getArmBasketParams(),
+            'home': __config.getArmHomeParams(),
         }
 
         # We must home before doing anything else or anything could happen
