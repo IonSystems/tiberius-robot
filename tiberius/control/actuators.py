@@ -57,7 +57,7 @@ def to_arm_coords(x, y, z, m, n):
 
 
 
-    theta -= 153
+    theta -= 25
 
 
 
