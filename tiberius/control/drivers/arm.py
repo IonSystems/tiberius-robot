@@ -36,7 +36,7 @@ class RoboticArmDriver:
             self.logger.warning("Serial port already open continuing.")
 
     def move_joints_to(self, rotation, shoulder, elbow):
-        self.ser.write("G0 X" + str(rotation) + "Y" + str(shoulder) + "Z" + str(elbow) + "\n")
+        self.ser.write("G0 X" + str(rotation) + " Y" + str(shoulder) + " Z" + str(elbow) + "\n")
 
     def move_gripper(self, close):
         if close:
@@ -49,13 +49,13 @@ class RoboticArmDriver:
             self.ser.write("M280 P0 S75\n")
 
     def home_x(self):
-        self.ser.write("G28 X")
+        self.ser.write("G28 X \n" )
 
     def home_y(self):
-        self.ser.write("G28 Y")
+        self.ser.write("G28 Y \n")
 
     def home_z(self):
-        self.ser.write("G28 Z")
+        self.ser.write("G28 Z \n")
 
     def rotate_arm(self, angle):
         self.ser.write("G0 X" + str(angle) + "\n")
