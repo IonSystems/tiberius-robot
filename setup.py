@@ -310,6 +310,8 @@ if is_windows():
     # Parameters for windows operating systems
     data_directory = 'D:\\tiberius'
     odbc_directory = data_directory
+    motion_directory = 'D:\\tiberius\\motion'
+    default_directory = 'D:\\tiberius\\default'
     requirements = ['enum34',
                     'autopep8',
                     'pynmea',

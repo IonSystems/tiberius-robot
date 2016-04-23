@@ -3,6 +3,7 @@ from tiberius.utils import detection
 import serial
 import logging
 import time
+from tiberius.config.config_parser import TiberiusConfigParser
 
 
 class RoboticArmDriver:
@@ -15,10 +16,9 @@ class RoboticArmDriver:
     if detection.detect_windows():
         port = 'COM6'
     else:
-        port = '/dev/ttyACM0'
+        port = TiberiusConfigParser.getArmSerialPort()
     baud = 19200
-    m = 0.3
-    n = 0.3
+
     # Time required to close and open the robotic gripper
     gripper_timeout = 5
 
@@ -34,7 +34,6 @@ class RoboticArmDriver:
             self.ser.open()
         except:
             self.logger.warning("Serial port already open continuing.")
-
 
     def move_joints_to(self, rotation, shoulder, elbow):
         self.ser.write("G0 X" + str(rotation) + "Y" + str(shoulder) + "Z" + str(elbow) + "\n")
@@ -53,16 +52,16 @@ class RoboticArmDriver:
         self.ser.write("G28 X")
 
     def home_y(self):
-        self.ser.write("G28 X")
+        self.ser.write("G28 Y")
 
     def home_z(self):
-        self.ser.write("G28 X")
+        self.ser.write("G28 Z")
 
     def rotate_arm(self, angle):
-        self.ser.write("G0 Y" + str(angle) + "\n")
+        self.ser.write("G0 X" + str(angle) + "\n")
 
     def move_shoulder(self, angle):
-        self.ser.write("G0 Z" + str(angle) + "\n")
+        self.ser.write("G0 Y" + str(angle) + "\n")
 
     def move_elbow(self, angle):
-        self.ser.write("G0 X" + str(angle) + "\n")
+        self.ser.write("G0 Z" + str(angle) + "\n")

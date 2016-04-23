@@ -1,3 +1,3 @@
-from tiberius.control.robotic_arm.cartesian import to_arm_coords
+from tiberius.control.actuators import to_arm_coords
 
-print to_arm_coords(-2.6, -1.55, -0.5, 2.5, 2)
+print to_arm_coords(0, 1, 0, 0.6, 0.6)

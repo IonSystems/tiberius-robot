@@ -35,8 +35,9 @@ def detect_pi():
 def detect_windows():
     return 'nt' in os.name
 
-import smbus
+
 def i2c_available():
+    import smbus
     try:
         i2c = smbus.SMBus(1)
     except:
