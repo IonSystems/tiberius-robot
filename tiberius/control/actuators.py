@@ -120,8 +120,8 @@ if TiberiusConfigParser.isArmEnabled():
         y = 0
         z = 0
 
-        arm_shoulder_elbow_length = 0.6
-        arm_elbow_gripper_length = 0.6
+        arm_shoulder_elbow_length = 0.3
+        arm_elbow_gripper_length = 0.3
 
         def move_x(self, amount):
             if not self.cartesian_usable:
