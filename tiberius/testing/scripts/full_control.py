@@ -65,17 +65,17 @@ if __name__ == "__main__":
         # Cartesian control
 
         elif key == 'u' and arm_control_mode == 'cartesian':  # x increase
-            c.arm.move_x(2)
+            c.arm.move_x(0.01)
         elif key == 'j' and arm_control_mode == 'cartesian':  # x decrease
-            c.arm.move_x(-2)
+            c.arm.move_x(-0.01)
         elif key == 'i' and arm_control_mode == 'cartesian':  # y increase
-            c.arm.move_y(2)
+            c.arm.move_y(0.01)
         elif key == 'k' and arm_control_mode == 'cartesian':  # y decrease
-            c.arm.move_y(-2)
+            c.arm.move_y(-0.01)
         elif key == 'o' and arm_control_mode == 'cartesian':  # z increase
-            c.arm.move_z(2)
+            c.arm.move_z(0.01)
         elif key == 'l' and arm_control_mode == 'cartesian':  # z decrease
-            c.arm.move_z(-2)
+            c.arm.move_z(-0.01)
 
         # Direct control
 

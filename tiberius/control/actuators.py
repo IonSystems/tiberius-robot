@@ -55,7 +55,7 @@ def to_arm_coords(x, y, z, m, n):
 
     # for the base we need to rotate the whole thing by the angle to the center, which on Tiberius 3 is 145 degrees
 
-    theta += 145
+    theta += 153
 
     # The same must be done for the other two joins
 
@@ -65,10 +65,21 @@ def to_arm_coords(x, y, z, m, n):
     rho = math.degrees(rho) + 52  # This is the angle from horizontal to the first arm segment
 
     # Since the elbow joint cannot go inline with the lower arm segment we need to take away the difference
-    sigma = math.degrees(sigma) - 40  # This is the angle from the first arm segment
+    sigma = math.degrees(sigma) - 80  # This is the angle from the first arm segment
     # to the second at the bottom. ie so it forms a set of triangles
 
     # We then round the result to remove the pointless precision
+
+    if theta > 300 or theta < 0:
+        print 'Cannot move to that position'
+        return
+    if rho > 210 or rho < 0:
+        print 'Cannot move to that position'
+        return
+    if sigma > 205 or sigma < 0:
+        print 'Cannot move to that position'
+        return
+
     return [round(theta, 2), round(rho, 2), round(sigma, 2)]
 
 
