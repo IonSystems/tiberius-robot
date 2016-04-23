@@ -9,16 +9,16 @@ def to_arm_coords(x, y, z, m, n):
     # Cartesian control is only for use in front of tiberius
     # So we must limit the values that can be used
 
-    if x < 0 or x > 100:
+    if x < -50 or x > 50:
         print 'Invalid  X Position'
         return
 
-    if y < 0 or y > 100:
-        print 'Invalid  X Position'
+    if y < 30 or y > 70:
+        print 'Invalid  Y Position'
         return
 
-    if z < 0 or z > 100:
-        print 'Invalid  X Position'
+    if z < -40 or z > 50:
+        print 'Invalid  Z Position'
         return
 
     # We cannot handle the arm going straight up or down, it breaks the math (divide by 0)
