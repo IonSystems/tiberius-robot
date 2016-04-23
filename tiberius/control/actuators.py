@@ -55,7 +55,11 @@ def to_arm_coords(x, y, z, m, n):
 
     # for the base we need to rotate the whole thing by the angle to the center, which on Tiberius 3 is 145 degrees
 
-    theta += 153
+
+
+    theta -= 153
+
+
 
     # The same must be done for the other two joins
 
@@ -216,7 +220,7 @@ if TiberiusConfigParser.isArmEnabled():
             self.set_position_to('centre')
             self.cartesian_usable = True;
             self.x = 0
-            self.y = 0.5
+            self.y = -0.5
             self.z = 0
 
         def basket(self):
