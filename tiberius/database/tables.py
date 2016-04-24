@@ -24,7 +24,7 @@ class GPSTable(Table):
         'latitude': 'float',
         'longitude': 'float',
         'altitude': 'float',
-        'gls_qual': 'int',
+        'gps_qual': 'int',
         'num_sats': 'int',
         'dilution_of_precision': 'float',
         'velocity': 'float',
@@ -121,5 +121,20 @@ class UltrasonicsValidityTable(Table):
         'rr': 'bool',
         'rc': 'bool',
         'rl': 'bool',
+        'timestamp': 'float'
+    }
+
+class GridTable(Table):
+    table_name = "grid_table"
+    columns = {
+        'id': 'int primary key',
+        'row': 'int',
+        'column': 'int',
+        'lat': 'float',
+        'lon': 'float',
+        'cost': 'int',
+        'heuristic': 'int',
+        'final': 'int',
+        'parent': 'int primary key',
         'timestamp': 'float'
     }
