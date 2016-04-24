@@ -113,6 +113,7 @@ if TiberiusConfigParser.isArmEnabled():
         # We must home before doing anything else or anything could happen
         homed = False
         cartesian_usable = False
+        gripper_state = 'closed'
 
         # Store current position of each joint
         waist_angle = 0
@@ -194,14 +195,15 @@ if TiberiusConfigParser.isArmEnabled():
             '''
             # Move arm out of harms way
             self.arm.move_joints_to(self.waist_angle, 100, 100)
-
+            # Close gripper
+            self.close_gripper()
             # Move arm to parking position
             self.arm.home_x()
             p = self.positions['park']
             self.arm.move_joints_to(p['x'], p['y'], p['z'])
 
-            # Close gripper
-            self.arm.move_gripper(True)
+
+
             self.set_position_to('park')
 
         def centre(self):
@@ -223,14 +225,16 @@ if TiberiusConfigParser.isArmEnabled():
             self.y = -0.5
             self.z = 0
 
+            self.open_gripper()
+        '''
         def basket(self):
             if not self.homed:
                 print 'Arm must be homed first'
                 return
-            '''
-                Swing the arm round around over the basket and ungrasp,
-                then return to the old position.
-            '''
+
+                # Swing the arm round around over the basket and ungrasp,
+                # then return to the old position.
+
             # Move arm out of harms way
             self.arm.move_joints_to(self.waist_angle, 100, 100)
 
@@ -240,8 +244,22 @@ if TiberiusConfigParser.isArmEnabled():
             self.arm.move_joints_to(p['x'], p['y'], p['z'])
 
             # Close gripper
-            self.arm.move_gripper(True)
+            self.close_gripper()
             self.set_position_to('basket')
+        '''
+        def close_gripper(self):
+            if self.gripper_state == 'closed':
+                print 'Gripper already closed'
+                return
+            self.arm.move_gripper(True)
+            self.gripper_state = 'closed'
+
+        def open_gripper(self):
+            if self.gripper_state == 'open':
+                print 'Gripper already open'
+                return
+            self.arm.move_gripper(False)
+            self.gripper_state = 'open'
 
         # get the points location
         def get_waist(self):

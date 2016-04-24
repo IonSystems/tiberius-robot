@@ -103,6 +103,12 @@ if __name__ == "__main__":
         elif key == '~':  # Cartesian arm join control
             print 'Cartesian arm joint control'
             arm_control_mode = 'cartesian'
+        elif key == 'm':  # Close gripper
+            print 'Closing gripper'
+            c.arm.close_gripper()
+        elif key == 'M':  # Open gripper
+            print 'Opening gripper'
+            c.arm.open_gripper()
         # to stop
         elif key == ' ':
             c.motors.stop()
