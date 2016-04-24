@@ -40,12 +40,12 @@ class RoboticArmDriver:
 
     def move_gripper(self, close):
         if close:
-            self.ser.write("M42 P42 S0\n")  # Close
+            self.ser.write("M42 P42 S255\n")  # Close
             self.ser.write("M42 P44 S255\n")
             time.sleep(self.gripper_timeout)
             self.ser.write("M42 P44 S0\n")
         else:
-            self.ser.write("M42 P42 S255\n")  # Open
+            self.ser.write("M42 P42 S0\n")  # Open
             self.ser.write("M42 P44 S255\n")
             time.sleep(self.gripper_timeout)
             self.ser.write("M42 P44 S0\n")
