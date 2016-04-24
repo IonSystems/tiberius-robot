@@ -1,3 +1,6 @@
 from tiberius.control.actuators import to_arm_coords
 
-print to_arm_coords(0, 1, 0, 0.6, 0.6)
+try:
+    print to_arm_coords(0, -0.2, -0.3, 0.3, 0.3)
+except ValueError:
+    print 'Arm cannot reach that location'

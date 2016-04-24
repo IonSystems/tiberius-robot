@@ -8,9 +8,13 @@ from tiberius.config.config_parser import TiberiusConfigParser
 
 class RoboticArmDriver:
     """
-        Class to interface the stepper motors with the robotic arm using RAMPS
-        This will be using GCODE as used in 3D printers
-        All joints are using stepper motors except for the gripper which uses a servo
+        Class to interface with the robotic arm
+        This is using G-code
+
+        Useful reference for all commands used:
+        http://reprap.org/wiki/G-code
+        The board is running a custom version of Marlin with a RAMPS1.4 board, DRV8825 stepper drivers and
+        a DRV8838 Motor driver
     """
 
     if detection.detect_windows():
@@ -20,7 +24,7 @@ class RoboticArmDriver:
     baud = 19200
 
     # Time required to close and open the robotic gripper
-    gripper_timeout = 1
+    gripper_timeout = 1  # A value of 1 gives about 6 positions for the gripper
 
     def __init__(self):
         self.logger = logging.getLogger('tiberius.control.robotic_arm.RoboticArmDriver')
@@ -44,14 +48,18 @@ class RoboticArmDriver:
             self.ser.write("M42 P44 S255\n")
             time.sleep(self.gripper_timeout)
             self.ser.write("M42 P44 S0\n")
-            self.ser.write("M42 P42 S0\n")  # Close
         else:
             self.ser.write("M42 P42 S0\n")  # Open
             self.ser.write("M42 P44 S255\n")
             time.sleep(self.gripper_timeout)
             self.ser.write("M42 P44 S0\n")
-            self.ser.write("M42 P42 S255\n")  # Close
 
+    # The light uses the direction pin on the gripper driver so it will go on and off when the motor is running
+    def set_light(self, state):
+        if state:
+            self.ser.write("M42 P42 S0\n")  # On
+        else:
+            self.ser.write("M42 P42 S255\n")  # Off
 
     def home_x(self):
         self.ser.write("G28 X \n" )

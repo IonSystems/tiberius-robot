@@ -6,84 +6,75 @@ import math
 
 
 def to_arm_coords(x, y, z, m, n):
-    # Cartesian control is only for use in front of tiberius
-    # So we must limit the values that can be used
-    '''
-    if x < -50 or x > 50:
-        print 'Invalid  X Position'
-        return
+    try:  # Catch any exceptions to stop us crashing our scripts
+        # We cannot handle the arm going straight up or down, it breaks the math (divide by 0)
+        if x == 0 and y == 0:
+            print 'Invalid Position - Must not be straight up or down'
+            return False
 
-    if y < 30 or y > 70:
-        print 'Invalid  Y Position'
-        return
+        theta = 0.0  # Rotation around base
+        rho = 0.0  # Angle of elevation from horizontal base (Shoulder)
+        sigma = 0.0  # Angle of elbow
 
-    if z < -40 or z > 50:
-        print 'Invalid  Z Position'
-        return
-    '''
-    # We cannot handle the arm going straight up or down, it breaks the math (divide by 0)
-    if x == 0 and y == 0:
-        print 'Invalid Position - Must not be straight up'
-        return
+        # Calculate base rotation
+        theta = math.atan2(x, y)
 
-    theta = 0.0  # Rotation around base
-    rho = 0.0  # Angle of elevation from base (Shoulder)
-    sigma = 0.0  # Angle of elbow
+        # -180->180    ->     0->360
+        theta = math.degrees(theta)
+        if theta < 0:
+            theta += 360
 
-    # Calculate base rotation
-    theta = math.atan2(x, y)
+        # Calculate angle of elbow
+        sigma = math.acos(
+            (math.pow(m, 2) + math.pow(n, 2) - (math.pow(x, 2) + math.pow(y, 2) + math.pow(z, 2))) / (2 * m * n))
 
-    # -180->180    ->     0->360
-    theta = math.degrees(theta)
-    if theta < 0:
-        theta += 360
+        # Temporary variables for rho calculation
+        j = (math.pow(m, 2) + (math.pow(x, 2) + math.pow(y, 2) + math.pow(z, 2)) - math.pow(n, 2)) / (
+            2 * m * math.sqrt(math.pow(x, 2) + math.pow(y, 2) + math.pow(z, 2)))
+        k = (math.sqrt(math.pow(x, 2) + math.pow(y, 2)))
 
-    # Calculate angle of elbow
-    sigma = math.acos(
-        (math.pow(m, 2) + math.pow(n, 2) - (math.pow(x, 2) + math.pow(y, 2) + math.pow(z, 2))) / (2 * m * n))
+        l = math.atan(z / k)
+        rho = l + math.acos(j)
 
-    # Temporary variables for rho calculation
-    j = (math.pow(m, 2) + (math.pow(x, 2) + math.pow(y, 2) + math.pow(z, 2)) - math.pow(n, 2)) / (
-        2 * m * math.sqrt(math.pow(x, 2) + math.pow(y, 2) + math.pow(z, 2)))
-    k = (math.sqrt(math.pow(x, 2) + math.pow(y, 2)))
+        # Now we must convert these angles into what the arm actually needs to do, since this is for an 'ideal' arm ie it
+        # can go from 0 to 360 on every joint
 
-    l = math.atan(z / k)
-    rho = l + math.acos(j)
+        # for the base we need to rotate the whole thing by the angle to the center, which on Tiberius 3 is -25 since we
+        # are using the -y area degrees
 
-    # Now we must convert these angles into what the arm actually needs to do, since this is for an 'ideal' arm ie it
-    # can go from 0 to 360 on every joint
+        theta -= 25
 
-    # for the base we need to rotate the whole thing by the angle to the center, which on Tiberius 3 is 145 degrees
+        # The same must be done for the other two joins
 
+        # The added numbers are the offset that the arm cannot travel too.
 
+        # Since the shoulder joint can go below horizontal we  add some to make it properly horizontal
+        rho = math.degrees(rho) + 52  # This is the angle from horizontal to the first arm segment
 
-    theta -= 25
+        # Since the elbow joint cannot go inline with the lower arm segment we need to take away the difference
+        sigma = math.degrees(sigma) - 80  # This is the angle from the first arm segment
+        # to the second at the bottom. ie so it forms a set of triangles
 
+        # print out the values we get for debugging purposes
+        print [round(theta, 2), round(rho, 2), round(sigma, 2)]
 
+        # Then stop the arm from trying to so something silly
+        if theta > 300 or theta < 0:
+            print 'Cannot move to that position'
+            return False
+        if rho > 210 or rho < 0:
+            print 'Cannot move to that position'
+            return False
+        if sigma > 205 or sigma < 0:
+            print 'Cannot move to that position'
+            return False
 
-    # The same must be done for the other two joins
-
-    # The added numbers are the offset that the arm cannot travel too.
-
-    # Since the shoulder joint can go below horizontal we  add some to make it properly horizontal
-    rho = math.degrees(rho) + 52  # This is the angle from horizontal to the first arm segment
-
-    # Since the elbow joint cannot go inline with the lower arm segment we need to take away the difference
-    sigma = math.degrees(sigma) - 80  # This is the angle from the first arm segment
-    # to the second at the bottom. ie so it forms a set of triangles
+    except ValueError:  # Math domain error as the arm cannot reach the specified location
+        print 'Arm cannot reach that location'
+        return False
 
     # We then round the result to remove the pointless precision
-    print [round(theta, 2), round(rho, 2), round(sigma, 2)]
-
-    if theta > 300 or theta < 0:
-        print 'Cannot move to that position'
-        return
-    if rho > 210 or rho < 0:
-        print 'Cannot move to that position'
-        return
-    if sigma > 205 or sigma < 0:
-        print 'Cannot move to that position'
-        return
+    # Finally we return the new position of the arm
 
     return [round(theta, 2), round(rho, 2), round(sigma, 2)]
 
@@ -91,7 +82,6 @@ def to_arm_coords(x, y, z, m, n):
 if TiberiusConfigParser.isArmEnabled():
     import drivers.arm as robotic_arm
     from tiberius.database.decorators import database_arm_update
-
 
     class Arm:
         """
@@ -115,6 +105,8 @@ if TiberiusConfigParser.isArmEnabled():
         cartesian_usable = False
         gripper_state = 'closed'
         gripper_position = 0
+        parked = True
+        light = False
 
         # Store current position of each joint
         waist_angle = 0
@@ -133,36 +125,38 @@ if TiberiusConfigParser.isArmEnabled():
             if not self.cartesian_usable:
                 print 'Arm must be homed and centered first before using cartesian control'
                 return
-            self.x += amount
-            self.cartesian_move()
+            if self.cartesian_move(self.x + amount, self.y, self.z):  # Only change stored if successful
+                self.x += amount
 
         def move_y(self, amount):
             if not self.cartesian_usable:
                 print 'Arm must be homed and centered first before using cartesian control'
                 return
-            self.y += amount
-            self.cartesian_move()
+            if self.cartesian_move(self.x, self.y + amount, self.z):  # Only change stored if successful
+                self.y += amount
 
         def move_z(self, amount):
             if not self.cartesian_usable:
                 print 'Arm must be homed and centered first before using cartesian control'
                 return
-            self.z += amount
-            self.cartesian_move()
+            if self.cartesian_move(self.x, self.y, self.z + amount):  # Only change stored if successful
+                self.z += amount
 
-        def cartesian_move(self):
+        def cartesian_move(self, x, y, z):
             if not self.cartesian_usable:
                 print 'Arm must be homed and centered first before using cartesian control'
                 return
-            new_position = to_arm_coords(self.x, self.y, self.z, self.arm_shoulder_elbow_length,
+
+            new_position = to_arm_coords(x, y, z, self.arm_shoulder_elbow_length,
                                          self.arm_elbow_gripper_length)
+
+            if new_position is False:  # something was wrong with that we tried to do
+                return False  # pass back to calling method that something was wrong
             self.waist_angle = new_position[0]
             self.shoulder_angle = new_position[1]
             self.elbow_angle = new_position[2]
 
             self.arm.move_joints_to(self.waist_angle, self.shoulder_angle, self.elbow_angle)
-
-
 
         def set_position_to(self, position):
             p = self.positions[position]
@@ -170,9 +164,13 @@ if TiberiusConfigParser.isArmEnabled():
             self.shoulder_angle = p['y']
             self.elbow_angle = p['z']
 
-        def home(self):
+        def home(self, forced=False):
             # We home in reverse order to make sure the arm is in front of tiberius for the x home which will stop
             # us from hitting anything
+
+            # We should only home from a parked position
+            if not self.parked and not forced:
+                print 'Arm must be parked before homing, or homing can be forced if it is safe to do so'
             self.arm.home_z()
             time.sleep(2)
             self.arm.home_y()
@@ -182,9 +180,10 @@ if TiberiusConfigParser.isArmEnabled():
             self.set_position_to('home')
             print 'Please wait for homing to complete...'
             # It is quite hard to figure out when homing is done so just wait for a reasonable amount of time
-            time.sleep(4)
-
-            self.homed = True;
+            # To stop the user spamming buttons
+            time.sleep(5)
+            self.parked = False
+            self.homed = True
 
         def park(self):
             if not self.homed:
@@ -197,15 +196,16 @@ if TiberiusConfigParser.isArmEnabled():
             # Move arm out of harms way
             self.arm.move_joints_to(self.waist_angle, 100, 100)
             # Close gripper
-            self.close_gripper()
+            self.fully_close_gripper()
+            self.change_arm_light(False)  # We force a light off when we park
             # Move arm to parking position
             self.arm.home_x()
             p = self.positions['park']
             self.arm.move_joints_to(p['x'], p['y'], p['z'])
-
-
-
+            print 'Parking arm...'
+            time.sleep(5)
             self.set_position_to('park')
+            self.parked = True
 
         def centre(self):
             if not self.homed:
@@ -220,13 +220,16 @@ if TiberiusConfigParser.isArmEnabled():
             # Move arm to centre position
             p = self.positions['centre']
             self.arm.move_joints_to(p['x'], p['y'], p['z'])
+            print 'Centring arm...'
+            time.sleep(5)
             self.set_position_to('centre')
-            self.cartesian_usable = True;
+            self.cartesian_usable = True
             self.x = 0
             self.y = -0.5
             self.z = 0
+            self.fully_open_gripper()
 
-            self.open_gripper()
+
         '''
         def basket(self):
             if not self.homed:
@@ -248,26 +251,49 @@ if TiberiusConfigParser.isArmEnabled():
             self.close_gripper()
             self.set_position_to('basket')
         '''
-        def close_gripper(self):
-            if self.gripper_state == 'closed':
+
+        def change_arm_light(self, state):
+            if state != self.light:
+                self.light = state
+            self.arm.set_light(self.light)
+
+        def set_arm_light(self):
+            self.arm.set_light(self.light)
+
+        # Since this is meant for use when putting the arm away it makes sense that we should not have anything
+        # in the gripper to start with since that would probably break it.
+        def fully_close_gripper(self):
+            self.fully_open_gripper()
+            while self.close_gripper():
+                time.sleep(0.2)
+            self.set_arm_light()
+
+        def fully_open_gripper(self):
+            while self.open_gripper():
+                time.sleep(0.2)
+            self.set_arm_light()
+
+        def close_gripper(self, forced=False):
+            if self.gripper_position < 1 and not forced:
                 print 'Gripper fully closed'
-                return
+                return False
             self.arm.move_gripper(True)
             self.gripper_position -= 1
-            if self.gripper_position < 1:
-                self.gripper_state = 'closed'
+            if forced:  # We set to 0 so we can change the endpoint of the gripper
+                self.gripper_position = 0
+            time.sleep(0.2)
+            return True
 
-
-        def open_gripper(self):
-            if self.gripper_state == 'open':
+        def open_gripper(self, forced=False):
+            if self.gripper_position > 5 and not forced:
                 print 'Gripper fully open'
-                return
+                return False
             self.arm.move_gripper(False)
-
             self.gripper_position += 1
-            if self.gripper_position > 5:
-                self.gripper_state = 'open'
-
+            if forced:  # We set to 6 so we can change the endpoint of the gripper
+                self.gripper_position = 6
+            time.sleep(0.2)
+            return True
 
         # get the points location
         def get_waist(self):
