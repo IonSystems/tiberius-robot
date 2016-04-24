@@ -20,7 +20,7 @@ class RoboticArmDriver:
     baud = 19200
 
     # Time required to close and open the robotic gripper
-    gripper_timeout = 1
+    gripper_timeout = 2
 
     def __init__(self):
         self.logger = logging.getLogger('tiberius.control.robotic_arm.RoboticArmDriver')
@@ -44,11 +44,14 @@ class RoboticArmDriver:
             self.ser.write("M42 P44 S255\n")
             time.sleep(self.gripper_timeout)
             self.ser.write("M42 P44 S0\n")
+            self.ser.write("M42 P42 S0\n")  # Close
         else:
             self.ser.write("M42 P42 S0\n")  # Open
             self.ser.write("M42 P44 S255\n")
             time.sleep(self.gripper_timeout)
             self.ser.write("M42 P44 S0\n")
+            self.ser.write("M42 P42 S255\n")  # Close
+
 
     def home_x(self):
         self.ser.write("G28 X \n" )
