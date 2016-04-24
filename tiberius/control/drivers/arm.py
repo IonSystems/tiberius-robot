@@ -20,7 +20,7 @@ class RoboticArmDriver:
     baud = 19200
 
     # Time required to close and open the robotic gripper
-    gripper_timeout = 2
+    gripper_timeout = 1
 
     def __init__(self):
         self.logger = logging.getLogger('tiberius.control.robotic_arm.RoboticArmDriver')

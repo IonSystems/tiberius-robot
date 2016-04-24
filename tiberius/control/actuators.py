@@ -114,6 +114,7 @@ if TiberiusConfigParser.isArmEnabled():
         homed = False
         cartesian_usable = False
         gripper_state = 'closed'
+        gripper_position = 0
 
         # Store current position of each joint
         waist_angle = 0
@@ -249,17 +250,24 @@ if TiberiusConfigParser.isArmEnabled():
         '''
         def close_gripper(self):
             if self.gripper_state == 'closed':
-                print 'Gripper already closed'
+                print 'Gripper fully closed'
                 return
             self.arm.move_gripper(True)
-            self.gripper_state = 'closed'
+            self.gripper_position -= 1
+            if self.gripper_position < 1:
+                self.gripper_state = 'closed'
+
 
         def open_gripper(self):
             if self.gripper_state == 'open':
-                print 'Gripper already open'
+                print 'Gripper fully open'
                 return
             self.arm.move_gripper(False)
-            self.gripper_state = 'open'
+
+            self.gripper_position += 1
+            if self.gripper_position > 5:
+                self.gripper_state = 'open'
+
 
         # get the points location
         def get_waist(self):
