@@ -125,21 +125,21 @@ if TiberiusConfigParser.isArmEnabled():
             if not self.cartesian_usable:
                 print 'Arm must be homed and centered first before using cartesian control'
                 return
-            if self.cartesian_move(self.x + amount, self.y, self.z):  # Only change stored if successful
+            if self.cartesian_move(self.x + amount, self.y, self.z) is not False:  # Only change stored if successful
                 self.x += amount
 
         def move_y(self, amount):
             if not self.cartesian_usable:
                 print 'Arm must be homed and centered first before using cartesian control'
                 return
-            if self.cartesian_move(self.x, self.y + amount, self.z):  # Only change stored if successful
+            if self.cartesian_move(self.x, self.y + amount, self.z) is not False:  # Only change stored if successful
                 self.y += amount
 
         def move_z(self, amount):
             if not self.cartesian_usable:
                 print 'Arm must be homed and centered first before using cartesian control'
                 return
-            if self.cartesian_move(self.x, self.y, self.z + amount):  # Only change stored if successful
+            if self.cartesian_move(self.x, self.y, self.z + amount) is not False:  # Only change stored if successful
                 self.z += amount
 
         def cartesian_move(self, x, y, z):
