@@ -72,16 +72,22 @@ if __name__ == "__main__":
 
             elif key == 'u' and arm_control_mode == 'cartesian':  # x increase
                 c.arm.move_x(0.01)
+                time.sleep(0.2)
             elif key == 'j' and arm_control_mode == 'cartesian':  # x decrease
                 c.arm.move_x(-0.01)
+                time.sleep(0.2)
             elif key == 'i' and arm_control_mode == 'cartesian':  # y increase
                 c.arm.move_y(0.01)
+                time.sleep(0.2)
             elif key == 'k' and arm_control_mode == 'cartesian':  # y decrease
                 c.arm.move_y(-0.01)
+                time.sleep(0.2)
             elif key == 'o' and arm_control_mode == 'cartesian':  # z increase
                 c.arm.move_z(0.01)
+                time.sleep(0.2)
             elif key == 'l' and arm_control_mode == 'cartesian':  # z decrease
                 c.arm.move_z(-0.01)
+                time.sleep(0.2)
 
             # Direct control
 
@@ -136,6 +142,9 @@ if __name__ == "__main__":
                 c.arm.change_arm_light(True)
             elif key == '}':  # Light off
                 c.arm.change_arm_light(False)
+
+            elif key == 'X':
+                sys.exit(0)
 
         except Exception as e:  # Print out any errors that occur, saves us having to restart the script if we
                                 # accidentally hit a key
