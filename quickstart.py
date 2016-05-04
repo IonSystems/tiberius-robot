@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from optparse import OptionParser
 from subprocess import check_output, Popen
 import time
