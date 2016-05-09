@@ -1,4 +1,4 @@
- td{
+ table.navigation_table td{
   height: 4em;
   width: 4em;
   float: center;
@@ -6,7 +6,7 @@
   text-align: center;
 }
 
-element{
+table.navigation_table element{
 	text-align: center;
 	font-size: 100%;
 }

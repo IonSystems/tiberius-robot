@@ -7,7 +7,7 @@
 <head>
 	{% include "head.html" %}
 	<title>View Mission</title>
-
+	<link href="{% static 'tiberius/css/navigation-grid.css' %}" rel="stylesheet" />
 </head>
 <body>
 	<!-- begin #page-loader -->
@@ -286,6 +286,22 @@
 																		</div>
 																</div>
 						</div>
+						<div class="panel panel-inverse" data-sortable-id="index-9">
+																<div class="panel-heading">
+																		<div class="panel-heading-btn">
+																				<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
+																				<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-reload"><i class="fa fa-repeat"></i></a>
+																				<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
+																				<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-danger" data-click="panel-remove"><i class="fa fa-times"></i></a>
+																		</div>
+																		<h4 class="panel-title">Navigation Matrix</h4>
+																</div>
+																<div class="panel-body p-0">
+																	<table class="navigation_table" border=1 style="border-collapse: collapse;" id="table">
+																		<h2>Tiberius A* Pathing Grid</h2>
+																	</table>
+																</div>
+						</div>
 						</div>
 					</div> <!-- end row-->
 			<!-- end profile-container -->
@@ -310,6 +326,14 @@
 	<script src="https://maps.googleapis.com/maps/api/js?libraries=geometry&key=AIzaSyDkFor-_BtfyOvNRxfqbNJdacVzIpQTw0Y"></script>
 	<script src="{% static 'tiberius/js/charify.js' %}"></script>
 	<script src="{% static 'tiberius/js/tiblib.js' %}"></script>
+	<script type="text/javascript">
+		var tiberiusImg = "<img src=\"{% static 'tiberius/img/arrows/tiberius.png' %}\" width=60em />";
+		var leftImg = "<img src=\"{% static 'tiberius/img/arrows/arrow_left.png' %}\" width=50em />";
+		var upImg = "<img src=\"{% static 'tiberius/img/arrows/arrow_up.png' %}\" width=50em />";
+		var rightImg = "<img src=\"{% static 'tiberius/img/arrows/arrow_right.png' %}\" width=50em />";
+		var downImg = "<img src=\"{% static 'tiberius/img/arrows/arrow_down.png' %}\" width=50em />";
+	</script>
+	<script src="{% static 'tiberius/js/navigation-grid.js' %}"></script>
 	<script src="{% static 'tiberius/js/control-map-google.js' %}"></script>
 	<script src="{% static 'tiberius/js/control-nav-requests.js' %}"></script>
 	<script src="{% static 'color-admin/plugins/DataTables/media/js/jquery.dataTables.js' %}"></script>

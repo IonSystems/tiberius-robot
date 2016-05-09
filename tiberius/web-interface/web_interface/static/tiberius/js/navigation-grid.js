@@ -1,20 +1,7 @@
-<!DOCTYPE=html>
-<html>
 
-<head>
-<link rel="stylesheet" href="grid.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-</head>
-
-<body>
-
-<table border=1 style="border-collapse: collapse;" id="table">
-<h2>Tiberius A* Pathing Grid</h2>
-</table>
-
-<script>
 var cellData;
 var cellPositionData;
+
 var testZonesi = 3;
 var testZonesj = 7;
 //var testPath = [(1,2), (1,3), (2,3), (2,4), (2,5), (3,5)];
@@ -199,7 +186,3 @@ $(function(){
         hideLongLat(row, col, $(this));
     });
 });
-
-</script>
-</body>
-</html>
