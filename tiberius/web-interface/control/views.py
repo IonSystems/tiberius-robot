@@ -8,6 +8,9 @@ from requests.exceptions import ConnectionError
 from fleet.models import Robot
 from .forms import ChangeRobotForm
 import requests
+from django.utils.safestring import mark_safe
+import json
+import web_interface.settings as settings
 # Create your views here.
 
 
@@ -64,87 +67,114 @@ def control(request, id):
         template = loader.get_template('control.html')
         tib = Robot.objects.get(id=id)
         robot_online = check_robot_status(tib.ip_address)
+        initial_speed = get_api_param(
+            tib.ip_address,
+            'motors',
+            'get_speed',
+            'speed'
+        )
+        initial_arm_values = get_api_param(
+            tib.ip_address,
+            'arm',
+            'get_speed'
+        )
+
+        # If the platform is offline, indicate so with -1
+        if isinstance(initial_arm_values, dict):
+            initial_arm_speed = mark_safe(initial_arm_values['speed'])
+        else:
+            initial_arm_speed = -1
+
         context = RequestContext(request, {
             'ruc': tib,
             'form': form,
-            'robot_online': robot_online
+            'robot_online': robot_online,
+            'initial_speed': mark_safe(initial_speed),
+            'initial_arm_values': mark_safe(initial_arm_values),
+            'initial_arm_speed': initial_arm_speed
         })
         return HttpResponse(template.render(context))
 
 
+def get_api_param(ip_address, resource, command, param=None):
+    try:
+        r = send_command(
+                command,
+                "http://" + ip_address + ":8000/" + resource)
+        if r and param:
+            r = json.loads(r)[param]
+        elif r:
+            r = json.loads(r)
+    except KeyError, e:
+        return -1
+    except TypeError, e:
+        return -1
+    except ValueError, e:
+        return -1
+    return r
+
+
 @require_http_methods(["POST"])
 def send_control_request(request):
-    headers = {'X-Auth-Token': "supersecretpassword"}
+    '''
+        Forward the HTTP request from the browser through to the Tiberius API.
+        Handles requests for manual motor control.
+    '''
+    headers = {'X-Auth-Token': settings.SUPER_SECRET_PASSWORD}
 
-    # Contruct url for motor resource on Control API
+    # Construct url for motor resource on Control API
     ip_address = request.POST.get('ip_address')
     url_start = "http://"
     url_end = ":8000/motors"
     url = url_start + ip_address + url_end
     response = ""
 
-    if request.POST.get('stop'):
-        try:
-            data = {'stop': True}
-            r = requests.post(url,
-                              data=data,
-                              headers=headers)
-            response = r.text
-        except ConnectionError as e:
-            response = e
-    elif request.POST.get('forward'):
-        data = {'forward': True}
-        try:
-            r = requests.post(url,
-                              data=data,
-                              headers=headers)
-            response = r.text
-        except ConnectionError as e:
-            response = e
-    elif request.POST.get('backward'):
-        data = {'backward': True}
-        try:
-            r = requests.post(url,
-                              data=data,
-                              headers=headers)
-            response = r.text
-        except ConnectionError as e:
-            response = e
-
-    if request.POST.get('left'):
-        data = {'left': True}
-        try:
-            r = requests.post(url,
-                              data=data,
-                              headers=headers)
-            response = r.text
-        except ConnectionError as e:
-            response = e
-    elif request.POST.get('right'):
-        data = {'right': True}
-        try:
-            r = requests.post(url,
-                              data=data,
-                              headers=headers)
-            response = r.text
-        except ConnectionError as e:
-            response = e
-
-    if request.POST.get('speed'):
-        try:
-            data = {'speed': request.POST.get('speed')}
-            r = requests.post(url,
-                              data=data,
-                              headers=headers)
-            response = r.text
-        except ConnectionError as e:
-            response = e
+    try:
+        r = requests.post(url,
+                          data=request.POST.lists(),
+                          headers=headers)
+        response = r.text
+    except ConnectionError as e:
+        response = e
     return HttpResponse(response)
 
 
 @require_http_methods(["POST"])
+def send_arm_request(request):
+    headers = {'X-Auth-Token': settings.SUPER_SECRET_PASSWORD}
+
+    # Contruct url for motor resource on Control API
+    ip_address = request.POST.get('ip_address')
+    url_start = "http://"
+    url_end = ":8000/arm"
+    url = url_start + ip_address + url_end
+    response = ""
+
+    try:
+        r = requests.post(url,
+                          data=request.POST.lists(),
+                          headers=headers)
+        response = r.text
+    except ConnectionError as e:
+        response = e
+    return HttpResponse(response)
+
+
+def send_command(command_name, url, headers={'X-Auth-Token': settings.SUPER_SECRET_PASSWORD}):
+    try:
+        data = {'command': command_name}
+        r = requests.post(url,
+                          data=data,
+                          headers=headers)
+        response = r.text
+    except ConnectionError as e:
+        response = e
+    return response
+
+
+@require_http_methods(["POST"])
 def send_task_request(request):
-    headers = {'X-Auth-Token': "supersecretpassword"}
+    headers = {'X-Auth-Token': settings.SUPER_SECRET_PASSWORD}
 
     # Contruct url for motor resource on Control API
     ip_address = request.POST.get('ip_address')
@@ -168,17 +198,18 @@ def send_task_request(request):
 
     return HttpResponse(response)
 
+
 def check_robot_status(ip_address):
     url_start = "http://"
     url_end = ":8000/status"
     url = url_start + ip_address + url_end
-    headers = {'X-Auth-Token': "supersecretpassword"}
+    headers = {'X-Auth-Token': settings.SUPER_SECRET_PASSWORD}
     data = 'status'
     try:
         r = requests.post(url,
                           data=data,
                           headers=headers)
-        status = r.text
+        status = json.loads(r.text)['connection']
     except ConnectionError as e:
         status = "Offline"
     return status

@@ -9,9 +9,22 @@ import logging
 '''
 
 
-class RobotArmStates(Enum):
+class ArmStates:
     ENABLED = "enabled"
-    DISABLED = "disbled"
+    DISABLED = "disabled"
+
+
+class ArmCommands:
+    BASKET = "basket"
+    CENTRE = "centre"
+    PARK = "park"
+    CHANGE_X = "arm_dx" # Waist
+    CHANGE_Y = "arm_dy" # Shoulder
+    CHANGE_Z = "arm_dz" # Elbow
+    GRASP = "grasp"
+    UNGRASP = "ungrasp"
+    SET_SPEED = "set_speed"
+    GET_SPEED = "get_speed"
 
 
 def generate_response(req, resp, resource):
@@ -21,7 +34,8 @@ def generate_response(req, resp, resource):
                  'x': resource.x,
                  'y': resource.y,
                  'z': resource.z,
-                 'state': resource.state.value,
+                 'state': resource.state,
+                 'speed': resource.speed,
     })
 
 
@@ -52,14 +66,49 @@ class RobotArmResource(object):
     def __init__(self, arm_control):
         self.arm_control = arm_control
         self.logger = logging.getLogger('tiberius.control_api.RobotArmResource')
-        self.state = RobotArmStates.ENABLED
+        self.state = ArmStates.ENABLED
 
-        self.x = None
-        self.y = None
-        self.z = None
+        self.x = -1
+        self.y = -1
+        self.z = -1
+
+        self.speed = 0
 
     @falcon.after(generate_response)
     @falcon.before(validate_params)
     def on_post(self, req, resp):
-        # Can't go forwards and backwards at the same time so we can use elif.
+        # Get arm speed
+        if(ArmCommands.GET_SPEED in req.params):
+            pass
+        if(ArmCommands.SET_SPEED in req.params):
+            self.speed = req.params[ArmCommands.SET_SPEED]
+	
+	if 'command_name' in req.params and 'command_value' in req.params:
+            command_name = req.params['command_name']
+	    command_value = int(req.params['command_value'])
+            # Arm positional commands
+            if(ArmCommands.CHANGE_X in command_name):
+                self.x += command_value
+	        self.arm_control.move_waist(command_value)
+            if(ArmCommands.CHANGE_Y in command_name):
+                self.y += command_value
+                self.arm_control.move_shoulder(command_value)
+            if(ArmCommands.CHANGE_Z in command_name):
+                self.z += command_value
+		self.arm_control.move_elbow(command_value)
+
+        # Arm gripper commands
+        if(ArmCommands.GRASP in req.params):
+            self.arm_control.grasp()
+        elif(ArmCommands.UNGRASP in req.params):
+            self.arm_control.ungrasp()
+
+        # Arm complex commands
+        if(ArmCommands.BASKET in req.params):
+            self.arm_control.basket()
+        elif(ArmCommands.CENTRE in req.params):
+            self.arm_control.centre()
+        elif(ArmCommands.PARK in req.params):
+            self.arm_control.park()
+
         print req.params

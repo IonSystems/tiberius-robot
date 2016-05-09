@@ -1,8 +1,9 @@
 from tiberius.navigation.gps.algorithms import Algorithms
+from tiberius.control.control import Control
 import sys
 import traceback
-
-g = Algorithms()
+c = Control()
+g = Algorithms(c)
 
 algo = sys.argv[1]
 latitude = []

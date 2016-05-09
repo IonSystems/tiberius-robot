@@ -2,6 +2,8 @@
 cell object that is used to create the grid for the A* algorithm.
 
 '''
+
+
 class Cell(object):
     def __init__(self, x, y, reachable, lat, lon):
         '''
@@ -19,4 +21,4 @@ class Cell(object):
         self.h = 0  # the heuristic value of the cell
         self.f = 0  # the final cost of the cell
         self.lat = lat  # the latitude position of the cell
-        self.long = lon  # the longitude position of the cell
+        self.lon = lon  # the longitude position of the cell

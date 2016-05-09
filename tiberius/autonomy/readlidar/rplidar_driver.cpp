@@ -2,26 +2,26 @@
  * Copyright (c) 2014, RoboPeak
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * 1. Redistributions of source code must retain the above copyright notice, 
+ * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  *
- * 2. Redistributions in binary form must reproduce the above copyright notice, 
- *    this list of conditions and the following disclaimer in the documentation 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
- * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
@@ -31,7 +31,7 @@
  *
  *  Copyright 2009 - 2014 RoboPeak Team
  *  http://www.robopeak.com
- * 
+ *
  */
 
 #include "sdkcommon.h"
@@ -69,7 +69,7 @@ void RPlidarDriver::DisposeDriver(RPlidarDriver * drv)
 
 // Serial Driver Impl
 
-RPlidarDriverSerialImpl::RPlidarDriverSerialImpl() 
+RPlidarDriverSerialImpl::RPlidarDriverSerialImpl()
     : _isConnected(false)
     , _isScanning(false)
 {
@@ -128,9 +128,9 @@ u_result RPlidarDriverSerialImpl::reset(_u32 timeout)
 u_result RPlidarDriverSerialImpl::getHealth(rplidar_response_device_health_t & healthinfo, _u32 timeout)
 {
     u_result  ans;
-    
+
     if (!isConnected()) return RESULT_OPERATION_FAIL;
-    
+
     _disableDataGrabbing();
 
     {
@@ -165,7 +165,7 @@ u_result RPlidarDriverSerialImpl::getHealth(rplidar_response_device_health_t & h
 u_result RPlidarDriverSerialImpl::getDeviceInfo(rplidar_response_device_info_t & info, _u32 timeout)
 {
     u_result  ans;
-    
+
     if (!isConnected()) return RESULT_OPERATION_FAIL;
 
     _disableDataGrabbing();
@@ -282,8 +282,8 @@ u_result RPlidarDriverSerialImpl::_cacheScanData()
         {
             if (local_buf[pos].sync_quality & RPLIDAR_RESP_MEASUREMENT_SYNCBIT)
             {
-                // only publish the data when it contains a full 360 degree scan 
-                
+                // only publish the data when it contains a full 360 degree scan
+
                 if ((local_scan[0].sync_quality & RPLIDAR_RESP_MEASUREMENT_SYNCBIT)) {
                     _lock.lock();
                     memcpy(_cached_scan_node_buf, local_scan, scan_count*sizeof(rplidar_response_measurement_node_t));
@@ -406,13 +406,13 @@ u_result RPlidarDriverSerialImpl::_waitNode(rplidar_response_measurement_node_t 
         size_t recvSize;
 
         int ans = _rxtx->waitfordata(remainSize, timeout-waitTime, &recvSize);
-        if (ans == rp::hal::serial_rxtx::ANS_DEV_ERR) 
+        if (ans == rp::hal::serial_rxtx::ANS_DEV_ERR)
             return RESULT_OPERATION_FAIL;
         else if (ans == rp::hal::serial_rxtx::ANS_TIMEOUT)
             return RESULT_OPERATION_TIMEOUT;
 
         if (recvSize > remainSize) recvSize = remainSize;
-        
+
         _rxtx->recvdata(recvBuffer, recvSize);
 
         for (size_t pos = 0; pos < recvSize; ++pos) {
@@ -468,7 +468,7 @@ u_result RPlidarDriverSerialImpl::_waitScanData(rplidar_response_measurement_nod
         if (IS_FAIL(ans = _waitNode(&node, timeout - waitTime))) {
             return ans;
         }
-        
+
         nodebuffer[recvNodeCount++] = node;
 
         if (recvNodeCount == count) return RESULT_OK;
@@ -531,15 +531,15 @@ u_result RPlidarDriverSerialImpl::_waitResponseHeader(rplidar_ans_header_t * hea
     while ((waitTime=getms() - startTs) <= timeout) {
         size_t remainSize = sizeof(rplidar_ans_header_t) - recvPos;
         size_t recvSize;
-        
+
         int ans = _rxtx->waitfordata(remainSize, timeout - waitTime, &recvSize);
-        if (ans == rp::hal::serial_rxtx::ANS_DEV_ERR) 
+        if (ans == rp::hal::serial_rxtx::ANS_DEV_ERR)
             return RESULT_OPERATION_FAIL;
         else if (ans == rp::hal::serial_rxtx::ANS_TIMEOUT)
             return RESULT_OPERATION_TIMEOUT;
-        
+
         if(recvSize > remainSize) recvSize = remainSize;
-        
+
         _rxtx->recvdata(recvBuffer, recvSize);
 
         for (size_t pos = 0; pos < recvSize; ++pos) {
@@ -549,7 +549,7 @@ u_result RPlidarDriverSerialImpl::_waitResponseHeader(rplidar_ans_header_t * hea
                 if (currentByte != RPLIDAR_ANS_SYNC_BYTE1) {
                    continue;
                 }
-                
+
                 break;
             case 1:
                 if (currentByte != RPLIDAR_ANS_SYNC_BYTE2) {
