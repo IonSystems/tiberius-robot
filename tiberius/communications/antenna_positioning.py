@@ -1,5 +1,7 @@
 import math
 
+import time
+
 import tiberius.database.query as db_q
 from tiberius.database.tables import CompassTable, GPSTable
 from tiberius.utils import bearing_math
@@ -24,14 +26,17 @@ class Antenna:
             self.moveServo(moveby, 1)  # anti-clockwise
         else:
             self.moveServo(moveby, 0)  # clockwise
-        #move servo
         self.curheading = heading
 
-    def moveServo(self, heading, direction):
-        if direction == 1:
-            a = 1
+    def moveServo(self, heading, rotation):
+        # based on speed
+        delay = heading * 0.00317  # speed per degree * degrees needed
+        if rotation == 1:
+            direction = 180
         else:
-            a = 2
+            direction = 0
+        self.control.ehc.set_hardware(None, None, None, None, {direction})
+        time.sleep(delay)
 
     def getCurHeading(self):
 
