@@ -231,23 +231,22 @@ class DatabaseThreadCreator:
     ******************************************'''
 
     def diagnostics_thread(self, control):
-        external_hardware_controller = control
+        from tables import SensorValidityTable
+        external_hardware_controller = control.ehc
 
         ultrasonics_status, compass_status, gps_status = False, False, False
 
-        while True:
-            try:
-                rows = q.get_latest(sensors_validity)
-                print "ROWS: " + str(rows)
-                for row in rows:
-                    print "ROW: " + str(row)
-                    ultrasonics_status = row.ultrasonics
-                    compass_status = row.compass
-                    gps_status = row.gps
-                diagnostics_leds = [ultrasonics_status, compass_status, gps_status, 9, 9, 9, 9, 9]
-                external_hardware_controller.set_hardware(diagnostics_leds)
+        try:
+            rows = q.get_latest(SensorValidityTable)
+            print "ROWS: " + str(rows)
+            for row in rows:
+                print "ROW: " + str(row)
+                ultrasonics_status = row.ultrasonics
+                compass_status = row.compass
+                gps_status = row.gps
+            diagnostics_leds = [ultrasonics_status, compass_status, gps_status, 9, 9, 9, 9, 9]
+            external_hardware_controller.set_hardware(diagnostics_leds)
 
-            except Exception as e:
-                print e
-                traceback.print_exc()
-            time.sleep(0.5)
+        except Exception as e:
+            print e
+            traceback.print_exc()

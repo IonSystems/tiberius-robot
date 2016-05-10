@@ -1,7 +1,8 @@
 import serial
 from tiberius.utils import detection
 import time
-
+import tiberius.database.query as db_q
+from tables import CompassTable
 
 class ExternalHardwareController:
     if detection.detect_windows():
@@ -55,7 +56,9 @@ class ExternalHardwareController:
             self.ser.write(data_message)
 
 
-def compass_monitor(bearing, control):
+def compass_monitor(control):
+    dicti = db_q.get_latest(CompassTable)
+    bearing = dicti.heading
     print "Bearing: " + str(bearing)
     if 7.5 > bearing > -7.5:
         control.ehc.set_hardware(None, [1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9], None, None)

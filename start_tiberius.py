@@ -11,6 +11,8 @@ import tiberius.database.create as cr
 import tiberius.database.insert as ins
 from tiberius.communications import antenna_thread as ant_thread
 from tiberius.control.control import Control
+from tiberius.diagnostics.external_hardware_controller import compass_monitor
+
 
 class Action(Enum):
     WEB_SERVER = 0
@@ -78,10 +80,7 @@ if TiberiusConfigParser.isLidarEnabled():
     print "lidar thread starting"
     lidar = Process(target=c.lidar_thread).start()
     time.sleep(0.5)
-#if TiberiusConfigParser.areDiagnosticsEnabled():
- #   print "diagnostics thread starting"
-  #  diagnostics = Process(target=c.diagnostics_thread.start()
-   # time.sleep(0.5)
+
 #if TiberiusConfigParser.isCompassEnabled() and TiberiusConfigParser.isGPSEnabled():
     #print "antenna thread starting"
     #antenna = Process(target=ant_thread).start()
@@ -100,6 +99,14 @@ if action == Action.WEB_SERVER:
     server = Popen("python tiberius/web-interface/manage.py runserver", shell=True)
     print "Web server started"
 
+# Now run other stuff
+
+print "Starting loop"
+while True:
+    c.diagnostics_thread(control)
+    compass_monitor(control)
+
+'''
 # Wait for a keyboard interrupt
 try:
     time.sleep(0.1)
@@ -120,3 +127,4 @@ except KeyboardInterrupt:
 sys.exit()
 
 print "tiberius fully started"
+'''
