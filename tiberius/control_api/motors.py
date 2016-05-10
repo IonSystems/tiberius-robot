@@ -55,6 +55,8 @@ class MotorResource(object):
 	# Debug
         self.logger.debug("Request Params: " + str(req.params))
         self.logger.debug("Request Headers: " + str(req.headers))
+        self.logger.debug("Request Speed: " + str(req.get_param('speed')))
+        self.logger.debug("Request Query: " + str(req.query_string))
 
         # Can't go forwards and backwards at the same time so we can use elif.
         if(MotorStates.FORWARD in req.params):
