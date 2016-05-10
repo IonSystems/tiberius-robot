@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 from optparse import OptionParser
 from subprocess import Popen, PIPE
 from tiberius.database.database_threads import DatabaseThreadCreator
@@ -10,7 +10,6 @@ from tiberius.config.config_parser import TiberiusConfigParser
 import tiberius.database.create as cr
 import tiberius.database.insert as ins
 from tiberius.communications import antenna_thread as ant_thread
-
 
 class Action(Enum):
     WEB_SERVER = 0
