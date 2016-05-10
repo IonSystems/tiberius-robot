@@ -13,7 +13,7 @@ class ExternalHardwareController:
     diagnostic_led_data = {0, 0, 0, 0, 0, 0, 0, 0}
     ring_led_data = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
     relay_data = {0, 0, 0, 0}
-    servo_data = {0}
+    servo_data = {75}
 
     def __init__(self, debug=False):
         self.ser = serial.Serial(self.port, self.baud, timeout=1)
