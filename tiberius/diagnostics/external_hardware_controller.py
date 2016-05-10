@@ -13,7 +13,7 @@ class ExternalHardwareController:
     diagnostic_led_data = {0, 0, 0, 0, 0, 0, 0, 0}
     ring_led_data = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
     relay_data = {0, 0, 0, 0}
-    servo_data = {0}
+    servo_data = {75}
 
     def __init__(self, debug=False):
         self.ser = serial.Serial(self.port, self.baud, timeout=1)
@@ -52,7 +52,6 @@ class ExternalHardwareController:
 
 
 if __name__ == "__main__":
-    # from tiberius.diagnostics.diagnostics_leds import diagnostics_leds
     from random import randint
 
     externalHardwareController = ExternalHardwareController()
@@ -60,7 +59,7 @@ if __name__ == "__main__":
     l1, l2, l3, l4, l5, l6, l7, l8 = 0, 0, 0, 0, 0, 0, 0, 0
 
     while (True):
-        externalHardwareController.setLEDs(l1, l2, l3, l4, l5, l6, l7, l8)
+        externalHardwareController.set_hardware({l1, l2, l3, l4, l5, l6, l7, l8})
         l1 = randint(0, 5)
         l2 = randint(0, 5)
         l3 = randint(0, 5)

@@ -66,7 +66,7 @@ class LidarTable(Table):
         'angle': 'float',
         'distance': 'float',
         'quality': 'float',
-        'reading_iteration': 'integer',
+        'reading_iteration': 'int',
         'timestamp': 'float'
     }
 
@@ -92,14 +92,14 @@ class SteeringTable(Table):
         'rear_right': 'float',
         'timestamp': 'float'
     }
-    
+
 class BatteryTable(Table):
     table_name = "battery_reading"
     columns = {
         'id': 'int primary key',
-        'monitor': 'integer',
+        'monitor': 'int',
         'volts': 'float',
-        'current': 'float',
+        'amps': 'float',
         'power': 'float',
         'time': 'float',
         'amp_hours': 'float',
