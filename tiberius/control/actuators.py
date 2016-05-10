@@ -394,7 +394,7 @@ if TiberiusConfigParser.areMotorsEnabled():
                 self.rear_left.move(0, 0)
                 self.front_right.move(0, 0)
                 self.rear_right.move(0, 0)
-            elif interface = "UDP":
+            elif self.interface == "UDP":
                 motor_udp.stop()
             self.state = MotorState.STOP
 
