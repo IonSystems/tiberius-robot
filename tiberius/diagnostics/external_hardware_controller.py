@@ -109,7 +109,9 @@ def compass_monitor(control):
             control.ehc.set_hardware(None, [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9], None, None)
         elif 172.5 < bearing < -172.5:
             control.ehc.set_hardware(None, [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1], None, None)
-    control.ehc.set_hardware(None, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], None, None)
+    else:
+        print "No Compass Data"
+        control.ehc.set_hardware(None, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], None, None)
 
 
 

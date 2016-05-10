@@ -105,7 +105,7 @@ print "Starting loop"
 while True:
     c.diagnostics_thread(control)
     compass_monitor(control)
-
+    time.sleep(1)
 
 # Wait for a keyboard interrupt
 try:
