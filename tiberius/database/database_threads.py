@@ -174,35 +174,35 @@ class DatabaseThreadCreator:
                 # TODO: Move validity checks to it's own module.
 
                 # maintain a short array of previous values
-                previous_values.append(heading)
-                if len(previous_values) >= 10:
-                    previous_values.pop(0)
+                #previous_values.append(heading)
+                #if len(previous_values) >= 10:
+                #    previous_values.pop(0)
 
                 # ensure the compass heading has not changed too much between readings
-                standard_deviation = np.std(np.diff(np.asarray(previous_values)))
+                #standard_deviation = np.std(np.diff(np.asarray(previous_values)))
 
-                if standard_deviation > 10:
-                    raise Exception('invalid data')
-                else:
-                    if compass_read_id < COMPASS_NUMBER_OF_READINGS: # store the first 10 results
-                        ins.insert_compass_reading(self.poly, compass_read_id, heading)
-                    else:  # start updating results
-                        compass_update_id = compass_read_id % COMPASS_NUMBER_OF_READINGS
-                        up.overwrite_compass_reading(self.poly, compass_update_id, heading)
-                    compass_read_id += 1
-                    #compass_monitor(heading, control)
+                #if standard_deviation > 10:
+                #    raise Exception('invalid data')
+                #else:
+                if compass_read_id < COMPASS_NUMBER_OF_READINGS: # store the first 10 results
+                    ins.insert_compass_reading(self.poly, compass_read_id, heading)
+                else:  # start updating results
+                    compass_update_id = compass_read_id % COMPASS_NUMBER_OF_READINGS
+                    up.overwrite_compass_reading(self.poly, compass_update_id, heading)
+                compass_read_id += 1
+                #compass_monitor(heading, control)
 
                 # TODO: Again, something weird is going on here!
                 # If not valid then valid = True?!
-                if not valid:
-                    valid = True
-                    up.update_compass_sensor_validity(self.poly, True)
+                #if not valid:
+                #    valid = True
+                #    up.update_compass_sensor_validity(self.poly, True)
 
             except Exception as e:
                 print e
-                if valid:
-                    valid = False
-                    up.update_compass_sensor_validity(self.poly, False)
+                #if valid:
+                    #valid = False
+                up.update_compass_sensor_validity(self.poly, False)
             time.sleep(0.5)
 
     '''******************************************
