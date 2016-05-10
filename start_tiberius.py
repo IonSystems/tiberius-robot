@@ -9,6 +9,7 @@ import time
 from tiberius.config.config_parser import TiberiusConfigParser
 import tiberius.database.create as cr
 import tiberius.database.insert as ins
+from tiberius.communications import antenna_thread as ant_thread
 
 
 class Action(Enum):
@@ -75,7 +76,12 @@ if TiberiusConfigParser.isLidarEnabled():
     time.sleep(3)
 if TiberiusConfigParser.areDiagnosticsEnabled():
     diagnostics = Process(target=c.diagnostics_thread()).start()
-    print "diagnostics thread stasrted"
+    print "diagnostics thread started"
+    time.sleep(3)
+
+if TiberiusConfigParser.isCompassEnabled() and TiberiusConfigParser.isGPSEnabled():
+    antenna = Process(target=ant_thread).start()
+    print "antenna thread started"
     time.sleep(3)
 
 if TiberiusConfigParser.isArmCamEnabled():
