@@ -8,7 +8,7 @@ import drivers.powermanagement as Powermanagement
 from tiberius.config.config_parser import TiberiusConfigParser
 
 
-class PowerManagement:
+class PowerManagementSensor:
 	
 	pm = Powermanagement.PowerManagement
 	def getdata(self):

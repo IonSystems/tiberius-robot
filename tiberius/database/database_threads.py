@@ -30,7 +30,7 @@ if TiberiusConfigParser.isCompassEnabled():
     from tiberius.control.sensors import Compass
 if TiberiusConfigParser.isLidarEnabled():
     from tiberius.control.sensors import Lidar
-from tiberius.control.sensors import PowerMangement
+from tiberius.control.sensors import PowerMangementSensor
 
 class DatabaseThreadCreator:
     '''
