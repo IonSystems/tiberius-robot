@@ -16,6 +16,8 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from dashboard import views as dashboard_views
+import settings
+import views
 
 urlpatterns = [
     url(r'^$', dashboard_views.index, name='dashboard'),
@@ -26,3 +28,11 @@ urlpatterns = [
     url(r'^missionplanner/', include('missionplanner.urls')),
     url(r'^fleet/', include('fleet.urls')),
 ]
+
+handler404 = 'web_interface.views.page_not_found'
+handler500 = 'web_interface.views.server_error'
+if settings.DEBUG:
+    urlpatterns += [
+        url(r'^404/$', views.page_not_found, name="404"),
+        url(r'^500/$', views.server_error, name='500'),
+    ]

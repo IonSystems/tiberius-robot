@@ -31,3 +31,6 @@ class Robot(models.Model):
 
     # An image of the robot
     image = models.ImageField(upload_to='robot_images')
+
+    def __unicode__(self):
+        return u'{0}'.format(self.name + " (IP=" + self.ip_address + ")")

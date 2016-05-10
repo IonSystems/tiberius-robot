@@ -1,6 +1,40 @@
 # Version 4
 
-## 4.14.40
+## 4.17.37
+
+### New Features
+
+* Momentjs TZ intergration #1242 thanks @bodrick
+* Independent CSS file, in case you don't want bootstrap for some reason
+
+### Bug Squashing
+
+* Slight changes decade view
+* Moved all tooltip text to `tooltips`
+* fixed #1212
+
+## 4.15.35
+
+### New Features
+
+`tooltips` allows custom, localized text to be included for icon tooltips
+
+### Bug Squashing
+
+fixed #1066
+
+fixed #1087 `sideBySide` properly supports `toolbarPlacement [top, bottom]`
+
+fixed #1119 
+
+fixed #1069 added input.blur()
+
+fixed #1049 fixed doc example 
+
+fixed #999 picker now looks for an element with `.input-group-addon`
+
+
+## 4.14.30
 
 ### New Features
 

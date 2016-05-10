@@ -1,11 +1,17 @@
 from django import forms
 from .models import Mission
+from .models import Task
+from .models import Robot
 
 
 class MissionCreateForm(forms.ModelForm):
     scheduled_start = forms.DateTimeField(
         label='buy date', input_formats=['%m/%d/%Y %H:%M %p'])
     scheduled_start.widget = forms.TextInput(attrs={'class': 'form-control'})
+
+    def __init__(self, user, *args, **kwargs):
+        super(MissionCreateForm, self).__init__(*args, **kwargs)
+        self.creator = user
 
     class Meta:
         model = Mission
@@ -27,3 +33,12 @@ class MissionCreateForm(forms.ModelForm):
 #
 #     supported_platforms = forms.MultipleChoiceField(label='Supported Platforms',choices = (('FR', 'Freshman'),('SO', 'Sophomore')))
 #     supported_platforms.widget = forms.SelectMultiple(attrs={'class': 'form-control'})
+
+from django.forms import ModelForm
+from django import forms
+from fleet.models import Robot
+
+
+class SendTaskRequestForm(forms.Form):
+    task = forms.ModelChoiceField(label="Task", queryset=Task.objects.all(),widget=forms.Select(attrs={'class':'form-control input-sm'}))
+    platform = forms.ModelChoiceField(label="Platform", queryset=Robot.objects.all(),widget=forms.Select(attrs={'class':'form-control input-sm'}))

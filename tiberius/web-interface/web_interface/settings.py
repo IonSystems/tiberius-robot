@@ -21,11 +21,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '3$62&)bqg!2^zp_0a(b58$!0mhs5-xhaxn(h-fhx&1dj8zjd74'
-
+# Tiberius's API Password
+SUPER_SECRET_PASSWORD = 'supersecretpassword'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -41,6 +42,7 @@ INSTALLED_APPS = (
     'missionplanner',
     'users',
     'fleet',
+    'dashboard'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -59,7 +61,10 @@ ROOT_URLCONF = 'web_interface.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'web_interface/templates/color-admin')],
+        'DIRS': [
+                 os.path.join(BASE_DIR, 'web_interface/templates/color-admin'),
+                 os.path.join(BASE_DIR, 'web_interface/templates/color-admin/error-pages'),
+                ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

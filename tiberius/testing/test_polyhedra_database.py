@@ -4,7 +4,7 @@ import os
 import sys
 import random
 import subprocess
-from tiberius.database.polyhedra_database import PolyhedraDatabase
+from tiberius.database_wrapper.polyhedra_database import PolyhedraDatabase
 
 
 def clean_up():
@@ -191,6 +191,62 @@ class TestCreateInsertDeleteDrop(unittest.TestCase):
         p.delete('complex_table')
         p.query('complex_table', '*')
         p.drop('complex_table')
+
+
+class GenerateUpdateQuery(unittest.TestCase):
+    '''Check that the SQL update query is being correctly generated.'''
+    def runTest(self):
+        statement = pol._PolyhedraDatabase__generate_update("Customers",
+            {
+                'ContactName': 'Alfred Schmidt',
+                'City': 'Hamburg'
+            },
+            {
+                'clause': 'WHERE',
+                'data': [
+                    {
+                        'column': 'CustomerName',
+                        'assertion': '=',
+                        'value': 'Alfreds Futterkiste'
+                    }
+                ]
+            })
+        expected = ("UPDATE Customers"
+                    "SET ContactName='Alfred Schmidt', City='Hamburg'"
+                    "WHERE CustomerName='Alfreds Futterkiste';")
+
+        self.assertEqual(statement, expected)
+
+
+class UpdateRow(unittest.TestCase):
+    '''Ensure the update() function actually updates the row.'''
+    def runTest(self):
+        table_name = "update_table"
+        p = PolyhedraDatabase('tiberius-polyhedra')
+        try:
+            p.create(table_name, {'id': 'int primary key', 'column': 'int'})
+        except PolyhedraDatabase.TableAlreadyExistsError as e:
+            print "Table already exists"
+        p.insert(table_name, {'id': 0, 'column': 0})
+        p.insert(table_name, {'id': 1, 'column': 2})
+        p.insert(table_name, {'id': 2, 'column': 4})
+        p.insert(table_name, {'id': 3, 'column': 6})
+        p.insert(table_name, {'id': 4, 'column': 8})
+        # TODO: Validate output
+        initial = p.query(table_name, '*')
+
+        # Update all the rows with different values
+        p.update(table_name, {'column': 1}, {
+                'clause': 'WHERE',
+                'data': [
+                    {
+                        'column': 'id',
+                        'assertion': '=',
+                        'value': 0
+                    }
+                ]
+            })
+        p.drop(table_name)
 
 
 class QueryDatabase(unittest.TestCase):

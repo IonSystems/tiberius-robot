@@ -1,0 +1,5 @@
+<form action="/missionplanner/delete_mission/{{ object.id }}/" method="post">
+{% csrf_token %}
+    <p>Are you sure you want to delete "{{ object }}"?</p>
+    <input type="submit" value="Confirm" />
+</form>

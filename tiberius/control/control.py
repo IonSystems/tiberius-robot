@@ -1,11 +1,10 @@
 #!/usr/bin/python
-
-import md03
-import srf08
 import sensors
 import actuators
+import math
 import time
 import logging
+from tiberius.logger import logger
 from tiberius.utils import bearing_math
 from tiberius.config.config_parser import TiberiusConfigParser
 from tiberius.control.exceptions import SensorNotEnabledError
@@ -30,7 +29,9 @@ class Control:
     if TiberiusConfigParser.isCompassEnabled():
         compass = sensors.Compass()
     motors = actuators.Motor()
-    arm = actuators.Arm()
+
+    if TiberiusConfigParser.isArmEnabled():
+        arm = actuators.Arm()
 
     def __init__(self):
         self.logger = logging.getLogger('tiberius.control.Control')
@@ -129,21 +130,21 @@ function cannot be executed.")
                 time.sleep(0.1)
                 actual_bearing = self.compass.headingNormalized()
                 error = actual_bearing - desired_bearing
-                self.logger.debug('Heading: ' + str(actual_bearing))
-                self.logger.debug('Desired: ' + str(desired_bearing))
+                # self.logger.debug('Heading: ' + str(actual_bearing))
+                # self.logger.debug('Desired: ' + str(desired_bearing))
 
                 if(error < 5 and error > -5):
-                    self.logger.debug('At heading: ' + str(actual_bearing))
+                    # self.logger.debug('At heading: ' + str(actual_bearing))
                     self.motors.stop()
                     break
                 if(error > 180):
-                    print 'error > 180'
+                    #print 'error > 180'
                     error -= 360
                 if(error < -180):
-                    print 'error < -180'
+                    #print 'error < -180'
                     error += 360
                 if(error > 0):
-                    print 'error < 0 turning left'
+                    # print 'error < 0 turning left'
                     self.motors.setSpeedPercent(100)
                     self.motors.turnLeft()
 
@@ -159,7 +160,7 @@ function cannot be executed.")
                         self.motors.setSpeedPercent(20)
                         self.motors.turnLeft()
                 if(error < 0):
-                    print 'error > 0 turning right'
+                    # print 'error > 0 turning right'
                     self.motors.setSpeedPercent(100)
                     self.motors.turnRight()
 
@@ -174,7 +175,7 @@ function cannot be executed.")
                         self.motors.setSpeedPercent(20)
                         self.motors.turnRight()
 
-                print str(error)
+                # print str(error)
             else:
                 print '50 Iterations Complete'
                 break
@@ -227,7 +228,7 @@ function cannot be executed.")
 
         d_factor = 1  # derivative
         previous_error = 0
-        debug = True
+        debug = False
         left_speed = (speed_percent * 255) / 100  # 0-100 -> 0-255
         right_speed = (speed_percent * 255) / 100
         while t < duration:
