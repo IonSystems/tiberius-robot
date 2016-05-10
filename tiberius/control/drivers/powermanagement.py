@@ -2,6 +2,7 @@
 
 import serial
 from time import sleep
+import json 
 
 print "running"
 
@@ -12,9 +13,18 @@ ser = serial.Serial(
 )
 
 while(1):
-	print "happening once"
+	
 	data = ser.readline() #read(1000)  # read 9999 bytes of data. could use .readline() to get line of data
 	if len(data) > 0:
         	print 'Got:', data
+		dictionary = json.loads(data)
+		#print dictionary
+		monitor = dictionary["monitor"]
+		volts = dictionary["volts"]
+		current = dictionary["current"]
+		power = dictionary["power"]
+		time = dictionary["time"]
+		amp_hours = dictionary["amp_hours"]
+		watt_hours = dictionary["watt_hours"]
 
-
+		print monitor
