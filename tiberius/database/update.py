@@ -157,7 +157,7 @@ def overwrite_compass_reading(poly, id, value):
     poly.update(
         CompassTable.table_name,
         {
-            'compass': value,
+            'heading': value,
             'timestamp': time.time()
         },
         {
