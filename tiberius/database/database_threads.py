@@ -56,14 +56,15 @@ class DatabaseThreadCreator:
 
     def powermanagement_thread(self):
     	pow_man = PowerManagementSensor()
-
+        powman_read_id = 0
     	while True:
             data = pow_man.getdata()
 	    	#print pow_man.getdata()
             ins.insert_battery_reading(
                 self.poly,
-                1,
+                powman_read_id,
                 data)
+            powman_read_id+=1
 
 
     '''******************************************

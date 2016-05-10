@@ -89,7 +89,7 @@ class RobotArmResource(object):
             # Arm positional commands
             if(ArmCommands.CHANGE_X in command_name):
                 self.x += command_value
-	        self.arm_control.move_waist(command_value)
+	        self.arm_control.rotate_waist(command_value)
             if(ArmCommands.CHANGE_Y in command_name):
                 self.y += command_value
                 self.arm_control.move_shoulder(command_value)
