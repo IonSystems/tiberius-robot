@@ -160,7 +160,7 @@ class DatabaseThreadCreator:
         Compass
     ******************************************'''
 
-    def compass_thread(self):
+    def compass_thread(self, control):
         compass = Compass()
         external_hardware_controller = ExternalHardwareController()
         compass_read_id = 0

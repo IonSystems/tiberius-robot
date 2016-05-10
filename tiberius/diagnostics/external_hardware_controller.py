@@ -51,8 +51,6 @@ class ExternalHardwareController:
             self.ser.write(data_message)
 
 
-
-
 def compass_monitor(bearing, control):
     if 7.5 > bearing > -7.5:
         control.ehc.set_hardware(None, {1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9}, None, None)
