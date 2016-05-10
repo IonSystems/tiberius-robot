@@ -106,7 +106,7 @@ while True:
     c.diagnostics_thread(control)
     compass_monitor(control)
 
-'''
+
 # Wait for a keyboard interrupt
 try:
     time.sleep(0.1)
@@ -126,5 +126,5 @@ except KeyboardInterrupt:
     print "Tiberius Software Suite Stopped"
 sys.exit()
 
-print "tiberius fully started"
-'''
+
+
