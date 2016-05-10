@@ -41,16 +41,17 @@
 		/**
 		 * an object of actions, or a function that accepts a node and a callback function and calls the callback function with an object of actions available for that node (you can also return the items too).
 		 *
-		 * Each action consists of a key (a unique name) and a value which is an object with the following properties (only label and action are required):
+		 * Each action consists of a key (a unique name) and a value which is an object with the following properties (only label and action are required). Once a menu item is activated the `action` function will be invoked with an object containing the following keys: item - the contextmenu item definition as seen below, reference - the DOM node that was used (the tree node), element - the contextmenu DOM element, position - an object with x/y properties indicating the position of the menu.
 		 *
 		 * * `separator_before` - a boolean indicating if there should be a separator before this item
 		 * * `separator_after` - a boolean indicating if there should be a separator after this item
 		 * * `_disabled` - a boolean indicating if this action should be disabled
 		 * * `label` - a string - the name of the action (could be a function returning a string)
-		 * * `action` - a function to be executed if this item is chosen
+		 * * `action` - a function to be executed if this item is chosen, the function will receive 
 		 * * `icon` - a string, can be a path to an icon or a className, if using an image that is in the current directory use a `./` prefix, otherwise it will be detected as a class
 		 * * `shortcut` - keyCode which will trigger the action if the menu is open (for example `113` for rename, which equals F2)
 		 * * `shortcut_label` - shortcut label (like for example `F2` for rename)
+		 * * `submenu` - an object with the same structure as $.jstree.defaults.contextmenu.items which can be used to create a submenu - each key will be rendered as a separate option in a submenu that will appear once the current item is hovered
 		 *
 		 * @name $.jstree.defaults.contextmenu.items
 		 * @plugin contextmenu
@@ -75,7 +76,7 @@
 					"separator_after"	: false,
 					"_disabled"			: false, //(this.check("rename_node", data.reference, this.get_parent(data.reference), "")),
 					"label"				: "Rename",
-					/*
+					/*!
 					"shortcut"			: 113,
 					"shortcut_label"	: 'F2',
 					"icon"				: "glyphicon glyphicon-leaf",
@@ -168,6 +169,9 @@
 			var last_ts = 0, cto = null, ex, ey;
 			this.element
 				.on("contextmenu.jstree", ".jstree-anchor", $.proxy(function (e, data) {
+						if (e.target.tagName.toLowerCase() === 'input') {
+							return;
+						}
 						e.preventDefault();
 						last_ts = e.ctrlKey ? +new Date() : 0;
 						if(data || cto) {
@@ -207,7 +211,7 @@
 						}
 					});
 
-			/*
+			/*!
 			if(!('oncontextmenu' in document.body) && ('ontouchstart' in document.body)) {
 				var el = null, tm = null;
 				this.element
@@ -228,7 +232,10 @@
 					});
 			}
 			*/
-			$(document).on("context_hide.vakata.jstree", $.proxy(function () { this._data.contextmenu.visible = false; }, this));
+			$(document).on("context_hide.vakata.jstree", $.proxy(function (e, data) {
+				this._data.contextmenu.visible = false;
+				data.reference.removeClass('jstree-context');
+			}, this));
 		};
 		this.teardown = function () {
 			if(this._data.contextmenu.visible) {
@@ -249,7 +256,7 @@
 		 */
 		this.show_contextmenu = function (obj, x, y, e) {
 			obj = this.get_node(obj);
-			if(!obj || obj.id === '#') { return false; }
+			if(!obj || obj.id === $.jstree.root) { return false; }
 			var s = this.settings.contextmenu,
 				d = this.get_node(obj, true),
 				a = d.children(".jstree-anchor"),
@@ -291,6 +298,7 @@
 			$(document).one("context_show.vakata.jstree", $.proxy(function (e, data) {
 				var cls = 'jstree-contextmenu jstree-' + this.get_theme() + '-contextmenu';
 				$(data.element).addClass(cls);
+				a.addClass('jstree-context');
 			}, this));
 			this._data.contextmenu.visible = true;
 			$.vakata.context.show(a, { 'x' : x, 'y' : y }, i);
@@ -404,7 +412,8 @@
 				o = $(o);
 				if(!o.length || !o.children("ul").length) { return; }
 				var e = o.children("ul"),
-					x = o.offset().left + o.outerWidth(),
+					xl = o.offset().left,
+					x = xl + o.outerWidth(),
 					y = o.offset().top,
 					w = e.width(),
 					h = e.height(),
@@ -415,11 +424,23 @@
 					o[x - (w + 10 + o.outerWidth()) < 0 ? "addClass" : "removeClass"]("vakata-context-left");
 				}
 				else {
-					o[x + w + 10 > dw ? "addClass" : "removeClass"]("vakata-context-right");
+					o[x + w > dw  && xl > dw - x ? "addClass" : "removeClass"]("vakata-context-right");
 				}
 				if(y + h + 10 > dh) {
 					e.css("bottom","-1px");
 				}
+
+				//if does not fit - stick it to the side
+				if (o.hasClass('vakata-context-right')) {
+					if (xl < w) {
+						e.css("margin-right", xl - w);
+					}
+				} else {
+					if (dw - x < w) {
+						e.css("margin-left", dw - x - w);
+					}
+				}
+
 				e.show();
 			},
 			show : function (reference, position, data) {

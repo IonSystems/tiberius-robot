@@ -1,0 +1,20 @@
+ table.navigation_table td{
+  height: 4em;
+  width: 4em;
+  float: center;
+  background-color: yellowgreen;
+  text-align: center;
+}
+
+table.navigation_table element{
+	text-align: center;
+	font-size: 100%;
+}
+
+h1{
+	font-size: 50%;
+}
+
+h2{
+	font-size: 100%;
+}
