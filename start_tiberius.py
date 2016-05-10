@@ -30,6 +30,9 @@ action = options.action
 
 print "Starting Tiberius Software Suite..."
 
+#config write
+TiberiusConfigParser.setBatteryMonitorPort("/dev/ttyACM0")
+
 # Start the database API if it is not already running
 print "Checking if database is running..."
 database = Popen("/home/pi/poly9.0/linux/raspi/bin/rtrdb -r data_service=8001 db", shell=True, stdout=PIPE)

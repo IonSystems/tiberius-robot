@@ -221,6 +221,12 @@ class TiberiusConfigParser():
         battery_port = TiberiusConfigParser.getParser().get(POWER_SECTION, 'battery_monitor_port')
         return battery_port
 
+    @staticmethod
+    def setBatteryMonitorPort(battery_port):
+        TiberiusConfigParser.getParser().set(POWER_SECTION, battery_port)
+        return battery_port
+
+
     '''******************************************
         Authentication
     ******************************************'''
