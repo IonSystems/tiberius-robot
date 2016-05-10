@@ -7,7 +7,7 @@ class ExternalHardwareController:
     if detection.detect_windows():
         port = 'COM8'
     else:
-        port = '/dev/ttyACM0'
+        port = '/dev/ttyACM3'
     baud = 115200
 
     diagnostic_led_data = {0, 0, 0, 0, 0, 0, 0, 0}
