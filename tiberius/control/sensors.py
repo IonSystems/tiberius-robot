@@ -4,9 +4,15 @@ import drivers.cmps11 as cmps11
 import drivers.srf08 as srf08
 import drivers.gps20 as gps20
 import drivers.lidar as rplidar
+import driver.powermanagement as Powermanagement
 from tiberius.config.config_parser import TiberiusConfigParser
 
 
+class PowerManagement:
+	
+	pm = Powermanagement.PowerManagement
+	def getdata(self):
+		return pm.getdata(self)	
 class Ultrasonic:
     '''
         Contains the ultrasonic sensors, and methods to receive data from them.
@@ -172,3 +178,5 @@ class GPS:
 
     def usable(self):
         return self.gps.usable()
+
+

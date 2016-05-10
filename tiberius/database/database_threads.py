@@ -30,7 +30,7 @@ if TiberiusConfigParser.isCompassEnabled():
     from tiberius.control.sensors import Compass
 if TiberiusConfigParser.isLidarEnabled():
     from tiberius.control.sensors import Lidar
-
+from tiberius.control.sensors import PowerMangement
 
 class DatabaseThreadCreator:
     '''
@@ -52,6 +52,13 @@ class DatabaseThreadCreator:
     def __init__(self):
         # Used by every thread to insert into the database.
         self.poly = PolyhedraDatabase("insert_threads")
+
+   def powermanagement_thread(self):
+	pow_man = PowerManagement()
+
+	while True:
+		print pow_man.readdata()	
+
 
     '''******************************************
         Ultrasonics
