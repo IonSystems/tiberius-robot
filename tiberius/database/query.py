@@ -10,7 +10,10 @@ in-memory database.
 poly = PolyhedraDatabase("query")
 
 def get_latest(table, limit=1):
-    return poly.sql("SELECT * from " + table.table_name + " ORDER BY timestamp DESC LIMIT " + str(limit) + ";")
+
+    query = "SELECT * from " + table.table_name + " ORDER BY timestamp DESC LIMIT " + str(limit) + ";"
+    print query
+    return poly.sql(query)
 
 
 def query_sensor_validity(poly):
