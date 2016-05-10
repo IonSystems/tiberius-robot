@@ -23,6 +23,7 @@ from tables import UltrasonicsValidityTable
 # TODO: This 'ExternalHardwareController' would be be best split up into
 # individual drivers as with cmps11, gps20 etc.
 from tiberius.diagnostics.external_hardware_controller import ExternalHardwareController
+from tiberius.diagnostics.external_hardware_controller import compass_monitor
 
 from tiberius.control.sensors import Ultrasonic
 from tiberius.control.sensors import GPS
@@ -129,6 +130,7 @@ class DatabaseThreadCreator:
             try:
                 if gps.usable():
                     gps_data = gps.read_gps()
+                    gps_data['dilution_of_precision'] = -1
                     if gps_data is not False:
                         if gps_read_id < GPS_NUMBER_OF_READINGS:
                             ins.insert_gps_reading(self.poly, gps_read_id, gps_data)
@@ -158,8 +160,9 @@ class DatabaseThreadCreator:
         Compass
     ******************************************'''
 
-    def compass_thread(self):
+    def compass_thread(self, control):
         compass = Compass()
+        external_hardware_controller = ExternalHardwareController()
         compass_read_id = 0
         compass_update_id = 0
         valid = False
@@ -188,6 +191,7 @@ class DatabaseThreadCreator:
                         compass_update_id = compass_read_id % COMPASS_NUMBER_OF_READINGS
                         up.overwrite_compass_reading(self.poly, compass_update_id, heading)
                     compass_read_id += 1
+                    #compass_monitor(heading, control)
 
                 # TODO: Again, something weird is going on here!
                 # If not valid then valid = True?!
@@ -227,21 +231,21 @@ class DatabaseThreadCreator:
         Diagnostics
     ******************************************'''
 
-    def diagnostics_thread(self):
-        external_hardware_controller = ExternalHardwareController()
+    def diagnostics_thread(self, control):
+        external_hardware_controller = control
 
         ultrasonics_status, compass_status, gps_status = False, False, False
 
         while True:
             try:
-                rows = q.query_sensor_validity(self.poly)
-                print rows
+                rows = q.get_latest(sensors_validity)
+                print "ROWS: " + str(rows)
                 for row in rows:
-                    print row
-                    # ultrasonics_status = row.ultrasonics
-                    # compass_status = row.compass
-                    # gps_status = row.gps
-                diagnostics_leds = {ultrasonics_status, compass_status, gps_status, -1, -1, -1, -1, -1}
+                    print "ROW: " + str(row)
+                    ultrasonics_status = row.ultrasonics
+                    compass_status = row.compass
+                    gps_status = row.gps
+                diagnostics_leds = [ultrasonics_status, compass_status, gps_status, 9, 9, 9, 9, 9]
                 external_hardware_controller.set_hardware(diagnostics_leds)
 
             except Exception as e:

@@ -7,9 +7,9 @@ from tables import SensorValidityTable
 Contains useful queries that are called to get data from Tiberius's
 in-memory database.
 '''
+poly = PolyhedraDatabase("query")
 
-
-def get_latest(poly, table, limit=1):
+def get_latest(table, limit=1):
     return poly.sql("SELECT * from " + table.table_name + " ORDER BY timestamp DESC LIMIT " + str(limit) + ";")
 
 

@@ -10,6 +10,7 @@ from tiberius.config.config_parser import TiberiusConfigParser
 import tiberius.database.create as cr
 import tiberius.database.insert as ins
 from tiberius.communications import antenna_thread as ant_thread
+from tiberius.control.control import Control
 
 class Action(Enum):
     WEB_SERVER = 0
@@ -27,8 +28,11 @@ parser.add_option(
 
 (options, args) = parser.parse_args()
 action = options.action
-
+control = Control()
 print "Starting Tiberius Software Suite..."
+
+#config write
+TiberiusConfigParser.setBatteryMonitorPort("/dev/ttyACM0")
 
 # Start the database API if it is not already running
 print "Checking if database is running..."
@@ -68,7 +72,7 @@ if TiberiusConfigParser.isGPSEnabled():
     time.sleep(0.5)
 if TiberiusConfigParser.isCompassEnabled():
     print "compass thread starting"
-    compass = Process(target=c.compass_thread).start()
+    compass = Process(target=c.compass_thread(control)).start()
     time.sleep(0.5)
 if TiberiusConfigParser.isLidarEnabled():
     print "lidar thread starting"
@@ -76,12 +80,12 @@ if TiberiusConfigParser.isLidarEnabled():
     time.sleep(0.5)
 if TiberiusConfigParser.areDiagnosticsEnabled():
     print "diagnostics thread starting"
-    diagnostics = Process(target=c.diagnostics_thread()).start()
+    diagnostics = Process(target=c.diagnostics_thread(control)).start()
     time.sleep(0.5)
-if TiberiusConfigParser.isCompassEnabled() and TiberiusConfigParser.isGPSEnabled():
-    print "antenna thread starting"
-    antenna = Process(target=ant_thread).start()
-    time.sleep(0.5)
+#if TiberiusConfigParser.isCompassEnabled() and TiberiusConfigParser.isGPSEnabled():
+    #print "antenna thread starting"
+    #antenna = Process(target=ant_thread(control)).start()
+    #time.sleep(0.5)
 if TiberiusConfigParser.isArmCamEnabled():
     print "arm webcam thread starting"
     arm_camera_start = check_output("sudo service motion", shell=True)

@@ -41,7 +41,6 @@ def generate_response(req, resp, resource):
 
 def validate_params(req, resp, resource, params):
     # Ensure speed value is between 0 and 100
-    params = req.params
     if 'x' in params:
         if 0 > int(params['x']):
             params['x'] = 0

@@ -11,7 +11,7 @@ class PowerManagement:
 
 	# configure the serial connections (the parameters differs on the device you are connecting to)
 
-	mbedport = getBatteryMonitorPort()
+	mbedport =TiberiusConfigParser.getBatteryMonitorPort()
 	ser = serial.Serial(
     	port= mbedport,
     	baudrate=115200,

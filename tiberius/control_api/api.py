@@ -20,9 +20,10 @@ from tiberius.control_api.middleware import AuthMiddleware
 # This is the main instance of Control that is used widely throughout this API.
 c = Control()
 
-api = application = falcon.API(media_type='application/json; charset=utf-8',
-                               middleware=[AuthMiddleware()]
-                              )
+api = application = falcon.API(
+    media_type='application/json; charset=utf-8',
+    middleware=[AuthMiddleware()]
+)
 
 sensors = sensors.SensorResource()
 api.add_route('/sensors', sensors)
