@@ -31,12 +31,17 @@ class Antenna:
     def moveServo(self, heading, rotation):
         # based on speed
         delay = heading * 0.00317  # speed per degree * degrees needed
-        if rotation == 1:
-            direction = 180
+        if heading > 12 or heading < -12:
+            if rotation == 1:
+                direction = 90
+            else:
+                direction = 50
+            self.control.ehc.set_hardware(None, None, None, None, {direction})
+            time.sleep(delay)
+            self.control.ehc.set_hardware(None, None, None, None, {75})
         else:
-            direction = 0
-        self.control.ehc.set_hardware(None, None, None, None, {direction})
-        time.sleep(delay)
+            # if the change angle is less than 25 degrees don't fix.
+            self.control.ehc.set_hardware(None, None, None, None, {75})
 
     def getCurHeading(self):
 
