@@ -1,0 +1,8 @@
+C:\git\tiberius-robot\kinect\KinectStreamer\KinectStreamer\KinectStreamer\bin\Debug\KinectStreamer.exe.config
+C:\git\tiberius-robot\kinect\KinectStreamer\KinectStreamer\KinectStreamer\bin\Debug\KinectStreamer.exe
+C:\git\tiberius-robot\kinect\KinectStreamer\KinectStreamer\KinectStreamer\bin\Debug\KinectStreamer.pdb
+C:\git\tiberius-robot\kinect\KinectStreamer\KinectStreamer\KinectStreamer\bin\Debug\Microsoft.Kinect.dll
+C:\git\tiberius-robot\kinect\KinectStreamer\KinectStreamer\KinectStreamer\bin\Debug\Microsoft.Kinect.xml
+C:\git\tiberius-robot\kinect\KinectStreamer\KinectStreamer\KinectStreamer\obj\Debug\KinectStreamer.exe
+C:\git\tiberius-robot\kinect\KinectStreamer\KinectStreamer\KinectStreamer\obj\Debug\KinectStreamer.pdb
+C:\git\tiberius-robot\kinect\KinectStreamer\KinectStreamer\KinectStreamer\obj\Debug\KinectStreamer.csprojResolveAssemblyReference.cache

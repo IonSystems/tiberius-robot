@@ -4,10 +4,12 @@ import actuators
 import math
 import time
 import logging
+import tiberius.database.query as db_q
 from tiberius.logger import logger
 from tiberius.utils import bearing_math
 from tiberius.config.config_parser import TiberiusConfigParser
 from tiberius.control.exceptions import SensorNotEnabledError
+from tiberius.database.tables import CompassTable
 
 """
 .. module:: control
@@ -28,7 +30,8 @@ class Control:
     ultrasonics = sensors.Ultrasonic()
     if TiberiusConfigParser.isCompassEnabled():
         compass = sensors.Compass()
-    motors = actuators.Motor()
+    if TiberiusConfigParser.areMotorsEnabled():
+        motors = actuators.Motor()
 
     if TiberiusConfigParser.isArmEnabled():
         arm = actuators.Arm()
@@ -128,7 +131,8 @@ function cannot be executed.")
             print 'Iteration: ' + str(count)
             if count < 50:
                 time.sleep(0.1)
-                actual_bearing = self.compass.headingNormalized()
+                # actual_bearing = self.compass.headingNormalized()
+                actual_bearing = db_q.get_latest(CompassTable)
                 error = actual_bearing - desired_bearing
                 # self.logger.debug('Heading: ' + str(actual_bearing))
                 # self.logger.debug('Desired: ' + str(desired_bearing))

@@ -4,7 +4,7 @@
 import time
 from tables import ArmTable
 from tables import MotorsTable
-from tiberius.database.polyhedra_database import PolyhedraDatabase
+from tiberius.database_wrapper.polyhedra_database import PolyhedraDatabase
 from tiberius.control.states import MotorState
 
 

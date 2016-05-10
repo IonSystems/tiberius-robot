@@ -1,7 +1,9 @@
 import math
+import tiberius.database.query as db_q
 
 from tiberius.control.gps20 import GlobalPositioningSystem
 from tiberius.utils import bearing_math
+from tiberius.database.tables import GPSTable
 
 
 class Algorithms:
@@ -18,6 +20,7 @@ class Algorithms:
 
     def __init__(self, control):
         self.gps = GlobalPositioningSystem()
+        self.gpstable = GPSTable()
 
         if not __debug__:
             self.control = control
@@ -27,9 +30,12 @@ class Algorithms:
         # get the current location of tiberius
 
     def getLocation(self):
+        gpsData = db_q.get_latest(GPSTable)
+        '''
         while self.gps.latitude is None:
             print 'Not valid gps fix, retying...'
             self.gps.update()
+
         # TESTING REMOVE
         for i in range(0, 10):
             self.gps.update()
@@ -37,6 +43,7 @@ class Algorithms:
             self.gps.latitude = 55.912658
             self.gps.longitude = -3.321353
         # -----------------------------
+
         count = 0
         if count is not 10:
             if self.gps.latitude is "" or self.gps.longitude is "":
@@ -44,7 +51,8 @@ class Algorithms:
         else:
             "No gps values gained"
             return None
-        return [self.gps.latitude, self.gps.longitude]
+        '''
+        return [gpsData.latitude, gpsData.longitude]
 
         # get the desired heading for tiberius
 

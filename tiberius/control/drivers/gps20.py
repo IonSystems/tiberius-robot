@@ -12,13 +12,13 @@ from tiberius.config.config_parser import TiberiusConfigParser
 class GlobalPositioningSystem:
     '''
     Reads GPS data.
-    GPS data comes in many formats. We parse the most useful senstences for
+    GPS data comes in many formats. We parse the most useful sentences for
     our needs and ignore the rest.
 
     The serial port must be correctly set in the config file for successful
     communication.
 
-    The publically accessible functions allow access to the most recent GPS
+    The publicly accessible functions allow access to the most recent GPS
     data, and allow to check if there is a current fix. Fields and the remainder
     of the functions have been hidden to prevent misuse of the class. E.g
     externally changing fields, or accidentally calling the wrong function.

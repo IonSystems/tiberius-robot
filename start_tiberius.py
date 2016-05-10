@@ -9,6 +9,7 @@ import time
 from tiberius.config.config_parser import TiberiusConfigParser
 import tiberius.database.create as cr
 import tiberius.database.insert as ins
+from tiberius.communications import antenna_thread as ant_thread
 
 
 class Action(Enum):
@@ -33,14 +34,7 @@ print "Starting Tiberius Software Suite..."
 # Start the database API if it is not already running
 print "Checking if database is running..."
 database = Popen("/home/pi/poly9.0/linux/raspi/bin/rtrdb -r data_service=8001 db", shell=True, stdout=PIPE)
-lines_iterator = iter(database.stdout.readline, b"")
-for line in lines_iterator:
-    if line == "Ready":
-        print "Database started successfully"
-        break
-    if "Failed" in line:
-        print "Database already running"
-        break
+time.sleep(5)
 
 # Create database tables for data
 print "Creating database tables for data"
@@ -82,7 +76,12 @@ if TiberiusConfigParser.isLidarEnabled():
     time.sleep(3)
 if TiberiusConfigParser.areDiagnosticsEnabled():
     diagnostics = Process(target=c.diagnostics_thread()).start()
-    print "diagnostics thread stasrted"
+    print "diagnostics thread started"
+    time.sleep(3)
+
+if TiberiusConfigParser.isCompassEnabled() and TiberiusConfigParser.isGPSEnabled():
+    antenna = Process(target=ant_thread).start()
+    print "antenna thread started"
     time.sleep(3)
 
 if TiberiusConfigParser.isArmCamEnabled():
