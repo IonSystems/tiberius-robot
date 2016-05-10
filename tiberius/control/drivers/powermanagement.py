@@ -15,9 +15,16 @@ class PowerManagement:
 	)
 
 	def getdata(self):
-		data = ser.readline() #read(1000)  # read 9999 bytes of data. could use .readline() to get line of data
-		dictionary = json.loads(data)
-		return dictionary
+		data =self.ser.readline() #read(1000)  # read 9999 bytes of data. could use .readline() to get line of data
+		try:
+			dictionary = json.loads(data)
+			if dictionary is not None:
+				return dictionary
+			else: 
+				return self.getdata()		
+		except:
+			return self.getdata() 
+			
 		
 	def testscript(self):
 		while(1):
