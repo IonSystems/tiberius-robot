@@ -238,12 +238,14 @@ class DatabaseThreadCreator:
 
         while True:
             try:
-                #row = q.get_latest(self.poly, sensors_validity, 1)
-                #print "ROW: " + str(row)
-                ultrasonics_status = 1#row.ultrasonics
-                compass_status = 1#row.compass
-                gps_status = 1#row.gps
-                diagnostics_leds = {ultrasonics_status, compass_status, gps_status, 9, 9, 9, 9, 9}
+                rows = q.get_latest(sensors_validity)
+                print "ROWS: " + str(rows)
+                for row in rows:
+                    print "ROW: " + str(row)
+                    ultrasonics_status = row.ultrasonics
+                    compass_status = row.compass
+                    gps_status = row.gps
+                diagnostics_leds = [ultrasonics_status, compass_status, gps_status, 9, 9, 9, 9, 9]
                 external_hardware_controller.set_hardware(diagnostics_leds)
 
             except Exception as e:

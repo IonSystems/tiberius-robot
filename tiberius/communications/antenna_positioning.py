@@ -45,5 +45,6 @@ class Antenna:
 
     def getCurHeading(self):
 
-        heading = db_q.get_latest(CompassTable) - 90
+        compass_dict = db_q.get_latest(CompassTable)
+        heading = compass_dict.heading - 90
         return bearing_math.normalize_bearing(heading)
