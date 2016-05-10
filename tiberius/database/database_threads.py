@@ -20,6 +20,7 @@ from tables import SteeringTable
 from tables import SensorValidityTable
 from tables import UltrasonicsValidityTable
 
+
 # TODO: This 'ExternalHardwareController' would be be best split up into
 # individual drivers as with cmps11, gps20 etc.
 from tiberius.diagnostics.external_hardware_controller import ExternalHardwareController
@@ -196,7 +197,7 @@ class DatabaseThreadCreator:
                 # If not valid then valid = True?!
                 #if not valid:
                 #    valid = True
-                #    up.update_compass_sensor_validity(self.poly, True)
+                up.update_compass_sensor_validity(self.poly, True)
 
             except Exception as e:
                 print e
@@ -231,14 +232,13 @@ class DatabaseThreadCreator:
     ******************************************'''
 
     def diagnostics_thread(self, control):
-        from tables import SensorValidityTable
         external_hardware_controller = control.ehc
 
         ultrasonics_status, compass_status, gps_status = False, False, False
 
-        try:
-            rows = q.get_latest(SensorValidityTable)
-            print "ROWS: " + str(rows)
+        rows = q.get_latest(SensorValidityTable)
+        print "ROWS: " + str(rows)
+        if rows is not None:
             for row in rows:
                 print "ROW: " + str(row)
                 ultrasonics_status = row.ultrasonics
@@ -246,7 +246,3 @@ class DatabaseThreadCreator:
                 gps_status = row.gps
             diagnostics_leds = [ultrasonics_status, compass_status, gps_status, 9, 9, 9, 9, 9]
             external_hardware_controller.set_hardware(diagnostics_leds)
-
-        except Exception as e:
-            print e
-            traceback.print_exc()
