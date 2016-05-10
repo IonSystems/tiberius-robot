@@ -76,7 +76,7 @@ var handleArmButtons = function(ip_address, initial_values) {
 		send_command(ip_address, 'arm_dx', d);
   });
 	$('#arm_button_stop').click(function() {
-		send_command(ip_address, 'stop', 'True');
+		send_command(ip_address, 'stop', 0);
   });
 	$('#arm_button_z_plus').click(function() {
 		send_command(ip_address, 'arm_dz', d);
