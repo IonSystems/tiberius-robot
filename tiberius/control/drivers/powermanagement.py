@@ -10,7 +10,7 @@ class PowerManagement:
 
 	# configure the serial connections (the parameters differs on the device you are connecting to)
 	ser = serial.Serial(
-    	port='/dev/ttyACM0',
+    	port='/dev/ttyACM4',
     	baudrate=115200,
 	)
 
