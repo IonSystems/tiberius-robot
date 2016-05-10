@@ -57,6 +57,18 @@ class TiberiusConfigParser():
         return TiberiusConfigParser.getParser().getboolean(MOTORS_SECTION, 'installed')
 
     @staticmethod
+    def getMotorInterface():
+        return TiberiusConfigParser.getParser().get(MOTORS_SECTION, 'interface')
+
+    @staticmethod
+    def isI2C():
+        return TiberiusConfigParser.getParser().get(MOTORS_SECTION, 'interface') == "I2C"
+
+    @staticmethod
+    def isUDP():
+        return TiberiusConfigParser.getParser().get(MOTORS_SECTION, 'interface') == "UDP"
+
+    @staticmethod
     def getMotorFrontLeftAddress():
         addr = TiberiusConfigParser.getParser().get(MOTORS_SECTION, 'front_left')
         return int(addr)

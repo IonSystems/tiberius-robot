@@ -369,11 +369,14 @@ if TiberiusConfigParser.areMotorsEnabled():
                 Does not contain any feedback.
         '''
         __config = TiberiusConfigParser()
-
-        front_left = md03.MotorDriver(__config.getMotorFrontLeftAddress())
-        rear_left = md03.MotorDriver(__config.getMotorRearLeftAddress())
-        front_right = md03.MotorDriver(__config.getMotorFrontRightAddress())
-        rear_right = md03.MotorDriver(__config.getMotorRearRightAddress())
+        interface = __config.getMotorInterface()
+        if(interface == "I2C"):
+            front_left = md03.MotorDriver(__config.getMotorFrontLeftAddress())
+            rear_left = md03.MotorDriver(__config.getMotorRearLeftAddress())
+            front_right = md03.MotorDriver(__config.getMotorFrontRightAddress())
+            rear_right = md03.MotorDriver(__config.getMotorRearRightAddress())
+        elif interface == "UDP":
+            import tiberius.control.drivers.motor_udp
 
         state = MotorState.STOP
 
@@ -386,44 +389,72 @@ if TiberiusConfigParser.areMotorsEnabled():
 
         @database_motor_update
         def stop(self):
-            self.front_left.move(0, 0)
-            self.rear_left.move(0, 0)
-            self.front_right.move(0, 0)
-            self.rear_right.move(0, 0)
+            if self.interface == "I2C":
+                self.front_left.move(0, 0)
+                self.rear_left.move(0, 0)
+                self.front_right.move(0, 0)
+                self.rear_right.move(0, 0)
+            elif interface = "UDP":
+                motor_udp.stop()
             self.state = MotorState.STOP
+
 
         @database_motor_update
         def moveForward(self):
-            self.front_left.move(self.speed, self.accel)
-            self.rear_left.move(self.speed, self.accel)
-            self.front_right.move(self.speed, self.accel)
-            self.rear_right.move(self.speed, self.accel)
+            if self.interface == "I2C":
+                self.front_left.move(self.speed, self.accel)
+                self.rear_left.move(self.speed, self.accel)
+                self.front_right.move(self.speed, self.accel)
+                self.rear_right.move(self.speed, self.accel)
+            elif self.interface == "UDP":
+                motor_udp.send_motor_speed_fl(self.speed)
+                motor_udp.send_motor_speed_rl(self.speed)
+                motor_udp.send_motor_speed_fr(self.speed)
+                motor_udp.send_motor_speed_rr(self.speed)
             self.state = MotorState.FORWARD
 
         @database_motor_update
         def moveBackward(self):
-            self.front_left.move(-self.speed, self.accel)
-            self.rear_left.move(-self.speed, self.accel)
-            self.front_right.move(-self.speed, self.accel)
-            self.rear_right.move(-self.speed, self.accel)
+            if self.interface == "I2C":
+                self.front_left.move(-self.speed, self.accel)
+                self.rear_left.move(-self.speed, self.accel)
+                self.front_right.move(-self.speed, self.accel)
+                self.rear_right.move(-self.speed, self.accel)
+            elif self.interface == "UDP"
+                motor_udp.send_motor_speed_fl(-self.speed)
+                motor_udp.send_motor_speed_rl(-self.speed)
+                motor_udp.send_motor_speed_fr(-self.speed)
+                motor_udp.send_motor_speed_rr(-self.speed)
             self.state = MotorState.BACKWARD
 
         # Turn on the spot, to the right
         @database_motor_update
         def turnRight(self):
-            self.front_left.move(self.speed, self.accel)
-            self.rear_left.move(self.speed, self.accel)
-            self.front_right.move(-self.speed, self.accel)
-            self.rear_right.move(-self.speed, self.accel)
+            if self.interface == "I2C":
+                self.front_left.move(self.speed, self.accel)
+                self.rear_left.move(self.speed, self.accel)
+                self.front_right.move(-self.speed, self.accel)
+                self.rear_right.move(-self.speed, self.accel)
+            elif self.interface == "UDP":
+                motor_udp.send_motor_speed_fl(self.speed)
+                motor_udp.send_motor_speed_rl(self.speed)
+                motor_udp.send_motor_speed_fr(-self.speed)
+                motor_udp.send_motor_speed_rr(-self.speed)
             self.state = MotorState.RIGHT
 
         # Turn on the spot, to the left
         @database_motor_update
         def turnLeft(self):
-            self.front_right.move(self.speed, self.accel)
-            self.rear_left.move(-self.speed, self.accel)
-            self.front_left.move(-self.speed, self.accel)
-            self.rear_right.move(self.speed, self.accel)
+            if self.interface == "I2C":
+                self.front_right.move(self.speed, self.accel)
+                self.rear_left.move(-self.speed, self.accel)
+                self.front_left.move(-self.speed, self.accel)
+                self.rear_right.move(self.speed, self.accel)
+            elif self.interface == "UDP":
+                motor_udp.send_motor_speed_fr(self.speed)
+                motor_udp.send_motor_speed_rl(-self.speed)
+                motor_udp.send_motor_speed_fl(-self.speed)
+                motor_udp.send_motor_speed_rr(self.speed)
             self.state = MotorState.LEFT
 
         # Used for going forward accurately by adjusting left and right speeds.
@@ -431,11 +462,16 @@ if TiberiusConfigParser.areMotorsEnabled():
         def moveForwardDualSpeed(self, left_speed, right_speed):
             left_speed = self.__clipSpeedValue(left_speed)
             right_speed = self.__clipSpeedValue(right_speed)
-
-            self.front_right.move(right_speed, self.accel)
-            self.front_left.move(left_speed, self.accel)
-            self.rear_right.move(right_speed, self.accel)
-            self.rear_left.move(left_speed, self.accel)
+            if self.interface == "I2C":
+                self.front_right.move(right_speed, self.accel)
+                self.front_left.move(left_speed, self.accel)
+                self.rear_right.move(right_speed, self.accel)
+                self.rear_left.move(left_speed, self.accel)
+            elif self.interface == "UDP":
+                motor_udp.send_motor_speed_fr(right_speed)
+                motor_udp.send_motor_speed_fl(left_speed)
+                motor_udp.send_motor_speed_rr(right_speed)
+                motor_udp.send_motor_speed_rl(left_speed)
 
             # TODO:This is unsafe! could be going forwards,backwards,left or right
             self.state = MotorState.FORWARD
@@ -455,10 +491,16 @@ if TiberiusConfigParser.areMotorsEnabled():
             rear_left = self.__clipSpeedValue(rear_left)
             rear_right = self.__clipSpeedValue(rear_right)
 
-            self.front_left.move(front_left, self.accel)
-            self.front_right.move(front_right, self.accel)
-            self.rear_left.move(rear_left, self.accel)
-            self.rear_right.move(rear_right, self.accel)
+            if self.interface == "I2C":
+                self.front_left.move(front_left, self.accel)
+                self.front_right.move(front_right, self.accel)
+                self.rear_left.move(rear_left, self.accel)
+                self.rear_right.move(rear_right, self.accel)
+            elif self.interface == "UDP":
+                motor_udp.send_motor_speed_fl(front_left)
+                motor_udp.send_motor_speed_fr(front_right)
+                motor_udp.send_motor_speed_rl(rear_left)
+                motor_udp.send_motor_speed_rr(rear_right)
 
             # TODO: This is unsafe! could be going forwards,backwards,left or right
             self.state = MotorState.FORWARD
