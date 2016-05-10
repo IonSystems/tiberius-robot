@@ -6,6 +6,7 @@ from tables import CompassTable
 from tables import LidarTable
 from tables import SensorValidityTable
 from tables import UltrasonicsValidityTable
+from tables import BatteryTable
 
 
 def insert(poly, table, data):
@@ -116,7 +117,7 @@ def insert_lidar_reading(poly, id, r_id, data):
 
 def insert_battery_reading(poly, id, data):
     poly.insert(
-        MotorTable.table_name,
+        BatteryTable.table_name,
         {
             'id': id,
             'monitor': data['monitor'],
