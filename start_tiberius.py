@@ -70,18 +70,18 @@ if TiberiusConfigParser.isGPSEnabled():
     print "GPS thread starting"
     gps = Process(target=c.gps_thread).start()
     time.sleep(0.5)
-if TiberiusConfigParser.isCompassEnabled():
-    print "compass thread starting"
-    compass = Process(target=c.compass_thread(control)).start()
-    time.sleep(0.5)
+#if TiberiusConfigParser.isCompassEnabled():
+  #  print "compass thread starting"
+   # compass = Process(target=c.compass_thread(control)).start()
+   # time.sleep(0.5)
 if TiberiusConfigParser.isLidarEnabled():
     print "lidar thread starting"
     lidar = Process(target=c.lidar_thread).start()
     time.sleep(0.5)
-if TiberiusConfigParser.areDiagnosticsEnabled():
-    print "diagnostics thread starting"
-    diagnostics = Process(target=c.diagnostics_thread(control)).start()
-    time.sleep(0.5)
+#if TiberiusConfigParser.areDiagnosticsEnabled():
+ #   print "diagnostics thread starting"
+  #  diagnostics = Process(target=c.diagnostics_thread(control)).start()
+   # time.sleep(0.5)
 #if TiberiusConfigParser.isCompassEnabled() and TiberiusConfigParser.isGPSEnabled():
     #print "antenna thread starting"
     #antenna = Process(target=ant_thread(control)).start()
