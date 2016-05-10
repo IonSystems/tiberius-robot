@@ -222,10 +222,13 @@ class TiberiusConfigParser():
         return battery_port
 
     @staticmethod
+    def isEhcEnabled():
+        ehc = TiberiusConfigParser.getParser().getboolean(POWER_SECTION, 'ehc')
+        return ehc
+
     def setBatteryMonitorPort(battery_port):
         TiberiusConfigParser.getParser().set(POWER_SECTION, battery_port)
         return battery_port
-
 
     '''******************************************
         Authentication

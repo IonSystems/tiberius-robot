@@ -81,7 +81,7 @@ class RobotArmResource(object):
             pass
         if(ArmCommands.SET_SPEED in req.params):
             self.speed = req.params[ArmCommands.SET_SPEED]
-	
+
 	if 'command_name' in req.params and 'command_value' in req.params:
             command_name = req.params['command_name']
 	    command_value = int(req.params['command_value'])
