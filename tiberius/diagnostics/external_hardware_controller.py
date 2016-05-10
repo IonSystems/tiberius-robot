@@ -57,9 +57,12 @@ class ExternalHardwareController:
 
 
 def compass_monitor(control):
+
     dicti = db_q.get_latest(CompassTable)
+
     if dicti is not None:
-        bearing = dicti.heading
+
+        bearing = dicti[0].heading
         print "Bearing: " + str(bearing)
         if 7.5 > bearing > -7.5:
             control.ehc.set_hardware(None, [1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9], None, None)

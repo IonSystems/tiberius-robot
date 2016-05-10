@@ -241,8 +241,17 @@ class DatabaseThreadCreator:
         if rows is not None:
             for row in rows:
                 print "ROW: " + str(row)
-                ultrasonics_status = row.ultrasonics
-                compass_status = row.compass
-                gps_status = row.gps
+                if row.ultrasonics:
+                    ultrasonics_status = 1
+                else:
+                    ultrasonics_status = 0
+                if row.compass:
+                    compass_status = 1
+                else:
+                    compass_status = 0
+                if row.gps:
+                    gps_status = 1
+                else:
+                    gps_status = 0
             diagnostics_leds = [ultrasonics_status, compass_status, gps_status, 9, 9, 9, 9, 9]
             external_hardware_controller.set_hardware(diagnostics_leds)
