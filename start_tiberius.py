@@ -88,8 +88,8 @@ if TiberiusConfigParser.isArmCamEnabled():
     arm_camera_start = check_output("sudo service motion", shell=True)
 
 # Start the control API
-#server = Popen("python tiberius/control_api/api.py", shell=True)
-#print "Control API started"
+# server = Popen("python tiberius/control_api/api.py", shell=True)
+# print "Control API started"
 
 if action == Action.WEB_SERVER:
     server = Popen("python tiberius/web-interface/manage.py runserver", shell=True)

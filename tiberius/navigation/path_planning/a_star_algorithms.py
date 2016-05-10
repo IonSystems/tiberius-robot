@@ -12,6 +12,7 @@ import math
 
 from tiberius.navigation.path_planning.cell import Cell
 from tiberius.navigation.gps.algorithms import Algorithms
+from tiberius.database.decorators import database_grid_update
 
 
 class Astar:
@@ -230,6 +231,7 @@ class Astar:
 
         return [curlocation, distance, bearing, grid_width, grid_height, startlocation, endlocation]
 
+    @database_grid_update
     def run_astar(self, destination):
         # 0 - curlocation, 1 - distance, 2 - bearing, 3 - grid_width,
         # 4 - grid_height, 5 - startlocation, 6 - endlocation
@@ -277,6 +279,7 @@ class Astar:
 
         print 'A-Star complete, with current location : {0}.\nThe given destination was : {1}'.format(str(curlocation),
                                                                                                   str(destination))
+
         return
 
 

@@ -24,7 +24,6 @@ if TiberiusConfigParser.isArmEnabled():
             'basket': __config.getArmBasketParams(),
         }
 
-
         # Store current posisions of each joints
         waist_angle = 0
         shoulder_angle = 0
@@ -58,8 +57,7 @@ if TiberiusConfigParser.isArmEnabled():
                 (math.pow(m, 2) + math.pow(n, 2) - (math.pow(x, 2) + math.pow(y, 2) + math.pow(z, 2))) / (2 * m * n))
 
             # Temporary variables for rho calculation
-            j = (math.pow(m, 2) + (math.pow(x, 2) + math.pow(y, 2) + math.pow(z, 2)) - math.pow(n, 2)) / (
-            2 * m * math.sqrt(math.pow(x, 2) + math.pow(y, 2) + math.pow(z, 2)))
+            j = (math.pow(m, 2) + (math.pow(x, 2) + math.pow(y, 2) + math.pow(z, 2)) - math.pow(n, 2)) / (2 * m * math.sqrt(math.pow(x, 2) + math.pow(y, 2) + math.pow(z, 2)))
             k = (math.sqrt(math.pow(x, 2) + math.pow(y, 2)))
 
             l = math.atan(z / k)
