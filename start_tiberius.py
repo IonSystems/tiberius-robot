@@ -82,10 +82,10 @@ if TiberiusConfigParser.areDiagnosticsEnabled():
     print "diagnostics thread starting"
     diagnostics = Process(target=c.diagnostics_thread(control)).start()
     time.sleep(0.5)
-if TiberiusConfigParser.isCompassEnabled() and TiberiusConfigParser.isGPSEnabled():
-    print "antenna thread starting"
-    antenna = Process(target=ant_thread(control)).start()
-    time.sleep(0.5)
+#if TiberiusConfigParser.isCompassEnabled() and TiberiusConfigParser.isGPSEnabled():
+    #print "antenna thread starting"
+    #antenna = Process(target=ant_thread(control)).start()
+    #time.sleep(0.5)
 if TiberiusConfigParser.isArmCamEnabled():
     print "arm webcam thread starting"
     arm_camera_start = check_output("sudo service motion", shell=True)
