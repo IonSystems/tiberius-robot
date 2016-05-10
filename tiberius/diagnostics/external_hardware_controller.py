@@ -36,15 +36,19 @@ class ExternalHardwareController:
                 self.servo_data = servos
 
             data_message = "s"
+            print "DLEDS: " + str(self.diagnostic_led_data)
             for data in self.diagnostic_led_data:
                 data_message += "d" + str(data)
 
+            print "ring: " + str(self.ring_led_data)
             for data in self.ring_led_data:
                 data_message += "d" + str(data)
 
+            print "relay: " + str(self.relay_data)
             for data in self.relay_data:
                 data_message += "d" + str(data)
 
+            print "servo: " + str(self.servo_data)
             for data in self.servo_data:
                 data_message += "d" + str(data)
             print "EHC DATA: " + str(data_message)
