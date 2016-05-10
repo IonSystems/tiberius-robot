@@ -239,13 +239,14 @@ class DatabaseThreadCreator:
         try:
             rows = q.get_latest(SensorValidityTable)
             print "ROWS: " + str(rows)
-            for row in rows:
-                print "ROW: " + str(row)
-                ultrasonics_status = row.ultrasonics
-                compass_status = row.compass
-                gps_status = row.gps
-            diagnostics_leds = [ultrasonics_status, compass_status, gps_status, 9, 9, 9, 9, 9]
-            external_hardware_controller.set_hardware(diagnostics_leds)
+            if rows is not None:
+                for row in rows:
+                    print "ROW: " + str(row)
+                    ultrasonics_status = row.ultrasonics
+                    compass_status = row.compass
+                    gps_status = row.gps
+                diagnostics_leds = [ultrasonics_status, compass_status, gps_status, 9, 9, 9, 9, 9]
+                external_hardware_controller.set_hardware(diagnostics_leds)
 
         except Exception as e:
             print e
