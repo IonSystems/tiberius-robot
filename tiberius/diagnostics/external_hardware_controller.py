@@ -47,11 +47,12 @@ class ExternalHardwareController:
 
             for data in self.servo_data:
                 data_message += "d" + str(data)
-
+            print "EHC DATA: " + data
             self.ser.write(data_message)
 
 
 def compass_monitor(bearing, control):
+    print "Bearing: " + bearing
     if 7.5 > bearing > -7.5:
         control.ehc.set_hardware(None, {1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9}, None, None)
     elif -7.5 > bearing > -22.5:
