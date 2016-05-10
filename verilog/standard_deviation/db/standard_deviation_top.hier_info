@@ -1,0 +1,7 @@
+|standard_deviation_top
+clk => ~NO_FANOUT~
+rstn => ~NO_FANOUT~
+data_in => ~NO_FANOUT~
+data_out <= <GND>
+
+

@@ -9,6 +9,7 @@ from tables import ArmTable
 from tables import LidarTable
 from tables import MotorsTable
 from tables import SteeringTable
+from tables import GridTable
 
 
 def drop_create(poly, table):
@@ -71,3 +72,6 @@ def create_sensor_validity_table(poly):
 
 def create_ultrasonics_validity_table(poly):
     drop_create(poly, UltrasonicsValidityTable)
+
+def create_grid_table(poly):
+    drop_create(poly, GridTable)

@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import sys
 from tiberius.utils import detection
+from tiberius.control.exceptions import CompassReadError
 # If not running on a raspberry pi, use the dummy smbus library to allow
 # simulation of I2C transactions.
 if not detection.detect_pi():
@@ -81,7 +82,7 @@ class TiltCompensatedCompass:
     ******************************************'''
 
     def __read_compass_8(self):
-        byte = self.bus.read_byte_data(self.address, self.COMPASS_8_BIT)
+        byte = self.bus.read_byte_data(self.address, Wself.COMPASS_8_BIT)
         self.__heading = byte
         return self.__heading
 
@@ -202,20 +203,18 @@ class TiltCompensatedCompass:
     ******************************************'''
 
     def getMostRecentDegrees(self):
-        # if self.__heading_degrees < 0:
-        #    return False
         return self.__heading_degrees
 
     # TODO: We cannot rely on such a crude method for getting a heading
     def heading(self):
         '''
-                Get the heading value between 0 and 3599.
+        Get the heading value between 0 and 3599.
         '''
         try:
             heading = self.__read_compass_16()
             return heading
         except IOError:
-            raise self.CompassReadError("Error reading compass")
+            raise CompassReadError("Error reading compass")
 
     def magnetometer(self):
         try:
@@ -224,7 +223,7 @@ class TiltCompensatedCompass:
                 self.__read_magnetometer_y(),
                 self.__read_magnetometer_z()]
         except IOError:
-            raise self.CompassReadError("Error reading magnetometer.")
+            raise CompassReadError("Error reading magnetometer.")
 
     def accelerometer(self):
         return [
@@ -248,5 +247,12 @@ class TiltCompensatedCompass:
         return self.__read_filtered_roll()
 
 # Test function
+import time
 if __name__ == "__main__":
-    cmps11 = TiltCompensatedCompass(66)
+    cmps11 = TiltCompensatedCompass(0x60)
+    while(True):
+        print "Heading: " + str(cmps11.heading())
+        print "Mag: " + str(cmps11.magnetometer())
+        print "Gyro: " + str(cmps11.gyroscope())
+        print "Temp: " + str(cmps11.temperature())
+        time.sleep(0.1)
