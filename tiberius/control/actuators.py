@@ -420,7 +420,7 @@ if TiberiusConfigParser.areMotorsEnabled():
                 self.rear_left.move(-self.speed, self.accel)
                 self.front_right.move(-self.speed, self.accel)
                 self.rear_right.move(-self.speed, self.accel)
-            elif self.interface == "UDP"
+            elif self.interface == "UDP":
                 motor_udp.send_motor_speed_fl(-self.speed)
                 motor_udp.send_motor_speed_rl(-self.speed)
                 motor_udp.send_motor_speed_fr(-self.speed)
