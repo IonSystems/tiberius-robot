@@ -190,8 +190,8 @@ class DatabaseThreadCreator:
                     else:  # start updating results
                         compass_update_id = compass_read_id % COMPASS_NUMBER_OF_READINGS
                         up.overwrite_compass_reading(self.poly, compass_update_id, heading)
-                    #compass_monitor(heading, control)
                     compass_read_id += 1
+                    compass_monitor(heading, control)
 
                 # TODO: Again, something weird is going on here!
                 # If not valid then valid = True?!
