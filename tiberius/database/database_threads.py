@@ -238,7 +238,7 @@ class DatabaseThreadCreator:
 
         while True:
             try:
-                rows = q.get_latest(self.poly, sensors_validity, 1)
+                rows = q.get_latest(sensors_validity)
                 print "ROWS: " + str(rows)
                 for row in rows:
                     print "ROW: " + str(row)
