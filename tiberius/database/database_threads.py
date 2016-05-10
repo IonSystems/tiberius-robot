@@ -30,7 +30,8 @@ if TiberiusConfigParser.isCompassEnabled():
     from tiberius.control.sensors import Compass
 if TiberiusConfigParser.isLidarEnabled():
     from tiberius.control.sensors import Lidar
-from tiberius.control.sensors import PowerManagementSensor
+if TiberiusConfigParser.isMonitorEnabled():
+    from tiberius.control.sensors import PowerManagementSensor
 
 class DatabaseThreadCreator:
     '''
@@ -57,7 +58,7 @@ class DatabaseThreadCreator:
 	pow_man = PowerManagementSensor()
 
 	while True:
-		print pow_man.getdata()	
+		print pow_man.getdata()
 
 
     '''******************************************
