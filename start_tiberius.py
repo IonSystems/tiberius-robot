@@ -90,7 +90,7 @@ if TiberiusConfigParser.isArmCamEnabled():
     arm_camera_start = check_output("sudo service motion", shell=True)
 if TiberiusConfigParser.isMonitorEnabled():
     print "battery monitor thread starting"
-    powermanagement = Process(target=c.powermanagement_thread()).start()
+    powermanagement = Process(target=c.powermanagement_thread).start()
 
 # Start the control API
 # server = Popen("python tiberius/control_api/api.py", shell=True)
@@ -106,7 +106,7 @@ while True:
     c.diagnostics_thread(control)
     compass_monitor(control)
 
-'''
+
 # Wait for a keyboard interrupt
 try:
     time.sleep(0.1)
@@ -126,5 +126,5 @@ except KeyboardInterrupt:
     print "Tiberius Software Suite Stopped"
 sys.exit()
 
-print "tiberius fully started"
-'''
+
+
