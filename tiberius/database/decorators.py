@@ -33,18 +33,21 @@ def database_arm_update(func):
         result = func(self, change, angle=None)
 
         # Update the database with values from self
-        db.insert(ArmTable.table_name, {
-            'id': arm_read_id,
-            'X': self.x,
-            'Y': self.y,
-            'Z' : self.z,
-            'waist': self.waist_angle,
-            'elbow': self.elbow_angle,
-            'shoulder': self.shoulder_angle,
-            'timestamp': time.time()
+        try:
+            db.insert(ArmTable.table_name, {
+                'id': arm_read_id,
+                'X': self.x,
+                'Y': self.y,
+                'Z' : self.z,
+                'waist': self.waist_angle,
+                'elbow': self.elbow_angle,
+                'shoulder': self.shoulder_angle,
+                'timestamp': time.time()
 
-        })
-        arm_read_id += 1
+            })
+            arm_read_id += 1
+        except PolyhedraDatabase.UnknownError:
+            print "Arm database entry failed."
     return func_wrapper
 
 
@@ -101,17 +104,19 @@ def database_motor_update(func):
                 rear_left = 0
                 front_right = 0
                 rear_right = 0
-
-        # Update the database with values from self
-        db.insert(MotorsTable.table_name, {
-            'id': motor_read_id,
-            'front_left': front_left,
-            'front_right': front_right,
-            'rear_left' : rear_left,
-            'rear_right': rear_right,
-            'timestamp' : time.time()
-        })
-        motor_read_id += 1
+        try:
+            # Update the database with values from self
+            db.insert(MotorsTable.table_name, {
+                'id': motor_read_id,
+                'front_left': front_left,
+                'front_right': front_right,
+                'rear_left' : rear_left,
+                'rear_right': rear_right,
+                'timestamp' : time.time()
+            })
+            motor_read_id += 1
+        except PolyhedraDatabase.UnknownError:
+            print "Motor database entry failed."
     return func_wrapper
 
 
