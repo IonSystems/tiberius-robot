@@ -57,6 +57,26 @@ class ExternalHardwareController:
             self.ser.write(data_message)
 
 
+if __name__ == "__main__":
+    from random import randint
+
+    externalHardwareController = ExternalHardwareController()
+
+    l1, l2, l3, l4, l5, l6, l7, l8 = 0, 0, 0, 0, 0, 0, 0, 0
+
+    while (True):
+        externalHardwareController.set_hardware({l1, l2, l3, l4, l5, l6, l7, l8})
+        l1 = randint(0, 5)
+        l2 = randint(0, 5)
+        l3 = randint(0, 5)
+        l4 = randint(0, 5)
+        l5 = randint(0, 5)
+        l6 = randint(0, 5)
+        l7 = randint(0, 5)
+        l8 = randint(0, 5)
+        time.sleep(0.1)
+
+
 def compass_monitor(control):
 
     dicti = db_q.get_latest(CompassTable)
