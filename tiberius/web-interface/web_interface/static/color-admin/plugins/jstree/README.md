@@ -148,7 +148,7 @@ There are other available options for each node, only set them if you need them 
    - `selected` - if the node should be initially selected
    - `opened` - if the node should be initially opened
    - `disabled` - if the node should be disabled
-   - `checked` - __checkbox plugin specific__ - if the node should be checked (only used when `tie_to_selection` is `false`, which you should only do if you really know what you are doing)
+   - `checked` - __checkbox plugin specific__ - if the node should be checked (only used when `tie_selection` is `false`, which you should only do if you really know what you are doing)
    - `undetermined` - __checkbox plugin specific__ - if the node should be rendered in undetermined state (only used with lazy loading and when the node is not yet loaded, otherwise this state is automatically calculated).
  * `type` - __types plugin specific__ - the type of the nodes (should be defined in the types config), if not set `"default"` is assumed.
  * `li_attr` - object of values which will be used to add HTML attributes on the resulting `LI` DOM node.
@@ -447,7 +447,7 @@ $("#tree").jstree({
 
 [view result](http://jsfiddle.net/vakata/2kwkh2uL/9/)
 
-`"core.check_callback"` can also be set to a function, that will be invoked every time a modification is about to happen (or when jstree needs to check if a modification is possible). If you return `true` the operation will be allowed, a value of `false` means it will not be allowed.
+`"core.check_callback"` can also be set to a function, that will be invoked every time a modification is about to happen (or when jstree needs to check if a modification is possible). If you return `true` the operation will be allowed, a value of `false` means it will not be allowed. The possible operation you can expect are `create_node`, `rename_node`, `delete_node`, `move_node` and `copy_node`. The `more` parameter will contain various information provided by the plugin that is invoking the check. For example the DND plugin will provide an object containing information about the move ot copy operation that is being checked - is it a multi tree operation, which node is currently hovered, where the insert arrow is pointing - before, after or inside, etc.
 
 ```js
 $("#tree").jstree({
@@ -527,7 +527,7 @@ $("#tree").jstree({
     "data" : function (nodes) {
       return { "ids" : nodes.join(",") };
     }
-  }
+  },
   "plugins" : [ "massload", "state" ]
 });
 ```
@@ -546,7 +546,7 @@ $("#container").jstree({
 });
 $("#s").submit(function(e) {
   e.preventDefault();
-  $("container").jstree(true).search($("#q").val());
+  $("#container").jstree(true).search($("#q").val());
 });
 </script>
 ```

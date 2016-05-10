@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from tiberius.database.polyhedra_database import PolyhedraDatabase
+from tiberius.database_wrapper.polyhedra_database import PolyhedraDatabase
 from tables import SensorValidityTable
 
 
