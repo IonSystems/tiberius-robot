@@ -114,6 +114,22 @@ def insert_lidar_reading(poly, id, r_id, data):
         }
     )
 
+def insert_battery_reading(poly, id, data):
+    poly.insert(
+        MotorTable.table_name,
+        {
+            'id': id,
+            'monitor': data['monitor'],
+            'volts': data['volts'],
+            'current': data['current'],
+            'power': data['power'],
+            'time': data['time'],
+            'amp_hours': data['amp_hours'],
+            'watt_hours': data['watt_hours'],
+            'timestamp': time.time()
+        }
+    )
+
 def insert_grid_reading(poly, id, data):
     poly.insert(
         LidarTable.table_name,

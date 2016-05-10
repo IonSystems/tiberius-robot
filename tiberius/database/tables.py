@@ -70,7 +70,6 @@ class LidarTable(Table):
         'timestamp': 'float'
     }
 
-
 class MotorsTable(Table):
     table_name = "motors_table"
     columns = {
@@ -93,7 +92,20 @@ class SteeringTable(Table):
         'rear_right': 'float',
         'timestamp': 'float'
     }
-
+    
+class BatteryTable(Table):
+    table_name = "battery_reading"
+    columns = {
+        'id': 'int primary key',
+        'monitor': 'integer',
+        'volts': 'float',
+        'current': 'float',
+        'power': 'float',
+        'time': 'float',
+        'amp_hours': 'float',
+        'watt_hours': 'float',
+        'timestamp': 'float'
+    }
 '''
 Alright, now the following tables have been refactored into this Table format,
 but I can't see these being very useful. Cameron
