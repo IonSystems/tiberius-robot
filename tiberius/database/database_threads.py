@@ -160,7 +160,7 @@ class DatabaseThreadCreator:
         Compass
     ******************************************'''
 
-    def compass_thread(self, control):
+    def compass_thread(self):
         compass = Compass()
         compass_read_id = 0
         compass_update_id = 0
