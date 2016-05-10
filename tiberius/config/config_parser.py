@@ -216,6 +216,11 @@ class TiberiusConfigParser():
     def isMonitorEnabled():
         return TiberiusConfigParser.getParser().getboolean(POWER_SECTION, 'battery_monitor')
 
+    @staticmethod
+    def getBatteryMonitorPort():
+        battery_port = TiberiusConfigParser.getParser().get(POWER_SECTION, 'battery_monitor_port')
+        return battery_port
+
     '''******************************************
         Authentication
     ******************************************'''
