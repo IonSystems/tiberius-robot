@@ -50,7 +50,7 @@ class ExternalHardwareController:
             print "servo: " + str(self.servo_data)
             for data in self.servo_data:
                 data_message += "d" + str(data)
-            #data_message += "\n"
+            data_message += "\n"
             print "EHC DATA: " + str(data_message)
             self.ser.write(data_message)
 
@@ -72,7 +72,7 @@ if __name__ == "__main__":
         l6 = randint(0, 5)
         l7 = randint(0, 5)
         l8 = randint(0, 5)
-        time.sleep(0.1)
+        time.sleep(1)
 
 
 def compass_monitor(control):
