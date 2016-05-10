@@ -47,7 +47,7 @@ class ExternalHardwareController:
 
             for data in self.servo_data:
                 data_message += "d" + str(data)
-            print "EHC DATA: " + data
+            print "EHC DATA: " + str(data_message)
             self.ser.write(data_message)
 
 
