@@ -53,7 +53,7 @@ class DatabaseThreadCreator:
         # Used by every thread to insert into the database.
         self.poly = PolyhedraDatabase("insert_threads")
 
-   def powermanagement_thread(self):
+    def powermanagement_thread(self):
 	pow_man = PowerManagement()
 
 	while True:
