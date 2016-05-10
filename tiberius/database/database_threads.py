@@ -196,7 +196,7 @@ class DatabaseThreadCreator:
                 # If not valid then valid = True?!
                 #if not valid:
                 #    valid = True
-                #    up.update_compass_sensor_validity(self.poly, True)
+                up.update_compass_sensor_validity(self.poly, True)
 
             except Exception as e:
                 print e
