@@ -245,7 +245,7 @@ class DatabaseThreadCreator:
                     ultrasonics_status = row.ultrasonics
                     compass_status = row.compass
                     gps_status = row.gps
-                diagnostics_leds = {ultrasonics_status, compass_status, gps_status, 9, 9, 9, 9, 9}
+                diagnostics_leds = [ultrasonics_status, compass_status, gps_status, 9, 9, 9, 9, 9]
                 external_hardware_controller.set_hardware(diagnostics_leds)
 
             except Exception as e:
