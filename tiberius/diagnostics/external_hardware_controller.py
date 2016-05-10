@@ -22,6 +22,7 @@ class ExternalHardwareController:
     def set_hardware(self, diagnostics_leds=None, ring_leds=None, relays=None, servos=None):
         if not self.ser.isOpen():
             try:
+                print "opening serial port"
                 self.ser.open()
             except:
                 print "Port already open"
@@ -52,7 +53,7 @@ class ExternalHardwareController:
             print "servo: " + str(self.servo_data)
             for data in self.servo_data:
                 data_message += "d" + str(data)
-            data_message += "\n"
+            #data_message += "\n"
             print "EHC DATA: " + str(data_message)
             self.ser.write(data_message)
 
