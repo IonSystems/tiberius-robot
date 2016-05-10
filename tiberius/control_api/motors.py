@@ -30,7 +30,7 @@ def generate_response(req, resp, resource):
     })
 
 
-def validate_params(req, resp, resource):
+def validate_params(req, resp, resource, params):
     # Ensure speed value is between 0 and 100
     params = req.params
     if 'speed' in params:
@@ -50,7 +50,7 @@ class MotorResource(object):
         self.state = MotorStates.STOP
 
     @falcon.after(generate_response)
-    @falcon.before(validate_params)
+    #@falcon.before(validate_params)
     def on_post(self, req, resp):
 	# Debug
 	self.logger.debug("Request Params: " + str(req.params))
