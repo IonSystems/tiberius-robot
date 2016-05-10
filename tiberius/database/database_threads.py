@@ -54,10 +54,10 @@ class DatabaseThreadCreator:
         self.poly = PolyhedraDatabase("insert_threads")
 
     def powermanagement_thread(self):
-	pow_man = PowerManagement()
+	pow_man = PowerManagementSensor()
 
 	while True:
-		print pow_man.readdata()	
+		print pow_man.getdata()	
 
 
     '''******************************************

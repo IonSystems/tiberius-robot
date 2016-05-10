@@ -1,7 +1,7 @@
 import math
 import tiberius.database.query as db_q
 
-from tiberius.control.gps20 import GlobalPositioningSystem
+from tiberius.control.drivers.gps20 import GlobalPositioningSystem
 from tiberius.utils import bearing_math
 from tiberius.database.tables import GPSTable
 

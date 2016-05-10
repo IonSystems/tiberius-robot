@@ -10,7 +10,7 @@ from tiberius.config.config_parser import TiberiusConfigParser
 
 class PowerManagementSensor:
 	
-	pm = Powermanagement.PowerManagement
+	pm = Powermanagement.PowerManagement()
 	def getdata(self):
 		return pm.getdata(self)	
 class Ultrasonic:
