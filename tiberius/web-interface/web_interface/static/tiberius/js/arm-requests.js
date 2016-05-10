@@ -98,6 +98,14 @@ var handleArmButtons = function(ip_address, initial_values) {
 		send_command(ip_address, 'home', 0);
   });
 
+	$('#arm_button_grab_plus').click(function() {
+		send_command(ip_address, 'grasp', 0);
+  });
+	$('#arm_button_grab_minus').click(function() {
+		send_command(ip_address, 'ungrasp', 0);
+  });
+
+
 };
 
 var ArmRequests = function (ip_address, initial_values) {
