@@ -32,7 +32,7 @@ control = Control()
 print "Starting Tiberius Software Suite..."
 
 #config write
-TiberiusConfigParser.setBatteryMonitorPort("/dev/ttyACM0")
+#TiberiusConfigParser.setBatteryMonitorPort("/dev/ttyACM0")
 
 # Start the database API if it is not already running
 print "Checking if database is running..."
