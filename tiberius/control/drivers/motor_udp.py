@@ -64,7 +64,7 @@ def send_udp_data_raw(data):
 	print "Sending " + str(data) + " to " + str(mbed_address)
 	bytes_sent = s.sendto(data, mbed_address)
 	print "Bytes sent = " + str(bytes_sent)
-	time.sleep(0.01)
+	time.sleep(0.025)
 
 def format_data(data):
 	return bytearray(data)
@@ -157,6 +157,20 @@ def stop():
 	send_motor_speed(SPEED_0, DIR_CW, FRONT_LEFT)
 	send_motor_speed(SPEED_0, DIR_CW, REAR_RIGHT)
 	send_motor_speed(SPEED_0, DIR_CW, REAR_LEFT)
+
+def skid_left(motor_speed):
+	l.info("Skidding left.")
+	send_motor_speed_fl(-motor_speed)
+	send_motor_speed_fr(motor_speed)
+	send_motor_speed_rr(motor_speed)
+	send_motor_speed_rl(-motor_speed)
+
+def skid_right(motor_speed):
+	l.info("Skidding right.")
+	send_motor_speed_fl(motor_speed)
+	send_motor_speed_fr(-motor_speed)
+	send_motor_speed_rr(-motor_speed)
+	send_motor_speed_rl(motor_speed)
 
 """********************************************
 		Debug
