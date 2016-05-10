@@ -26,7 +26,7 @@ api = application = falcon.API(media_type='application/json; charset=utf-8',
 sensors = sensors.SensorResource()
 api.add_route('/sensors', sensors)
 
-TiberiusConfigParser.areMotorsEnabled():
+if TiberiusConfigParser.areMotorsEnabled():
     m = c.motors
     motors = motors.MotorResource(m)
     api.add_route('/motors', motors)
