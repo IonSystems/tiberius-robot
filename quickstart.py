@@ -1,8 +1,10 @@
+#!/usr/bin/env python
 from optparse import OptionParser
 from subprocess import check_output, Popen
 import time
 import sys
 from enum import Enum
+
 
 class Action(Enum):
     KEYBOARD_CONTROL = 0
@@ -14,6 +16,7 @@ class Action(Enum):
     STYLE_CHECKER = 6
     EMERGENCY_STOP = 7
     KEYBOARD_CONTROL_COLLISION = 8
+    FULL_CONTROL = 9
 
 parser = OptionParser()
 
@@ -24,6 +27,13 @@ parser.add_option(
     const=Action.KEYBOARD_CONTROL,
     dest="action",
     help="Start the keyboard control test script.")
+parser.add_option(
+    "-f",
+    "--full-control",
+    action="store_const",
+    const=Action.FULL_CONTROL,
+    dest="action",
+    help="Start the keyboard control test script and arm control.")
 parser.add_option(
     "-c",
     "--keyboard-control-collision",
@@ -93,8 +103,13 @@ if action == Action.KEYBOARD_CONTROL:
         shell=True)
 
 elif action == Action.KEYBOARD_CONTROL_COLLISION:
-    print "Starting unit test suite."
+    print "Starting keyboard collision control."
     check_output("python tiberius/testing/scripts/ultras_control.py", shell=True)
+
+elif action == Action.FULL_CONTROL:
+    print "Starting keyboard control with arm control."
+    check_output("python tiberius/testing/scripts/full_control.py", shell=True)
+
 
 elif action == Action.RUN_TESTS:
     print "Starting unit test suite."

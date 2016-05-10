@@ -4,7 +4,7 @@ import os
 import sys
 import random
 import subprocess
-from tiberius.database.polyhedra_database import PolyhedraDatabase
+from tiberius.database_wrapper.polyhedra_database import PolyhedraDatabase
 
 
 def clean_up():

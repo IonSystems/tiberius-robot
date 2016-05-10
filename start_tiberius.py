@@ -1,12 +1,14 @@
+#!/usr/bin/env python 
 from optparse import OptionParser
 from subprocess import Popen, PIPE
-from tiberius.control.control_thread import ControlThread
+from tiberius.database.database_threads import DatabaseThreadCreator
 from multiprocessing import Process
 from enum import Enum
 import sys
 import time
 from tiberius.config.config_parser import TiberiusConfigParser
-
+import tiberius.database.create as cr
+import tiberius.database.insert as ins
 
 
 class Action(Enum):
@@ -42,37 +44,55 @@ for line in lines_iterator:
 
 # Create database tables for data
 print "Creating database tables for data"
-control_thread = ControlThread()
+c = DatabaseThreadCreator()
 # Wait for the connection to the database to start
 time.sleep(2)
-control_thread.polycreate_sensor_validity()
-control_thread.polycreate_ultrasonics_validity()
-control_thread.polycreate_ultrasonic()
-control_thread.polycreate_compass()
-control_thread.polycreate_gps()
+cr.create_sensor_validity_table(c.poly)
+ins.insert_initial_sensor_validity(c.poly)
+cr.create_ultrasonics_validity_table(c.poly)
+ins.insert_initial_ultrasonics_validity(c.poly)
+cr.create_ultrasonics_table(c.poly)
+cr.create_compass_table(c.poly)
+cr.create_gps_table(c.poly)
+cr.create_lidar_table(c.poly)
+cr.create_arm_table(c.poly)
+cr.create_motors_table(c.poly)
+cr.create_steering_table(c.poly)
 
 print 'Waiting for tables to finish being created...'
 time.sleep(10)
 
 print 'Starting sensor data threads...'
 # Start sensor data threads
-ultrasonics = Process(target=control_thread.ultrasonics_thread).start()
-time.sleep(5)
-#if TiberiusConfigParser.isCompassEnabled():
-#    compass = Process(target=control_thread.compass_thread).start()
-#    time.sleep(5)
-#gps = Process(target=control_thread.gps_thread).start()
-#time.sleep(5)
-#diagnostics = Process(target=control_thread.diagnostics_thread()).start()
-#time.sleep(5)
+if TiberiusConfigParser.areUltrasonicsEnabled():
+    ultrasonics = Process(target=c.ultrasonics_thread).start()
+    print "ultrasonic thread started"
+    time.sleep(3)
+if TiberiusConfigParser.isGPSEnabled():
+    gps = Process(target=c.gps_thread).start()
+    print "GPS thread started"
+    time.sleep(3)
+if TiberiusConfigParser.isCompassEnabled():
+    compass = Process(target=c.compass_thread).start()
+    print "compass thread started"
+    time.sleep(3)
+if TiberiusConfigParser.isLidarEnabled():
+    lidar = Process(target=c.lidar_thread).start()
+    print "lidar thread started"
+    time.sleep(3)
+if TiberiusConfigParser.areDiagnosticsEnabled():
+    diagnostics = Process(target=c.diagnostics_thread()).start()
+    print "diagnostics thread stasrted"
+    time.sleep(3)
+
+if TiberiusConfigParser.isArmCamEnabled():
+    arm_camera_start = check_output("sudo service motion", shell=True)
 
 # Start the control API
-print "Starting the control API..."
-server = Popen("python tiberius/control_api/api.py", shell=True)
-print "Control API started"
+# server = Popen("python tiberius/control_api/api.py", shell=True)
+# print "Control API started"
 
 if action == Action.WEB_SERVER:
-    print "Starting the web server..."
     server = Popen("python tiberius/web-interface/manage.py runserver", shell=True)
     print "Web server started"
 
@@ -94,3 +114,5 @@ except KeyboardInterrupt:
         Popen.kill(server)
     print "Tiberius Software Suite Stopped"
 sys.exit()
+
+print "tiberius fully started"
