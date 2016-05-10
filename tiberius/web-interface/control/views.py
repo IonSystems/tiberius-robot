@@ -128,7 +128,7 @@ def send_control_request(request):
     url_end = ":8000/motors"
     url = url_start + ip_address + url_end
     response = ""
-
+    print "Sending motor command " + str(request.POST.lists())
     try:
         r = requests.post(url,
                           data=request.POST.lists(),

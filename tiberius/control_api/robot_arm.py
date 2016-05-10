@@ -18,6 +18,7 @@ class ArmCommands:
     BASKET = "basket"
     CENTRE = "centre"
     PARK = "park"
+    HOME = "home"
     CHANGE_X = "arm_dx" # Waist
     CHANGE_Y = "arm_dy" # Shoulder
     CHANGE_Z = "arm_dz" # Elbow
@@ -103,11 +104,13 @@ class RobotArmResource(object):
             self.arm_control.ungrasp()
 
         # Arm complex commands
-        if(ArmCommands.BASKET in req.params):
-            self.arm_control.basket()
-        elif(ArmCommands.CENTRE in req.params):
+        # if(ArmCommands.BASKET in req.params):
+        #     self.arm_control.basket()
+        if(ArmCommands.CENTRE in req.params):
             self.arm_control.centre()
         elif(ArmCommands.PARK in req.params):
             self.arm_control.park()
+        elif(ArmCommands.HOME in req.params):
+            self.arm_control.home()
 
         print req.params
