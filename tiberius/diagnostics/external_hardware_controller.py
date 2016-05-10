@@ -2,7 +2,7 @@ import serial
 from tiberius.utils import detection
 import time
 import tiberius.database.query as db_q
-from tables import CompassTable
+from tiberius.database.tables import CompassTable
 
 class ExternalHardwareController:
     if detection.detect_windows():
