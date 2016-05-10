@@ -23,6 +23,7 @@ from tables import UltrasonicsValidityTable
 # TODO: This 'ExternalHardwareController' would be be best split up into
 # individual drivers as with cmps11, gps20 etc.
 from tiberius.diagnostics.external_hardware_controller import ExternalHardwareController
+from tiberius.diagnostics.external_hardware_controller import compass_monitor
 
 from tiberius.control.sensors import Ultrasonic
 from tiberius.control.sensors import GPS
@@ -160,6 +161,7 @@ class DatabaseThreadCreator:
 
     def compass_thread(self):
         compass = Compass()
+        external_hardware_controller = ExternalHardwareController()
         compass_read_id = 0
         compass_update_id = 0
         valid = False
@@ -187,6 +189,7 @@ class DatabaseThreadCreator:
                     else:  # start updating results
                         compass_update_id = compass_read_id % COMPASS_NUMBER_OF_READINGS
                         up.overwrite_compass_reading(self.poly, compass_update_id, heading)
+                        compass_monitor(heading)
                     compass_read_id += 1
 
                 # TODO: Again, something weird is going on here!
@@ -227,21 +230,20 @@ class DatabaseThreadCreator:
         Diagnostics
     ******************************************'''
 
-    def diagnostics_thread(self):
-        external_hardware_controller = ExternalHardwareController()
+    def diagnostics_thread(self, control):
+        external_hardware_controller = control
 
         ultrasonics_status, compass_status, gps_status = False, False, False
 
         while True:
             try:
                 rows = q.query_sensor_validity(self.poly)
-                print rows
+
                 for row in rows:
-                    print row
-                    # ultrasonics_status = row.ultrasonics
-                    # compass_status = row.compass
-                    # gps_status = row.gps
-                diagnostics_leds = {ultrasonics_status, compass_status, gps_status, -1, -1, -1, -1, -1}
+                    ultrasonics_status = row.ultrasonics
+                    compass_status = row.compass
+                    gps_status = row.gps
+                diagnostics_leds = {ultrasonics_status, compass_status, gps_status, 9, 9, 9, 9, 9}
                 external_hardware_controller.set_hardware(diagnostics_leds)
 
             except Exception as e:
