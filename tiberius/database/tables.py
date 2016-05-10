@@ -99,7 +99,7 @@ class BatteryTable(Table):
         'id': 'int primary key',
         'monitor': 'int',
         'volts': 'float',
-        'current': 'float',
+        'amps': 'float',
         'power': 'float',
         'time': 'float',
         'amp_hours': 'float',
