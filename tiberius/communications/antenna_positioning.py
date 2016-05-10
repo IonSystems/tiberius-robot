@@ -32,11 +32,12 @@ class Antenna:
         # based on speed
         delay = heading * 0.00317  # speed per degree * degrees needed
         if rotation == 1:
-            direction = 180
+            direction = 90
         else:
             direction = 0
         self.control.ehc.set_hardware(None, None, None, None, {direction})
         time.sleep(delay)
+        self.control.ehc.set_hardware(None, None, None, None, {56})
 
     def getCurHeading(self):
 
