@@ -1,8 +1,6 @@
 import serial
 from tiberius.utils import detection
 import time
-import tiberius.database.query as db_q
-from tiberius.database.tables import CompassTable
 
 class ExternalHardwareController:
     if detection.detect_windows():
@@ -16,7 +14,7 @@ class ExternalHardwareController:
     relay_data = [1, 1, 1, 1]
     servo_data = [75]
 
-    def __init__(self, debug=False):
+    def __init__(self):
         self.ser = serial.Serial(self.port, self.baud, timeout=1)
 
     def set_hardware(self, diagnostics_leds=None, ring_leds=None, relays=None, servos=None):
@@ -26,7 +24,6 @@ class ExternalHardwareController:
                 self.ser.open()
             except:
                 print "Port already open"
-            time.sleep(10)
         if self.ser.isOpen():
             if diagnostics_leds is not None:
                 self.diagnostic_led_data = diagnostics_leds
@@ -79,6 +76,8 @@ if __name__ == "__main__":
 
 
 def compass_monitor(control):
+    import tiberius.database.query as db_q
+    from tiberius.database.tables import CompassTable
 
     dicti = db_q.get_latest(CompassTable)
 
