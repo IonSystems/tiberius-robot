@@ -120,9 +120,9 @@ def send_motor_speed_rl(motor_speed):
 	send_motor_speed(motor_speed, motor_direction, REAR_LEFT)
 
 def speed_dir_convert(motor_speed):
-	if motor_speed > 0:
+	if motor_speed >= 0:
 		motor_direction = DIR_CW
-	elif motor_speed <= 0:
+	elif motor_speed < 0:
 		motor_direction = DIR_ACW
 
 	motor_speed = speed_convert(abs(motor_speed))
@@ -166,5 +166,9 @@ if __name__ == "__main__":
 		time.sleep(1)
 
 	#send_motor_speed(100, DIR_CW, FRONT_RIGHT)
-	send_motor_speed_rl(100)
-	send_motor_speed_rl(-100)
+	#stop()
+	send_led_toggle_slave(REAR_RIGHT)
+	#send_motor_speed_fl(100)
+	#send_motor_speed_fr(100)
+	send_motor_speed_rr(0)
+	#send_motor_speed_rl(100)
