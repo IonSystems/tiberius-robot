@@ -13,7 +13,7 @@ class ExternalHardwareController:
 
     diagnostic_led_data = [0, 0, 0, 0, 0, 0, 0, 0]
     ring_led_data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    relay_data = [0, 0, 0, 0]
+    relay_data = [1, 1, 1, 1]
     servo_data = [75]
 
     def __init__(self, debug=False):
@@ -52,6 +52,7 @@ class ExternalHardwareController:
             print "servo: " + str(self.servo_data)
             for data in self.servo_data:
                 data_message += "d" + str(data)
+            data_message += "\n"
             print "EHC DATA: " + str(data_message)
             self.ser.write(data_message)
 
