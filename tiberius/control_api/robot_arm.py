@@ -100,10 +100,10 @@ class RobotArmResource(object):
         # Arm gripper commands
         if(ArmCommands.GRASP in command_name):
             self.logger.info("Grasping")
-            self.arm_control.grasp()
+            self.arm_control.close_gripper()
         elif(ArmCommands.UNGRASP in command_name):
             self.logger.info("Ungrasp")
-            self.arm_control.ungrasp()
+            self.arm_control.open_gripper()
 
         # Arm complex commands
         # if(ArmCommands.BASKET in req.params):
