@@ -122,7 +122,7 @@ def insert_battery_reading(poly, id, data):
             'id': id,
             'monitor': data['monitor'],
             'volts': data['volts'],
-            'current': data['current'],
+            'amps': data['current'],
             'power': data['power'],
             'time': data['time'],
             'amp_hours': data['amp_hours'],
