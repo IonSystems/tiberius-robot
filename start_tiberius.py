@@ -86,7 +86,9 @@ if TiberiusConfigParser.isCompassEnabled() and TiberiusConfigParser.isGPSEnabled
 if TiberiusConfigParser.isArmCamEnabled():
     arm_camera_start = check_output("sudo service motion", shell=True)
 
-powermanagement = Process(target=c.powermanagement_thread()).start()
+if TiberiusConfigParser.isMonitorEnabled():
+    powermanagement = Process(target=c.powermanagement_thread()).start()
+    print "battery monitor thread started"
 
 # Start the control API
 # server = Popen("python tiberius/control_api/api.py", shell=True)

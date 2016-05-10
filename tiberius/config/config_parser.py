@@ -212,6 +212,10 @@ class TiberiusConfigParser():
         chemistry = TiberiusConfigParser.getParser().get(POWER_SECTION, 'chemistry')
         return chemistry
 
+    @staticmethod
+    def isMonitorEnabled():
+        return TiberiusConfigParser.getParser().getboolean(POWER_SECTION, 'battery_monitor')
+
     '''******************************************
         Authentication
     ******************************************'''
