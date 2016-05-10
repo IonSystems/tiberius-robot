@@ -130,6 +130,7 @@ class DatabaseThreadCreator:
             try:
                 if gps.usable():
                     gps_data = gps.read_gps()
+                    gps_data['dilution_of_precision'] = -1
                     if gps_data is not False:
                         if gps_read_id < GPS_NUMBER_OF_READINGS:
                             ins.insert_gps_reading(self.poly, gps_read_id, gps_data)
