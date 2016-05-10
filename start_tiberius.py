@@ -51,6 +51,7 @@ cr.create_lidar_table(c.poly)
 cr.create_arm_table(c.poly)
 cr.create_motors_table(c.poly)
 cr.create_steering_table(c.poly)
+cr.create_battery_table(c.poly)
 
 print 'Waiting for tables to finish being created...'
 time.sleep(10)
