@@ -9,8 +9,8 @@ in-memory database.
 '''
 
 
-def get_latest(poly, table):
-    return poly.sql("SELECT * from " + table.table_name + " ORDER BY timestamp DESC LIMIT 1;")
+def get_latest(poly, table, limit=1):
+    return poly.sql("SELECT * from " + table.table_name + " ORDER BY timestamp DESC LIMIT " + str(limit) + ";")
 
 
 def query_sensor_validity(poly):

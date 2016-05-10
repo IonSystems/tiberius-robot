@@ -113,3 +113,20 @@ def insert_lidar_reading(poly, id, r_id, data):
             'timestamp': time.time()
         }
     )
+
+def insert_grid_reading(poly, id, data):
+    poly.insert(
+        LidarTable.table_name,
+        {
+            'id': 'int primary key',
+            'row': 'int',
+            'column': 'int',
+            'lat': 'float',
+            'lon': 'float',
+            'cost': 'int',
+            'heuristic': 'int',
+            'final': 'int',
+            'parent': 'int primary key',
+            'timestamp': time.time()
+        }
+    )

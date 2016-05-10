@@ -13,6 +13,8 @@
 
 	{% include "head.html" %}
 	<link href="{% static 'color-admin/plugins/gritter/css/jquery.gritter.css' %}" rel="stylesheet"/>
+	<link href="{% static 'tiberius/css/lib.css' %}" rel="stylesheet"/>
+	<link href="{% static 'color-admin/plugins/jstree/dist/themes/default/style.min.css' %}" rel="stylesheet" />
 	<!-- ================== BEGIN BASE JS ================== -->
 	<script src="{% static 'color-admin/plugins/pace/pace.min.js' %}"></script>
 	<!-- ================== END BASE JS ================== -->
@@ -47,37 +49,95 @@
 			<!-- begin page-header -->
 			<h1 class="page-header">Google Map <small>header small text goes here...</small></h1>
 			<!-- end page-header -->
+						<div class="row"> <!-- Contains panel on left and map on right-->
+							<div class="col-md-3"> <!-- start of left panel -->
+								<div class="panel panel-inverse">
+                        <div class="panel-heading">
+                            <div class="panel-heading-btn">
+                                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
+                                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-reload"><i class="fa fa-repeat"></i></a>
+                                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
+                                <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-danger" data-click="panel-remove"><i class="fa fa-times"></i></a>
+                            </div>
+                            <h4 class="panel-title">Mission Tree</h4>
+                        </div>
+                      <div class="panel-body">
+												<div id="jstree-waypoints">
+													<ul>
+														<li id = "tree-top-level" data-jstree='{ "opened" : true ,"icon": "fa fa-map"}}'>Waypoints</li>
+													</ul>
+												</div>
+											</div>
+                  </div>
+							</div> <!-- end of left panel -->
+							<div class="col-md-6"> <!-- start of map panel -->
+								<div class="panel panel-inverse">
+										<div class="panel-heading">
+												<div class="panel-heading-btn">
+														<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
+														<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-reload"><i class="fa fa-repeat"></i></a>
+														<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
+														<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-danger" data-click="panel-remove"><i class="fa fa-times"></i></a>
+												</div>
+												<h4 class="panel-title">Map</h4>
+										</div>
 
-            <div class="map-content">
-                <div class="btn-group map-btn pull-right">
-										<button type="button" class="btn btn-sm btn-inverse" id="map-theme-text">Default Theme</button>
-                    <button type="button" class="btn btn-sm btn-inverse dropdown-toggle" data-toggle="dropdown">
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" id="map-theme-selection">
-                        <li class="active"><a href="javascript:;" data-map-theme="default">Default</a></li>
-                        <li><a href="javascript:;" data-map-theme="flat">Flat</a></li>
-                        <li><a href="javascript:;" data-map-theme="turquoise-water">Turquoise Water</a></li>
-                        <li><a href="javascript:;" data-map-theme="icy-blue">Icy Blue</a></li>
-                        <li><a href="javascript:;" data-map-theme="cobalt">Cobalt</a></li>
-                        <li><a href="javascript:;" data-map-theme="old-dry-mud">Old Dry Mud</a></li>
-                        <li><a href="javascript:;" data-map-theme="dark-red">Dark Red</a></li>
-                    </ul>
-                </div>
+										<div class="panel-body no-padding">
+								      <div id="google-map-default" class="height-sm width-full"></div>
+											<div class="map-content">
+													<div class="btn-group map-btn pull-right">
+															<form id ="form-submit" action = "/missionplanner/plotting/{{ mission_id }}/" method="POST">
+																{% csrf_token %}
+																<input id="input-waypoints" type="hidden" name="waypoints" value="" />
+																	<input type="hidden" name="mission_id" value="{{mission_id}}" />
+																	<input style="margin-right:1em;" class="btn btn-sm btn-inverse" id="btn-submit" type="submit" value="Save Plot">
+															</form>
+													</div>
+											</div>
+									</div> <!-- end of panel body-->
+							</div> <!-- end of map panel -->
+							<div class="panel panel-inverse">
+									<div class="panel-heading">
+											<div class="panel-heading-btn">
+													<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
+													<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-reload"><i class="fa fa-repeat"></i></a>
+													<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
+													<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-danger" data-click="panel-remove"><i class="fa fa-times"></i></a>
+											</div>
+											<h4 class="panel-title">Map</h4>
+									</div>
 
-								<div class="btn-group map-btn pull-right">
-                    <button type="button" class="btn btn-sm btn-inverse" id="btn-save-plot">Save Plot</button>
-										<form id ="form-submit" action = "/missionplanner/plotting/{{ mission_id }}/" method="POST">
-											{% csrf_token %}
-											<input id="input-waypoints" type="hidden" name="waypoints" value="" />
-												<input type="hidden" name="mission_id" value="{{mission_id}}" />
-												<input id="btn-submit" type="submit" value="Better Button">
-										</form>
-								</div>
-            </div>
-			<div class="map">
-                <div id="google-map-default" class="height-full width-full"></div>
-            </div>
+									<div class="panel-body no-padding">
+
+										<div class="map-content">
+												<div class="btn-group map-btn pull-right">
+														<button type="button" class="btn btn-sm btn-inverse" id="map-theme-text">Default Theme</button>
+														<button type="button" class="btn btn-sm btn-inverse dropdown-toggle" data-toggle="dropdown">
+																<span class="caret"></span>
+														</button>
+														<ul class="dropdown-menu" id="map-theme-selection">
+																<li class="active"><a href="javascript:;" data-map-theme="default">Default</a></li>
+																<li><a href="javascript:;" data-map-theme="flat">Flat</a></li>
+																<li><a href="javascript:;" data-map-theme="turquoise-water">Turquoise Water</a></li>
+																<li><a href="javascript:;" data-map-theme="icy-blue">Icy Blue</a></li>
+																<li><a href="javascript:;" data-map-theme="cobalt">Cobalt</a></li>
+																<li><a href="javascript:;" data-map-theme="old-dry-mud">Old Dry Mud</a></li>
+																<li><a href="javascript:;" data-map-theme="dark-red">Dark Red</a></li>
+														</ul>
+												</div>
+
+												<div class="btn-group map-btn pull-right">
+														<form id ="form-submit" action = "/missionplanner/plotting/{{ mission_id }}/" method="POST">
+															{% csrf_token %}
+															<input id="input-waypoints" type="hidden" name="waypoints" value="" />
+																<input type="hidden" name="mission_id" value="{{mission_id}}" />
+																<input style="margin-right:1em;" class="btn btn-sm btn-inverse" id="btn-submit" type="submit" value="Save Plot">
+														</form>
+												</div>
+										</div>
+								</div> <!-- end of panel body-->
+						</div> <!-- end of map panel -->
+						</div> <!-- end of the row for map and panel-->
 		</div>
 		<!-- end #content -->
 
@@ -169,13 +229,17 @@
 	<!-- ================== BEGIN PAGE LEVEL JS ================== -->
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDkFor-_BtfyOvNRxfqbNJdacVzIpQTw0Y"></script>
 	<script src="{% static 'tiberius/js/charify.js' %}"></script>
-<script src="{% static 'tiberius/js/plotting-map-google.js' %}"></script>
-<script src="{% static 'color-admin/js/apps.min.js' %}"></script>
+	<script src="{% static 'color-admin/plugins/jstree/dist/jstree.min.js' %}"></script>
+	<script src="{% static 'tiberius/js/plotting-jstree.js' %}"></script>
+	<script src="{% static 'tiberius/js/plotting-map-google.js' %}"></script>
+	<script src="{% static 'color-admin/js/apps.min.js' %}"></script>
+
 	<!-- ================== END PAGE LEVEL JS ================== -->
 
 	<script>
 		$(document).ready(function() {
 			App.init();
+			TreeView.init();
 			PlottingGoogleMap.init({{ mission_id }}, {{ json_tasks }});
 		});
 	</script>
