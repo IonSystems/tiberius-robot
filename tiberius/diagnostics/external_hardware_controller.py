@@ -8,7 +8,7 @@ class ExternalHardwareController:
         port = 'COM8'
     else:
         port = '/dev/ttyACM0'
-    baud = 9600
+    baud = 115200
 
     diagnostic_led_data = {0, 0, 0, 0, 0, 0, 0, 0}
     ring_led_data = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
