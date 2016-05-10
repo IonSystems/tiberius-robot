@@ -239,8 +239,9 @@ class DatabaseThreadCreator:
         while True:
             try:
                 rows = q.query_sensor_validity(self.poly)
-
+                print "ROWS: " + str(rows)
                 for row in rows:
+                    print "ROW: " + str(row)
                     ultrasonics_status = row.ultrasonics
                     compass_status = row.compass
                     gps_status = row.gps
