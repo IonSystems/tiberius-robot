@@ -10,9 +10,10 @@ from tiberius.config.config_parser import TiberiusConfigParser
 import tiberius.database.create as cr
 import tiberius.database.insert as ins
 from tiberius.communications import antenna_thread as ant_thread
-from tiberius.control.control import Control
 from tiberius.diagnostics.external_hardware_controller import compass_monitor
 from tiberius.database_wrapper.polyhedra_database import PolyhedraDatabase
+if TiberiusConfigParser.isEhcEnabled():
+    from tiberius.diagnostics.external_hardware_controller import ExternalHardwareController
 
 class Action(Enum):
     WEB_SERVER = 0
@@ -91,6 +92,7 @@ if TiberiusConfigParser.isArmCamEnabled():
 if TiberiusConfigParser.isMonitorEnabled():
     print "battery monitor thread starting"
     powermanagement = Process(target=c.powermanagement_thread).start()
+
 if TiberiusConfigParser.areDiagnosticsEnabled() and TiberiusConfigParser.isEhcEnabled():
     ehc = ExternalHardwareController()
 
