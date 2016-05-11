@@ -37,8 +37,8 @@ int delayval = 5;
 int data_diagnostics[8] = {0,0,0,0,0,0,0,0};
 int data_ring[24] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 int data_relays[4] = {0,0,0,0};
-int servo_positions[1] = {0};
-int relays[4] = {0,0,0,0};
+int servo_positions[1] = {75};
+int relays[4] = {1,1,1,1};
 
 
 
@@ -49,7 +49,7 @@ void setup() {
   Ring_leds.begin(); // This initializes the NeoPixel library.
   Diagnostics_leds.setBrightness(64);
   Ring_leds.setBrightness(64);
-  Serial.begin(9600);
+  Serial.begin(115200);
   antenna_servo.attach(servo);
 
 
@@ -57,6 +57,8 @@ void setup() {
   pinMode(kinect2, OUTPUT);
   pinMode(sensors, OUTPUT);
   pinMode(drive, OUTPUT);
+
+  antenna_servo.write(servo_positions[0]);
 }
 
 void setColourDiagnosticsLeds(int ledNo, int red, int green, int blue){
@@ -125,9 +127,9 @@ void setRelays(){
   int i = 0;
   for(i = 0; i < NUM_relays; i++){
     if(data_relays[i] == 0){
-      relays[i] = 1;      
+      relays[i] = 0;      
     }else{
-      relays[i] = 0; //Default to ON so we don't accidently turn stuff off.    
+      relays[i] = 1; //Default to ON so we don't accidently turn stuff off.    
     }
   }     
 }
