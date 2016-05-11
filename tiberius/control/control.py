@@ -39,9 +39,6 @@ class Control:
     if TiberiusConfigParser.isArmEnabled():
         arm = actuators.Arm()
 
-    if TiberiusConfigParser.areDiagnosticsEnabled() and TiberiusConfigParser.isEhcEnabled():
-        ehc = ExternalHardwareController()
-
     def __init__(self):
         self.logger = logging.getLogger('tiberius.control.Control')
         self.logger.info('Creating an instance of Control')

@@ -30,7 +30,7 @@ parser.add_option(
 
 (options, args) = parser.parse_args()
 action = options.action
-control = Control()
+
 print "Starting Tiberius Software Suite..."
 
 #config write
@@ -91,6 +91,8 @@ if TiberiusConfigParser.isArmCamEnabled():
 if TiberiusConfigParser.isMonitorEnabled():
     print "battery monitor thread starting"
     powermanagement = Process(target=c.powermanagement_thread).start()
+if TiberiusConfigParser.areDiagnosticsEnabled() and TiberiusConfigParser.isEhcEnabled():
+    ehc = ExternalHardwareController()
 
 # Start the control API
 # server = Popen("python tiberius/control_api/api.py", shell=True)
@@ -119,7 +121,7 @@ while True:
 
     #strip = c.diagnostics_thread(poly, control)
     ring = compass_monitor(poly, control)
-    control.ehc.set_hardware([l1, l2, l3, l4, l5, l6, l7, l8], ring)
+    ehc.set_hardware([l1, l2, l3, l4, l5, l6, l7, l8], ring)
     time.sleep(2)
 
 # Wait for a keyboard interrupt
