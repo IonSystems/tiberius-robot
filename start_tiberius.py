@@ -100,7 +100,7 @@ if TiberiusConfigParser.areDiagnosticsEnabled() and TiberiusConfigParser.isEhcEn
     ehc = ExternalHardwareController()
 
 # Start the control API
-# server = Popen("python tiberius/control_api/api.py", shell=True)
+server = Popen("python tiberius/control_api/api.py", shell=True)
 # print "Control API started"
 if action == Action.WEB_SERVER:
     server = Popen("python tiberius/web-interface/manage.py runserver", shell=True)
