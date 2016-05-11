@@ -16,7 +16,7 @@ class ExternalHardwareController:
 
     def __init__(self):
         self.ser = serial.Serial(self.port, self.baud, timeout=1)
-        set_hardware()
+        self.set_hardware()
 
     def set_hardware(self, diagnostics_leds=None, ring_leds=None, relays=None, servos=None):
         if not self.ser.isOpen():
