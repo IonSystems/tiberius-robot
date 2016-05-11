@@ -2,7 +2,6 @@ import time
 
 from tiberius.config.config_parser import TiberiusConfigParser
 import tiberius.control.drivers.motor_udp
-
 import math
 
 
