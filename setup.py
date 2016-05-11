@@ -316,7 +316,7 @@ if is_windows():
                     'autopep8',
                     'pynmea',
                     'pyserial',
-                    'falcon',
+                    'falcon==0.3.0',
                     'gunicorn',
                     'requests']
 
@@ -331,7 +331,7 @@ else:
                     'pynmea',
                     'pyserial',
                     'smbus-cffi',
-                    'falcon',
+                    'falcon==0.3.0',
                     'gunicorn',
                     'python-crontab',
                     'requests']
