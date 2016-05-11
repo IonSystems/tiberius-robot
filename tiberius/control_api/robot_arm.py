@@ -89,13 +89,13 @@ class RobotArmResource(object):
             # Arm positional commands
             if(ArmCommands.CHANGE_X in command_name):
                 self.x += command_value
-                self.arm_control.move_x(command_value)
+                self.arm_control.rotate_waist(command_value)
             if(ArmCommands.CHANGE_Y in command_name):
                 self.y += command_value
-                self.arm_control.move_y(command_value)
+                self.arm_control.move_shoulder(command_value)
             if(ArmCommands.CHANGE_Z in command_name):
                 self.z += command_value
-                self.arm_control.move_z(command_value)
+                self.arm_control.move_elbow(command_value)
 
             # Arm gripper commands
             if(ArmCommands.GRASP in command_name):
