@@ -10,8 +10,7 @@ from tiberius.utils import bearing_math
 from tiberius.config.config_parser import TiberiusConfigParser
 from tiberius.control.exceptions import SensorNotEnabledError
 from tiberius.database.tables import CompassTable
-if TiberiusConfigParser.isEhcEnabled():
-    from tiberius.diagnostics.external_hardware_controller import ExternalHardwareController
+
 
 """
 .. module:: control
