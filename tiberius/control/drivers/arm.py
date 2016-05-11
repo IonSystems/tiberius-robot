@@ -1,4 +1,3 @@
-from tiberius.control.robotic_arm.cartesian import to_arm_coords
 from tiberius.utils import detection
 import serial
 import logging

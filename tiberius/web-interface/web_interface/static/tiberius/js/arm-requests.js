@@ -76,7 +76,7 @@ var handleArmButtons = function(ip_address, initial_values) {
 		send_command(ip_address, 'arm_dx', d);
   });
 	$('#arm_button_stop').click(function() {
-		send_command(ip_address, 'stop', 'True');
+		send_command(ip_address, 'stop', 0);
   });
 	$('#arm_button_z_plus').click(function() {
 		send_command(ip_address, 'arm_dz', d);
@@ -84,6 +84,28 @@ var handleArmButtons = function(ip_address, initial_values) {
 	$('#arm_button_z_minus').click(function() {
 		send_command(ip_address, 'arm_dz', -d);
   });
+
+	// $('#arm_button_basket').click(function() {
+	// 	send_command(ip_address, 'basket', 0);
+  // });
+	$('#arm_button_park').click(function() {
+		send_command(ip_address, 'park', 0);
+  });
+	$('#arm_button_centre').click(function() {
+		send_command(ip_address, 'centre', 0);
+  });
+	$('#arm_button_home').click(function() {
+		send_command(ip_address, 'home', 0);
+  });
+
+	$('#arm_button_grab_plus').click(function() {
+		send_command(ip_address, 'grasp', 0);
+  });
+	$('#arm_button_grab_minus').click(function() {
+		send_command(ip_address, 'ungrasp', 0);
+  });
+
+
 };
 
 var ArmRequests = function (ip_address, initial_values) {

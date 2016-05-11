@@ -106,7 +106,7 @@ class PolyhedraDatabase(Database):
 
     def sql(self, statement):
         self.c.execute(statement)
-        self.c.fetchall()
+        return self.c.fetchall()
 
     '''*******************************************************************
         Hidden functions

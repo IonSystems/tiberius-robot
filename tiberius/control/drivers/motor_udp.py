@@ -3,6 +3,12 @@ from socket import *
 from struct import *
 import time
 
+from tiberius.logger import logger
+import logging
+
+l = logging.getLogger('tiberius.control.drivers.motor_udp')
+l.info('Creating an instance of MotorDriver')
+
 # Send UDP broadcast packets
 #TODO: Get these from config file
 mbed_port = 43442
@@ -52,11 +58,13 @@ CAN_BYTES_3 = "\x03\x00\x00\x00"
 """********************************************
 		UDP Socket
 ********************************************"""
+s = socket(AF_INET, SOCK_DGRAM)
+
 def send_udp_data_raw(data):
-	s = socket(AF_INET, SOCK_DGRAM)
 	print "Sending " + str(data) + " to " + str(mbed_address)
 	bytes_sent = s.sendto(data, mbed_address)
 	print "Bytes sent = " + str(bytes_sent)
+	time.sleep(0.025)
 
 def format_data(data):
 	return bytearray(data)
@@ -92,6 +100,7 @@ def send_motor_speed_fr(motor_speed):
 		Sets motor speed for front right motor.
 		motor_speed: Integer value between -100 and 100
 	"""
+	l.info("Node: Front Right, Speed: " + str(motor_speed))
 	motor_speed, motor_direction = speed_dir_convert(motor_speed)
 	send_motor_speed(motor_speed, motor_direction, FRONT_RIGHT)
 
@@ -100,6 +109,7 @@ def send_motor_speed_fl(motor_speed):
 		Sets motor speed for front left motor.
 		motor_speed: Integer value between -100 and 100
 	"""
+	l.info("Node: Front Left, Speed: " + str(motor_speed))
 	motor_speed, motor_direction = speed_dir_convert(motor_speed)
 	send_motor_speed(motor_speed, motor_direction, FRONT_LEFT)
 
@@ -108,6 +118,7 @@ def send_motor_speed_rr(motor_speed):
 		Sets motor speed for rear right motor.
 		motor_speed: Integer value between -100 and 100
 	"""
+	l.info("Node: Rear Right, Speed: " + str(motor_speed))
 	motor_speed, motor_direction = speed_dir_convert(motor_speed)
 	send_motor_speed(motor_speed, motor_direction, REAR_RIGHT)
 
@@ -116,13 +127,14 @@ def send_motor_speed_rl(motor_speed):
 		Sets motor speed for rear left motor.
 		motor_speed: Integer value between -100 and 100
 	"""
+	l.info("Node: Rear Left, Speed: " + str(motor_speed))
 	motor_speed, motor_direction = speed_dir_convert(motor_speed)
 	send_motor_speed(motor_speed, motor_direction, REAR_LEFT)
 
 def speed_dir_convert(motor_speed):
-	if motor_speed > 0:
+	if motor_speed >= 0:
 		motor_direction = DIR_CW
-	elif motor_speed <= 0:
+	elif motor_speed < 0:
 		motor_direction = DIR_ACW
 
 	motor_speed = speed_convert(abs(motor_speed))
@@ -140,10 +152,25 @@ def speed_convert(speed_int):
 	return pack('B', speed_int)
 
 def stop():
+	l.info("Stopping all motors.")
 	send_motor_speed(SPEED_0, DIR_CW, FRONT_RIGHT)
 	send_motor_speed(SPEED_0, DIR_CW, FRONT_LEFT)
 	send_motor_speed(SPEED_0, DIR_CW, REAR_RIGHT)
 	send_motor_speed(SPEED_0, DIR_CW, REAR_LEFT)
+
+def skid_left(motor_speed):
+	l.info("Skidding left.")
+	send_motor_speed_fl(-motor_speed)
+	send_motor_speed_fr(motor_speed)
+	send_motor_speed_rr(motor_speed)
+	send_motor_speed_rl(-motor_speed)
+
+def skid_right(motor_speed):
+	l.info("Skidding right.")
+	send_motor_speed_fl(motor_speed)
+	send_motor_speed_fr(-motor_speed)
+	send_motor_speed_rr(-motor_speed)
+	send_motor_speed_rl(motor_speed)
 
 """********************************************
 		Debug
@@ -151,20 +178,30 @@ def stop():
 
 if __name__ == "__main__":
 
-	while(False):
+	while(True):
 		print "Forward"
 		send_led_toggle_slave(FRONT_RIGHT)
-		send_motor_speed(SPEED_100, DIR_CW, FRONT_RIGHT)
+		send_motor_speed_fl(100)
+		send_motor_speed_fr(100)
+		send_motor_speed_rr(100)
+		send_motor_speed_rl(100)
 		time.sleep(1)
 		print "Backward"
 		send_led_toggle_slave(FRONT_RIGHT)
-		send_motor_speed(SPEED_100, DIR_ACW, FRONT_RIGHT)
+		send_motor_speed_fl(-100)
+		send_motor_speed_fr(-100)
+		send_motor_speed_rr(-100)
+		send_motor_speed_rl(-100)
 		time.sleep(1)
 		print "Stop"
 		send_led_toggle_slave(FRONT_RIGHT)
-		send_motor_speed(SPEED_0, DIR_CW, FRONT_RIGHT)
+		stop()
 		time.sleep(1)
 
 	#send_motor_speed(100, DIR_CW, FRONT_RIGHT)
-	send_motor_speed_rl(100)
-	send_motor_speed_rl(-100)
+	#stop()
+	# send_led_toggle_slave(REAR_RIGHT)
+	# send_motor_speed_fl(0)
+	# send_motor_speed_fr(0)
+	# send_motor_speed_rr(0)
+	# send_motor_speed_rl(0)

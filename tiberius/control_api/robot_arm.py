@@ -18,6 +18,7 @@ class ArmCommands:
     BASKET = "basket"
     CENTRE = "centre"
     PARK = "park"
+    HOME = "home"
     CHANGE_X = "arm_dx" # Waist
     CHANGE_Y = "arm_dy" # Shoulder
     CHANGE_Z = "arm_dz" # Elbow
@@ -39,9 +40,8 @@ def generate_response(req, resp, resource):
     })
 
 
-def validate_params(req, resp, resource):
+def validate_params(req, resp, resource, params):
     # Ensure speed value is between 0 and 100
-    params = req.params
     if 'x' in params:
         if 0 > int(params['x']):
             params['x'] = 0
@@ -82,14 +82,14 @@ class RobotArmResource(object):
             pass
         if(ArmCommands.SET_SPEED in req.params):
             self.speed = req.params[ArmCommands.SET_SPEED]
-	
+
 	if 'command_name' in req.params and 'command_value' in req.params:
             command_name = req.params['command_name']
 	    command_value = int(req.params['command_value'])
             # Arm positional commands
             if(ArmCommands.CHANGE_X in command_name):
                 self.x += command_value
-	        self.arm_control.move_waist(command_value)
+	        self.arm_control.rotate_waist(command_value)
             if(ArmCommands.CHANGE_Y in command_name):
                 self.y += command_value
                 self.arm_control.move_shoulder(command_value)
@@ -97,18 +97,25 @@ class RobotArmResource(object):
                 self.z += command_value
 		self.arm_control.move_elbow(command_value)
 
-        # Arm gripper commands
-        if(ArmCommands.GRASP in req.params):
-            self.arm_control.grasp()
-        elif(ArmCommands.UNGRASP in req.params):
-            self.arm_control.ungrasp()
+            # Arm gripper commands
+            if(ArmCommands.GRASP in command_name):
+                self.logger.info("Grasping")
+                self.arm_control.close_gripper()
+            elif(ArmCommands.UNGRASP in command_name):
+                self.logger.info("Ungrasp")
+            self.arm_control.open_gripper()
 
-        # Arm complex commands
-        if(ArmCommands.BASKET in req.params):
-            self.arm_control.basket()
-        elif(ArmCommands.CENTRE in req.params):
-            self.arm_control.centre()
-        elif(ArmCommands.PARK in req.params):
-            self.arm_control.park()
+            # Arm complex commands
+            # if(ArmCommands.BASKET in req.params):
+            #     self.arm_control.basket()
+            if(ArmCommands.CENTRE in command_name):
+                self.logger.info("Centring")
+                self.arm_control.centre()
+            elif(ArmCommands.PARK in command_name):
+                self.logger.info("Parking")
+                self.arm_control.park()
+            elif(ArmCommands.HOME in command_name):
+                self.logger.info("Homing")
+                self.arm_control.home()
 
         print req.params

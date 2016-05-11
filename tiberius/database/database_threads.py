@@ -20,9 +20,11 @@ from tables import SteeringTable
 from tables import SensorValidityTable
 from tables import UltrasonicsValidityTable
 
+
 # TODO: This 'ExternalHardwareController' would be be best split up into
 # individual drivers as with cmps11, gps20 etc.
 from tiberius.diagnostics.external_hardware_controller import ExternalHardwareController
+from tiberius.diagnostics.external_hardware_controller import compass_monitor
 
 from tiberius.control.sensors import Ultrasonic
 from tiberius.control.sensors import GPS
@@ -55,10 +57,16 @@ class DatabaseThreadCreator:
         self.poly = PolyhedraDatabase("insert_threads")
 
     def powermanagement_thread(self):
-	pow_man = PowerManagementSensor()
-
-	while True:
-		print pow_man.getdata()
+    	pow_man = PowerManagementSensor()
+        powman_read_id = 0
+    	while True:
+            data = pow_man.getdata()
+	    	#print pow_man.getdata()
+            ins.insert_battery_reading(
+                self.poly,
+                powman_read_id,
+                data)
+            powman_read_id+=1
 
 
     '''******************************************
@@ -123,6 +131,7 @@ class DatabaseThreadCreator:
             try:
                 if gps.usable():
                     gps_data = gps.read_gps()
+                    gps_data['dilution_of_precision'] = -1
                     if gps_data is not False:
                         if gps_read_id < GPS_NUMBER_OF_READINGS:
                             ins.insert_gps_reading(self.poly, gps_read_id, gps_data)
@@ -166,34 +175,35 @@ class DatabaseThreadCreator:
                 # TODO: Move validity checks to it's own module.
 
                 # maintain a short array of previous values
-                previous_values.append(heading)
-                if len(previous_values) >= 10:
-                    previous_values.pop(0)
+                #previous_values.append(heading)
+                #if len(previous_values) >= 10:
+                #    previous_values.pop(0)
 
                 # ensure the compass heading has not changed too much between readings
-                standard_deviation = np.std(np.diff(np.asarray(previous_values)))
+                #standard_deviation = np.std(np.diff(np.asarray(previous_values)))
 
-                if standard_deviation > 10:
-                    raise Exception('invalid data')
-                else:
-                    if compass_read_id < COMPASS_NUMBER_OF_READINGS: # store the first 10 results
-                        ins.insert_compass_reading(self.poly, compass_read_id, heading)
-                    else:  # start updating results
-                        compass_update_id = compass_read_id % COMPASS_NUMBER_OF_READINGS
-                        up.overwrite_compass_reading(self.poly, compass_update_id, heading)
-                    compass_read_id += 1
+                #if standard_deviation > 10:
+                #    raise Exception('invalid data')
+                #else:
+                if compass_read_id < COMPASS_NUMBER_OF_READINGS: # store the first 10 results
+                    ins.insert_compass_reading(self.poly, compass_read_id, heading)
+                else:  # start updating results
+                    compass_update_id = compass_read_id % COMPASS_NUMBER_OF_READINGS
+                    up.overwrite_compass_reading(self.poly, compass_update_id, heading)
+                compass_read_id += 1
+                #compass_monitor(heading, control)
 
                 # TODO: Again, something weird is going on here!
                 # If not valid then valid = True?!
-                if not valid:
-                    valid = True
-                    up.update_compass_sensor_validity(self.poly, True)
+                #if not valid:
+                #    valid = True
+                up.update_compass_sensor_validity(self.poly, True)
 
             except Exception as e:
                 print e
-                if valid:
-                    valid = False
-                    up.update_compass_sensor_validity(self.poly, False)
+                #if valid:
+                    #valid = False
+                up.update_compass_sensor_validity(self.poly, False)
             time.sleep(0.5)
 
     '''******************************************
@@ -221,24 +231,26 @@ class DatabaseThreadCreator:
         Diagnostics
     ******************************************'''
 
-    def diagnostics_thread(self):
-        external_hardware_controller = ExternalHardwareController()
+    def diagnostics_thread(self, poly, control):
 
         ultrasonics_status, compass_status, gps_status = False, False, False
 
-        while True:
-            try:
-                rows = q.query_sensor_validity(self.poly)
-                print rows
-                for row in rows:
-                    print row
-                    # ultrasonics_status = row.ultrasonics
-                    # compass_status = row.compass
-                    # gps_status = row.gps
-                diagnostics_leds = {ultrasonics_status, compass_status, gps_status, -1, -1, -1, -1, -1}
-                external_hardware_controller.set_hardware(diagnostics_leds)
-
-            except Exception as e:
-                print e
-                traceback.print_exc()
-            time.sleep(0.5)
+        rows = q.get_latest(SensorValidityTable)
+        print "ROWS: " + str(rows)
+        if rows is not None:
+            for row in rows:
+                print "ROW: " + str(row)
+                if row.ultrasonics:
+                    ultrasonics_status = 1
+                else:
+                    ultrasonics_status = 0
+                if row.compass:
+                    compass_status = 1
+                else:
+                    compass_status = 0
+                if row.gps:
+                    gps_status = 1
+                else:
+                    gps_status = 0
+            return [ultrasonics_status, compass_status, gps_status, 9, 9, 9, 9, 9]
+        return None
