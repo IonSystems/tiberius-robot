@@ -1,0 +1,1 @@
+C:\git\tiberius-robot\kinect\InfraredBasics-WPF\bin\AnyCPU\Debug\InfraredBasics-WPF.exe.config
