@@ -122,7 +122,7 @@ while True:
     l8 = randint(0, 5)
 
     #strip = c.diagnostics_thread(poly, control)
-    ring = compass_monitor(poly, control)
+    ring = compass_monitor(poly)
     ehc.set_hardware([l1, l2, l3, l4, l5, l6, l7, l8], ring)
     time.sleep(2)
 
