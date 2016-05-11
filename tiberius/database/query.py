@@ -11,7 +11,7 @@ in-memory database.
 
 def get_latest(poly, table, limit=1):
 
-    query = "SELECT * from " + table.table_name + " LIMIT " + str(limit) + ";"  # ORDER BY timestamp DESC
+    query = "SELECT * from " + table.table_name + " ORDER BY timestamp DESC LIMIT " + str(limit) + ";"  # ORDER BY timestamp DESC
     print query
     return poly.sql(query)
 
