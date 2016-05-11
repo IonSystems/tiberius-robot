@@ -33,6 +33,9 @@ parser.add_option(
 action = options.action
 
 print "Starting Tiberius Software Suite..."
+#motion
+#database = Popen("sudo motion", shell=True, stdout=PIPE)
+
 
 #config write
 #TiberiusConfigParser.setBatteryMonitorPort("/dev/ttyACM0")
