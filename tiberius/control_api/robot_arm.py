@@ -67,15 +67,10 @@ class RobotArmResource(object):
         self.arm_control = arm_control
         self.logger = logging.getLogger('tiberius.control_api.RobotArmResource')
         self.state = ArmStates.ENABLED
-
-        self.x = -1
-        self.y = -1
-        self.z = -1
-
         self.speed = 0
 
     @falcon.after(generate_response)
-    @falcon.before(validate_params)
+    #@falcon.before(validate_params)
     def on_post(self, req, resp):
         # Get arm speed
         if(ArmCommands.GET_SPEED in req.params):
@@ -83,19 +78,16 @@ class RobotArmResource(object):
         if(ArmCommands.SET_SPEED in req.params):
             self.speed = req.params[ArmCommands.SET_SPEED]
 
-	if 'command_name' in req.params and 'command_value' in req.params:
+    if 'command_name' in req.params and 'command_value' in req.params:
             command_name = req.params['command_name']
-	    command_value = int(req.params['command_value'])
+            command_value = int(req.params['command_value'])
             # Arm positional commands
             if(ArmCommands.CHANGE_X in command_name):
-                self.x += command_value
-	        self.arm_control.rotate_waist(command_value)
+                self.arm_control.move_x(command_value)
             if(ArmCommands.CHANGE_Y in command_name):
-                self.y += command_value
-                self.arm_control.move_shoulder(command_value)
+                self.arm_control.move_y(command_value)
             if(ArmCommands.CHANGE_Z in command_name):
-                self.z += command_value
-		self.arm_control.move_elbow(command_value)
+                self.arm_control.move_z(command_value)
 
             # Arm gripper commands
             if(ArmCommands.GRASP in command_name):
@@ -103,7 +95,7 @@ class RobotArmResource(object):
                 self.arm_control.close_gripper()
             elif(ArmCommands.UNGRASP in command_name):
                 self.logger.info("Ungrasp")
-            self.arm_control.open_gripper()
+                self.arm_control.open_gripper()
 
             # Arm complex commands
             # if(ArmCommands.BASKET in req.params):
@@ -117,5 +109,4 @@ class RobotArmResource(object):
             elif(ArmCommands.HOME in command_name):
                 self.logger.info("Homing")
                 self.arm_control.home()
-
-        print req.params
+            print req.params

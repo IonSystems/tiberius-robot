@@ -132,7 +132,7 @@ if __name__ == "__main__":
             elif key == 'n':  # Open gripper
                 print 'Opening gripper'
                 c.arm.open_gripper()
-            elif key == 'n':  # Force open gripper- for resetting position
+            elif key == 'N':  # Force open gripper- for resetting position
                 print 'Forcing open gripper must be run to new fully open position'
                 c.arm.open_gripper(True)
 
