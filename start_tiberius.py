@@ -103,11 +103,23 @@ if action == Action.WEB_SERVER:
 
 print "Starting loop"
 
+from random import randint
 while True:
     poly = PolyhedraDatabase("diagnostics")
-    strip = c.diagnostics_thread(poly, control)
+
+    # Make some random values to show the leds working...
+    l1 = randint(0, 5)
+    l2 = randint(0, 5)
+    l3 = randint(0, 5)
+    l4 = randint(0, 5)
+    l5 = randint(0, 5)
+    l6 = randint(0, 5)
+    l7 = randint(0, 5)
+    l8 = randint(0, 5)
+
+    #strip = c.diagnostics_thread(poly, control)
     ring = compass_monitor(poly, control)
-    control.ehc.set_hardware(strip, ring)
+    control.ehc.set_hardware([l1, l2, l3, l4, l5, l6, l7, l8], ring)
     time.sleep(2)
 
 # Wait for a keyboard interrupt
