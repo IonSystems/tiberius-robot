@@ -75,7 +75,7 @@ if __name__ == "__main__":
         time.sleep(1)
 
 
-def compass_monitor(poly, control):
+def compass_monitor(poly):
     import tiberius.database.query as db_q
     from tiberius.database.tables import CompassTable
 
