@@ -231,7 +231,7 @@ class DatabaseThreadCreator:
         Diagnostics
     ******************************************'''
 
-    def diagnostics_thread(self, control):
+    def diagnostics_thread(self, poly, control):
 
         ultrasonics_status, compass_status, gps_status = False, False, False
 

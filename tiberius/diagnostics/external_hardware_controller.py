@@ -75,11 +75,11 @@ if __name__ == "__main__":
         time.sleep(1)
 
 
-def compass_monitor(control):
+def compass_monitor(poly, control):
     import tiberius.database.query as db_q
     from tiberius.database.tables import CompassTable
 
-    dicti = db_q.get_latest(CompassTable)
+    dicti = db_q.get_latest(poly, CompassTable)
 
     if dicti is not None:
 

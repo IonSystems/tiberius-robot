@@ -12,7 +12,7 @@ import tiberius.database.insert as ins
 from tiberius.communications import antenna_thread as ant_thread
 from tiberius.control.control import Control
 from tiberius.diagnostics.external_hardware_controller import compass_monitor
-
+from tiberius.database_wrapper.polyhedra_database import PolyhedraDatabase
 
 class Action(Enum):
     WEB_SERVER = 0
@@ -104,8 +104,9 @@ if action == Action.WEB_SERVER:
 print "Starting loop"
 
 while True:
-    strip = c.diagnostics_thread(control)
-    ring = compass_monitor(control)
+    poly = PolyhedraDatabase("diagnostics")
+    strip = c.diagnostics_thread(poly, control)
+    ring = compass_monitor(poly, control)
     control.ehc.set_hardware(strip, ring)
     time.sleep(2)
 
