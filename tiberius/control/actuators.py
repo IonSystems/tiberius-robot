@@ -1,7 +1,7 @@
 import time
 
 from tiberius.config.config_parser import TiberiusConfigParser
-
+import tiberius.control.drivers.motors_udp
 import math
 
 
@@ -375,8 +375,6 @@ if TiberiusConfigParser.areMotorsEnabled():
             rear_left = md03.MotorDriver(__config.getMotorRearLeftAddress())
             front_right = md03.MotorDriver(__config.getMotorFrontRightAddress())
             rear_right = md03.MotorDriver(__config.getMotorRearRightAddress())
-        elif interface == "UDP":
-            import tiberius.control.drivers.motor_udp
 
         state = MotorState.STOP
 
