@@ -69,8 +69,12 @@ class RobotArmResource(object):
         self.state = ArmStates.ENABLED
         self.speed = 0
 
+        self.x =0
+        self.y = 0
+        self.z = 0
+
     @falcon.after(generate_response)
-    #@falcon.before(validate_params)
+    @falcon.before(validate_params)
     def on_post(self, req, resp):
         # Get arm speed
         if(ArmCommands.GET_SPEED in req.params):
