@@ -67,11 +67,12 @@ class RobotArmResource(object):
         self.arm_control = arm_control
         self.logger = logging.getLogger('tiberius.control_api.RobotArmResource')
         self.state = ArmStates.ENABLED
-        self.speed = 0
 
-        self.x =0
-        self.y = 0
-        self.z = 0
+        self.x = -1
+        self.y = -1
+        self.z = -1
+
+        self.speed = 0
 
     @falcon.after(generate_response)
     @falcon.before(validate_params)
@@ -87,10 +88,13 @@ class RobotArmResource(object):
             command_value = int(req.params['command_value'])
             # Arm positional commands
             if(ArmCommands.CHANGE_X in command_name):
+                self.x += command_value
                 self.arm_control.move_x(command_value)
             if(ArmCommands.CHANGE_Y in command_name):
+                self.y += command_value
                 self.arm_control.move_y(command_value)
             if(ArmCommands.CHANGE_Z in command_name):
+                self.z += command_value
                 self.arm_control.move_z(command_value)
 
             # Arm gripper commands
@@ -113,4 +117,5 @@ class RobotArmResource(object):
             elif(ArmCommands.HOME in command_name):
                 self.logger.info("Homing")
                 self.arm_control.home()
+
             print req.params
