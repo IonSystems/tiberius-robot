@@ -1,0 +1,70 @@
+//Recieve
+
+module tenbasetrxd(clk, clk48, manchester_data_in, TxD);
+input clk, clk48, manchester_data_in;
+output TxD;
+
+reg [2:0] in_data;
+always @(posedge clk48) in_data <= {in_data[1:0], manchester_data_in};
+
+reg [1:0] cnt;
+always @(posedge clk48) if(|cnt || (in_data[2] ^ in_data[1])) cnt<=cnt+1;
+
+reg [7:0] data;
+reg new_bit_avail;
+always @(posedge clk48) new_bit_avail <= (cnt==3);
+always @(posedge clk48) if(cnt==3) data<={in_data[1],data[7:1]};
+
+/////////////////////////////////////////////////
+reg end_of_Ethernet_frame;
+
+reg [4:0] sync1;
+always @(posedge clk48)
+if(end_of_Ethernet_frame)
+  sync1<=0; 
+else 
+if(new_bit_avail) 
+begin
+  if(!(data==8'h55 || data==8'hAA)) // not preamble?
+    sync1 <= 0;
+  else
+  if(~&sync1) // if all bits of this "sync1" counter are one, we decide that enough of the preamble
+                  // has been received, so stop counting and wait for "sync2" to detect the SFD
+    sync1 <= sync1 + 1; // otherwise keep counting
+end
+
+reg [9:0] sync2;
+always @(posedge clk48)
+if(end_of_Ethernet_frame)
+  sync2 <= 0;
+else 
+if(new_bit_avail) 
+begin
+  if(|sync2) // if the SFD has already been detected (Ethernet data is coming in)
+    sync2 <= sync2 + 1; // then count the bits coming in
+  else
+  if(&sync1 && data==8'hD5) // otherwise, let's wait for the SFD (0xD5)
+    sync2 <= sync2 + 1;
+end
+
+wire new_byte_available = new_bit_avail && (sync2[2:0]==3'h0) && (sync2[9:3]!=0);  
+
+/////////////////////////////////////////////////
+// if no clock transistion is detected for some time, that's the end of the Ethernet frame
+
+reg [2:0] transition_timeout;
+always @(posedge clk48) if(in_data[2]^in_data[1]) transition_timeout<=0; else if(~&cnt) transition_timeout<=transition_timeout+1;
+always @(posedge clk48) end_of_Ethernet_frame <= &transition_timeout;
+
+/////////////////////////////////////////////////
+wire [7:0] q_fifo;
+fifo myfifo(.data(data), .wrreq(new_byte_available), .wrclk(clk48), 
+  .q(q_fifo), .rdreq(rdreq), .rdclk(clk), .rdempty(rdempty));
+
+wire TxD_busy;
+wire TxD_start = ~TxD_busy & ~rdempty;
+assign rdreq = TxD_start;
+
+async_transmitter async_txd(.clk(clk), .TxD(TxD), .TxD_start(TxD_start), .TxD_busy(TxD_busy), .TxD_data(q_fifo));
+
+endmodule

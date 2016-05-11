@@ -12,13 +12,13 @@ from tiberius.config.config_parser import TiberiusConfigParser
 class GlobalPositioningSystem:
     '''
     Reads GPS data.
-    GPS data comes in many formats. We parse the most useful senstences for
+    GPS data comes in many formats. We parse the most useful sentences for
     our needs and ignore the rest.
 
     The serial port must be correctly set in the config file for successful
     communication.
 
-    The publically accessible functions allow access to the most recent GPS
+    The publicly accessible functions allow access to the most recent GPS
     data, and allow to check if there is a current fix. Fields and the remainder
     of the functions have been hidden to prevent misuse of the class. E.g
     externally changing fields, or accidentally calling the wrong function.
@@ -155,8 +155,16 @@ class GlobalPositioningSystem:
         '''
         if "GPGGA" in data:
             data = self.__gpgga.parse(data)
-            self.__latitude = self.__parse_lat(self.__gpgga.latitude)
-            self.__longitude = self.__parse_long(self.__gpgga.longitude)
+            if hasattr(self.__gpgga, 'latitude'):
+                self.__latitude = self.__parse_lat(self.__gpgga.latitude, self.__gpgga.lat_direction)
+                if self.debug:
+                    self.logger.debug("Lat:" + str(self.__gpgga.latitude))
+
+            if hasattr(self.__gpgga, 'longitude'):
+                self.__longitude = self.__parse_long(self.__gpgga.longitude, self.__gpgga.lon_direction)
+                if self.debug:
+                    self.logger.debug("Lng:" + str(self.__gpgga.longitude))
+
             self.__gps_qual = self.__gpgga.gps_qual
             self.__num_sats = self.__gpgga.num_sats
             self.__num_sats = self.__gpgga.num_sats
@@ -174,8 +182,10 @@ class GlobalPositioningSystem:
 
         elif "GPRMC" in data:
             data = self.__gprmc.parse(data)
-            self.__latitude = self.__parse_lat(self.__gprmc.lat)
-            self.__longitude = self.__parse_long(self.__gprmc.lon)
+            if hasattr(self.__gprmc, 'lat'):
+                self.__latitude = self.__parse_lat(self.__gprmc.lat, self.__gprmc.lat_dir)
+            if hasattr(self.__gprmc, 'lon'):
+                self.__longitude = self.__parse_long(self.__gprmc.lon, self.__gprmc.lon_dir)
             # We NEED to set fixmode
             if self.__gprmc.data_validity == 'A':
                 self.__fixmode = 1
@@ -185,18 +195,38 @@ class GlobalPositioningSystem:
             return False
         return True
 
-    def __parse_long(self, longitude):
+    def __parse_long(self, longitude, direction):
         '''
         Convert the NMEA string into a valid floating point representation.
         '''
-        longitude = float(longitude[3:])/60+float(longitude[:3])
+        if self.debug:
+            self.logger.debug("Converting " + str(longitude) + str(direction) + " to long.")
+        try:
+            longitude = float(longitude[3:])/60+float(longitude[:3])
+        except ValueError:
+            return -1
+        # Check direction field and modify result accordingly
+        # Longitude direction will be either E or W, if we get W,
+        # negate the longitude.
+        if direction == "W":
+            longitude *= -1
         return longitude
 
-    def __parse_lat(self, latitude):
+    def __parse_lat(self, latitude, direction):
         '''
         Convert the NMEA string into a valid floating point representation.
         '''
-        latitude = float(latitude[2:])/60+float(latitude[:2])
+        if self.debug:
+            self.logger.debug("Converting " + str(latitude) + str(direction) + " to lat.")
+        try:
+            latitude = float(latitude[2:])/60+float(latitude[:2])
+        except ValueError:
+            return -1
+        # Check direction field and modify result accordingly
+        # Latitude direction will be either N or S, if we get S,
+        # negate the latitude.
+        if direction == "S":
+            latitude *= -1
         return latitude
 
 # For testing

@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from tiberius.database.polyhedra_database import PolyhedraDatabase
+from tiberius.database_wrapper.polyhedra_database import PolyhedraDatabase
 from tables import SensorValidityTable
 
 
@@ -9,8 +9,11 @@ in-memory database.
 '''
 
 
-def get_latest(poly, table):
-    return poly.sql("SELECT * from " + table.table_name + " ORDER BY timestamp DESC LIMIT 1;")
+def get_latest(poly, table, limit=1):
+
+    query = "SELECT * from " + table.table_name + " LIMIT " + str(limit) + ";"  # ORDER BY timestamp DESC
+    print query
+    return poly.sql(query)
 
 
 def query_sensor_validity(poly):

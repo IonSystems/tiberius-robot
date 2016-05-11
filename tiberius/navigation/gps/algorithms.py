@@ -1,7 +1,9 @@
 import math
+import tiberius.database.query as db_q
 
-from tiberius.control.gps20 import GlobalPositioningSystem
+from tiberius.control.drivers.gps20 import GlobalPositioningSystem
 from tiberius.utils import bearing_math
+from tiberius.database.tables import GPSTable
 
 
 class Algorithms:
@@ -18,6 +20,7 @@ class Algorithms:
 
     def __init__(self, control):
         self.gps = GlobalPositioningSystem()
+        self.gpstable = GPSTable()
 
         if not __debug__:
             self.control = control
@@ -27,9 +30,12 @@ class Algorithms:
         # get the current location of tiberius
 
     def getLocation(self):
+        gpsData = db_q.get_latest(GPSTable)
+        '''
         while self.gps.latitude is None:
             print 'Not valid gps fix, retying...'
             self.gps.update()
+
         # TESTING REMOVE
         for i in range(0, 10):
             self.gps.update()
@@ -37,6 +43,7 @@ class Algorithms:
             self.gps.latitude = 55.912658
             self.gps.longitude = -3.321353
         # -----------------------------
+
         count = 0
         if count is not 10:
             if self.gps.latitude is "" or self.gps.longitude is "":
@@ -44,7 +51,8 @@ class Algorithms:
         else:
             "No gps values gained"
             return None
-        return [self.gps.latitude, self.gps.longitude]
+        '''
+        return [gpsData.latitude, gpsData.longitude]
 
         # get the desired heading for tiberius
 
@@ -68,14 +76,14 @@ class Algorithms:
 
         r = 6371000.0  # radius of the earth in meters
 
-        theata1 = math.radians(curlocation[0])
-        theata2 = math.radians(destination[0])
+        theta1 = math.radians(curlocation[0])
+        theta2 = math.radians(destination[0])
 
-        deltaThetha = math.radians(destination[0] - curlocation[0])
+        deltaTheta = math.radians(destination[0] - curlocation[0])
         deltaLambda = math.radians(destination[1] - curlocation[1])
 
-        a = math.pow(math.sin(deltaThetha / 2.0), 2) + \
-            math.cos(theata1) * math.cos(theata2) * \
+        a = math.pow(math.sin(deltaTheta / 2.0), 2) + \
+            math.cos(theta1) * math.cos(theta2) * \
             math.pow(math.sin(deltaLambda / 2.0), 2)
 
         c = 2.0 * math.atan2(math.sqrt(a), math.sqrt(1.0 - a))
@@ -83,6 +91,22 @@ class Algorithms:
         d = r * c
 
         return d
+
+    # untested
+    def getDestination(self, startlocation, distance, bearing):
+        r = 6371000.0
+        destination = []
+        startlat = math.radians(startlocation[0])
+        startlon = math.radians(startlocation[1])
+
+        destination[0] = math.asin(math.sin(startlat) * math.cos(distance / r) +
+                                   math.cos(startlat) * math.sin(distance / r) * math.cos(bearing))
+
+        x = math.sin(bearing) * math.sin(distance / r) * math.cos(startlocation[0])
+        y = math.cos(distance / r) - math.sin(startlat) * math.sin(destination[0])
+        destination[1] = startlon + math.atan2(x, y)
+
+        return destination
 
     # move from current location to a given destination (a longitude and latitude)
     def pointToPoint(self, destination, speedpercent):

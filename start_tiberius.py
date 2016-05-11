@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from optparse import OptionParser
 from subprocess import Popen, PIPE
 from tiberius.database.database_threads import DatabaseThreadCreator
@@ -8,7 +9,10 @@ import time
 from tiberius.config.config_parser import TiberiusConfigParser
 import tiberius.database.create as cr
 import tiberius.database.insert as ins
-
+from tiberius.communications import antenna_thread as ant_thread
+from tiberius.control.control import Control
+from tiberius.diagnostics.external_hardware_controller import compass_monitor
+from tiberius.database_wrapper.polyhedra_database import PolyhedraDatabase
 
 class Action(Enum):
     WEB_SERVER = 0
@@ -26,26 +30,22 @@ parser.add_option(
 
 (options, args) = parser.parse_args()
 action = options.action
-
+control = Control()
 print "Starting Tiberius Software Suite..."
+
+#config write
+#TiberiusConfigParser.setBatteryMonitorPort("/dev/ttyACM0")
 
 # Start the database API if it is not already running
 print "Checking if database is running..."
 database = Popen("/home/pi/poly9.0/linux/raspi/bin/rtrdb -r data_service=8001 db", shell=True, stdout=PIPE)
-lines_iterator = iter(database.stdout.readline, b"")
-for line in lines_iterator:
-    if line == "Ready":
-        print "Database started successfully"
-        break
-    if "Failed" in line:
-        print "Database already running"
-        break
+time.sleep(5)
 
 # Create database tables for data
 print "Creating database tables for data"
 c = DatabaseThreadCreator()
 # Wait for the connection to the database to start
-time.sleep(2)
+time.sleep(1)
 cr.create_sensor_validity_table(c.poly)
 ins.insert_initial_sensor_validity(c.poly)
 cr.create_ultrasonics_validity_table(c.poly)
@@ -57,6 +57,7 @@ cr.create_lidar_table(c.poly)
 cr.create_arm_table(c.poly)
 cr.create_motors_table(c.poly)
 cr.create_steering_table(c.poly)
+cr.create_battery_table(c.poly)
 
 print 'Waiting for tables to finish being created...'
 time.sleep(10)
@@ -64,36 +65,50 @@ time.sleep(10)
 print 'Starting sensor data threads...'
 # Start sensor data threads
 if TiberiusConfigParser.areUltrasonicsEnabled():
+    print "ultrasonic thread starting"
     ultrasonics = Process(target=c.ultrasonics_thread).start()
-    print "ultrasonic thread started"
-    time.sleep(3)
+    time.sleep(0.5)
 if TiberiusConfigParser.isGPSEnabled():
+    print "GPS thread starting"
     gps = Process(target=c.gps_thread).start()
-    print "GPS thread started"
-    time.sleep(3)
+    time.sleep(0.5)
 if TiberiusConfigParser.isCompassEnabled():
+    print "compass thread starting"
     compass = Process(target=c.compass_thread).start()
-    print "compass thread started"
-    time.sleep(3)
+    time.sleep(0.5)
 if TiberiusConfigParser.isLidarEnabled():
+    print "lidar thread starting"
     lidar = Process(target=c.lidar_thread).start()
-    print "lidar thread started"
-    time.sleep(3)
-if TiberiusConfigParser.areDiagnosticsEnabled():
-    diagnostics = Process(target=c.diagnostics_thread()).start()
-    print "diagnostics thread stasrted"
-    time.sleep(3)
+    time.sleep(0.5)
 
+#if TiberiusConfigParser.isCompassEnabled() and TiberiusConfigParser.isGPSEnabled():
+    #print "antenna thread starting"
+    #antenna = Process(target=ant_thread).start()
+    #time.sleep(0.5)
 if TiberiusConfigParser.isArmCamEnabled():
+    print "arm webcam thread starting"
     arm_camera_start = check_output("sudo service motion", shell=True)
+if TiberiusConfigParser.isMonitorEnabled():
+    print "battery monitor thread starting"
+    powermanagement = Process(target=c.powermanagement_thread).start()
 
 # Start the control API
-#server = Popen("python tiberius/control_api/api.py", shell=True)
-#print "Control API started"
-
+# server = Popen("python tiberius/control_api/api.py", shell=True)
+# print "Control API started"
 if action == Action.WEB_SERVER:
     server = Popen("python tiberius/web-interface/manage.py runserver", shell=True)
     print "Web server started"
+
+# Now run other stuff
+
+print "Starting loop"
+
+while True:
+    poly = PolyhedraDatabase("diagnostics")
+    strip = c.diagnostics_thread(poly, control)
+    ring = compass_monitor(poly, control)
+    control.ehc.set_hardware(strip, ring)
+    time.sleep(2)
 
 # Wait for a keyboard interrupt
 try:
@@ -114,4 +129,5 @@ except KeyboardInterrupt:
     print "Tiberius Software Suite Stopped"
 sys.exit()
 
-print "tiberius fully started"
+
+

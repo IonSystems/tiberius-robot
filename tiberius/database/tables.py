@@ -66,10 +66,9 @@ class LidarTable(Table):
         'angle': 'float',
         'distance': 'float',
         'quality': 'float',
-        'reading_iteration': 'integer',
+        'reading_iteration': 'int',
         'timestamp': 'float'
     }
-
 
 class MotorsTable(Table):
     table_name = "motors_table"
@@ -94,6 +93,19 @@ class SteeringTable(Table):
         'timestamp': 'float'
     }
 
+class BatteryTable(Table):
+    table_name = "battery_reading"
+    columns = {
+        'id': 'int primary key',
+        'monitor': 'int',
+        'volts': 'float',
+        'amps': 'float',
+        'power': 'float',
+        'time': 'float',
+        'amp_hours': 'float',
+        'watt_hours': 'float',
+        'timestamp': 'float'
+    }
 '''
 Alright, now the following tables have been refactored into this Table format,
 but I can't see these being very useful. Cameron
@@ -121,5 +133,20 @@ class UltrasonicsValidityTable(Table):
         'rr': 'bool',
         'rc': 'bool',
         'rl': 'bool',
+        'timestamp': 'float'
+    }
+
+class GridTable(Table):
+    table_name = "grid_table"
+    columns = {
+        'id': 'int primary key',
+        'row': 'int',
+        'column': 'int',
+        'lat': 'float',
+        'lon': 'float',
+        'cost': 'int',
+        'heuristic': 'int',
+        'final': 'int',
+        'parent': 'int primary key',
         'timestamp': 'float'
     }

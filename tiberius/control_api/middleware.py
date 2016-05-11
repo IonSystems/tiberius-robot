@@ -30,4 +30,5 @@ class AuthMiddleware(object):
         if token == self.password:
             return True
         else:
+	    print "Invalid Request"
             return False

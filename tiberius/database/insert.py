@@ -6,6 +6,7 @@ from tables import CompassTable
 from tables import LidarTable
 from tables import SensorValidityTable
 from tables import UltrasonicsValidityTable
+from tables import BatteryTable
 
 
 def insert(poly, table, data):
@@ -110,6 +111,39 @@ def insert_lidar_reading(poly, id, r_id, data):
             'angle': data['theta'],
             'distance': data['dist'],
             'quality': data['quality'],
+            'timestamp': time.time()
+        }
+    )
+
+def insert_battery_reading(poly, id, data):
+    poly.insert(
+        BatteryTable.table_name,
+        {
+            'id': id,
+            'monitor': data['monitor'],
+            'volts': data['volts'],
+            'amps': data['current'],
+            'power': data['power'],
+            'time': data['time'],
+            'amp_hours': data['amp_hours'],
+            'watt_hours': data['watt_hours'],
+            'timestamp': time.time()
+        }
+    )
+
+def insert_grid_reading(poly, id, data):
+    poly.insert(
+        LidarTable.table_name,
+        {
+            'id': 'int primary key',
+            'row': 'int',
+            'column': 'int',
+            'lat': 'float',
+            'lon': 'float',
+            'cost': 'int',
+            'heuristic': 'int',
+            'final': 'int',
+            'parent': 'int primary key',
             'timestamp': time.time()
         }
     )

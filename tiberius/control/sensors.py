@@ -4,8 +4,20 @@ import drivers.cmps11 as cmps11
 import drivers.srf08 as srf08
 import drivers.gps20 as gps20
 import drivers.lidar as rplidar
+
 from tiberius.config.config_parser import TiberiusConfigParser
 
+#Only import power mon driver if enables, prevents port open error
+if TiberiusConfigParser.isMonitorEnabled():
+	import drivers.powermanagement as Powermanagement
+
+
+class PowerManagementSensor:
+
+	pm = Powermanagement.PowerManagement()
+
+	def getdata(self):
+		return self.pm.getdata()
 
 class Ultrasonic:
     '''

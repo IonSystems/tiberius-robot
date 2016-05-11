@@ -19,6 +19,7 @@ AUTHENTICATION_SECTION = 'authentication'
 ARM_BASKET_SECTION = 'arm_basket_positions'
 ARM_CENTRE_SECTION = 'arm_centre_positions'
 ARM_PARK_SECTION = 'arm_park_positions'
+ARM_HOME_SECTION = 'arm_home_positions'
 DIAGNOSTICS_SECTION = 'diagnostics'
 
 class TiberiusConfigParser():
@@ -50,6 +51,23 @@ class TiberiusConfigParser():
     '''******************************************
         Motors
     ******************************************'''
+
+    @staticmethod
+    def areMotorsEnabled():
+        return TiberiusConfigParser.getParser().getboolean(MOTORS_SECTION, 'installed')
+
+    @staticmethod
+    def getMotorInterface():
+        return TiberiusConfigParser.getParser().get(MOTORS_SECTION, 'interface')
+
+    @staticmethod
+    def isI2C():
+        return TiberiusConfigParser.getParser().get(MOTORS_SECTION, 'interface') == "I2C"
+
+    @staticmethod
+    def isUDP():
+        return TiberiusConfigParser.getParser().get(MOTORS_SECTION, 'interface') == "UDP"
+
     @staticmethod
     def getMotorFrontLeftAddress():
         addr = TiberiusConfigParser.getParser().get(MOTORS_SECTION, 'front_left')
@@ -132,6 +150,10 @@ class TiberiusConfigParser():
     def isArmCamEnabled():
         return TiberiusConfigParser.getParser().getboolean(ROBOT_ARM_SECTION, 'camera')
 
+    @staticmethod
+    def getArmSerialPort():
+        return TiberiusConfigParser.getParser().get(ROBOT_ARM_SECTION, 'serial_port')
+
     '''******************************************
         GPS
     ******************************************'''
@@ -190,6 +212,24 @@ class TiberiusConfigParser():
         chemistry = TiberiusConfigParser.getParser().get(POWER_SECTION, 'chemistry')
         return chemistry
 
+    @staticmethod
+    def isMonitorEnabled():
+        return TiberiusConfigParser.getParser().getboolean(POWER_SECTION, 'battery_monitor')
+
+    @staticmethod
+    def getBatteryMonitorPort():
+        battery_port = TiberiusConfigParser.getParser().get(POWER_SECTION, 'battery_monitor_port')
+        return battery_port
+
+    @staticmethod
+    def isEhcEnabled():
+        ehc = TiberiusConfigParser.getParser().getboolean(POWER_SECTION, 'ehc')
+        return ehc
+
+    def setBatteryMonitorPort(battery_port):
+        TiberiusConfigParser.getParser().set(POWER_SECTION, battery_port)
+        return battery_port
+
     '''******************************************
         Authentication
     ******************************************'''
@@ -222,6 +262,13 @@ class TiberiusConfigParser():
         x = TiberiusConfigParser.getParser().getint(ARM_BASKET_SECTION, 'x')
         y = TiberiusConfigParser.getParser().getint(ARM_BASKET_SECTION, 'y')
         z = TiberiusConfigParser.getParser().getint(ARM_BASKET_SECTION, 'z')
+        return {'x': x, 'y': y, 'z': z}
+
+    @staticmethod
+    def getArmHomeParams():
+        x = TiberiusConfigParser.getParser().getint(ARM_HOME_SECTION, 'x')
+        y = TiberiusConfigParser.getParser().getint(ARM_HOME_SECTION, 'y')
+        z = TiberiusConfigParser.getParser().getint(ARM_HOME_SECTION, 'z')
         return {'x': x, 'y': y, 'z': z}
 
 
