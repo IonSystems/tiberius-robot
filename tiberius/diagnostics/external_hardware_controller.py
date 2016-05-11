@@ -1,8 +1,6 @@
 import serial
 from tiberius.utils import detection
 import time
-import tiberius.database.query as db_q
-from tiberius.database.tables import CompassTable
 
 class ExternalHardwareController:
     if detection.detect_windows():
@@ -16,16 +14,16 @@ class ExternalHardwareController:
     relay_data = [1, 1, 1, 1]
     servo_data = [75]
 
-    def __init__(self, debug=False):
+    def __init__(self):
         self.ser = serial.Serial(self.port, self.baud, timeout=1)
 
     def set_hardware(self, diagnostics_leds=None, ring_leds=None, relays=None, servos=None):
         if not self.ser.isOpen():
             try:
+                print "opening serial port"
                 self.ser.open()
             except:
                 print "Port already open"
-            time.sleep(10)
         if self.ser.isOpen():
             if diagnostics_leds is not None:
                 self.diagnostic_led_data = diagnostics_leds
@@ -74,10 +72,12 @@ if __name__ == "__main__":
         l6 = randint(0, 5)
         l7 = randint(0, 5)
         l8 = randint(0, 5)
-        time.sleep(0.1)
+        time.sleep(1)
 
 
 def compass_monitor(control):
+    import tiberius.database.query as db_q
+    from tiberius.database.tables import CompassTable
 
     dicti = db_q.get_latest(CompassTable)
 
@@ -86,56 +86,56 @@ def compass_monitor(control):
         bearing = dicti[0].heading
         print "Bearing: " + str(bearing)
         if 7.5 > bearing > -7.5:
-            control.ehc.set_hardware(None, [1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9], None, None)
+            return [1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9]
         elif -7.5 > bearing > -22.5:
-            control.ehc.set_hardware(None, [9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9], None, None)
+            return [9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9]
         elif -22.5 > bearing > -37.5:
-            control.ehc.set_hardware(None, [9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9], None, None)
+            return [9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9]
         elif -37.5 > bearing > -52.5:
-            control.ehc.set_hardware(None, [9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9], None, None)
+            return [9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9]
         elif -52.5 > bearing > -67.5:
-            control.ehc.set_hardware(None, [9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9], None, None)
+            return [9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9]
         elif -67.5 > bearing > -82.5:
-            control.ehc.set_hardware(None, [9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9], None, None)
+            return [9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9]
         elif -82.5 > bearing > -97.5:
-            control.ehc.set_hardware(None, [9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9], None, None)
+            return [9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9]
         elif -97.5 > bearing > -112.5:
-            control.ehc.set_hardware(None, [9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9], None, None)
+            return [9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9]
         elif -112.5 > bearing > -127.5:
-            control.ehc.set_hardware(None, [9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9], None, None)
+            return [9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9]
         elif -127.5 > bearing > -142.5:
-            control.ehc.set_hardware(None, [9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9], None, None)
+            return [9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9]
         elif -142.5 > bearing > -157.5:
-            control.ehc.set_hardware(None, [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9], None, None)
+            return [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9]
         elif -157.5 > bearing > -172.5:
-            control.ehc.set_hardware(None, [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9], None, None)
+            return [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9]
         elif 22.5 > bearing > 7.5:
-            control.ehc.set_hardware(None, [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9], None, None)
+            return [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9]
         elif 37.5 > bearing > 22.5:
-            control.ehc.set_hardware(None, [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9], None, None)
+            return [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9]
         elif 52.5 > bearing > 37.5:
-            control.ehc.set_hardware(None, [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9], None, None)
+            return [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9]
         elif 67.5 > bearing > 52.5:
-            control.ehc.set_hardware(None, [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9], None, None)
+            return [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9, 9]
         elif 82.5 > bearing > 67.5:
-            control.ehc.set_hardware(None, [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9], None, None)
+            return [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9, 9]
         elif 97.5 > bearing > 82.5:
-            control.ehc.set_hardware(None, [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9], None, None)
+            return [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9, 9]
         elif 112.5 > bearing > 97.5:
-            control.ehc.set_hardware(None, [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9], None, None)
+            return [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9, 9]
         elif 127.5 > bearing > 112.5:
-            control.ehc.set_hardware(None, [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9], None, None)
+            return [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9, 9]
         elif 142.5 > bearing > 127.5:
-            control.ehc.set_hardware(None, [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9], None, None)
+            return [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9, 9]
         elif 157.5 > bearing > 142.5:
-            control.ehc.set_hardware(None, [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9], None, None)
+            return [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9, 9]
         elif 172.5 > bearing > 157.5:
-            control.ehc.set_hardware(None, [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9], None, None)
+            return [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1, 9]
         elif 172.5 < bearing < -172.5:
-            control.ehc.set_hardware(None, [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1], None, None)
+            return [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1]
     else:
         print "No Compass Data"
-        control.ehc.set_hardware(None, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], None, None)
+        return [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 
 

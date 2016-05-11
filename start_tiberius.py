@@ -102,10 +102,12 @@ if action == Action.WEB_SERVER:
 # Now run other stuff
 
 print "Starting loop"
+
 while True:
-    c.diagnostics_thread(control)
-    compass_monitor(control)
-    time.sleep(1)
+    strip = c.diagnostics_thread(control)
+    ring = compass_monitor(control)
+    control.ehc.set_hardware(strip, ring)
+    time.sleep(2)
 
 # Wait for a keyboard interrupt
 try:

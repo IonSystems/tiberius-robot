@@ -232,7 +232,6 @@ class DatabaseThreadCreator:
     ******************************************'''
 
     def diagnostics_thread(self, control):
-        external_hardware_controller = control.ehc
 
         ultrasonics_status, compass_status, gps_status = False, False, False
 
@@ -253,5 +252,5 @@ class DatabaseThreadCreator:
                     gps_status = 1
                 else:
                     gps_status = 0
-            diagnostics_leds = [ultrasonics_status, compass_status, gps_status, 9, 9, 9, 9, 9]
-            external_hardware_controller.set_hardware(diagnostics_leds)
+            return [ultrasonics_status, compass_status, gps_status, 9, 9, 9, 9, 9]
+        return None

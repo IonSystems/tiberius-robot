@@ -97,25 +97,25 @@ class RobotArmResource(object):
                 self.z += command_value
 		self.arm_control.move_elbow(command_value)
 
-        # Arm gripper commands
-        if(ArmCommands.GRASP in command_name):
-            self.logger.info("Grasping")
-            self.arm_control.close_gripper()
-        elif(ArmCommands.UNGRASP in command_name):
-            self.logger.info("Ungrasp")
+            # Arm gripper commands
+            if(ArmCommands.GRASP in command_name):
+                self.logger.info("Grasping")
+                self.arm_control.close_gripper()
+            elif(ArmCommands.UNGRASP in command_name):
+                self.logger.info("Ungrasp")
             self.arm_control.open_gripper()
 
-        # Arm complex commands
-        # if(ArmCommands.BASKET in req.params):
-        #     self.arm_control.basket()
-        if(ArmCommands.CENTRE in command_name):
-            self.logger.info("Centring")
-            self.arm_control.centre()
-        elif(ArmCommands.PARK in command_name):
-            self.logger.info("Parking")
-            self.arm_control.park()
-        elif(ArmCommands.HOME in command_name):
-            self.logger.info("Homing")
-            self.arm_control.home()
+            # Arm complex commands
+            # if(ArmCommands.BASKET in req.params):
+            #     self.arm_control.basket()
+            if(ArmCommands.CENTRE in command_name):
+                self.logger.info("Centring")
+                self.arm_control.centre()
+            elif(ArmCommands.PARK in command_name):
+                self.logger.info("Parking")
+                self.arm_control.park()
+            elif(ArmCommands.HOME in command_name):
+                self.logger.info("Homing")
+                self.arm_control.home()
 
         print req.params
