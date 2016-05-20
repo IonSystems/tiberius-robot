@@ -8,4 +8,6 @@ User Guide
    quickstart
    databases
    architecture
+   udp_motor_control
    testing
+   web/index

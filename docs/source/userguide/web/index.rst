@@ -1,9 +1,8 @@
-Web Interface Tutorials
-=======================
+Web Interface User Guides
+=========================
 
 .. toctree::
    :maxdepth: 2
 
-   intro
    mission_planning
    teleoperation
