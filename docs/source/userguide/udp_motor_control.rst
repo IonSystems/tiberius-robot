@@ -3,7 +3,7 @@ Motor Control Architecture
 
 Introduction
 ------------
-Tiberius III and onwards uses a new modular motor control system.
+Tiberius III and onwards use a new modular motor control system.
 This new design was motivated by the need for a more reliable communication network.
 Previously an I2C network was used to communicate between Raspberry Pis
 and the MD03 motor drivers, but I2C does not cope well with interference,
