@@ -101,7 +101,7 @@ var handleGoogleMapSetting = function(mission_id, json_tasks) {
 			draggable: false
 	  });
 
-		// Caclulate the distance travelled from the previous marker to this one.
+		// Calculate the distance travelled from the previous marker to this one.
 		if(path.getLength() > 1){
 			var previous_latlng = path.getAt(path.getLength() - 2);
 			var distance = google.maps.geometry.spherical.computeDistanceBetween(previous_latlng, event.latLng).toFixed(2);
@@ -117,7 +117,7 @@ var handleGoogleMapSetting = function(mission_id, json_tasks) {
 			task_options.push('<option value="' + task.id + '">' + task.name + '</option>')
 		}
 		var button_id = "btn-add-task-" + path.getLength();
-		var contentwindow  = "Hello from " + path.getLength() + "<br>" +
+		var contentwindow  = "Waypoint " + path.getLength() + "<br>" +
 											   "Distance: " + distance + "<br>" +
 												 "Latitude: " + event.latLng.lat() + "<br>" +
 												 "Longitude: " + event.latLng.lng() + "<br>" +
