@@ -16,8 +16,13 @@ class DebugResource(object):
     def on_get(self, req, resp):
         resp.body = '{"status":{"motors": "forward"}}'
 
+	def on_post(self, req, resp):
+		print "Received POST"
+		for k,v in req.params:
+			print str(k) + ": " + str(v)
+		resp.status = falcon.HTTP_200
+		resp.body = json.dumps({
+					 'test': "valuetest",
+					 'test2': "valuetest"
+		})
 
-def validate_params(req, resp, resource, params):
-    if req.content_type not in ALLOWED_IMAGE_TYPES:
-        msg = 'Image type not allowed. Must be PNG, JPEG, or GIF'
-        raise falcon.HTTPBadRequest('Bad request', msg)
