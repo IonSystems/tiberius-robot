@@ -3,7 +3,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/background_blue"
-                tools:context="tiberius.tiberius.Start">
+                tools:context=".StartupActivity">
 
     <!-- Video playing on start -->
     <SurfaceView android:id="@+id/start_video"

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference android:title="API Server IP Address and Port Number"
+        android:key="api_ip_address"
+        android:summary="IP Address of API Server running on Tiberius"></EditTextPreference>
+
+    <EditTextPreference android:title="API Authentication Token"
+        android:key="x_auth_token"
+        android:summary="Authentication token for Tiberius's API"
+        android:maxLines="1"></EditTextPreference>
+
+    <CheckBoxPreference android:title="Startup Video"
+        android:defaultValue="true"
+        android:summary="This option if selected will play a short video when the application starts."
+        android:key="startup_video" />
+</PreferenceScreen>

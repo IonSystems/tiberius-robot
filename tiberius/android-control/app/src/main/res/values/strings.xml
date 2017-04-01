@@ -7,22 +7,24 @@
     <string name="title_activity_autonomy">Autonomy</string>
     <string name="title_activity_main_menu">MainMenu</string>
     <string name="title_activity_database">Database</string>
+    <string name="title_activity_wasd">WASD Control</string>
     <string name="title_activity_mission_selection">MissionSelection</string>
     <string name="title_activity_choose_destination">ChooseDestination</string>
 
     <!-- ********************************** TEXTVIEW NAMES *************************************** -->
     <!-- HEADERS -->
-    <string name="autonomy_header">~AUTONOMY~</string>
-    <string name="settings_header">~SETTINGS~</string>
-    <string name="manual_header">~MANUAL~</string>
-    <string name="main_menu_header">~MAIN MENU~</string>
-    <string name="database_header">~DATABASE~</string>
-    <string name="mission_selection_header">~MISSION SELECTION~</string>
-    <string name="destination_header">~SELECT THE DESTINATION~</string>
+    <string name="autonomy_header">AUTONOMY</string>
+    <string name="settings_header">SETTINGS</string>
+    <string name="manual_header">Thumb Control</string>
+    <string name="wasd_header">WASD Control</string>
+    <string name="main_menu_header">MAIN MENU</string>
+    <string name="database_header">DATABASE</string>
+    <string name="mission_selection_header">MISSION SELECTION</string>
+    <string name="destination_header">SELECT THE DESTINATION</string>
 
     <!-- START -->
-    <string name="robot_info">~Tiberius Autonomous Robot~</string>
-    <string name="year">~2014/2015~</string>
+    <string name="robot_info">Tiberius Autonomous Robot</string>
+    <string name="year">~2015/2016~</string>
 
     <!-- AUTONOMY -->
     <string name="mission_destination">MISSION\nDESTINATION</string>
@@ -69,9 +71,11 @@
 
     <!-- MAIN MENU -->
     <string name="menu_autonomy_btn">AUTONOMY</string>
-    <string name="menu_manual_btn">MANUAL</string>
+    <string name="menu_manual_btn">Thumb Control</string>
+    <string name="menu_wasd_btn">WASD Control</string>
     <string name="menu_database_btn">DATABASE</string>
     <string name="menu_settings_btn">SETTINGS</string>
+    <string name="menu_credits_btn">Credits</string>
     <string name="mission_selection_map_btn">MAP</string>
 
 </resources>

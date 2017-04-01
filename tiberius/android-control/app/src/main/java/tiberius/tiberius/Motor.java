@@ -1,16 +1,16 @@
 package tiberius.tiberius;
 
+import android.util.Log;
+
 /**
  * A class for setting the speed of a motor based on a seekbar.
- * It is called in the Manual.java class.
+ * It is called in the ThumbControlActivity.java class.
  */
 public class Motor {
 
-    /** GLOBAL VARIABLES & PARAMETERS */
+    private int min_speed_seekbar;
+    private int max_speed_seekbar;
 
-    // PROGRESS BAR GOES FROM {0,510}
-    // THAT IS TRANSLATED INTO {-255,+255} for the motor (-Reverse, +Forward)
-    // The speed adjustment to scale from {0,510} to {-255,+255}.
     private final static int SPEED_ADJUSTMENT = -255;
 
     // SPEED = 0 => MOTOR STOPPED
@@ -25,8 +25,11 @@ public class Motor {
     /**
      * Constructor
      */
-    public Motor(String id){
+    public Motor(String id, int min_speed_seekbar, int max_speed_seekbar){
         this.id = id;
+        this.min_speed_seekbar = min_speed_seekbar;
+        this.max_speed_seekbar = max_speed_seekbar;
+
     }
 
     /**
@@ -37,10 +40,15 @@ public class Motor {
     }
 
     /**
-     * Set the speed of the motor
+     * The speed comes in with a a range of 0 --> 200.
+     * We store this as a normalised speed -100 to 100.
      */
     public void setSpeed(int speed) {
-        this.speed = speed + SPEED_ADJUSTMENT;
+        //Represent the speed as a percentage ( 0 --> 1)
+        double percentage = ((double)speed - (double)this.min_speed_seekbar) / ((double)this.max_speed_seekbar - (double)this.min_speed_seekbar);
+        //Convert the percentage into a valid range for API (-100 --> 100)
+        int speed_api =  (int) Math.round(((percentage - 0.5) / 0.5) * 100);
+        this.speed = speed_api;
     }
 
     /**

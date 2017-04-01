@@ -8,19 +8,21 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
 
     <application
         android:allowBackup="true"
-        android:debuggable="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
 
-        <!-- Start up activity -->
+        <!-- StartupActivity up activity -->
         <activity
-            android:name=".Start"
-            android:label="@string/app_name"
-            android:screenOrientation="landscape" >
+            android:name=".StartupActivity"
+            android:label="@string/app_name" >
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,23 +31,17 @@
         </activity>
 
         <!-- Autonomy activity -->
-        <activity
-            android:name=".Autonomy"
-            android:configChanges="fontScale"
-            android:label="@string/title_activity_autonomy"
-            android:screenOrientation="landscape" >
-        </activity>
 
-        <!-- Manual activity -->
+        <!-- ThumbControlActivity activity -->
         <activity
-            android:name=".Manual"
+            android:name=".ThumbControlActivity"
             android:label="@string/title_activity_manual"
             android:screenOrientation="landscape" >
         </activity>
 
         <!-- Settings activity -->
         <activity
-            android:name=".SettingsMenu"
+            android:name=".SettingsActivity"
             android:label="@string/title_activity_settings_menu"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden" >
@@ -53,32 +49,27 @@
 
         <!-- Main Menu activity -->
         <activity
-            android:name=".MainMenu"
-            android:label="@string/title_activity_main_menu"
-            android:screenOrientation="landscape" >
+            android:name=".MainMenuActivity"
+            android:label="@string/title_activity_main_menu">
         </activity>
 
-        <!-- Database activity -->
+        <!-- DatabaseActivity activity -->
         <activity
-            android:name=".Database"
+            android:name=".DatabaseActivity"
             android:label="@string/title_activity_database"
             android:screenOrientation="landscape" >
         </activity>
 
-        <!-- Mission Selection activity -->
+        <!-- DatabaseActivity activity -->
         <activity
-            android:name=".MissionSelection"
-            android:label="@string/title_activity_mission_selection"
-            android:screenOrientation="landscape"
-            android:windowSoftInputMode="stateHidden" >
-        </activity>
-
-        <!-- Choose Destination activity -->
-        <activity
-            android:name=".ChooseDestination"
-            android:label="@string/title_activity_choose_destination"
+            android:name=".WASDControlActivity"
+            android:label="@string/title_activity_wasd"
             android:screenOrientation="landscape" >
         </activity>
+
+        <!-- Mission Selection activity -->
+
+        <!-- Choose Destination activity -->
 
 
         <!-- Add Google Play APis (use Google Maps) -->

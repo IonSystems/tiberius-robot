@@ -1,13 +1,9 @@
 package tiberius.tiberius;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.Looper;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -22,7 +18,7 @@ import java.util.TimerTask;
 /**
  * DATABASE ACTIVITY
  */
-public class Database extends ActionBarActivity {
+public class DatabaseActivity extends ActionBarActivity {
 
     // GLOBAL VARIABLES & PARAMETERS
 
@@ -57,9 +53,6 @@ public class Database extends ActionBarActivity {
     // The lidar's maximum range point.
     private final static float LIDAR_RANGE = 600;
 
-    // The thread handling the socket for sending commands to the database unit.
-    private DatabaseThread database_thread;
-
     // Timer object to control the communication with the database unit.
     private Timer timer;
 
@@ -69,10 +62,7 @@ public class Database extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_database);
 
-        // Create the socket thread for communicating with the databse.
-        final String database_IP = new SettingsMenu().getDatabaseIP();
-        database_thread = new DatabaseThread(Database.this,database_IP);
-        new Thread(database_thread).start();
+
 
         // Update the database fields every 200ms.
         updateDatabaseFields();
@@ -105,7 +95,7 @@ public class Database extends ActionBarActivity {
 
             @Override
             public void run() {
-                Database.this.runOnUiThread(new Runnable() {
+                DatabaseActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         text_latitude.setText(getLatitude());
@@ -383,7 +373,6 @@ public class Database extends ActionBarActivity {
     public void goMenu(View view) {
         timer.cancel();
         timer.purge();
-        database_thread.closeSocket();
         this.goMainMenu();
     }
 
@@ -391,7 +380,7 @@ public class Database extends ActionBarActivity {
      * Go to the Main Menu.
      */
     private void goMainMenu(){
-        Intent intent = new Intent(this,MainMenu.class);
+        Intent intent = new Intent(this,MainMenuActivity.class);
         startActivity(intent);
     }
 
@@ -403,7 +392,6 @@ public class Database extends ActionBarActivity {
     public void onBackPressed() {
         timer.cancel();
         timer.purge();
-        database_thread.closeSocket();
         this.goMainMenu();
     }
 
@@ -422,10 +410,7 @@ public class Database extends ActionBarActivity {
         A PAUSE MISSION MESSAGE IS SENT WHENEVER THE USER LEAVES THE APPLICATION.
          */
         // If mission is running - pause the current mission.
-        if(!new Autonomy().missionStopped()) {
-            database_thread.pauseMission();
-            database_thread.closeSocket();
-        }
+
     }
 
     /**
@@ -446,21 +431,7 @@ public class Database extends ActionBarActivity {
         textView = (TextView) findViewById(R.id.database_lidar_label);
         textView.setText(Html.fromHtml("<u>LIDAR:</u>"));
 
-        if(!new Autonomy().missionStopped()) {
-            new Autonomy().pauseMission();
-            // Display an alert that the current mission has been paused.
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Mission Paused!");
-            builder.setMessage("Application was put into the background. The current mission has been paused.");
-            builder.setCancelable(false);
-            builder.setIcon(R.drawable.alert_icon);
-            builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                }
-            });
-            builder.show();
-        }
+
     }
 
 }
