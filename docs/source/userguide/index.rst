@@ -11,3 +11,4 @@ User Guide
    udp_motor_control
    testing
    web/index
+   api/index
